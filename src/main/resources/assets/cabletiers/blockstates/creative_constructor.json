@@ -1,0 +1,180 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "refinedstorage:block/cable_core"
+      }
+    },
+    {
+      "when": {
+        "north": true
+      },
+      "apply": {
+        "model": "refinedstorage:block/cable_extension"
+      }
+    },
+    {
+      "when": {
+        "east": true
+      },
+      "apply": {
+        "model": "refinedstorage:block/cable_extension",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": true
+      },
+      "apply": {
+        "model": "refinedstorage:block/cable_extension",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "west": true
+      },
+      "apply": {
+        "model": "refinedstorage:block/cable_extension",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": true
+      },
+      "apply": {
+        "model": "refinedstorage:block/cable_extension",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "down": true
+      },
+      "apply": {
+        "model": "refinedstorage:block/cable_extension",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "direction": "north",
+        "connected": true
+      },
+      "apply": {
+        "model": "cabletiers:block/creative_constructor_connected"
+      }
+    },
+    {
+      "when": {
+        "direction": "east",
+        "connected": true
+      },
+      "apply": {
+        "model": "cabletiers:block/creative_constructor_connected",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "direction": "south",
+        "connected": true
+      },
+      "apply": {
+        "model": "cabletiers:block/creative_constructor_connected",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "direction": "west",
+        "connected": true
+      },
+      "apply": {
+        "model": "cabletiers:block/creative_constructor_connected",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "direction": "up",
+        "connected": true
+      },
+      "apply": {
+        "model": "cabletiers:block/creative_constructor_connected",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "direction": "down",
+        "connected": true
+      },
+      "apply": {
+        "model": "cabletiers:block/creative_constructor_connected",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "direction": "north",
+        "connected": false
+      },
+      "apply": {
+        "model": "cabletiers:block/creative_constructor_disconnected"
+      }
+    },
+    {
+      "when": {
+        "direction": "east",
+        "connected": false
+      },
+      "apply": {
+        "model": "cabletiers:block/creative_constructor_disconnected",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "direction": "south",
+        "connected": false
+      },
+      "apply": {
+        "model": "cabletiers:block/creative_constructor_disconnected",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "direction": "west",
+        "connected": false
+      },
+      "apply": {
+        "model": "cabletiers:block/creative_constructor_disconnected",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "direction": "up",
+        "connected": false
+      },
+      "apply": {
+        "model": "cabletiers:block/creative_constructor_disconnected",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "direction": "down",
+        "connected": false
+      },
+      "apply": {
+        "model": "cabletiers:block/creative_constructor_disconnected",
+        "x": 90
+      }
+    }
+  ]
+}

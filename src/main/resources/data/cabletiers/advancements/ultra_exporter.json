@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "cabletiers:ultra_exporter"
+    },
+    "title": {
+      "translate": "advancements.cabletiers.ultra_exporter"
+    },
+    "description": {
+      "translate": "advancements.cabletiers.ultra_exporter.description"
+    }
+  },
+  "parent": "cabletiers:elite_exporter",
+  "criteria": {
+    "ultra_exporter_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "cabletiers:ultra_exporter"
+          }
+        ]
+      }
+    }
+  }
+}

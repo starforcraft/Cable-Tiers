@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "cabletiers:elite_destructor"
+    },
+    "title": {
+      "translate": "advancements.cabletiers.elite_destructor"
+    },
+    "description": {
+      "translate": "advancements.cabletiers.elite_destructor.description"
+    }
+  },
+  "parent": "refinedstorage:destruction",
+  "criteria": {
+    "elite_destructor_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "cabletiers:elite_destructor"
+          }
+        ]
+      }
+    }
+  }
+}

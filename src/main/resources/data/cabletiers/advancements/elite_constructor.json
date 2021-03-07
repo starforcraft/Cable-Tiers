@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "cabletiers:elite_constructor"
+    },
+    "title": {
+      "translate": "advancements.cabletiers.elite_constructor"
+    },
+    "description": {
+      "translate": "advancements.cabletiers.elite_constructor.description"
+    }
+  },
+  "parent": "refinedstorage:construction",
+  "criteria": {
+    "elite_constructor_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "cabletiers:elite_constructor"
+          }
+        ]
+      }
+    }
+  }
+}

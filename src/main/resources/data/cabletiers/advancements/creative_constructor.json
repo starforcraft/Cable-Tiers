@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "cabletiers:creative_constructor"
+    },
+    "title": {
+      "translate": "advancements.cabletiers.creative_constructor"
+    },
+    "description": {
+      "translate": "advancements.cabletiers.creative_constructor.description"
+    }
+  },
+  "parent": "cabletiers:ultra_constructor",
+  "criteria": {
+    "creative_constructor_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "cabletiers:creative_constructor"
+          }
+        ]
+      }
+    }
+  }
+}

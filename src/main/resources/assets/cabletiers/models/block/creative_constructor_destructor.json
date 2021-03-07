@@ -1,0 +1,44 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"border": "cabletiers:blocks/creative_cable_part_border"
+	},
+	"elements": [
+		{
+			"name": "Line1",
+			"from": [7, 7, 2],
+			"to": [9, 9, 6],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 0]},
+			"faces": {
+				"east": {"uv": [1, 1, 5, 3], "texture": "#border"},
+				"south": {"uv": [1, 1, 3, 3], "texture": "#border"},
+				"west": {"uv": [1, 1, 5, 3], "texture": "#border"},
+				"up": {"uv": [1, 1, 3, 5], "texture": "#border"},
+				"down": {"uv": [1, 1, 3, 5], "texture": "#border"}
+			}
+		},
+		{
+			"name": "Line2",
+			"from": [2, 2, 0],
+			"to": [14, 14, 2],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 0]},
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#front"},
+				"east": {"uv": [0, 2, 2, 12], "rotation": 180, "texture": "#border"},
+				"south": {"uv": [1, 1, 16, 16], "texture": "#border"},
+				"west": {"uv": [0, 2, 2, 12], "texture": "#border"},
+				"up": {"uv": [0, 0, 10, 2], "texture": "#border"},
+				"down": {"uv": [0, 0, 10, 2], "rotation": 180, "texture": "#border"}
+			}
+		},
+		{
+			"name": "Line3",
+			"from": [2, 2, 0],
+			"to": [14, 14, 2],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 0]},
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#cutout"}
+			}
+		}
+	]
+}

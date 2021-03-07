@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "cabletiers:elite_importer"
+    },
+    "title": {
+      "translate": "advancements.cabletiers.elite_importer"
+    },
+    "description": {
+      "translate": "advancements.cabletiers.elite_importer.description"
+    }
+  },
+  "parent": "refinedstorage:importing",
+  "criteria": {
+    "elite_importer_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "cabletiers:elite_importer"
+          }
+        ]
+      }
+    }
+  }
+}

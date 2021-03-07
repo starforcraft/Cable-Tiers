@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DMD",
+    "MAM",
+    "DMD"
+  ],
+  "key": {
+    "A": { "item": "refinedstorage:advanced_processor" },
+    "D": { "item": "minecraft:diamond_block" },
+    "M": { "item": "cabletiers:elite_importer" }
+  },
+  "result": {
+    "item": "cabletiers:ultra_importer",
+    "count": 1
+  }
+}
