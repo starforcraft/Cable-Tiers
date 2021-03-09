@@ -75,37 +75,39 @@ public class CreativeImporterNetworkNode extends NetworkNode implements ICompara
         	TileEntity facing = getFacingTile();
             IItemHandler handler = WorldUtils.getItemHandler(facing, getDirection().getOpposite());
 
-            for(int x = 0; x < handler.getSlots(); x++) {
-            	if (facing instanceof DiskDriveTile || handler == null) {
-	            	return;
-	            }
-            	
-                if (currentSlot >= handler.getSlots()) {
-                    currentSlot = 0;
-                }
-
-                if (handler.getSlots() > 0) {
-                    while (currentSlot + 1 < handler.getSlots() && handler.getStackInSlot(currentSlot).isEmpty()) {
-                        currentSlot++;
+            if (handler != null) {
+                for(int x = 0; x < handler.getSlots(); x++) {
+                	if (facing instanceof DiskDriveTile || handler == null) {
+    	            	return;
+    	            }
+                	
+                    if (currentSlot >= handler.getSlots()) {
+                        currentSlot = 0;
                     }
 
-                    ItemStack stack = handler.getStackInSlot(currentSlot);
-
-                    if (!IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, stack)) {
-                        currentSlot++;
-                    } else {
-                        ItemStack result = handler.extractItem(currentSlot, 64, true);
-
-                        if (!result.isEmpty() && network.insertItem(result, result.getCount(), Action.SIMULATE).isEmpty()) {
-                                result = handler.extractItem(currentSlot, 64, false);
-
-                                network.insertItemTracked(result, result.getCount());
-                        } else {
+                    if (handler.getSlots() > 0) {
+                        while (currentSlot + 1 < handler.getSlots() && handler.getStackInSlot(currentSlot).isEmpty()) {
                             currentSlot++;
                         }
-                    }
-                }	
-        	}
+
+                        ItemStack stack = handler.getStackInSlot(currentSlot);
+
+                        if (!IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, stack)) {
+                            currentSlot++;
+                        } else {
+                            ItemStack result = handler.extractItem(currentSlot, 64, true);
+
+                            if (!result.isEmpty() && network.insertItem(result, result.getCount(), Action.SIMULATE).isEmpty()) {
+                                    result = handler.extractItem(currentSlot, 64, false);
+
+                                    network.insertItemTracked(result, result.getCount());
+                            } else {
+                                currentSlot++;
+                            }
+                        }
+                    }	
+            	}	
+            }
         }
         else if (type == IType.FLUIDS)
         {
