@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage.item.UpgradeItem;
 import com.refinedmods.refinedstorage.tile.config.IType;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.items.SlotItemHandler;
 
 public class CreativeExporterContainer extends BaseContainer {
     private final CreativeExporterTileEntity tile;
@@ -46,6 +47,9 @@ public class CreativeExporterContainer extends BaseContainer {
 
         this.transferManager.clearTransfers();
 
+        for (int i = 0; i < 4; i++)
+            addSlot(new SlotItemHandler(tile.getNode().getUpgrades(), i, 187, 6 + (i * 18)));
+        
         boolean hasRegulator = tile.getNode().getUpgrades().hasUpgrade(UpgradeItem.Type.REGULATOR);
 
         for (int i = 0; i < 6; i++)

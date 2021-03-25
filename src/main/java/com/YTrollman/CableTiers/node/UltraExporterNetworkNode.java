@@ -120,7 +120,7 @@ public class UltraExporterNetworkNode extends NetworkNode implements IComparable
                     ItemStack slot = itemFilters.getStackInSlot(filterSlot);
 
                     if (!slot.isEmpty()) {
-                        int stackSize = upgrades.getStackInteractCount();
+                        int stackSize = 64;
 
                         if (upgrades.hasUpgrade(UpgradeItem.Type.REGULATOR)) {
                             int found = 0;
@@ -188,7 +188,7 @@ public class UltraExporterNetworkNode extends NetworkNode implements IComparable
                     FluidStack stack = fluids[filterSlot];
 
                     if (stack != null) {
-                        int toExtract = FluidAttributes.BUCKET_VOLUME * upgrades.getStackInteractCount();
+                        int toExtract = FluidAttributes.BUCKET_VOLUME * 64;
 
                         FluidStack stackInStorage = network.getFluidStorageCache().getList().get(stack, compare);
 
