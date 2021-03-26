@@ -76,7 +76,7 @@ public class CreativeImporterNetworkNode extends NetworkNode implements ICompara
             IItemHandler handler = WorldUtils.getItemHandler(facing, getDirection().getOpposite());
 
             if (handler != null) {
-                for(int x = 0; x < 1024; x++) {
+                for(int x = 0; x < handler.getSlots(); x++) {
                 	if (facing instanceof DiskDriveTile || handler == null) {
     	            	return;
     	            }
@@ -114,23 +114,22 @@ public class CreativeImporterNetworkNode extends NetworkNode implements ICompara
             IFluidHandler handler = WorldUtils.getFluidHandler(getFacingTile(), getDirection().getOpposite());
             
             if (handler != null) {
-                for(int x = 0; x < 1024; x++) {
                 FluidStack stack = handler.drain(FluidAttributes.BUCKET_VOLUME, IFluidHandler.FluidAction.SIMULATE);
 
-                if (!stack.isEmpty() &&
-                        IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack) &&
-                        network.insertFluid(stack, stack.getAmount(), Action.SIMULATE).isEmpty()) {
-                    FluidStack toDrain = handler.drain(FluidAttributes.BUCKET_VOLUME * 64, IFluidHandler.FluidAction.SIMULATE);
+                for(int x = 0; x < stack.getAmount(); x++) {
+                    if (!stack.isEmpty() &&
+                            IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack) &&
+                            network.insertFluid(stack, stack.getAmount(), Action.SIMULATE).isEmpty()) {
+                        FluidStack toDrain = handler.drain(FluidAttributes.BUCKET_VOLUME * 64, IFluidHandler.FluidAction.SIMULATE);
 
-                    if (!toDrain.isEmpty()) {
-                        FluidStack remainder = network.insertFluidTracked(toDrain, toDrain.getAmount());
-                        if (!remainder.isEmpty()) {
-                            toDrain.shrink(remainder.getAmount());
+                        if (!toDrain.isEmpty()) {
+                            FluidStack remainder = network.insertFluidTracked(toDrain, toDrain.getAmount());
+                            if (!remainder.isEmpty()) {
+                                toDrain.shrink(remainder.getAmount());
+                            }
+                            handler.drain(toDrain, IFluidHandler.FluidAction.EXECUTE);
                         }
-
-                        handler.drain(toDrain, IFluidHandler.FluidAction.EXECUTE);
-                        }
-                    }	
+                    }
             	}
             }
         }

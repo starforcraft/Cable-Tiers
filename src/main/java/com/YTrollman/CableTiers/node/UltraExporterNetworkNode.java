@@ -46,7 +46,7 @@ public class UltraExporterNetworkNode extends NetworkNode implements IComparable
     private final BaseItemHandler itemFilters = new BaseItemHandler(SLOTS).addListener(new NetworkNodeInventoryListener(this));
     private final FluidInventory fluidFilters = new FluidInventory(SLOTS).addListener(new NetworkNodeFluidInventoryListener(this));
 
-    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.STACK, UpgradeItem.Type.REGULATOR)
+    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR)
         .addListener(new NetworkNodeInventoryListener(this))
         .addListener((handler, slot, reading) ->
         {
