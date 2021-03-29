@@ -116,10 +116,10 @@ public class CreativeImporterNetworkNode extends NetworkNode implements ICompara
             if (handler != null) {
                 FluidStack stack = handler.drain(FluidAttributes.BUCKET_VOLUME, IFluidHandler.FluidAction.SIMULATE);
 
-                for(int x = 0; x < stack.getAmount(); x++) {
-                    if (!stack.isEmpty() &&
-                            IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack) &&
-                            network.insertFluid(stack, stack.getAmount(), Action.SIMULATE).isEmpty()) {
+                if (!stack.isEmpty() &&
+                        IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack) &&
+                        network.insertFluid(stack, stack.getAmount(), Action.SIMULATE).isEmpty()) {
+                    for(int x = 0; x < stack.getAmount(); x++) {
                         FluidStack toDrain = handler.drain(FluidAttributes.BUCKET_VOLUME * 64, IFluidHandler.FluidAction.SIMULATE);
 
                         if (!toDrain.isEmpty()) {

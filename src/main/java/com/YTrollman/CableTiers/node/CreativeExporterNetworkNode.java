@@ -186,8 +186,8 @@ public class CreativeExporterNetworkNode extends NetworkNode implements ICompara
                 if (handler != null) {
                     FluidStack stack = fluids[filterSlot];
 
-                    for(int x = 0; x < stack.getAmount(); x++) {
-                        if (stack != null) {
+                    if (stack != null) {
+                        for(int x = 0; x < stack.getAmount(); x++) {
                             int toExtract = FluidAttributes.BUCKET_VOLUME * 64;
 
                             FluidStack stackInStorage = network.getFluidStorageCache().getList().get(stack, compare);

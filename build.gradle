@@ -22,10 +22,10 @@ repositories {
     	name = "ModMaven"
     	url = "https://modmaven.k-4u.nl"
   	}
-    	maven {
+    maven {
         name = "RS maven"
         url = "https://repo.refinedmods.com"
-    	}
+    }
 }
 
 version = "${mod_version}"
