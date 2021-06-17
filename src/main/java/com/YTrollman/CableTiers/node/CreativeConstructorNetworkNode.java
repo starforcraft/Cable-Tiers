@@ -140,12 +140,10 @@ public class CreativeConstructorNetworkNode extends NetworkNode implements IComp
     private void extractAndDropItem(ItemStack stack) {
         ItemStack took = network.extractItem(stack, 64, compare, Action.PERFORM);
 
-        for(int x = 0; x < took.getCount(); x++) {
-            if (!took.isEmpty()) {
-                DefaultDispenseItemBehavior.doDispense(world, took, 6, getDirection(), new Position(getDispensePositionX(), getDispensePositionY(), getDispensePositionZ()));
-            } else if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {
-                network.getCraftingManager().request(this, stack, 1);
-            }	
+        if (!took.isEmpty()) {
+            DefaultDispenseItemBehavior.doDispense(world, took, 6, getDirection(), new Position(getDispensePositionX(), getDispensePositionY(), getDispensePositionZ()));
+        } else if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {
+            network.getCraftingManager().request(this, stack, 1);
         }
     }
 
