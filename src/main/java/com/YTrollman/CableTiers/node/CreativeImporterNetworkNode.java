@@ -47,8 +47,6 @@ public class CreativeImporterNetworkNode extends NetworkNode implements ICompara
     private int compare = IComparer.COMPARE_NBT;
     private int mode = IWhitelistBlacklist.BLACKLIST;
     private int type = IType.ITEMS;
-
-    private int currentSlot;
     
     public CreativeImporterNetworkNode(World world, BlockPos pos)
     {
@@ -72,41 +70,28 @@ public class CreativeImporterNetworkNode extends NetworkNode implements ICompara
 
         if (type == IType.ITEMS)
         {
-        	TileEntity facing = getFacingTile();
+            TileEntity facing = getFacingTile();
             IItemHandler handler = WorldUtils.getItemHandler(facing, getDirection().getOpposite());
 
-            if (handler != null) {
-                for(int x = 0; x < handler.getSlots(); x++) {
-                	if (facing instanceof DiskDriveTile || handler == null) {
-    	            	return;
-    	            }
-                	
-                    if (currentSlot >= handler.getSlots()) {
-                        currentSlot = 0;
-                    }
+            if (handler != null && !(facing instanceof DiskDriveTile)) {
+                for (int x = 0; x < handler.getSlots(); x++) {
+                    ItemStack stack = handler.getStackInSlot(x);
 
-                    if (handler.getSlots() > 0) {
-                        while (currentSlot + 1 < handler.getSlots() && handler.getStackInSlot(currentSlot).isEmpty()) {
-                            currentSlot++;
-                        }
+                    if (!stack.isEmpty() && IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, stack)) {
+                        ItemStack result = handler.extractItem(x, stack.getCount(), true);
 
-                        ItemStack stack = handler.getStackInSlot(currentSlot);
-
-                        if (!IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, stack)) {
-                            currentSlot++;
-                        } else {
-                            ItemStack result = handler.extractItem(currentSlot, 64, true);
-
-                            if (!result.isEmpty() && network.insertItem(result, result.getCount(), Action.SIMULATE).isEmpty()) {
-                                    result = handler.extractItem(currentSlot, 64, false);
-
-                                    network.insertItemTracked(result, result.getCount());
-                            } else {
-                                currentSlot++;
+                        if (!result.isEmpty()) {
+                            ItemStack remainder = network.insertItem(result, result.getCount(), Action.SIMULATE);
+                            if (!remainder.isEmpty()) {
+                                result.shrink(remainder.getCount());
+                            }
+                            if (!result.isEmpty()) {
+                                result = handler.extractItem(x, result.getCount(), false);
+                                network.insertItemTracked(result, result.getCount());
                             }
                         }
-                    }	
-            	}	
+                    }
+            	}
             }
         }
         else if (type == IType.FLUIDS)
@@ -114,23 +99,24 @@ public class CreativeImporterNetworkNode extends NetworkNode implements ICompara
             IFluidHandler handler = WorldUtils.getFluidHandler(getFacingTile(), getDirection().getOpposite());
             
             if (handler != null) {
-                FluidStack stack = handler.drain(FluidAttributes.BUCKET_VOLUME, IFluidHandler.FluidAction.SIMULATE);
+                for (int x = 0; x < handler.getTanks(); x++) {
+                    FluidStack stack = handler.getFluidInTank(x);
 
-                if (!stack.isEmpty() &&
-                        IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack) &&
-                        network.insertFluid(stack, stack.getAmount(), Action.SIMULATE).isEmpty()) {
-                    for(int x = 0; x < stack.getAmount(); x++) {
-                        FluidStack toDrain = handler.drain(FluidAttributes.BUCKET_VOLUME * 64, IFluidHandler.FluidAction.SIMULATE);
+                    if (!stack.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack)) {
+                        FluidStack result = handler.drain(stack, IFluidHandler.FluidAction.SIMULATE);
 
-                        if (!toDrain.isEmpty()) {
-                            FluidStack remainder = network.insertFluidTracked(toDrain, toDrain.getAmount());
+                        if (!result.isEmpty()) {
+                            FluidStack remainder = network.insertFluid(result, result.getAmount(), Action.SIMULATE);
                             if (!remainder.isEmpty()) {
-                                toDrain.shrink(remainder.getAmount());
+                                result.shrink(remainder.getAmount());
                             }
-                            handler.drain(toDrain, IFluidHandler.FluidAction.EXECUTE);
+                            if (!result.isEmpty()) {
+                                result = handler.drain(result, IFluidHandler.FluidAction.EXECUTE);
+                                network.insertFluidTracked(result, result.getAmount());
+                            }
                         }
                     }
-            	}
+                }
             }
         }
     }
