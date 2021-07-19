@@ -46,6 +46,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
 public class CreativeConstructorNetworkNode extends NetworkNode implements IComparable, IType {
     public static final ResourceLocation ID = new ResourceLocation(CableTiers.MOD_ID, "creative_constructor");
 
@@ -78,7 +80,7 @@ public class CreativeConstructorNetworkNode extends NetworkNode implements IComp
     public void update() {
         super.update();
 
-        if (canUpdate() && world.isBlockPresent(pos)) {
+        if (canUpdate() && world.isLoaded(pos)) {
             if (type == IType.ITEMS && !itemFilters.getStackInSlot(0).isEmpty()) {
                 ItemStack stack = itemFilters.getStackInSlot(0);
 
@@ -98,7 +100,7 @@ public class CreativeConstructorNetworkNode extends NetworkNode implements IComp
     }
 
     private void extractAndPlaceFluid(FluidStack stack) {
-        BlockPos front = pos.offset(getDirection());
+        BlockPos front = pos.relative(getDirection());
 
         for(int x = 0; x < network.extractFluid(stack, FluidAttributes.BUCKET_VOLUME, compare, Action.SIMULATE).getAmount(); x++) {
             if (network.extractFluid(stack, FluidAttributes.BUCKET_VOLUME, compare, Action.SIMULATE).getAmount() < FluidAttributes.BUCKET_VOLUME) {
@@ -124,7 +126,7 @@ public class CreativeConstructorNetworkNode extends NetworkNode implements IComp
 
             for(int x = 0; x < took.getCount(); x++) {
                 ActionResultType result = ForgeHooks.onPlaceItemIntoWorld(ctx);
-                if (result.isSuccessOrConsume()) {
+                if (result.consumesAction()) {
                     network.extractItem(stack, 1, Action.PERFORM);
                 }	
             }
@@ -141,7 +143,7 @@ public class CreativeConstructorNetworkNode extends NetworkNode implements IComp
         ItemStack took = network.extractItem(stack, 64, compare, Action.PERFORM);
 
         if (!took.isEmpty()) {
-            DefaultDispenseItemBehavior.doDispense(world, took, 6, getDirection(), new Position(getDispensePositionX(), getDispensePositionY(), getDispensePositionZ()));
+            DefaultDispenseItemBehavior.spawnItem(world, took, 6, getDirection(), new Position(getDispensePositionX(), getDispensePositionY(), getDispensePositionZ()));
         } else if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {
             network.getCraftingManager().request(this, stack, 1);
         }
@@ -152,21 +154,21 @@ public class CreativeConstructorNetworkNode extends NetworkNode implements IComp
 
         for(int x = 0; x < took.getCount(); x++) {
             if (!took.isEmpty()) {
-                world.addEntity(new FireworkRocketEntity(world, getDispensePositionX(), getDispensePositionY(), getDispensePositionZ(), took));
+                world.addFreshEntity(new FireworkRocketEntity(world, getDispensePositionX(), getDispensePositionY(), getDispensePositionZ(), took));
             }	
         }
     }
 
     private double getDispensePositionX() {
-        return (double) pos.getX() + 0.5D + 0.8D * (double) getDirection().getXOffset();
+        return (double) pos.getX() + 0.5D + 0.8D * (double) getDirection().getStepX();
     }
 
     private double getDispensePositionY() {
-        return (double) pos.getY() + (getDirection() == Direction.DOWN ? 0.45D : 0.5D) + 0.8D * (double) getDirection().getYOffset();
+        return (double) pos.getY() + (getDirection() == Direction.DOWN ? 0.45D : 0.5D) + 0.8D * (double) getDirection().getStepY();
     }
 
     private double getDispensePositionZ() {
-        return (double) pos.getZ() + 0.5D + 0.8D * (double) getDirection().getZOffset();
+        return (double) pos.getZ() + 0.5D + 0.8D * (double) getDirection().getStepZ();
     }
 
     @Override
@@ -259,7 +261,7 @@ public class CreativeConstructorNetworkNode extends NetworkNode implements IComp
 
     @Override
     public int getType() {
-        return world.isRemote ? CreativeConstructorTileEntity.TYPE.getValue() : type;
+        return world.isClientSide ? CreativeConstructorTileEntity.TYPE.getValue() : type;
     }
 
     @Override

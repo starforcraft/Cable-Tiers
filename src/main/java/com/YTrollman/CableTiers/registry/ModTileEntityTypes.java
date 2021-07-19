@@ -24,41 +24,41 @@ public class ModTileEntityTypes {
     public static final DeferredRegister<TileEntityType<?>> TILE_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, CableTiers.MOD_ID);
 
     public static final RegistryObject<TileEntityType<EliteExporterTileEntity>> ELITE_EXPORTER_TILE_ENTITY = TILE_ENTITY_TYPES.register("elite_exporter", () -> TileEntityType.Builder
-            .create(() -> new EliteExporterTileEntity(), ModBlocks.ELITE_EXPORTER.get())
+            .of(() -> new EliteExporterTileEntity(), ModBlocks.ELITE_EXPORTER.get())
             .build(null));
     public static final RegistryObject<TileEntityType<EliteImporterTileEntity>> ELITE_IMPORTER_TILE_ENTITY = TILE_ENTITY_TYPES.register("elite_importer", () -> TileEntityType.Builder
-            .create(() -> new EliteImporterTileEntity(), ModBlocks.ELITE_IMPORTER.get())
+            .of(() -> new EliteImporterTileEntity(), ModBlocks.ELITE_IMPORTER.get())
             .build(null));
     public static final RegistryObject<TileEntityType<EliteConstructorTileEntity>> ELITE_CONSTRUCTOR_TILE_ENTITY = TILE_ENTITY_TYPES.register("elite_constructor", () -> TileEntityType.Builder
-            .create(() -> new EliteConstructorTileEntity(), ModBlocks.ELITE_CONSTRUCTOR.get())
+            .of(() -> new EliteConstructorTileEntity(), ModBlocks.ELITE_CONSTRUCTOR.get())
             .build(null));
     public static final RegistryObject<TileEntityType<EliteDestructorTileEntity>> ELITE_DESTRUCTOR_TILE_ENTITY = TILE_ENTITY_TYPES.register("elite_destructor", () -> TileEntityType.Builder
-            .create(() -> new EliteDestructorTileEntity(), ModBlocks.ELITE_DESTRUCTOR.get())
+            .of(() -> new EliteDestructorTileEntity(), ModBlocks.ELITE_DESTRUCTOR.get())
             .build(null));
     
     public static final RegistryObject<TileEntityType<UltraExporterTileEntity>> ULTRA_EXPORTER_TILE_ENTITY = TILE_ENTITY_TYPES.register("ultra_exporter", () -> TileEntityType.Builder
-            .create(() -> new UltraExporterTileEntity(), ModBlocks.ULTRA_EXPORTER.get())
+            .of(() -> new UltraExporterTileEntity(), ModBlocks.ULTRA_EXPORTER.get())
             .build(null));
     public static final RegistryObject<TileEntityType<UltraImporterTileEntity>> ULTRA_IMPORTER_TILE_ENTITY = TILE_ENTITY_TYPES.register("ultra_importer", () -> TileEntityType.Builder
-            .create(() -> new UltraImporterTileEntity(), ModBlocks.ULTRA_IMPORTER.get())
+            .of(() -> new UltraImporterTileEntity(), ModBlocks.ULTRA_IMPORTER.get())
             .build(null));
     public static final RegistryObject<TileEntityType<UltraConstructorTileEntity>> ULTRA_CONSTRUCTOR_TILE_ENTITY = TILE_ENTITY_TYPES.register("ultra_constructor", () -> TileEntityType.Builder
-            .create(() -> new UltraConstructorTileEntity(), ModBlocks.ULTRA_CONSTRUCTOR.get())
+            .of(() -> new UltraConstructorTileEntity(), ModBlocks.ULTRA_CONSTRUCTOR.get())
             .build(null));
     public static final RegistryObject<TileEntityType<UltraDestructorTileEntity>> ULTRA_DESTRUCTOR_TILE_ENTITY = TILE_ENTITY_TYPES.register("ultra_destructor", () -> TileEntityType.Builder
-            .create(() -> new UltraDestructorTileEntity(), ModBlocks.ULTRA_DESTRUCTOR.get())
+            .of(() -> new UltraDestructorTileEntity(), ModBlocks.ULTRA_DESTRUCTOR.get())
             .build(null));
     
     public static final RegistryObject<TileEntityType<CreativeExporterTileEntity>> CREATIVE_EXPORTER_TILE_ENTITY = TILE_ENTITY_TYPES.register("creative_exporter", () -> TileEntityType.Builder
-            .create(() -> new CreativeExporterTileEntity(), ModBlocks.CREATIVE_EXPORTER.get())
+            .of(() -> new CreativeExporterTileEntity(), ModBlocks.CREATIVE_EXPORTER.get())
             .build(null));
     public static final RegistryObject<TileEntityType<CreativeImporterTileEntity>> CREATIVE_IMPORTER_TILE_ENTITY = TILE_ENTITY_TYPES.register("creative_importer", () -> TileEntityType.Builder
-            .create(() -> new CreativeImporterTileEntity(), ModBlocks.CREATIVE_IMPORTER.get())
+            .of(() -> new CreativeImporterTileEntity(), ModBlocks.CREATIVE_IMPORTER.get())
             .build(null));
     public static final RegistryObject<TileEntityType<CreativeConstructorTileEntity>> CREATIVE_CONSTRUCTOR_TILE_ENTITY = TILE_ENTITY_TYPES.register("creative_constructor", () -> TileEntityType.Builder
-            .create(() -> new CreativeConstructorTileEntity(), ModBlocks.CREATIVE_CONSTRUCTOR.get())
+            .of(() -> new CreativeConstructorTileEntity(), ModBlocks.CREATIVE_CONSTRUCTOR.get())
             .build(null));
     public static final RegistryObject<TileEntityType<CreativeDestructorTileEntity>> CREATIVE_DESTRUCTOR_TILE_ENTITY = TILE_ENTITY_TYPES.register("creative_destructor", () -> TileEntityType.Builder
-            .create(() -> new CreativeDestructorTileEntity(), ModBlocks.CREATIVE_DESTRUCTOR.get())
+            .of(() -> new CreativeDestructorTileEntity(), ModBlocks.CREATIVE_DESTRUCTOR.get())
             .build(null));
 }

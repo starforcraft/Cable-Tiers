@@ -85,7 +85,7 @@ public class CreativeDestructorNetworkNode extends NetworkNode implements ICompa
     public void update() {
         super.update();
 
-        if (canUpdate() && world.isBlockPresent(pos)) {
+        if (canUpdate() && world.isLoaded(pos)) {
             if (type == IType.ITEMS) {
                 if (pickupItem) {
                     pickupItems();
@@ -99,12 +99,12 @@ public class CreativeDestructorNetworkNode extends NetworkNode implements ICompa
     }
 
     private void pickupItems() {
-        BlockPos front = pos.offset(getDirection());
+        BlockPos front = pos.relative(getDirection());
 
         List<Entity> droppedItems = new ArrayList<>();
 
         Chunk chunk = world.getChunkAt(front);
-        chunk.getEntitiesWithinAABBForEntity(null, new AxisAlignedBB(front), droppedItems, null);
+        chunk.getEntities((Entity) null, new AxisAlignedBB(front), droppedItems, null);
 
         for (Entity entity : droppedItems) {
             if (entity instanceof ItemEntity) {
@@ -125,7 +125,7 @@ public class CreativeDestructorNetworkNode extends NetworkNode implements ICompa
     }
 
     private void breakBlock() {
-        BlockPos front = pos.offset(getDirection());
+        BlockPos front = pos.relative(getDirection());
         BlockState frontBlockState = world.getBlockState(front);
         Block frontBlock = frontBlockState.getBlock();
         ItemStack frontStack = frontBlock.getPickBlock(
@@ -139,12 +139,12 @@ public class CreativeDestructorNetworkNode extends NetworkNode implements ICompa
         for(int x = 0; x < frontStack.getCount(); x++) {
             if (!frontStack.isEmpty() &&
                     IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, frontStack) &&
-                    frontBlockState.getBlockHardness(world, front) != -1.0) {
+                    frontBlockState.getDestroySpeed(world, front) != -1.0) {
                     List<ItemStack> drops = Block.getDrops(
                         frontBlockState,
                         (ServerWorld) world,
                         front,
-                        world.getTileEntity(front),
+                        world.getBlockEntity(front),
                         WorldUtils.getFakePlayer((ServerWorld) world, getOwner()),
                         tool
                     );
@@ -158,7 +158,7 @@ public class CreativeDestructorNetworkNode extends NetworkNode implements ICompa
                     BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(world, front, frontBlockState, WorldUtils.getFakePlayer((ServerWorld) world, getOwner()));
 
                     if (!MinecraftForge.EVENT_BUS.post(e)) {
-                        frontBlock.onBlockHarvested(world, front, frontBlockState, WorldUtils.getFakePlayer((ServerWorld) world, getOwner()));
+                        frontBlock.playerWillDestroy(world, front, frontBlockState, WorldUtils.getFakePlayer((ServerWorld) world, getOwner()));
 
                         world.removeBlock(front, false);
 
@@ -166,7 +166,7 @@ public class CreativeDestructorNetworkNode extends NetworkNode implements ICompa
                             // We check if the controller isn't null here because when a destructor faces a node and removes it
                             // it will essentially remove this block itself from the network without knowing
                             if (network == null) {
-                                InventoryHelper.spawnItemStack(world, front.getX(), front.getY(), front.getZ(), drop);
+                                InventoryHelper.dropItemStack(world, front.getX(), front.getY(), front.getZ(), drop);
                             } else {
                                 network.insertItemTracked(drop, drop.getCount());
                             }
@@ -177,13 +177,13 @@ public class CreativeDestructorNetworkNode extends NetworkNode implements ICompa
     }
 
     private void breakFluid() {
-        BlockPos front = pos.offset(getDirection());
+        BlockPos front = pos.relative(getDirection());
         BlockState frontBlockState = world.getBlockState(front);
         Block frontBlock = frontBlockState.getBlock();
 
         if (frontBlock instanceof FlowingFluidBlock) {
             // @Volatile: Logic from FlowingFluidBlock#pickupFluid
-            if (frontBlockState.get(FlowingFluidBlock.LEVEL) == 0) {
+            if (frontBlockState.getValue(FlowingFluidBlock.LEVEL) == 0) {
                 Fluid fluid = ((FlowingFluidBlock) frontBlock).getFluid();
 
                 FluidStack stack = new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME);
@@ -193,7 +193,7 @@ public class CreativeDestructorNetworkNode extends NetworkNode implements ICompa
                         network.insertFluid(stack, stack.getAmount(), Action.SIMULATE).isEmpty()) {
                     	network.insertFluidTracked(stack, stack.getAmount());
 
-                        world.setBlockState(front, Blocks.AIR.getDefaultState(), 11);
+                        world.setBlock(front, Blocks.AIR.defaultBlockState(), 11);
                     }	
                 }
             }
@@ -219,13 +219,13 @@ public class CreativeDestructorNetworkNode extends NetworkNode implements ICompa
         ItemStack newTool = new ItemStack(Items.DIAMOND_PICKAXE);
 
         if (upgrades.hasUpgrade(UpgradeItem.Type.SILK_TOUCH)) {
-            newTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
+            newTool.enchant(Enchantments.SILK_TOUCH, 1);
         } else if (upgrades.hasUpgrade(UpgradeItem.Type.FORTUNE_3)) {
-            newTool.addEnchantment(Enchantments.FORTUNE, 3);
+            newTool.enchant(Enchantments.BLOCK_FORTUNE, 3);
         } else if (upgrades.hasUpgrade(UpgradeItem.Type.FORTUNE_2)) {
-            newTool.addEnchantment(Enchantments.FORTUNE, 2);
+            newTool.enchant(Enchantments.BLOCK_FORTUNE, 2);
         } else if (upgrades.hasUpgrade(UpgradeItem.Type.FORTUNE_1)) {
-            newTool.addEnchantment(Enchantments.FORTUNE, 1);
+            newTool.enchant(Enchantments.BLOCK_FORTUNE, 1);
         }
 
         return newTool;
@@ -330,7 +330,7 @@ public class CreativeDestructorNetworkNode extends NetworkNode implements ICompa
 
     @Override
     public int getType() {
-        return world.isRemote ? CreativeDestructorTileEntity.TYPE.getValue() : type;
+        return world.isClientSide ? CreativeDestructorTileEntity.TYPE.getValue() : type;
     }
 
     @Override

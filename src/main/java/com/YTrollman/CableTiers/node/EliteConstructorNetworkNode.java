@@ -47,6 +47,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
 public class EliteConstructorNetworkNode extends NetworkNode implements IComparable, IType {
     public static final ResourceLocation ID = new ResourceLocation(CableTiers.MOD_ID, "elite_constructor");
 
@@ -81,7 +83,7 @@ public class EliteConstructorNetworkNode extends NetworkNode implements ICompara
     public void update() {
         super.update();
 
-        if (canUpdate() && ticks % upgrades.getSpeed(BASE_SPEED, 4) == 0 && world.isBlockPresent(pos)) {
+        if (canUpdate() && ticks % upgrades.getSpeed(BASE_SPEED, 4) == 0 && world.isLoaded(pos)) {
             if (type == IType.ITEMS && !itemFilters.getStackInSlot(0).isEmpty()) {
                 ItemStack stack = itemFilters.getStackInSlot(0);
 
@@ -99,7 +101,7 @@ public class EliteConstructorNetworkNode extends NetworkNode implements ICompara
     }
 
     private void extractAndPlaceFluid(FluidStack stack) {
-        BlockPos front = pos.offset(getDirection());
+        BlockPos front = pos.relative(getDirection());
 
         if (network.extractFluid(stack, FluidAttributes.BUCKET_VOLUME, compare, Action.SIMULATE).getAmount() < FluidAttributes.BUCKET_VOLUME) {
             if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {
@@ -122,7 +124,7 @@ public class EliteConstructorNetworkNode extends NetworkNode implements ICompara
             );
 
             ActionResultType result = ForgeHooks.onPlaceItemIntoWorld(ctx);
-            if (result.isSuccessOrConsume()) {
+            if (result.consumesAction()) {
                 network.extractItem(stack, 1, Action.PERFORM);
             }
         } else if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {
@@ -136,7 +138,7 @@ public class EliteConstructorNetworkNode extends NetworkNode implements ICompara
         ItemStack took = network.extractItem(stack, upgrades.getStackInteractCount(), compare, Action.PERFORM);
 
         if (!took.isEmpty()) {
-            DefaultDispenseItemBehavior.doDispense(world, took, 6, getDirection(), new Position(getDispensePositionX(), getDispensePositionY(), getDispensePositionZ()));
+            DefaultDispenseItemBehavior.spawnItem(world, took, 6, getDirection(), new Position(getDispensePositionX(), getDispensePositionY(), getDispensePositionZ()));
         } else if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {
             network.getCraftingManager().request(this, stack, 1);
         }
@@ -146,20 +148,20 @@ public class EliteConstructorNetworkNode extends NetworkNode implements ICompara
         ItemStack took = network.extractItem(stack, 1, compare, Action.PERFORM);
 
         if (!took.isEmpty()) {
-            world.addEntity(new FireworkRocketEntity(world, getDispensePositionX(), getDispensePositionY(), getDispensePositionZ(), took));
+            world.addFreshEntity(new FireworkRocketEntity(world, getDispensePositionX(), getDispensePositionY(), getDispensePositionZ(), took));
         }
     }
 
     private double getDispensePositionX() {
-        return (double) pos.getX() + 0.5D + 0.8D * (double) getDirection().getXOffset();
+        return (double) pos.getX() + 0.5D + 0.8D * (double) getDirection().getStepX();
     }
 
     private double getDispensePositionY() {
-        return (double) pos.getY() + (getDirection() == Direction.DOWN ? 0.45D : 0.5D) + 0.8D * (double) getDirection().getYOffset();
+        return (double) pos.getY() + (getDirection() == Direction.DOWN ? 0.45D : 0.5D) + 0.8D * (double) getDirection().getStepY();
     }
 
     private double getDispensePositionZ() {
-        return (double) pos.getZ() + 0.5D + 0.8D * (double) getDirection().getZOffset();
+        return (double) pos.getZ() + 0.5D + 0.8D * (double) getDirection().getStepZ();
     }
 
     @Override
@@ -252,7 +254,7 @@ public class EliteConstructorNetworkNode extends NetworkNode implements ICompara
 
     @Override
     public int getType() {
-        return world.isRemote ? EliteConstructorTileEntity.TYPE.getValue() : type;
+        return world.isClientSide ? EliteConstructorTileEntity.TYPE.getValue() : type;
     }
 
     @Override

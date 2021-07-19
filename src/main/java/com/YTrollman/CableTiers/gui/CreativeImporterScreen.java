@@ -40,7 +40,7 @@ public class CreativeImporterScreen extends BaseScreen<CreativeImporterContainer
     public void renderBackground(MatrixStack matrixStack, int x, int y, int mouseX, int mouseY)
     {
         bindTexture(CableTiers.MOD_ID, "gui/creative_importer.png");
-        blit(matrixStack, x, y, 0, 0, xSize, ySize);
+        blit(matrixStack, x, y, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
