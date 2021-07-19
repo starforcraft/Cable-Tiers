@@ -97,7 +97,7 @@ public class CreativeExporterNetworkNode extends NetworkNode implements ICompara
     public void update() {
         super.update();
 
-        if (canUpdate() && world.isBlockPresent(pos)) {
+        if (canUpdate() && world.isLoaded(pos)) {
             if (type == IType.ITEMS) {
                 IItemHandler handler = WorldUtils.getItemHandler(getFacingTile(), getDirection().getOpposite());
 
@@ -315,7 +315,7 @@ public class CreativeExporterNetworkNode extends NetworkNode implements ICompara
     @Override
     public int getType()
     {
-        return world.isRemote ? CreativeExporterTileEntity.TYPE.getValue() : type;
+        return world.isClientSide ? CreativeExporterTileEntity.TYPE.getValue() : type;
     }
 
     @Override

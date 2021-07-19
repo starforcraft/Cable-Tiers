@@ -40,7 +40,7 @@ public class ModContainers {
 
     public static final RegistryObject<ContainerType<EliteExporterContainer>> ELITE_EXPORTER_CONTAINER = CONTAINER_TYPES.register("elite_exporter", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
-        TileEntity te = inv.player.getEntityWorld().getTileEntity(pos);
+        TileEntity te = inv.player.getCommandSenderWorld().getBlockEntity(pos);
         if(!(te instanceof EliteExporterTileEntity))
         {
             CableTiers.LOGGER.error("Wrong type of tile entity (expected EliteExporterTileEntity)!");
@@ -50,7 +50,7 @@ public class ModContainers {
     }));
     public static final RegistryObject<ContainerType<EliteImporterContainer>> ELITE_IMPORTER_CONTAINER = CONTAINER_TYPES.register("elite_importer", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
-        TileEntity te = inv.player.getEntityWorld().getTileEntity(pos);
+        TileEntity te = inv.player.getCommandSenderWorld().getBlockEntity(pos);
         if(!(te instanceof EliteImporterTileEntity))
         {
             CableTiers.LOGGER.error("Wrong type of tile entity (expected EliteImporterTileEntity)!");
@@ -60,7 +60,7 @@ public class ModContainers {
     }));
     public static final RegistryObject<ContainerType<EliteConstructorContainer>> ELITE_CONSTRUCTOR_CONTAINER = CONTAINER_TYPES.register("elite_constructor", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
-        TileEntity te = inv.player.getEntityWorld().getTileEntity(pos);
+        TileEntity te = inv.player.getCommandSenderWorld().getBlockEntity(pos);
         if(!(te instanceof EliteConstructorTileEntity))
         {
             CableTiers.LOGGER.error("Wrong type of tile entity (expected EliteConstructorTileEntity)!");
@@ -70,7 +70,7 @@ public class ModContainers {
     }));
     public static final RegistryObject<ContainerType<EliteDestructorContainer>> ELITE_DESTRUCTOR_CONTAINER = CONTAINER_TYPES.register("elite_destructor", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
-        TileEntity te = inv.player.getEntityWorld().getTileEntity(pos);
+        TileEntity te = inv.player.getCommandSenderWorld().getBlockEntity(pos);
         if(!(te instanceof EliteDestructorTileEntity))
         {
             CableTiers.LOGGER.error("Wrong type of tile entity (expected EliteDestructorTileEntity)!");
@@ -81,7 +81,7 @@ public class ModContainers {
     
     public static final RegistryObject<ContainerType<UltraExporterContainer>> ULTRA_EXPORTER_CONTAINER = CONTAINER_TYPES.register("ultra_exporter", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
-        TileEntity te = inv.player.getEntityWorld().getTileEntity(pos);
+        TileEntity te = inv.player.getCommandSenderWorld().getBlockEntity(pos);
         if(!(te instanceof UltraExporterTileEntity))
         {
             CableTiers.LOGGER.error("Wrong type of tile entity (expected UltraExporterTileEntity)!");
@@ -91,7 +91,7 @@ public class ModContainers {
     }));
     public static final RegistryObject<ContainerType<UltraImporterContainer>> ULTRA_IMPORTER_CONTAINER = CONTAINER_TYPES.register("ultra_importer", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
-        TileEntity te = inv.player.getEntityWorld().getTileEntity(pos);
+        TileEntity te = inv.player.getCommandSenderWorld().getBlockEntity(pos);
         if(!(te instanceof UltraImporterTileEntity))
         {
             CableTiers.LOGGER.error("Wrong type of tile entity (expected UltraImporterTileEntity)!");
@@ -101,7 +101,7 @@ public class ModContainers {
     }));
     public static final RegistryObject<ContainerType<UltraConstructorContainer>> ULTRA_CONSTRUCTOR_CONTAINER = CONTAINER_TYPES.register("ultra_constructor", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
-        TileEntity te = inv.player.getEntityWorld().getTileEntity(pos);
+        TileEntity te = inv.player.getCommandSenderWorld().getBlockEntity(pos);
         if(!(te instanceof UltraConstructorTileEntity))
         {
             CableTiers.LOGGER.error("Wrong type of tile entity (expected UltraConstructorTileEntity)!");
@@ -111,7 +111,7 @@ public class ModContainers {
     }));
     public static final RegistryObject<ContainerType<UltraDestructorContainer>> ULTRA_DESTRUCTOR_CONTAINER = CONTAINER_TYPES.register("ultra_destructor", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
-        TileEntity te = inv.player.getEntityWorld().getTileEntity(pos);
+        TileEntity te = inv.player.getCommandSenderWorld().getBlockEntity(pos);
         if(!(te instanceof UltraDestructorTileEntity))
         {
             CableTiers.LOGGER.error("Wrong type of tile entity (expected UltraDestructorTileEntity)!");
@@ -122,7 +122,7 @@ public class ModContainers {
  
     public static final RegistryObject<ContainerType<CreativeExporterContainer>> CREATIVE_EXPORTER_CONTAINER = CONTAINER_TYPES.register("creative_exporter", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
-        TileEntity te = inv.player.getEntityWorld().getTileEntity(pos);
+        TileEntity te = inv.player.getCommandSenderWorld().getBlockEntity(pos);
         if(!(te instanceof CreativeExporterTileEntity))
         {
             CableTiers.LOGGER.error("Wrong type of tile entity (expected CreativeExporterTileEntity)!");
@@ -132,7 +132,7 @@ public class ModContainers {
     }));
     public static final RegistryObject<ContainerType<CreativeImporterContainer>> CREATIVE_IMPORTER_CONTAINER = CONTAINER_TYPES.register("creative_importer", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
-        TileEntity te = inv.player.getEntityWorld().getTileEntity(pos);
+        TileEntity te = inv.player.getCommandSenderWorld().getBlockEntity(pos);
         if(!(te instanceof CreativeImporterTileEntity))
         {
             CableTiers.LOGGER.error("Wrong type of tile entity (expected CreativeImporterTileEntity)!");
@@ -142,7 +142,7 @@ public class ModContainers {
     }));
     public static final RegistryObject<ContainerType<CreativeConstructorContainer>> CREATIVE_CONSTRUCTOR_CONTAINER = CONTAINER_TYPES.register("creative_constructor", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
-        TileEntity te = inv.player.getEntityWorld().getTileEntity(pos);
+        TileEntity te = inv.player.getCommandSenderWorld().getBlockEntity(pos);
         if(!(te instanceof CreativeConstructorTileEntity))
         {
             CableTiers.LOGGER.error("Wrong type of tile entity (expected CreativeConstructorTileEntity)!");
@@ -152,7 +152,7 @@ public class ModContainers {
     }));
     public static final RegistryObject<ContainerType<CreativeDestructorContainer>> CREATIVE_DESTRUCTOR_CONTAINER = CONTAINER_TYPES.register("creative_destructor", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
-        TileEntity te = inv.player.getEntityWorld().getTileEntity(pos);
+        TileEntity te = inv.player.getCommandSenderWorld().getBlockEntity(pos);
         if(!(te instanceof CreativeDestructorTileEntity))
         {
             CableTiers.LOGGER.error("Wrong type of tile entity (expected CreativeDestructorTileEntity)!");

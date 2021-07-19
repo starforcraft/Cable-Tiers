@@ -29,9 +29,9 @@ public class CreativeExporterContainer extends BaseContainer {
     }
 
     @Override
-    public void detectAndSendChanges()
+    public void broadcastChanges()
     {
-        super.detectAndSendChanges();
+        super.broadcastChanges();
 
         boolean updatedHasRegulatorMode = hasRegulatorMode();
         if (hasRegulatorMode != updatedHasRegulatorMode)
@@ -42,8 +42,8 @@ public class CreativeExporterContainer extends BaseContainer {
     }
 
     public void initSlots() {
-        this.inventorySlots.clear();
-        this.inventoryItemStacks.clear();
+        this.slots.clear();
+        this.lastSlots.clear();
 
         this.transferManager.clearTransfers();
 

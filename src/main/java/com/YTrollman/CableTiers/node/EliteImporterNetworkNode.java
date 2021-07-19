@@ -70,7 +70,7 @@ public class EliteImporterNetworkNode extends NetworkNode implements IComparable
     {
         super.update();
 
-        if (!canUpdate() || !world.isBlockPresent(pos)) {
+        if (!canUpdate() || !world.isLoaded(pos)) {
             return;
         }
 
@@ -226,7 +226,7 @@ public class EliteImporterNetworkNode extends NetworkNode implements IComparable
     @Override
     public int getType()
     {
-        return world.isRemote ? EliteImporterTileEntity.TYPE.getValue() : type;
+        return world.isClientSide ? EliteImporterTileEntity.TYPE.getValue() : type;
     }
 
     @Override

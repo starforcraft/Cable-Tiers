@@ -100,7 +100,7 @@ public class EliteExporterNetworkNode extends NetworkNode implements IComparable
     public void update() {
         super.update();
 
-        if (canUpdate() && (ticks % upgrades.getSpeed()) / faster == 0 && world.isBlockPresent(pos)) {
+        if (canUpdate() && (ticks % upgrades.getSpeed()) / faster == 0 && world.isLoaded(pos)) {
             if (type == IType.ITEMS) {
                 IItemHandler handler = WorldUtils.getItemHandler(getFacingTile(), getDirection().getOpposite());
 
@@ -314,7 +314,7 @@ public class EliteExporterNetworkNode extends NetworkNode implements IComparable
     @Override
     public int getType()
     {
-        return world.isRemote ? EliteExporterTileEntity.TYPE.getValue() : type;
+        return world.isClientSide ? EliteExporterTileEntity.TYPE.getValue() : type;
     }
 
     @Override

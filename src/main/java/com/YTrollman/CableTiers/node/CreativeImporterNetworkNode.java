@@ -64,7 +64,7 @@ public class CreativeImporterNetworkNode extends NetworkNode implements ICompara
     {
         super.update();
 
-        if (!canUpdate() || !world.isBlockPresent(pos)) {
+        if (!canUpdate() || !world.isLoaded(pos)) {
             return;
         }
 
@@ -213,7 +213,7 @@ public class CreativeImporterNetworkNode extends NetworkNode implements ICompara
     @Override
     public int getType()
     {
-        return world.isRemote ? CreativeImporterTileEntity.TYPE.getValue() : type;
+        return world.isClientSide ? CreativeImporterTileEntity.TYPE.getValue() : type;
     }
 
     @Override

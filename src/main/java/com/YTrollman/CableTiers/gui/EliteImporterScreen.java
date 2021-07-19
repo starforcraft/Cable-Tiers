@@ -40,7 +40,7 @@ public class EliteImporterScreen extends BaseScreen<EliteImporterContainer>
     public void renderBackground(MatrixStack matrixStack, int x, int y, int mouseX, int mouseY)
     {
         bindTexture(CableTiers.MOD_ID, "gui/elite_exporter_importer_destructor.png");
-        blit(matrixStack, x, y, 0, 0, xSize, ySize);
+        blit(matrixStack, x, y, 0, 0, imageWidth, imageHeight);
     }
 
     @Override

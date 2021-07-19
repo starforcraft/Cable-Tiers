@@ -27,7 +27,7 @@ public class UltraExporterScreen extends BaseScreen<UltraExporterContainer>
 
     private boolean hasRegulatorMode()
     {
-        return container.getTile().getNode().getUpgrades().hasUpgrade(UpgradeItem.Type.REGULATOR);
+        return menu.getTile().getNode().getUpgrades().hasUpgrade(UpgradeItem.Type.REGULATOR);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class UltraExporterScreen extends BaseScreen<UltraExporterContainer>
         if (hasRegulatorMode != updatedHasRegulatorMode)
         {
             hasRegulatorMode = updatedHasRegulatorMode;
-            container.initSlots();
+            menu.initSlots();
         }
     }
 
@@ -53,7 +53,7 @@ public class UltraExporterScreen extends BaseScreen<UltraExporterContainer>
     public void renderBackground(MatrixStack matrixStack, int x, int y, int mouseX, int mouseY)
     {
         bindTexture(CableTiers.MOD_ID, "gui/ultra_exporter_importer_destructor.png");
-        blit(matrixStack, x, y, 0, 0, xSize, ySize);
+        blit(matrixStack, x, y, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
