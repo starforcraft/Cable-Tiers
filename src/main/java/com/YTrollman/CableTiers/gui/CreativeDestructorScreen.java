@@ -40,7 +40,7 @@ public class CreativeDestructorScreen extends BaseScreen<CreativeDestructorConta
 
     @Override
     public void renderBackground(MatrixStack matrixStack, int x, int y, int mouseX, int mouseY) {
-        bindTexture(CableTiers.MOD_ID, "gui/creative_exporter_destructor.png");
+        bindTexture(CableTiers.MOD_ID, "gui/creative_exporter_importer_destructor.png");
 
         blit(matrixStack, x, y, 0, 0, imageWidth, imageHeight);
     }
