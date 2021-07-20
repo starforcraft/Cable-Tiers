@@ -13,13 +13,11 @@ public class ModBlocks {
 
     public static final RegistryObject<EliteExporterBlock> ELITE_EXPORTER = BLOCKS.register("elite_exporter", () -> new EliteExporterBlock());
     public static final RegistryObject<EliteConstructorBlock> ELITE_CONSTRUCTOR = BLOCKS.register("elite_constructor", () -> new EliteConstructorBlock());
-    public static final RegistryObject<EliteDestructorBlock> ELITE_DESTRUCTOR = BLOCKS.register("elite_destructor", () -> new EliteDestructorBlock());
 
     public static final RegistryObject<UltraExporterBlock> ULTRA_EXPORTER = BLOCKS.register("ultra_exporter", () -> new UltraExporterBlock());
     public static final RegistryObject<UltraConstructorBlock> ULTRA_CONSTRUCTOR = BLOCKS.register("ultra_constructor", () -> new UltraConstructorBlock());
-    public static final RegistryObject<UltraDestructorBlock> ULTRA_DESTRUCTOR = BLOCKS.register("ultra_destructor", () -> new UltraDestructorBlock());
 
     public static final RegistryObject<CreativeExporterBlock> CREATIVE_EXPORTER = BLOCKS.register("creative_exporter", () -> new CreativeExporterBlock());
     public static final RegistryObject<CreativeConstructorBlock> CREATIVE_CONSTRUCTOR = BLOCKS.register("creative_constructor", () -> new CreativeConstructorBlock());
-    public static final RegistryObject<CreativeDestructorBlock> CREATIVE_DESTRUCTOR = BLOCKS.register("creative_destructor", () -> new CreativeDestructorBlock());
+
 }

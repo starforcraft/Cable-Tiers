@@ -57,10 +57,9 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
         super(world, pos);
         this.tier = tier;
         this.id = ContentType.IMPORTER.getId(tier);
-
-        itemFilters = new BaseItemHandler(tier.getSlots()).addListener(new NetworkNodeInventoryListener(this));
-        fluidFilters = new FluidInventory(tier.getSlots()).addListener(new NetworkNodeFluidInventoryListener(this));
-        upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
+        this.itemFilters = new BaseItemHandler(tier.getSlots()).addListener(new NetworkNodeInventoryListener(this));
+        this.fluidFilters = new FluidInventory(tier.getSlots()).addListener(new NetworkNodeFluidInventoryListener(this));
+        this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
                 tier == CableTier.CREATIVE ? 0 : 4,
                 tier == CableTier.ELITE ? new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK } : new UpgradeItem.Type[] { UpgradeItem.Type.SPEED }
         ).addListener(new NetworkNodeInventoryListener(this));

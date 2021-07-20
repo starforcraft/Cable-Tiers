@@ -18,24 +18,18 @@ public class ModSetup {
     public static void init(FMLCommonSetupEvent event) {
         API.instance().getNetworkNodeRegistry().add(EliteExporterNetworkNode.ID, (tag, world, pos) -> readAndReturn(tag, new EliteExporterNetworkNode(world, pos)));
         API.instance().getNetworkNodeRegistry().add(EliteConstructorNetworkNode.ID, (tag, world, pos) -> readAndReturn(tag, new EliteConstructorNetworkNode(world, pos)));
-        API.instance().getNetworkNodeRegistry().add(EliteDestructorNetworkNode.ID, (tag, world, pos) -> readAndReturn(tag, new EliteDestructorNetworkNode(world, pos)));
         ModTileEntityTypes.ELITE_EXPORTER_TILE_ENTITY.get().create().getDataManager().getParameters().forEach(TileDataManager::registerParameter);
         ModTileEntityTypes.ELITE_CONSTRUCTOR_TILE_ENTITY.get().create().getDataManager().getParameters().forEach(TileDataManager::registerParameter);
-        ModTileEntityTypes.ELITE_DESTRUCTOR_TILE_ENTITY.get().create().getDataManager().getParameters().forEach(TileDataManager::registerParameter);
 
         API.instance().getNetworkNodeRegistry().add(UltraExporterNetworkNode.ID, (tag, world, pos) -> readAndReturn(tag, new UltraExporterNetworkNode(world, pos)));
         API.instance().getNetworkNodeRegistry().add(UltraConstructorNetworkNode.ID, (tag, world, pos) -> readAndReturn(tag, new UltraConstructorNetworkNode(world, pos)));
-        API.instance().getNetworkNodeRegistry().add(UltraDestructorNetworkNode.ID, (tag, world, pos) -> readAndReturn(tag, new UltraDestructorNetworkNode(world, pos)));
         ModTileEntityTypes.ULTRA_EXPORTER_TILE_ENTITY.get().create().getDataManager().getParameters().forEach(TileDataManager::registerParameter);
         ModTileEntityTypes.ULTRA_CONSTRUCTOR_TILE_ENTITY.get().create().getDataManager().getParameters().forEach(TileDataManager::registerParameter);
-        ModTileEntityTypes.ULTRA_DESTRUCTOR_TILE_ENTITY.get().create().getDataManager().getParameters().forEach(TileDataManager::registerParameter);
 
         API.instance().getNetworkNodeRegistry().add(CreativeExporterNetworkNode.ID, (tag, world, pos) -> readAndReturn(tag, new CreativeExporterNetworkNode(world, pos)));
         API.instance().getNetworkNodeRegistry().add(CreativeConstructorNetworkNode.ID, (tag, world, pos) -> readAndReturn(tag, new CreativeConstructorNetworkNode(world, pos)));
-        API.instance().getNetworkNodeRegistry().add(CreativeDestructorNetworkNode.ID, (tag, world, pos) -> readAndReturn(tag, new CreativeDestructorNetworkNode(world, pos)));
         ModTileEntityTypes.CREATIVE_EXPORTER_TILE_ENTITY.get().create().getDataManager().getParameters().forEach(TileDataManager::registerParameter);
         ModTileEntityTypes.CREATIVE_CONSTRUCTOR_TILE_ENTITY.get().create().getDataManager().getParameters().forEach(TileDataManager::registerParameter);
-        ModTileEntityTypes.CREATIVE_DESTRUCTOR_TILE_ENTITY.get().create().getDataManager().getParameters().forEach(TileDataManager::registerParameter);
     }
 
     private static INetworkNode readAndReturn(CompoundNBT tag, NetworkNode node) {

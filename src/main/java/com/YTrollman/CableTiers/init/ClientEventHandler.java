@@ -20,27 +20,25 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void init(FMLClientSetupEvent event) {
         for (CableTier tier : CableTier.VALUES) {
+            for (ContentType<?, ?, ?, ?> type : ContentType.CONTENT_TYPES) {
+                RenderTypeLookup.setRenderLayer(type.getBlock(tier), RenderType.cutout());
+            }
+
             ScreenManager.register(ContentType.IMPORTER.getContainerType(tier), TieredImporterScreen::new);
-            RenderTypeLookup.setRenderLayer(ContentType.IMPORTER.getBlock(tier), RenderType.cutout());
+            ScreenManager.register(ContentType.DESTRUCTOR.getContainerType(tier), TieredDestructorScreen::new);
         }
 
         ScreenManager.register(ModContainers.ELITE_CONSTRUCTOR_CONTAINER.get(), EliteConstructorScreen::new);
-        ScreenManager.register(ModContainers.ELITE_DESTRUCTOR_CONTAINER.get(), EliteDestructorScreen::new);
         ScreenManager.register(ModContainers.ELITE_EXPORTER_CONTAINER.get(), EliteExporterScreen::new);
         ScreenManager.register(ModContainers.ULTRA_CONSTRUCTOR_CONTAINER.get(), UltraConstructorScreen::new);
-        ScreenManager.register(ModContainers.ULTRA_DESTRUCTOR_CONTAINER.get(), UltraDestructorScreen::new);
         ScreenManager.register(ModContainers.ULTRA_EXPORTER_CONTAINER.get(), UltraExporterScreen::new);
         ScreenManager.register(ModContainers.CREATIVE_CONSTRUCTOR_CONTAINER.get(), CreativeConstructorScreen::new);
-        ScreenManager.register(ModContainers.CREATIVE_DESTRUCTOR_CONTAINER.get(), CreativeDestructorScreen::new);
         ScreenManager.register(ModContainers.CREATIVE_EXPORTER_CONTAINER.get(), CreativeExporterScreen::new);
 
-        RenderTypeLookup.setRenderLayer(ModBlocks.ELITE_DESTRUCTOR.get(), RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.ELITE_CONSTRUCTOR.get(), RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.ELITE_EXPORTER.get(), RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.ULTRA_DESTRUCTOR.get(), RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.ULTRA_CONSTRUCTOR.get(), RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.ULTRA_EXPORTER.get(), RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.CREATIVE_DESTRUCTOR.get(), RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.CREATIVE_CONSTRUCTOR.get(), RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.CREATIVE_EXPORTER.get(), RenderType.cutout());
     }

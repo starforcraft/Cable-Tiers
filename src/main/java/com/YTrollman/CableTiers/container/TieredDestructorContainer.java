@@ -2,8 +2,8 @@ package com.YTrollman.CableTiers.container;
 
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
-import com.YTrollman.CableTiers.node.TieredImporterNetworkNode;
-import com.YTrollman.CableTiers.tileentity.TieredImporterTileEntity;
+import com.YTrollman.CableTiers.node.TieredDestructorNetworkNode;
+import com.YTrollman.CableTiers.tileentity.TieredDestructorTileEntity;
 import com.YTrollman.CableTiers.util.MathUtil;
 import com.refinedmods.refinedstorage.container.BaseContainer;
 import com.refinedmods.refinedstorage.container.slot.filter.FilterSlot;
@@ -12,12 +12,12 @@ import com.refinedmods.refinedstorage.tile.config.IType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class TieredImporterContainer extends BaseContainer {
+public class TieredDestructorContainer extends BaseContainer {
 
     private final CableTier tier;
 
-    public TieredImporterContainer(int windowId, PlayerEntity player, TieredImporterTileEntity tile, CableTier tier) {
-        super(ContentType.IMPORTER.getContainerType(tier), tile, player, windowId);
+    public TieredDestructorContainer(int windowId, PlayerEntity player, TieredDestructorTileEntity tile, CableTier tier) {
+        super(ContentType.DESTRUCTOR.getContainerType(tier), tile, player, windowId);
         this.tier = tier;
         initSlots();
     }
@@ -27,11 +27,11 @@ public class TieredImporterContainer extends BaseContainer {
     }
 
     @Override
-    public TieredImporterTileEntity getTile() {
-        return (TieredImporterTileEntity) super.getTile();
+    public TieredDestructorTileEntity getTile() {
+        return (TieredDestructorTileEntity) super.getTile();
     }
 
-    private TieredImporterNetworkNode getNode() {
+    private TieredDestructorNetworkNode getNode() {
         return getTile().getNode();
     }
 

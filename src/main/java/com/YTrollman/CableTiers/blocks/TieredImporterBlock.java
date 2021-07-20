@@ -71,13 +71,13 @@ public class TieredImporterBlock extends CableBlock {
     public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext ctx) {
         return ShapeCache.getOrCreate(state, s -> {
             VoxelShape shape = getCableShape(s);
-            shape = VoxelShapes.or(shape, this.getLineShape(s));
+            shape = VoxelShapes.or(shape, getLineShape(s));
             return shape;
         });
     }
 
     protected VoxelShape getLineShape(BlockState state) {
-        switch (state.getValue(this.getDirection().getProperty())) {
+        switch (state.getValue(getDirection().getProperty())) {
             case UP:
                 return LINE_UP;
             case DOWN:
@@ -100,8 +100,9 @@ public class TieredImporterBlock extends CableBlock {
         return ContentType.IMPORTER.getTileEntityType(tier).create();
     }
 
+    @Override
     public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
-        if (!world.isClientSide && CollisionUtils.isInBounds(this.getLineShape(state), pos, hit.getLocation())) {
+        if (!world.isClientSide && CollisionUtils.isInBounds(getLineShape(state), pos, hit.getLocation())) {
             return NetworkUtils.attemptModify(
                     world,
                     pos,
@@ -109,7 +110,7 @@ public class TieredImporterBlock extends CableBlock {
                     () -> NetworkHooks.openGui(
                             (ServerPlayerEntity) player,
                             new PositionalTileContainerProvider<TieredImporterTileEntity>(
-                                    new TranslationTextComponent(this.getDescriptionId()),
+                                    new TranslationTextComponent(getDescriptionId()),
                                     (tile, windowId, inventory, p) -> ContentType.IMPORTER.createContainer(windowId, p, tile, tier),
                                     pos
                             ),
@@ -117,6 +118,7 @@ public class TieredImporterBlock extends CableBlock {
                     )
             );
         }
+
         return ActionResultType.SUCCESS;
     }
 }

@@ -33,15 +33,6 @@ public class ModContainers {
         }
         return new EliteConstructorContainer((EliteConstructorTileEntity) te, inv.player, windowId);
     }));
-    public static final RegistryObject<ContainerType<EliteDestructorContainer>> ELITE_DESTRUCTOR_CONTAINER = CONTAINER_TYPES.register("elite_destructor", () -> IForgeContainerType.create((windowId, inv, data) -> {
-        BlockPos pos = data.readBlockPos();
-        TileEntity te = inv.player.getCommandSenderWorld().getBlockEntity(pos);
-        if (!(te instanceof EliteDestructorTileEntity)) {
-            CableTiers.LOGGER.error("Wrong type of tile entity (expected EliteDestructorTileEntity)!");
-            return null;
-        }
-        return new EliteDestructorContainer((EliteDestructorTileEntity) te, inv.player, windowId);
-    }));
 
     public static final RegistryObject<ContainerType<UltraExporterContainer>> ULTRA_EXPORTER_CONTAINER = CONTAINER_TYPES.register("ultra_exporter", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
@@ -60,15 +51,6 @@ public class ModContainers {
             return null;
         }
         return new UltraConstructorContainer((UltraConstructorTileEntity) te, inv.player, windowId);
-    }));
-    public static final RegistryObject<ContainerType<UltraDestructorContainer>> ULTRA_DESTRUCTOR_CONTAINER = CONTAINER_TYPES.register("ultra_destructor", () -> IForgeContainerType.create((windowId, inv, data) -> {
-        BlockPos pos = data.readBlockPos();
-        TileEntity te = inv.player.getCommandSenderWorld().getBlockEntity(pos);
-        if (!(te instanceof UltraDestructorTileEntity)) {
-            CableTiers.LOGGER.error("Wrong type of tile entity (expected UltraDestructorTileEntity)!");
-            return null;
-        }
-        return new UltraDestructorContainer((UltraDestructorTileEntity) te, inv.player, windowId);
     }));
 
     public static final RegistryObject<ContainerType<CreativeExporterContainer>> CREATIVE_EXPORTER_CONTAINER = CONTAINER_TYPES.register("creative_exporter", () -> IForgeContainerType.create((windowId, inv, data) -> {
@@ -89,13 +71,5 @@ public class ModContainers {
         }
         return new CreativeConstructorContainer((CreativeConstructorTileEntity) te, inv.player, windowId);
     }));
-    public static final RegistryObject<ContainerType<CreativeDestructorContainer>> CREATIVE_DESTRUCTOR_CONTAINER = CONTAINER_TYPES.register("creative_destructor", () -> IForgeContainerType.create((windowId, inv, data) -> {
-        BlockPos pos = data.readBlockPos();
-        TileEntity te = inv.player.getCommandSenderWorld().getBlockEntity(pos);
-        if (!(te instanceof CreativeDestructorTileEntity)) {
-            CableTiers.LOGGER.error("Wrong type of tile entity (expected CreativeDestructorTileEntity)!");
-            return null;
-        }
-        return new CreativeDestructorContainer((CreativeDestructorTileEntity) te, inv.player, windowId);
-    }));
+
 }

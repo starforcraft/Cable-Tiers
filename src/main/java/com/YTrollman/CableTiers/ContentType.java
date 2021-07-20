@@ -1,8 +1,12 @@
 package com.YTrollman.CableTiers;
 
+import com.YTrollman.CableTiers.blocks.TieredDestructorBlock;
 import com.YTrollman.CableTiers.blocks.TieredImporterBlock;
+import com.YTrollman.CableTiers.container.TieredDestructorContainer;
 import com.YTrollman.CableTiers.container.TieredImporterContainer;
+import com.YTrollman.CableTiers.node.TieredDestructorNetworkNode;
 import com.YTrollman.CableTiers.node.TieredImporterNetworkNode;
+import com.YTrollman.CableTiers.tileentity.TieredDestructorTileEntity;
 import com.YTrollman.CableTiers.tileentity.TieredImporterTileEntity;
 import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.apiimpl.API;
@@ -42,8 +46,15 @@ public class ContentType<B extends BaseBlock, T extends BaseTile, C extends Cont
             TieredImporterContainer::new,
             TieredImporterNetworkNode::new
     );
+    public static final ContentType<TieredDestructorBlock, TieredDestructorTileEntity, TieredDestructorContainer, TieredDestructorNetworkNode> DESTRUCTOR = new ContentType<>(
+            "destructor",
+            TieredDestructorBlock::new,
+            TieredDestructorTileEntity::new,
+            TieredDestructorContainer::new,
+            TieredDestructorNetworkNode::new
+    );
 
-    public static final ContentType<?, ?, ?, ?>[] CONTENT_TYPES = { IMPORTER };
+    public static final ContentType<?, ?, ?, ?>[] CONTENT_TYPES = { IMPORTER, DESTRUCTOR };
 
     private final Map<CableTier, RegistryObject<B>> blocks = new EnumMap<>(CableTier.class);
     private final Map<CableTier, RegistryObject<Item>> items = new EnumMap<>(CableTier.class);
