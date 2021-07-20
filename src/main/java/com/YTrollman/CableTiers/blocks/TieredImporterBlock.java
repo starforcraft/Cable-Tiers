@@ -1,9 +1,8 @@
 package com.YTrollman.CableTiers.blocks;
 
-import javax.annotation.Nullable;
-
-import com.YTrollman.CableTiers.container.CreativeImporterContainer;
-import com.YTrollman.CableTiers.tileentity.CreativeImporterTileEntity;
+import com.YTrollman.CableTiers.CableTier;
+import com.YTrollman.CableTiers.ContentType;
+import com.YTrollman.CableTiers.tileentity.TieredImporterTileEntity;
 import com.refinedmods.refinedstorage.block.BlockDirection;
 import com.refinedmods.refinedstorage.block.CableBlock;
 import com.refinedmods.refinedstorage.block.shape.ShapeCache;
@@ -11,7 +10,6 @@ import com.refinedmods.refinedstorage.container.factory.PositionalTileContainerP
 import com.refinedmods.refinedstorage.util.BlockUtils;
 import com.refinedmods.refinedstorage.util.CollisionUtils;
 import com.refinedmods.refinedstorage.util.NetworkUtils;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -28,7 +26,10 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-public class CreativeImporterBlock extends CableBlock {
+import javax.annotation.Nullable;
+
+public class TieredImporterBlock extends CableBlock {
+
     private static final VoxelShape LINE_NORTH_1 = box(6, 6, 4, 10, 10, 6);
     private static final VoxelShape LINE_NORTH_2 = box(5, 5, 2, 11, 11, 4);
     private static final VoxelShape LINE_NORTH_3 = box(3, 3, 0, 13, 13, 2);
@@ -54,54 +55,67 @@ public class CreativeImporterBlock extends CableBlock {
     private static final VoxelShape LINE_DOWN_3 = box(3, 0, 3, 13, 2, 13);
     private static final VoxelShape LINE_DOWN = VoxelShapes.or(LINE_DOWN_1, LINE_DOWN_2, LINE_DOWN_3);
 
-    public CreativeImporterBlock()
-    {
+    private final CableTier tier;
+
+    public TieredImporterBlock(CableTier tier) {
         super(BlockUtils.DEFAULT_GLASS_PROPERTIES);
+        this.tier = tier;
     }
 
-    public BlockDirection getDirection()
-    {
+    @Override
+    public BlockDirection getDirection() {
         return BlockDirection.ANY;
     }
 
-    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext ctx)
-    {
-        return ShapeCache.getOrCreate(state, (s) ->
-        {
+    @Override
+    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext ctx) {
+        return ShapeCache.getOrCreate(state, s -> {
             VoxelShape shape = getCableShape(s);
             shape = VoxelShapes.or(shape, this.getLineShape(s));
             return shape;
         });
     }
 
-    protected VoxelShape getLineShape(BlockState state)
-    {
-        switch (state.getValue(this.getDirection().getProperty()))
-        {
-            case UP: return LINE_UP;
-            case DOWN: return LINE_DOWN;
-            case NORTH: return LINE_NORTH;
-            case SOUTH: return LINE_SOUTH;
-            case EAST: return LINE_EAST;
-            case WEST: return LINE_WEST;
-            default: return VoxelShapes.empty();
+    protected VoxelShape getLineShape(BlockState state) {
+        switch (state.getValue(this.getDirection().getProperty())) {
+            case UP:
+                return LINE_UP;
+            case DOWN:
+                return LINE_DOWN;
+            case NORTH:
+                return LINE_NORTH;
+            case SOUTH:
+                return LINE_SOUTH;
+            case EAST:
+                return LINE_EAST;
+            case WEST:
+                return LINE_WEST;
+            default:
+                return VoxelShapes.empty();
         }
     }
 
     @Nullable
-    public TileEntity createTileEntity(BlockState state, IBlockReader world)
-    {
-        return new CreativeImporterTileEntity();
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return ContentType.IMPORTER.getTileEntityType(tier).create();
     }
 
-    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit)
-    {
-        if(!world.isClientSide && CollisionUtils.isInBounds(this.getLineShape(state), pos, hit.getLocation()))
-        {
-            return NetworkUtils.attemptModify(world, pos, player, () ->
-            {
-                NetworkHooks.openGui((ServerPlayerEntity) player, new PositionalTileContainerProvider<CreativeImporterTileEntity>(new TranslationTextComponent(this.getDescriptionId()), (tile, windowId, inventory, p) -> new CreativeImporterContainer(windowId, player, tile), pos), pos);
-            });
+    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+        if (!world.isClientSide && CollisionUtils.isInBounds(this.getLineShape(state), pos, hit.getLocation())) {
+            return NetworkUtils.attemptModify(
+                    world,
+                    pos,
+                    player,
+                    () -> NetworkHooks.openGui(
+                            (ServerPlayerEntity) player,
+                            new PositionalTileContainerProvider<TieredImporterTileEntity>(
+                                    new TranslationTextComponent(this.getDescriptionId()),
+                                    (tile, windowId, inventory, p) -> ContentType.IMPORTER.createContainer(windowId, p, tile, tier),
+                                    pos
+                            ),
+                            pos
+                    )
+            );
         }
         return ActionResultType.SUCCESS;
     }

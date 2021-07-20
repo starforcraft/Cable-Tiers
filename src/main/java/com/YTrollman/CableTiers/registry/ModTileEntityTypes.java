@@ -4,20 +4,19 @@ import com.YTrollman.CableTiers.CableTiers;
 import com.YTrollman.CableTiers.tileentity.CreativeConstructorTileEntity;
 import com.YTrollman.CableTiers.tileentity.CreativeDestructorTileEntity;
 import com.YTrollman.CableTiers.tileentity.CreativeExporterTileEntity;
-import com.YTrollman.CableTiers.tileentity.CreativeImporterTileEntity;
 import com.YTrollman.CableTiers.tileentity.EliteConstructorTileEntity;
 import com.YTrollman.CableTiers.tileentity.EliteDestructorTileEntity;
 import com.YTrollman.CableTiers.tileentity.EliteExporterTileEntity;
-import com.YTrollman.CableTiers.tileentity.EliteImporterTileEntity;
 import com.YTrollman.CableTiers.tileentity.UltraConstructorTileEntity;
 import com.YTrollman.CableTiers.tileentity.UltraDestructorTileEntity;
 import com.YTrollman.CableTiers.tileentity.UltraExporterTileEntity;
-import com.YTrollman.CableTiers.tileentity.UltraImporterTileEntity;
 
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import static com.YTrollman.CableTiers.registry.RegistryHandler.TILE_ENTITY_TYPES;
 
 public class ModTileEntityTypes {
 
@@ -25,9 +24,6 @@ public class ModTileEntityTypes {
 
     public static final RegistryObject<TileEntityType<EliteExporterTileEntity>> ELITE_EXPORTER_TILE_ENTITY = TILE_ENTITY_TYPES.register("elite_exporter", () -> TileEntityType.Builder
             .of(() -> new EliteExporterTileEntity(), ModBlocks.ELITE_EXPORTER.get())
-            .build(null));
-    public static final RegistryObject<TileEntityType<EliteImporterTileEntity>> ELITE_IMPORTER_TILE_ENTITY = TILE_ENTITY_TYPES.register("elite_importer", () -> TileEntityType.Builder
-            .of(() -> new EliteImporterTileEntity(), ModBlocks.ELITE_IMPORTER.get())
             .build(null));
     public static final RegistryObject<TileEntityType<EliteConstructorTileEntity>> ELITE_CONSTRUCTOR_TILE_ENTITY = TILE_ENTITY_TYPES.register("elite_constructor", () -> TileEntityType.Builder
             .of(() -> new EliteConstructorTileEntity(), ModBlocks.ELITE_CONSTRUCTOR.get())
@@ -39,9 +35,6 @@ public class ModTileEntityTypes {
     public static final RegistryObject<TileEntityType<UltraExporterTileEntity>> ULTRA_EXPORTER_TILE_ENTITY = TILE_ENTITY_TYPES.register("ultra_exporter", () -> TileEntityType.Builder
             .of(() -> new UltraExporterTileEntity(), ModBlocks.ULTRA_EXPORTER.get())
             .build(null));
-    public static final RegistryObject<TileEntityType<UltraImporterTileEntity>> ULTRA_IMPORTER_TILE_ENTITY = TILE_ENTITY_TYPES.register("ultra_importer", () -> TileEntityType.Builder
-            .of(() -> new UltraImporterTileEntity(), ModBlocks.ULTRA_IMPORTER.get())
-            .build(null));
     public static final RegistryObject<TileEntityType<UltraConstructorTileEntity>> ULTRA_CONSTRUCTOR_TILE_ENTITY = TILE_ENTITY_TYPES.register("ultra_constructor", () -> TileEntityType.Builder
             .of(() -> new UltraConstructorTileEntity(), ModBlocks.ULTRA_CONSTRUCTOR.get())
             .build(null));
@@ -51,9 +44,6 @@ public class ModTileEntityTypes {
     
     public static final RegistryObject<TileEntityType<CreativeExporterTileEntity>> CREATIVE_EXPORTER_TILE_ENTITY = TILE_ENTITY_TYPES.register("creative_exporter", () -> TileEntityType.Builder
             .of(() -> new CreativeExporterTileEntity(), ModBlocks.CREATIVE_EXPORTER.get())
-            .build(null));
-    public static final RegistryObject<TileEntityType<CreativeImporterTileEntity>> CREATIVE_IMPORTER_TILE_ENTITY = TILE_ENTITY_TYPES.register("creative_importer", () -> TileEntityType.Builder
-            .of(() -> new CreativeImporterTileEntity(), ModBlocks.CREATIVE_IMPORTER.get())
             .build(null));
     public static final RegistryObject<TileEntityType<CreativeConstructorTileEntity>> CREATIVE_CONSTRUCTOR_TILE_ENTITY = TILE_ENTITY_TYPES.register("creative_constructor", () -> TileEntityType.Builder
             .of(() -> new CreativeConstructorTileEntity(), ModBlocks.CREATIVE_CONSTRUCTOR.get())
