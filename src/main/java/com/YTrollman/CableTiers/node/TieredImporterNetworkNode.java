@@ -148,8 +148,8 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
                     int inserted = interactionCount - remaining;
                     if (inserted > 0) {
                         result = handler.extractItem(currentSlot, inserted, false);
-                        ItemStack actuallyInserted = network.insertItemTracked(result, result.getCount());
-                        if (!actuallyInserted.isEmpty()) {
+                        ItemStack actualRemainder = network.insertItemTracked(result, result.getCount());
+                        if (!actualRemainder.isEmpty()) {
                             throw new RuntimeException("could not insert extracted item stack into network");
                         }
 
@@ -195,21 +195,21 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
         while (true) {
             FluidStack stack = handler.getFluidInTank(currentSlot);
             if (!stack.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack)) {
-                int interactionCount = interactWithStacks() ? stack.getAmount() : FluidAttributes.BUCKET_VOLUME;
+                int interactionAmount = interactWithStacks() ? stack.getAmount() : FluidAttributes.BUCKET_VOLUME;
                 FluidStack toExtract = stack.copy();
-                toExtract.setAmount(interactionCount);
+                toExtract.setAmount(interactionAmount);
 
                 FluidStack result = handler.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
                 if (!result.isEmpty()) {
                     int remaining = network.insertFluid(result, result.getAmount(), Action.SIMULATE).getAmount();
-                    int inserted = interactionCount - remaining;
+                    int inserted = interactionAmount - remaining;
                     if (inserted > 0) {
                         toExtract = stack.copy();
                         toExtract.setAmount(inserted);
 
                         result = handler.drain(toExtract, IFluidHandler.FluidAction.EXECUTE);
-                        FluidStack actuallyInserted = network.insertFluidTracked(result, result.getAmount());
-                        if (!actuallyInserted.isEmpty()) {
+                        FluidStack actualRemainder = network.insertFluidTracked(result, result.getAmount());
+                        if (!actualRemainder.isEmpty()) {
                             throw new RuntimeException("could not insert extracted fluid stack into network");
                         }
 
