@@ -9,7 +9,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod("cabletiers")
+@Mod(CableTiers.MOD_ID)
 public class CableTiers {
 
     public static final String MOD_ID = "cabletiers";
@@ -17,13 +17,9 @@ public class CableTiers {
 
     public CableTiers() {
         RegistryHandler.init();
-        /*DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientEventHandler::init);
-        });*/
-
         ContentType.init();
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.client_config);
-        Config.loadConfig(Config.client_config, FMLPaths.CONFIGDIR.get().resolve("cabletiers-client.toml").toString());
+        Config.loadConfig(Config.client_config, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-client.toml").toString());
     }
 }

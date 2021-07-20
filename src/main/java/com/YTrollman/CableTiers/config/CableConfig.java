@@ -1,5 +1,6 @@
 package com.YTrollman.CableTiers.config;
 
+import com.YTrollman.CableTiers.CableTier;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class CableConfig {
@@ -23,7 +24,7 @@ public class CableConfig {
                     .defineInRange("eliteexporterspeed", 2, 1, 10);
             ELITE_IMPORTER_SPEED = client
             		.comment("\nElite Importer Speed")
-                    .defineInRange("eliteimporterspeed", 2, 1, 10);
+                    .defineInRange("eliteimporterspeed", CableTier.ELITE.getDefaultSpeedMultiplier(), 1, Integer.MAX_VALUE);
             ELITE_CONSTRUCTOR_SPEED = client
             		.comment("\nElite Constructor Speed")
                     .defineInRange("eliteconstructorspeed", 2, 1, 10);
@@ -36,7 +37,7 @@ public class CableConfig {
                     .defineInRange("ultraexporterspeed", 6, 1, 10);
             ULTRA_IMPORTER_SPEED = client
             		.comment("\nUltra Importer Speed")
-                    .defineInRange("ultraimporterspeed", 6, 1, 10);
+                    .defineInRange("ultraimporterspeed", CableTier.ULTRA.getDefaultSpeedMultiplier(), 1, Integer.MAX_VALUE);
             ULTRA_CONSTRUCTOR_SPEED = client
             		.comment("\nUltra Constructor Speed")
                     .defineInRange("ultraconstructorspeed", 6, 1, 10);

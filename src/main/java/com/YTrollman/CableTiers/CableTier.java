@@ -4,7 +4,7 @@ public enum CableTier {
 
     ELITE("elite", 2, 18),
     ULTRA("ultra", 6, 36),
-    CREATIVE("creative", 0, 54);
+    CREATIVE("creative", -1, 54);
 
     public static final CableTier[] VALUES = values();
 
