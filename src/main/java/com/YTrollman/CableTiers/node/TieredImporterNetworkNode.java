@@ -158,8 +158,10 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
                 }
             }
 
-            currentSlot++;
-            currentSlot %= handler.getSlots();
+            if (++currentSlot >= handler.getSlots()) {
+                currentSlot = 0;
+            }
+
             if (currentSlot == startSlot) {
                 return false;
             }
@@ -218,8 +220,10 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
                 }
             }
 
-            currentSlot++;
-            currentSlot %= handler.getTanks();
+            if (++currentSlot >= handler.getTanks()) {
+                currentSlot = 0;
+            }
+
             if (currentSlot == startSlot) {
                 return false;
             }
