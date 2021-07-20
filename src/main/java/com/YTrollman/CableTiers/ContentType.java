@@ -64,21 +64,22 @@ public class ContentType<B extends BaseBlock, T extends BaseTile, C extends Cont
             items.put(tier, ITEMS.register(id, () -> new BaseBlockItem(getBlock(tier), new Item.Properties().tab(RS.MAIN_GROUP))));
             tileEntityTypes.put(tier, TILE_ENTITY_TYPES.register(id, () -> TileEntityType.Builder.of(() -> tileEntityFactory.apply(tier), getBlock(tier)).build(null)));
             containerTypes.put(tier, CONTAINER_TYPES.register(id, () -> IForgeContainerType.create((windowId, inv, data) -> {
-                BlockPos pos = data.readBlockPos();
-                TileEntity tile = inv.player.getCommandSenderWorld().getBlockEntity(pos);
-                if (tile == null) {
-                    CableTiers.LOGGER.error("Expected tile entity of type " + id + ", but found none");
-                    return null;
-                }
+                        BlockPos pos = data.readBlockPos();
+                        TileEntity tile = inv.player.getCommandSenderWorld().getBlockEntity(pos);
+                        if (tile == null) {
+                            CableTiers.LOGGER.error("Expected tile entity of type " + id + ", but found none");
+                            return null;
+                        }
 
-                TileEntityType<T> tileEntityType = getTileEntityType(tier);
-                if (tile.getType() != tileEntityType) {
-                    CableTiers.LOGGER.error("Wrong type of tile entity, expected " + tileEntityType.getRegistryName() + ", but got " + tile.getType().getRegistryName());
-                    return null;
-                }
+                        TileEntityType<T> tileEntityType = getTileEntityType(tier);
+                        if (tile.getType() != tileEntityType) {
+                            CableTiers.LOGGER.error("Wrong type of tile entity, expected " + tileEntityType.getRegistryName() + ", but got " + tile.getType().getRegistryName());
+                            return null;
+                        }
 
-                return createContainer(windowId, inv.player, (T) tile, tier);
-            })));
+                        return createContainer(windowId, inv.player, (T) tile, tier);
+                    })
+            ));
         }
     }
 
