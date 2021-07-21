@@ -21,11 +21,10 @@ import com.refinedmods.refinedstorage.util.StackUtils;
 import com.refinedmods.refinedstorage.util.WorldUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FlowingFluidBlock;
+import net.minecraft.block.IBucketPickupHandler;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -39,6 +38,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
@@ -166,12 +166,13 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
         }
 
         Block frontBlock = frontBlockState.getBlock();
+        FakePlayer fakePlayer = WorldUtils.getFakePlayer((ServerWorld) world, getOwner());
         ItemStack frontStack = frontBlock.getPickBlock(
                 frontBlockState,
                 new BlockRayTraceResult(Vector3d.ZERO, getDirection().getOpposite(), front, false),
                 world,
                 front,
-                WorldUtils.getFakePlayer((ServerWorld) world, getOwner())
+                fakePlayer
         );
         if (frontStack.isEmpty() || !IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, frontStack)) {
             return;
@@ -182,7 +183,7 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
                 (ServerWorld) world,
                 front,
                 world.getBlockEntity(front),
-                WorldUtils.getFakePlayer((ServerWorld) world, getOwner()),
+                fakePlayer,
                 tool
         );
 
@@ -192,10 +193,9 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
             }
         }
 
-        BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(world, front, frontBlockState, WorldUtils.getFakePlayer((ServerWorld) world, getOwner()));
-
+        BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(world, front, frontBlockState, fakePlayer);
         if (!MinecraftForge.EVENT_BUS.post(e)) {
-            frontBlock.playerWillDestroy(world, front, frontBlockState, WorldUtils.getFakePlayer((ServerWorld) world, getOwner()));
+            frontBlock.playerWillDestroy(world, front, frontBlockState, fakePlayer);
 
             world.removeBlock(front, false);
 
@@ -219,32 +219,36 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
         BlockState frontBlockState = world.getBlockState(front);
         Block frontBlock = frontBlockState.getBlock();
 
-        if (frontBlock instanceof FlowingFluidBlock) {
-            // @Volatile: Logic from FlowingFluidBlock#pickupFluid
-            if (frontBlockState.getValue(FlowingFluidBlock.LEVEL) == 0) {
-                Fluid fluid = ((FlowingFluidBlock) frontBlock).getFluid();
-
-                FluidStack result = new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME);
-                if (IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, result) && network.insertFluid(result, result.getAmount(), Action.SIMULATE).isEmpty()) {
-                    world.setBlock(front, Blocks.AIR.defaultBlockState(), 11);
-
-                    FluidStack remainder = network.insertFluidTracked(result, result.getAmount());
-                    if (!remainder.isEmpty()) {
-                        throw new RuntimeException("could not insert drained fluid stack into network");
-                    }
-                }
-            }
-        } else if (frontBlock instanceof IFluidBlock) {
+        if (frontBlock instanceof IFluidBlock) {
             IFluidBlock fluidBlock = (IFluidBlock) frontBlock;
             if (fluidBlock.canDrain(world, front)) {
                 FluidStack result = fluidBlock.drain(world, front, IFluidHandler.FluidAction.SIMULATE);
-                if (IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, result) && network.insertFluid(result, result.getAmount(), Action.SIMULATE).isEmpty()) {
+                if (!result.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, result) && network.insertFluid(result, result.getAmount(), Action.SIMULATE).isEmpty()) {
                     result = fluidBlock.drain(world, front, IFluidHandler.FluidAction.EXECUTE);
 
                     FluidStack remainder = network.insertFluidTracked(result, result.getAmount());
                     if (!remainder.isEmpty()) {
                         throw new RuntimeException("could not insert drained fluid stack into network");
                     }
+
+                    return;
+                }
+            }
+        }
+
+        if (frontBlock instanceof IBucketPickupHandler) {
+            IBucketPickupHandler bucketPickupHandler = (IBucketPickupHandler) frontBlock;
+            FluidState fluidState = world.getFluidState(front);
+            if (!fluidState.isEmpty()) {
+                FluidStack result = new FluidStack(fluidState.getType(), FluidAttributes.BUCKET_VOLUME);
+                if (!result.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, result) && network.insertFluid(result, result.getAmount(), Action.SIMULATE).isEmpty()) {
+                    result = new FluidStack(bucketPickupHandler.takeLiquid(world, front, frontBlockState), FluidAttributes.BUCKET_VOLUME);
+                    FluidStack remainder = network.insertFluidTracked(result, result.getAmount());
+                    if (!remainder.isEmpty()) {
+                        throw new RuntimeException("could not insert drained fluid stack into network");
+                    }
+
+                    return;
                 }
             }
         }
