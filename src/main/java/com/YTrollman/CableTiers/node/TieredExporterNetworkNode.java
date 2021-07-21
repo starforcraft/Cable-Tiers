@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.api.util.Action;
 import com.refinedmods.refinedstorage.api.util.IComparer;
 import com.refinedmods.refinedstorage.apiimpl.API;
-import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.apiimpl.network.node.SlottedCraftingRequest;
 import com.refinedmods.refinedstorage.inventory.fluid.FluidInventory;
 import com.refinedmods.refinedstorage.inventory.item.BaseItemHandler;
@@ -22,7 +21,6 @@ import com.refinedmods.refinedstorage.util.StackUtils;
 import com.refinedmods.refinedstorage.util.WorldUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -32,7 +30,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class TieredExporterNetworkNode extends NetworkNode implements IComparable, IType {
+public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterNetworkNode> implements IComparable, IType {
 
     private static final String NBT_COMPARE = "Compare";
     private static final String NBT_TYPE = "Type";
@@ -40,9 +38,6 @@ public class TieredExporterNetworkNode extends NetworkNode implements IComparabl
 
     private static final int BASE_SPEED = 9;
     private static final int SPEED_INCREASE = 2;
-
-    private final CableTier tier;
-    private final ResourceLocation id;
 
     private final BaseItemHandler itemFilters;
     private final FluidInventory fluidFilters;
@@ -55,9 +50,7 @@ public class TieredExporterNetworkNode extends NetworkNode implements IComparabl
     private int filterSlot;
 
     public TieredExporterNetworkNode(World world, BlockPos pos, CableTier tier) {
-        super(world, pos);
-        this.tier = tier;
-        this.id = ContentType.IMPORTER.getId(tier);
+        super(world, pos, ContentType.EXPORTER, tier);
         this.itemFilters = new BaseItemHandler(tier.getSlots()).addListener(new NetworkNodeInventoryListener(this));
         this.fluidFilters = new FluidInventory(tier.getSlots()).addListener(new NetworkNodeFluidInventoryListener(this));
         this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
@@ -104,18 +97,18 @@ public class TieredExporterNetworkNode extends NetworkNode implements IComparabl
     }
 
     private int getSpeedMultiplier() {
-        switch (tier) {
+        switch (getTier()) {
             case ELITE:
                 return CableConfig.ELITE_EXPORTER_SPEED.get();
             case ULTRA:
                 return CableConfig.ULTRA_EXPORTER_SPEED.get();
             default:
-                throw new RuntimeException("illegal tier " + tier);
+                throw new RuntimeException("illegal tier " + getTier());
         }
     }
 
     private boolean interactWithStacks() {
-        return tier != CableTier.ELITE || upgrades.hasUpgrade(UpgradeItem.Type.STACK);
+        return getTier() != CableTier.ELITE || upgrades.hasUpgrade(UpgradeItem.Type.STACK);
     }
 
     private int getInteractionSize(ItemStack stack) {
@@ -130,7 +123,7 @@ public class TieredExporterNetworkNode extends NetworkNode implements IComparabl
             return;
         }
 
-        if (tier != CableTier.CREATIVE) {
+        if (getTier() != CableTier.CREATIVE) {
             int baseSpeed = BASE_SPEED / getSpeedMultiplier();
             int speed = Math.max(1, upgrades.getSpeed(baseSpeed, SPEED_INCREASE));
             if (speed > 1 && ticks % speed != 0) {
@@ -155,7 +148,7 @@ public class TieredExporterNetworkNode extends NetworkNode implements IComparabl
             filterSlot = 0;
         }
 
-        if (tier == CableTier.CREATIVE) {
+        if (getTier() == CableTier.CREATIVE) {
             while (doItemInsertion(handler)) {
             }
         } else {
@@ -245,7 +238,7 @@ public class TieredExporterNetworkNode extends NetworkNode implements IComparabl
         }
 
 
-        if (tier == CableTier.CREATIVE) {
+        if (getTier() == CableTier.CREATIVE) {
             while (doFluidInsertion(handler)) {
             }
         } else {
@@ -260,7 +253,7 @@ public class TieredExporterNetworkNode extends NetworkNode implements IComparabl
             boolean work = false;
             FluidStack filter = fluidFilters.getFluid(filterSlot);
             if (!filter.isEmpty()) {
-                int interactionCount = interactWithStacks() ? (tier == CableTier.CREATIVE ? Integer.MAX_VALUE : 64 * FluidAttributes.BUCKET_VOLUME) : FluidAttributes.BUCKET_VOLUME;
+                int interactionCount = interactWithStacks() ? (getTier() == CableTier.CREATIVE ? Integer.MAX_VALUE : 64 * FluidAttributes.BUCKET_VOLUME) : FluidAttributes.BUCKET_VOLUME;
 
                 int toTransfer;
                 if (upgrades.hasUpgrade(UpgradeItem.Type.REGULATOR)) {
@@ -332,11 +325,6 @@ public class TieredExporterNetworkNode extends NetworkNode implements IComparabl
     public void setCompare(int compare) {
         this.compare = compare;
         markDirty();
-    }
-
-    @Override
-    public ResourceLocation getId() {
-        return id;
     }
 
     @Override

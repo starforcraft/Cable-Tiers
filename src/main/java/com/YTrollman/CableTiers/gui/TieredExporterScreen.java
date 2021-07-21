@@ -1,13 +1,12 @@
 package com.YTrollman.CableTiers.gui;
 
-import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.CableTiers;
 import com.YTrollman.CableTiers.container.TieredExporterContainer;
+import com.YTrollman.CableTiers.node.TieredExporterNetworkNode;
 import com.YTrollman.CableTiers.tileentity.TieredExporterTileEntity;
 import com.YTrollman.CableTiers.util.MathUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.refinedmods.refinedstorage.item.UpgradeItem;
-import com.refinedmods.refinedstorage.screen.BaseScreen;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.ExactModeSideButton;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.RedstoneModeSideButton;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.TypeSideButton;
@@ -16,7 +15,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
-public class TieredExporterScreen extends BaseScreen<TieredExporterContainer> {
+public class TieredExporterScreen extends TieredScreen<TieredExporterTileEntity, TieredExporterContainer, TieredExporterNetworkNode> {
 
     private boolean hasRegulatorMode;
 
@@ -25,12 +24,8 @@ public class TieredExporterScreen extends BaseScreen<TieredExporterContainer> {
         this.hasRegulatorMode = hasRegulatorMode();
     }
 
-    public CableTier getTier() {
-        return getMenu().getTier();
-    }
-
     private boolean hasRegulatorMode() {
-        return getMenu().getTile().getNode().getUpgrades().hasUpgrade(UpgradeItem.Type.REGULATOR);
+        return getNode().getUpgrades().hasUpgrade(UpgradeItem.Type.REGULATOR);
     }
 
     @Override

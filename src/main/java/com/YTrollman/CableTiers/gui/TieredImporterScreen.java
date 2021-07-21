@@ -3,10 +3,10 @@ package com.YTrollman.CableTiers.gui;
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.CableTiers;
 import com.YTrollman.CableTiers.container.TieredImporterContainer;
+import com.YTrollman.CableTiers.node.TieredImporterNetworkNode;
 import com.YTrollman.CableTiers.tileentity.TieredImporterTileEntity;
 import com.YTrollman.CableTiers.util.MathUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.refinedmods.refinedstorage.screen.BaseScreen;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.ExactModeSideButton;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.RedstoneModeSideButton;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.TypeSideButton;
@@ -16,14 +16,10 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
-public class TieredImporterScreen extends BaseScreen<TieredImporterContainer> {
+public class TieredImporterScreen extends TieredScreen<TieredImporterTileEntity, TieredImporterContainer, TieredImporterNetworkNode> {
 
     public TieredImporterScreen(TieredImporterContainer container, PlayerInventory inventory, ITextComponent title) {
         super(container, container.getTier() == CableTier.CREATIVE ? 176 : 211, 119 + 18 * MathUtil.ceilDiv(container.getTier().getSlots(), 9), inventory, title);
-    }
-
-    public CableTier getTier() {
-        return getMenu().getTier();
     }
 
     @Override
@@ -32,10 +28,6 @@ public class TieredImporterScreen extends BaseScreen<TieredImporterContainer> {
         addSideButton(new TypeSideButton(this, TieredImporterTileEntity.TYPE));
         addSideButton(new WhitelistBlacklistSideButton(this, TieredImporterTileEntity.WHITELIST_BLACKLIST));
         addSideButton(new ExactModeSideButton(this, TieredImporterTileEntity.COMPARE));
-    }
-
-    @Override
-    public void tick(int x, int y) {
     }
 
     @Override

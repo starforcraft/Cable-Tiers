@@ -7,7 +7,6 @@ import com.YTrollman.CableTiers.tileentity.TieredDestructorTileEntity;
 import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.api.util.Action;
 import com.refinedmods.refinedstorage.api.util.IComparer;
-import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.inventory.fluid.FluidInventory;
 import com.refinedmods.refinedstorage.inventory.item.BaseItemHandler;
 import com.refinedmods.refinedstorage.inventory.item.UpgradeItemHandler;
@@ -30,7 +29,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -50,7 +48,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TieredDestructorNetworkNode extends NetworkNode implements IComparable, IWhitelistBlacklist, IType {
+public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestructorNetworkNode> implements IComparable, IWhitelistBlacklist, IType {
 
     private static final String NBT_COMPARE = "Compare";
     private static final String NBT_MODE = "Mode";
@@ -60,9 +58,6 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
 
     private static final int BASE_SPEED = 20;
     private static final int SPEED_INCREASE = 4;
-
-    private final CableTier tier;
-    private final ResourceLocation id;
 
     private final BaseItemHandler itemFilters;
     private final FluidInventory fluidFilters;
@@ -77,9 +72,7 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
     private ItemStack tool;
 
     public TieredDestructorNetworkNode(World world, BlockPos pos, CableTier tier) {
-        super(world, pos);
-        this.tier = tier;
-        this.id = ContentType.DESTRUCTOR.getId(tier);
+        super(world, pos, ContentType.DESTRUCTOR, tier);
         this.itemFilters = new BaseItemHandler(tier.getSlots()).addListener(new NetworkNodeInventoryListener(this));
         this.fluidFilters = new FluidInventory(tier.getSlots()).addListener(new NetworkNodeFluidInventoryListener(this));
         this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
@@ -104,7 +97,7 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
             return;
         }
 
-        if (tier != CableTier.CREATIVE) {
+        if (getTier() != CableTier.CREATIVE) {
             int baseSpeed = BASE_SPEED / getSpeedMultiplier();
             int speed = Math.max(1, upgrades.getSpeed(baseSpeed, SPEED_INCREASE));
             if (speed > 1 && ticks % speed != 0) {
@@ -124,13 +117,13 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
     }
 
     private int getSpeedMultiplier() {
-        switch (tier) {
+        switch (getTier()) {
             case ELITE:
                 return CableConfig.ELITE_DESTRUCTOR_SPEED.get();
             case ULTRA:
                 return CableConfig.ULTRA_DESTRUCTOR_SPEED.get();
             default:
-                throw new RuntimeException("illegal tier " + tier);
+                throw new RuntimeException("illegal tier " + getTier());
         }
     }
 
@@ -153,7 +146,7 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
                     entity.setItem(remaining);
                 }
 
-                if (tier != CableTier.CREATIVE) {
+                if (getTier() != CableTier.CREATIVE) {
                     break;
                 }
             }
@@ -257,7 +250,7 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
     }
 
     private ItemStack createTool() {
-        ItemStack newTool = new ItemStack(tier == CableTier.CREATIVE ? Items.NETHERITE_PICKAXE : Items.DIAMOND_PICKAXE);
+        ItemStack newTool = new ItemStack(getTier() == CableTier.CREATIVE ? Items.NETHERITE_PICKAXE : Items.DIAMOND_PICKAXE);
 
         if (upgrades.hasUpgrade(UpgradeItem.Type.SILK_TOUCH)) {
             newTool.enchant(Enchantments.SILK_TOUCH, 1);
@@ -298,11 +291,6 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
     public void read(CompoundNBT tag) {
         super.read(tag);
         StackUtils.readItems(upgrades, 1, tag);
-    }
-
-    @Override
-    public ResourceLocation getId() {
-        return id;
     }
 
     @Override

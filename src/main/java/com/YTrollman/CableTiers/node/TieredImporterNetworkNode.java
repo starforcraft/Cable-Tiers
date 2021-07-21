@@ -7,7 +7,6 @@ import com.YTrollman.CableTiers.tileentity.TieredImporterTileEntity;
 import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.api.util.Action;
 import com.refinedmods.refinedstorage.api.util.IComparer;
-import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.inventory.fluid.FluidInventory;
 import com.refinedmods.refinedstorage.inventory.item.BaseItemHandler;
 import com.refinedmods.refinedstorage.inventory.item.UpgradeItemHandler;
@@ -23,7 +22,6 @@ import com.refinedmods.refinedstorage.util.WorldUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -32,7 +30,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-public class TieredImporterNetworkNode extends NetworkNode implements IComparable, IWhitelistBlacklist, IType {
+public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterNetworkNode> implements IComparable, IWhitelistBlacklist, IType {
 
     private static final String NBT_COMPARE = "Compare";
     private static final String NBT_MODE = "Mode";
@@ -41,9 +39,6 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
 
     private static final int BASE_SPEED = 9;
     private static final int SPEED_INCREASE = 2;
-
-    private final CableTier tier;
-    private final ResourceLocation id;
 
     private final BaseItemHandler itemFilters;
     private final FluidInventory fluidFilters;
@@ -57,9 +52,7 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
     private int currentSlot;
 
     public TieredImporterNetworkNode(World world, BlockPos pos, CableTier tier) {
-        super(world, pos);
-        this.tier = tier;
-        this.id = ContentType.IMPORTER.getId(tier);
+        super(world, pos, ContentType.IMPORTER, tier);
         this.itemFilters = new BaseItemHandler(tier.getSlots()).addListener(new NetworkNodeInventoryListener(this));
         this.fluidFilters = new FluidInventory(tier.getSlots()).addListener(new NetworkNodeFluidInventoryListener(this));
         this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
@@ -82,7 +75,7 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
             return;
         }
 
-        if (tier != CableTier.CREATIVE) {
+        if (getTier() != CableTier.CREATIVE) {
             int baseSpeed = BASE_SPEED / getSpeedMultiplier();
             int speed = Math.max(1, upgrades.getSpeed(baseSpeed, SPEED_INCREASE));
             if (speed > 1 && ticks % speed != 0) {
@@ -98,18 +91,18 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
     }
 
     private int getSpeedMultiplier() {
-        switch (tier) {
+        switch (getTier()) {
             case ELITE:
                 return CableConfig.ELITE_IMPORTER_SPEED.get();
             case ULTRA:
                 return CableConfig.ULTRA_IMPORTER_SPEED.get();
             default:
-                throw new RuntimeException("illegal tier " + tier);
+                throw new RuntimeException("illegal tier " + getTier());
         }
     }
 
     private boolean interactWithStacks() {
-        return tier != CableTier.ELITE || upgrades.hasUpgrade(UpgradeItem.Type.STACK);
+        return getTier() != CableTier.ELITE || upgrades.hasUpgrade(UpgradeItem.Type.STACK);
     }
 
     private void itemUpdate() {
@@ -127,7 +120,7 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
             currentSlot = 0;
         }
 
-        if (tier == CableTier.CREATIVE) {
+        if (getTier() == CableTier.CREATIVE) {
             while (doItemExtraction(handler)) {
             }
         } else {
@@ -179,7 +172,7 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
             currentSlot = 0;
         }
 
-        if (tier == CableTier.CREATIVE) {
+        if (getTier() == CableTier.CREATIVE) {
             while (doFluidExtraction(handler)) {
             }
         } else {
@@ -193,7 +186,7 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
         while (true) {
             FluidStack stack = handler.getFluidInTank(currentSlot);
             if (!stack.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack)) {
-                int interactionAmount = interactWithStacks() ? (tier == CableTier.CREATIVE ? stack.getAmount() : 64 * FluidAttributes.BUCKET_VOLUME) : FluidAttributes.BUCKET_VOLUME;
+                int interactionAmount = interactWithStacks() ? (getTier() == CableTier.CREATIVE ? stack.getAmount() : 64 * FluidAttributes.BUCKET_VOLUME) : FluidAttributes.BUCKET_VOLUME;
                 FluidStack toExtract = stack.copy();
                 toExtract.setAmount(interactionAmount);
 
@@ -246,11 +239,6 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
     public void setWhitelistBlacklistMode(int mode) {
         this.mode = mode;
         markDirty();
-    }
-
-    @Override
-    public ResourceLocation getId() {
-        return id;
     }
 
     @Override

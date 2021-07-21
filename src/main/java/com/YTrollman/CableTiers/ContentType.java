@@ -4,18 +4,12 @@ import com.YTrollman.CableTiers.blocks.TieredConstructorBlock;
 import com.YTrollman.CableTiers.blocks.TieredDestructorBlock;
 import com.YTrollman.CableTiers.blocks.TieredExporterBlock;
 import com.YTrollman.CableTiers.blocks.TieredImporterBlock;
-import com.YTrollman.CableTiers.container.TieredConstructorContainer;
-import com.YTrollman.CableTiers.container.TieredDestructorContainer;
-import com.YTrollman.CableTiers.container.TieredExporterContainer;
-import com.YTrollman.CableTiers.container.TieredImporterContainer;
+import com.YTrollman.CableTiers.container.*;
 import com.YTrollman.CableTiers.node.TieredConstructorNetworkNode;
 import com.YTrollman.CableTiers.node.TieredDestructorNetworkNode;
 import com.YTrollman.CableTiers.node.TieredExporterNetworkNode;
 import com.YTrollman.CableTiers.node.TieredImporterNetworkNode;
-import com.YTrollman.CableTiers.tileentity.TieredConstructorTileEntity;
-import com.YTrollman.CableTiers.tileentity.TieredDestructorTileEntity;
-import com.YTrollman.CableTiers.tileentity.TieredExporterTileEntity;
-import com.YTrollman.CableTiers.tileentity.TieredImporterTileEntity;
+import com.YTrollman.CableTiers.tileentity.*;
 import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
@@ -45,7 +39,7 @@ import java.util.function.Function;
 import static com.YTrollman.CableTiers.registry.RegistryHandler.*;
 
 @Mod.EventBusSubscriber(modid = CableTiers.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class ContentType<B extends BaseBlock, T extends BaseTile, C extends Container, N extends NetworkNode> {
+public class ContentType<B extends BaseBlock, T extends TieredTileEntity<N>, C extends TieredContainer<T, N>, N extends NetworkNode> {
 
     public static final ContentType<TieredImporterBlock, TieredImporterTileEntity, TieredImporterContainer, TieredImporterNetworkNode> IMPORTER = new ContentType<>(
             "importer",
@@ -134,8 +128,8 @@ public class ContentType<B extends BaseBlock, T extends BaseTile, C extends Cont
         return new ResourceLocation(CableTiers.MOD_ID, getName(tier));
     }
 
-    public C createContainer(int windowId, PlayerEntity player, T tile, CableTier tier) {
-        return containerFactory.create(windowId, player, tile, tier);
+    public C createContainer(int windowId, PlayerEntity player, T tile) {
+        return containerFactory.create(windowId, player, tile);
     }
 
     public N createNetworkNode(World world, BlockPos pos, CableTier tier) {
@@ -162,7 +156,7 @@ public class ContentType<B extends BaseBlock, T extends BaseTile, C extends Cont
                             return null;
                         }
 
-                        return createContainer(windowId, inv.player, (T) tile, tier);
+                        return createContainer(windowId, inv.player, (T) tile);
                     })
             ));
         }
@@ -182,7 +176,7 @@ public class ContentType<B extends BaseBlock, T extends BaseTile, C extends Cont
     @FunctionalInterface
     private interface ContainerFactory<T extends BaseTile, C extends Container> {
 
-        C create(int windowId, PlayerEntity player, T tile, CableTier tier);
+        C create(int windowId, PlayerEntity player, T tile);
 
     }
 

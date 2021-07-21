@@ -7,7 +7,6 @@ import com.YTrollman.CableTiers.tileentity.TieredConstructorTileEntity;
 import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.api.util.Action;
 import com.refinedmods.refinedstorage.api.util.IComparer;
-import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.inventory.fluid.FluidInventory;
 import com.refinedmods.refinedstorage.inventory.item.BaseItemHandler;
 import com.refinedmods.refinedstorage.inventory.item.UpgradeItemHandler;
@@ -29,7 +28,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
@@ -45,7 +43,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 
-public class TieredConstructorNetworkNode extends NetworkNode implements IComparable, IType {
+public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstructorNetworkNode> implements IComparable, IType {
 
     private static final String NBT_COMPARE = "Compare";
     private static final String NBT_TYPE = "Type";
@@ -54,9 +52,6 @@ public class TieredConstructorNetworkNode extends NetworkNode implements ICompar
 
     private static final int BASE_SPEED = 20;
     private static final int SPEED_INCREASE = 4;
-
-    private final CableTier tier;
-    private final ResourceLocation id;
 
     private final BaseItemHandler itemFilters;
     private final FluidInventory fluidFilters;
@@ -68,9 +63,7 @@ public class TieredConstructorNetworkNode extends NetworkNode implements ICompar
     private boolean drop = false;
 
     public TieredConstructorNetworkNode(World world, BlockPos pos, CableTier tier) {
-        super(world, pos);
-        this.tier = tier;
-        this.id = ContentType.CONSTRUCTOR.getId(tier);
+        super(world, pos, ContentType.CONSTRUCTOR, tier);
         this.itemFilters = new BaseItemHandler(1).addListener(new NetworkNodeInventoryListener(this));
         this.fluidFilters = new FluidInventory(1).addListener(new NetworkNodeFluidInventoryListener(this));
         this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, UpgradeItem.Type.CRAFTING)
@@ -91,7 +84,7 @@ public class TieredConstructorNetworkNode extends NetworkNode implements ICompar
             return;
         }
 
-        if (tier != CableTier.CREATIVE) {
+        if (getTier() != CableTier.CREATIVE) {
             int baseSpeed = BASE_SPEED / getSpeedMultiplier();
             int speed = Math.max(1, upgrades.getSpeed(baseSpeed, SPEED_INCREASE));
             if (speed > 1 && ticks % speed != 0) {
@@ -115,18 +108,18 @@ public class TieredConstructorNetworkNode extends NetworkNode implements ICompar
     }
 
     private int getSpeedMultiplier() {
-        switch (tier) {
+        switch (getTier()) {
             case ELITE:
                 return CableConfig.ELITE_CONSTRUCTOR_SPEED.get();
             case ULTRA:
                 return CableConfig.ULTRA_CONSTRUCTOR_SPEED.get();
             default:
-                throw new RuntimeException("illegal tier " + tier);
+                throw new RuntimeException("illegal tier " + getTier());
         }
     }
 
     private boolean interactWithStacks() {
-        return tier != CableTier.ELITE || upgrades.hasUpgrade(UpgradeItem.Type.STACK);
+        return getTier() != CableTier.ELITE || upgrades.hasUpgrade(UpgradeItem.Type.STACK);
     }
 
     private void extractAndPlaceFluid(FluidStack stack) {
@@ -207,11 +200,6 @@ public class TieredConstructorNetworkNode extends NetworkNode implements ICompar
     public void read(CompoundNBT tag) {
         super.read(tag);
         StackUtils.readItems(upgrades, 1, tag);
-    }
-
-    @Override
-    public ResourceLocation getId() {
-        return id;
     }
 
     @Override

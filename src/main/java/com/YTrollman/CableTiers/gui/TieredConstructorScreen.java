@@ -1,7 +1,7 @@
 package com.YTrollman.CableTiers.gui;
 
-import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.container.TieredConstructorContainer;
+import com.YTrollman.CableTiers.node.TieredConstructorNetworkNode;
 import com.YTrollman.CableTiers.tileentity.TieredConstructorTileEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.refinedmods.refinedstorage.RS;
@@ -17,14 +17,10 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
-public class TieredConstructorScreen extends BaseScreen<TieredConstructorContainer> {
+public class TieredConstructorScreen extends TieredScreen<TieredConstructorTileEntity, TieredConstructorContainer, TieredConstructorNetworkNode> {
 
     public TieredConstructorScreen(TieredConstructorContainer container, PlayerInventory inventory, ITextComponent title) {
         super(container, 211, 137, inventory, title);
-    }
-
-    public CableTier getTier() {
-        return getMenu().getTier();
     }
 
     @Override
@@ -36,10 +32,6 @@ public class TieredConstructorScreen extends BaseScreen<TieredConstructorContain
     }
 
     @Override
-    public void tick(int x, int y) {
-    }
-
-    @Override
     public void renderBackground(MatrixStack matrixStack, int x, int y, int mouseX, int mouseY) {
         bindTexture(RS.ID, "gui/constructor.png");
         blit(matrixStack, x, y, 0, 0, imageWidth, imageHeight);
@@ -48,7 +40,7 @@ public class TieredConstructorScreen extends BaseScreen<TieredConstructorContain
     @Override
     public void renderForeground(MatrixStack matrixStack, int mouseX, int mouseY) {
         renderString(matrixStack, 7, 7, title.getString());
-        renderString(matrixStack, 7, 43, I18n.get("container.inventory"));
+        renderString(matrixStack, 7, 42, I18n.get("container.inventory"));
     }
 
     private static class TieredConstructorDropSideButton extends SideButton {

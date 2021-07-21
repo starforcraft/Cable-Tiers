@@ -1,8 +1,8 @@
 package com.YTrollman.CableTiers.gui;
 
-import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.CableTiers;
 import com.YTrollman.CableTiers.container.TieredDestructorContainer;
+import com.YTrollman.CableTiers.node.TieredDestructorNetworkNode;
 import com.YTrollman.CableTiers.tileentity.TieredDestructorTileEntity;
 import com.YTrollman.CableTiers.util.MathUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -15,14 +15,10 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
-public class TieredDestructorScreen extends BaseScreen<TieredDestructorContainer> {
+public class TieredDestructorScreen extends TieredScreen<TieredDestructorTileEntity, TieredDestructorContainer, TieredDestructorNetworkNode> {
 
     public TieredDestructorScreen(TieredDestructorContainer container, PlayerInventory inventory, ITextComponent title) {
         super(container, 211, 119 + 18 * MathUtil.ceilDiv(container.getTier().getSlots(), 9), inventory, title);
-    }
-
-    public CableTier getTier() {
-        return getMenu().getTier();
     }
 
     @Override
@@ -32,10 +28,6 @@ public class TieredDestructorScreen extends BaseScreen<TieredDestructorContainer
         addSideButton(new WhitelistBlacklistSideButton(this, TieredDestructorTileEntity.WHITELIST_BLACKLIST));
         addSideButton(new ExactModeSideButton(this, TieredDestructorTileEntity.COMPARE));
         addSideButton(new TieredDestructorPickupSideButton(this));
-    }
-
-    @Override
-    public void tick(int x, int y) {
     }
 
     @Override
