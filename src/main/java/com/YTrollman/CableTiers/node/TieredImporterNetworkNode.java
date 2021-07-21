@@ -39,6 +39,9 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
     private static final String NBT_TYPE = "Type";
     private static final String NBT_FLUID_FILTERS = "FluidFilters";
 
+    private static final int BASE_SPEED = 9;
+    private static final int SPEED_INCREASE = 2;
+
     private final CableTier tier;
     private final ResourceLocation id;
 
@@ -75,12 +78,16 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
     public void update() {
         super.update();
 
-        if (!canUpdate() || !world.isLoaded(pos)) {
+        if (!canUpdate() || !world.isLoaded(pos) || !world.isLoaded(pos.relative(getDirection()))) {
             return;
         }
 
-        if (tier != CableTier.CREATIVE && ticks % upgrades.getSpeed() != 0) {
-            return;
+        if (tier != CableTier.CREATIVE) {
+            int baseSpeed = BASE_SPEED / getSpeedMultiplier();
+            int speed = Math.max(1, upgrades.getSpeed(baseSpeed, SPEED_INCREASE));
+            if (speed > 1 && ticks % speed != 0) {
+                return;
+            }
         }
 
         if (type == IType.ITEMS) {
@@ -124,12 +131,7 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
             while (doItemExtraction(handler)) {
             }
         } else {
-            int speedMultiplier = getSpeedMultiplier();
-            for (int i = 0; i < speedMultiplier; i++) {
-                if (!doItemExtraction(handler)) {
-                    return;
-                }
-            }
+            doItemExtraction(handler);
         }
     }
 
@@ -144,7 +146,7 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
                 ItemStack result = handler.extractItem(currentSlot, interactionCount, true);
                 if (!result.isEmpty()) {
                     int remaining = network.insertItem(result, result.getCount(), Action.SIMULATE).getCount();
-                    int inserted = interactionCount - remaining;
+                    int inserted = result.getCount() - remaining;
                     if (inserted > 0) {
                         result = handler.extractItem(currentSlot, inserted, false);
                         ItemStack actualRemainder = network.insertItemTracked(result, result.getCount());
@@ -181,12 +183,7 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
             while (doFluidExtraction(handler)) {
             }
         } else {
-            int speedMultiplier = getSpeedMultiplier();
-            for (int i = 0; i < speedMultiplier; i++) {
-                if (!doFluidExtraction(handler)) {
-                    return;
-                }
-            }
+            doFluidExtraction(handler);
         }
     }
 
@@ -196,14 +193,14 @@ public class TieredImporterNetworkNode extends NetworkNode implements IComparabl
         while (true) {
             FluidStack stack = handler.getFluidInTank(currentSlot);
             if (!stack.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack)) {
-                int interactionAmount = interactWithStacks() ? stack.getAmount() : FluidAttributes.BUCKET_VOLUME;
+                int interactionAmount = interactWithStacks() ? (tier == CableTier.CREATIVE ? stack.getAmount() : 64 * FluidAttributes.BUCKET_VOLUME) : FluidAttributes.BUCKET_VOLUME;
                 FluidStack toExtract = stack.copy();
                 toExtract.setAmount(interactionAmount);
 
                 FluidStack result = handler.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
                 if (!result.isEmpty()) {
                     int remaining = network.insertFluid(result, result.getAmount(), Action.SIMULATE).getAmount();
-                    int inserted = interactionAmount - remaining;
+                    int inserted = result.getAmount() - remaining;
                     if (inserted > 0) {
                         toExtract = stack.copy();
                         toExtract.setAmount(inserted);

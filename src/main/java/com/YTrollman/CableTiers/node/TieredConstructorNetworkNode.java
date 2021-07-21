@@ -53,6 +53,7 @@ public class TieredConstructorNetworkNode extends NetworkNode implements ICompar
     private static final String NBT_FLUID_FILTERS = "FluidFilters";
 
     private static final int BASE_SPEED = 20;
+    private static final int SPEED_INCREASE = 4;
 
     private final CableTier tier;
     private final ResourceLocation id;
@@ -92,7 +93,7 @@ public class TieredConstructorNetworkNode extends NetworkNode implements ICompar
 
         if (tier != CableTier.CREATIVE) {
             int baseSpeed = BASE_SPEED / getSpeedMultiplier();
-            int speed = Math.max(1, upgrades.getSpeed(baseSpeed, 4));
+            int speed = Math.max(1, upgrades.getSpeed(baseSpeed, SPEED_INCREASE));
             if (speed > 1 && ticks % speed != 0) {
                 return;
             }
@@ -126,10 +127,6 @@ public class TieredConstructorNetworkNode extends NetworkNode implements ICompar
 
     private boolean interactWithStacks() {
         return tier != CableTier.ELITE || upgrades.hasUpgrade(UpgradeItem.Type.STACK);
-    }
-
-    private int getInteractionSize(ItemStack stack) {
-        return interactWithStacks() ? stack.getMaxStackSize() : 1;
     }
 
     private void extractAndPlaceFluid(FluidStack stack) {
@@ -167,7 +164,8 @@ public class TieredConstructorNetworkNode extends NetworkNode implements ICompar
     }
 
     private void extractAndDropItem(ItemStack stack) {
-        ItemStack took = network.extractItem(stack, getInteractionSize(stack), compare, Action.PERFORM);
+        int interactionCount = interactWithStacks() ? stack.getMaxStackSize() : 1;
+        ItemStack took = network.extractItem(stack, interactionCount, compare, Action.PERFORM);
         if (!took.isEmpty()) {
             DefaultDispenseItemBehavior.spawnItem(world, took, 6, getDirection(), new Position(getDispensePositionX(), getDispensePositionY(), getDispensePositionZ()));
         } else if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {

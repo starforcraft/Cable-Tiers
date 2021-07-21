@@ -59,6 +59,7 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
     private static final String NBT_FLUID_FILTERS = "FluidFilters";
 
     private static final int BASE_SPEED = 20;
+    private static final int SPEED_INCREASE = 4;
 
     private final CableTier tier;
     private final ResourceLocation id;
@@ -105,7 +106,7 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
 
         if (tier != CableTier.CREATIVE) {
             int baseSpeed = BASE_SPEED / getSpeedMultiplier();
-            int speed = Math.max(1, upgrades.getSpeed(baseSpeed, 4));
+            int speed = Math.max(1, upgrades.getSpeed(baseSpeed, SPEED_INCREASE));
             if (speed > 1 && ticks % speed != 0) {
                 return;
             }

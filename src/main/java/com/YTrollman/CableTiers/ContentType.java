@@ -1,9 +1,21 @@
 package com.YTrollman.CableTiers;
 
-import com.YTrollman.CableTiers.blocks.*;
-import com.YTrollman.CableTiers.container.*;
-import com.YTrollman.CableTiers.node.*;
-import com.YTrollman.CableTiers.tileentity.*;
+import com.YTrollman.CableTiers.blocks.TieredConstructorBlock;
+import com.YTrollman.CableTiers.blocks.TieredDestructorBlock;
+import com.YTrollman.CableTiers.blocks.TieredExporterBlock;
+import com.YTrollman.CableTiers.blocks.TieredImporterBlock;
+import com.YTrollman.CableTiers.container.TieredConstructorContainer;
+import com.YTrollman.CableTiers.container.TieredDestructorContainer;
+import com.YTrollman.CableTiers.container.TieredExporterContainer;
+import com.YTrollman.CableTiers.container.TieredImporterContainer;
+import com.YTrollman.CableTiers.node.TieredConstructorNetworkNode;
+import com.YTrollman.CableTiers.node.TieredDestructorNetworkNode;
+import com.YTrollman.CableTiers.node.TieredExporterNetworkNode;
+import com.YTrollman.CableTiers.node.TieredImporterNetworkNode;
+import com.YTrollman.CableTiers.tileentity.TieredConstructorTileEntity;
+import com.YTrollman.CableTiers.tileentity.TieredDestructorTileEntity;
+import com.YTrollman.CableTiers.tileentity.TieredExporterTileEntity;
+import com.YTrollman.CableTiers.tileentity.TieredImporterTileEntity;
 import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
@@ -149,17 +161,21 @@ public class ContentType<B extends BaseBlock, T extends BaseTile, C extends Cont
         }
     }
 
+    private void registerContent() {
+        for (CableTier tier : CableTier.VALUES) {
+            API.instance().getNetworkNodeRegistry().add(getId(tier), (tag, world, pos) -> {
+                NetworkNode node = createNetworkNode(world, pos, tier);
+                node.read(tag);
+                return node;
+            });
+            getTileEntityType(tier).create().getDataManager().getParameters().forEach(TileDataManager::registerParameter);
+        }
+    }
+
     @SubscribeEvent
     public static void registerWithRS(FMLCommonSetupEvent event) {
-        for (CableTier tier : CableTier.VALUES) {
-            for (ContentType<?, ?, ?, ?> type : CONTENT_TYPES) {
-                API.instance().getNetworkNodeRegistry().add(type.getId(tier), (tag, world, pos) -> {
-                    NetworkNode node = type.createNetworkNode(world, pos, tier);
-                    node.read(tag);
-                    return node;
-                });
-                type.getTileEntityType(tier).create().getDataManager().getParameters().forEach(TileDataManager::registerParameter);
-            }
+        for (ContentType<?, ?, ?, ?> type : CONTENT_TYPES) {
+            type.registerContent();
         }
     }
 
