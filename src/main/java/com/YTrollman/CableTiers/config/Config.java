@@ -13,8 +13,9 @@ import java.io.File;
 @Mod.EventBusSubscriber(modid = CableTiers.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Config {
 
-    private static final ForgeConfigSpec.Builder client_builder = new ForgeConfigSpec.Builder();
     public static final ForgeConfigSpec client_config;
+
+    private static final ForgeConfigSpec.Builder client_builder = new ForgeConfigSpec.Builder();
 
     static {
         CableConfig.init(client_builder);
@@ -23,7 +24,7 @@ public class Config {
 
     public static void loadConfig(ForgeConfigSpec config, String path) {
         CableTiers.LOGGER.info("Loading config: " + path);
-        final CommentedFileConfig file = CommentedFileConfig.builder(new File(path)).sync().autosave().writingMode(WritingMode.REPLACE).build();
+        CommentedFileConfig file = CommentedFileConfig.builder(new File(path)).sync().autosave().writingMode(WritingMode.REPLACE).build();
         CableTiers.LOGGER.info("Built config: " + path);
         file.load();
         CableTiers.LOGGER.info("Loaded config: " + path);

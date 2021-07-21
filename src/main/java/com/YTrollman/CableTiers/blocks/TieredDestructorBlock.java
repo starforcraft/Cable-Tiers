@@ -26,8 +26,6 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-import javax.annotation.Nullable;
-
 public class TieredDestructorBlock extends CableBlock {
 
     private static final VoxelShape HEAD_NORTH = VoxelShapes.or(box(2, 2, 0, 14, 14, 2), HOLDER_NORTH);

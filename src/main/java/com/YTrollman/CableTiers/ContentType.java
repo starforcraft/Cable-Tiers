@@ -47,19 +47,19 @@ import static com.YTrollman.CableTiers.registry.RegistryHandler.*;
 @Mod.EventBusSubscriber(modid = CableTiers.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ContentType<B extends BaseBlock, T extends BaseTile, C extends Container, N extends NetworkNode> {
 
-    public static final ContentType<TieredExporterBlock, TieredExporterTileEntity, TieredExporterContainer, TieredExporterNetworkNode> EXPORTER = new ContentType<>(
-            "exporter",
-            TieredExporterBlock::new,
-            TieredExporterTileEntity::new,
-            TieredExporterContainer::new,
-            TieredExporterNetworkNode::new
-    );
     public static final ContentType<TieredImporterBlock, TieredImporterTileEntity, TieredImporterContainer, TieredImporterNetworkNode> IMPORTER = new ContentType<>(
             "importer",
             TieredImporterBlock::new,
             TieredImporterTileEntity::new,
             TieredImporterContainer::new,
             TieredImporterNetworkNode::new
+    );
+    public static final ContentType<TieredExporterBlock, TieredExporterTileEntity, TieredExporterContainer, TieredExporterNetworkNode> EXPORTER = new ContentType<>(
+            "exporter",
+            TieredExporterBlock::new,
+            TieredExporterTileEntity::new,
+            TieredExporterContainer::new,
+            TieredExporterNetworkNode::new
     );
     public static final ContentType<TieredConstructorBlock, TieredConstructorTileEntity, TieredConstructorContainer, TieredConstructorNetworkNode> CONSTRUCTOR = new ContentType<>(
             "constructor",
@@ -95,6 +95,19 @@ public class ContentType<B extends BaseBlock, T extends BaseTile, C extends Cont
         this.tileEntityFactory = tileEntityFactory;
         this.containerFactory = containerFactory;
         this.networkNodeFactory = networkNodeFactory;
+    }
+
+    public static void init() {
+        for (ContentType<?, ?, ?, ?> type : ContentType.CONTENT_TYPES) {
+            type.initContent();
+        }
+    }
+
+    @SubscribeEvent
+    public static void registerWithRS(FMLCommonSetupEvent event) {
+        for (ContentType<?, ?, ?, ?> type : CONTENT_TYPES) {
+            type.registerContent();
+        }
     }
 
     public B getBlock(CableTier tier) {
@@ -155,12 +168,6 @@ public class ContentType<B extends BaseBlock, T extends BaseTile, C extends Cont
         }
     }
 
-    public static void init() {
-        for (ContentType<?, ?, ?, ?> type : ContentType.CONTENT_TYPES) {
-            type.initContent();
-        }
-    }
-
     private void registerContent() {
         for (CableTier tier : CableTier.VALUES) {
             API.instance().getNetworkNodeRegistry().add(getId(tier), (tag, world, pos) -> {
@@ -169,13 +176,6 @@ public class ContentType<B extends BaseBlock, T extends BaseTile, C extends Cont
                 return node;
             });
             getTileEntityType(tier).create().getDataManager().getParameters().forEach(TileDataManager::registerParameter);
-        }
-    }
-
-    @SubscribeEvent
-    public static void registerWithRS(FMLCommonSetupEvent event) {
-        for (ContentType<?, ?, ?, ?> type : CONTENT_TYPES) {
-            type.registerContent();
         }
     }
 
