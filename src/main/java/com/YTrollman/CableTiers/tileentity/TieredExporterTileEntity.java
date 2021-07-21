@@ -18,7 +18,7 @@ public class TieredExporterTileEntity extends NetworkNodeTile<TieredExporterNetw
     private final CableTier tier;
 
     public TieredExporterTileEntity(CableTier tier) {
-        super(ContentType.IMPORTER.getTileEntityType(tier));
+        super(ContentType.EXPORTER.getTileEntityType(tier));
         this.tier = tier;
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(TYPE);

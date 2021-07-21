@@ -44,9 +44,6 @@ public class TieredExporterNetworkNode extends NetworkNode implements IComparabl
     private final CableTier tier;
     private final ResourceLocation id;
 
-    private final int faster = 2;
-    private static final int SLOTS = 36;
-
     private final BaseItemHandler itemFilters;
     private final FluidInventory fluidFilters;
 
@@ -61,8 +58,8 @@ public class TieredExporterNetworkNode extends NetworkNode implements IComparabl
         super(world, pos);
         this.tier = tier;
         this.id = ContentType.IMPORTER.getId(tier);
-        this.itemFilters = new BaseItemHandler(SLOTS).addListener(new NetworkNodeInventoryListener(this));
-        this.fluidFilters = new FluidInventory(SLOTS).addListener(new NetworkNodeFluidInventoryListener(this));
+        this.itemFilters = new BaseItemHandler(tier.getSlots()).addListener(new NetworkNodeInventoryListener(this));
+        this.fluidFilters = new FluidInventory(tier.getSlots()).addListener(new NetworkNodeFluidInventoryListener(this));
         this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
                 4,
                 tier == CableTier.ELITE ?
@@ -109,9 +106,9 @@ public class TieredExporterNetworkNode extends NetworkNode implements IComparabl
     private int getSpeedMultiplier() {
         switch (tier) {
             case ELITE:
-                return CableConfig.ELITE_IMPORTER_SPEED.get();
+                return CableConfig.ELITE_EXPORTER_SPEED.get();
             case ULTRA:
-                return CableConfig.ULTRA_IMPORTER_SPEED.get();
+                return CableConfig.ULTRA_EXPORTER_SPEED.get();
             default:
                 throw new RuntimeException("illegal tier " + tier);
         }
