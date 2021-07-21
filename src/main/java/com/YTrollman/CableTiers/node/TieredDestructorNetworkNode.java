@@ -72,6 +72,7 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
     private int mode = IWhitelistBlacklist.BLACKLIST;
     private int type = IType.ITEMS;
     private boolean pickupItem = false;
+
     private ItemStack tool;
 
     public TieredDestructorNetworkNode(World world, BlockPos pos, CableTier tier) {

@@ -1,13 +1,9 @@
 package com.YTrollman.CableTiers;
 
-import com.YTrollman.CableTiers.blocks.TieredDestructorBlock;
-import com.YTrollman.CableTiers.blocks.TieredImporterBlock;
-import com.YTrollman.CableTiers.container.TieredDestructorContainer;
-import com.YTrollman.CableTiers.container.TieredImporterContainer;
-import com.YTrollman.CableTiers.node.TieredDestructorNetworkNode;
-import com.YTrollman.CableTiers.node.TieredImporterNetworkNode;
-import com.YTrollman.CableTiers.tileentity.TieredDestructorTileEntity;
-import com.YTrollman.CableTiers.tileentity.TieredImporterTileEntity;
+import com.YTrollman.CableTiers.blocks.*;
+import com.YTrollman.CableTiers.container.*;
+import com.YTrollman.CableTiers.node.*;
+import com.YTrollman.CableTiers.tileentity.*;
 import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
@@ -39,12 +35,26 @@ import static com.YTrollman.CableTiers.registry.RegistryHandler.*;
 @Mod.EventBusSubscriber(modid = CableTiers.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ContentType<B extends BaseBlock, T extends BaseTile, C extends Container, N extends NetworkNode> {
 
+    public static final ContentType<TieredExporterBlock, TieredExporterTileEntity, TieredExporterContainer, TieredExporterNetworkNode> EXPORTER = new ContentType<>(
+            "exporter",
+            TieredExporterBlock::new,
+            TieredExporterTileEntity::new,
+            TieredExporterContainer::new,
+            TieredExporterNetworkNode::new
+    );
     public static final ContentType<TieredImporterBlock, TieredImporterTileEntity, TieredImporterContainer, TieredImporterNetworkNode> IMPORTER = new ContentType<>(
             "importer",
             TieredImporterBlock::new,
             TieredImporterTileEntity::new,
             TieredImporterContainer::new,
             TieredImporterNetworkNode::new
+    );
+    public static final ContentType<TieredConstructorBlock, TieredConstructorTileEntity, TieredConstructorContainer, TieredConstructorNetworkNode> CONSTRUCTOR = new ContentType<>(
+            "constructor",
+            TieredConstructorBlock::new,
+            TieredConstructorTileEntity::new,
+            TieredConstructorContainer::new,
+            TieredConstructorNetworkNode::new
     );
     public static final ContentType<TieredDestructorBlock, TieredDestructorTileEntity, TieredDestructorContainer, TieredDestructorNetworkNode> DESTRUCTOR = new ContentType<>(
             "destructor",
@@ -54,7 +64,7 @@ public class ContentType<B extends BaseBlock, T extends BaseTile, C extends Cont
             TieredDestructorNetworkNode::new
     );
 
-    public static final ContentType<?, ?, ?, ?>[] CONTENT_TYPES = { IMPORTER, DESTRUCTOR };
+    public static final ContentType<?, ?, ?, ?>[] CONTENT_TYPES = { EXPORTER, IMPORTER, CONSTRUCTOR, DESTRUCTOR };
 
     private final Map<CableTier, RegistryObject<B>> blocks = new EnumMap<>(CableTier.class);
     private final Map<CableTier, RegistryObject<Item>> items = new EnumMap<>(CableTier.class);
@@ -62,36 +72,17 @@ public class ContentType<B extends BaseBlock, T extends BaseTile, C extends Cont
     private final Map<CableTier, RegistryObject<ContainerType<C>>> containerTypes = new EnumMap<>(CableTier.class);
 
     private final String name;
+    private final Function<CableTier, B> blockFactory;
+    private final Function<CableTier, T> tileEntityFactory;
     private final ContainerFactory<T, C> containerFactory;
     private final NetworkNodeFactory<N> networkNodeFactory;
 
     private ContentType(String name, Function<CableTier, B> blockFactory, Function<CableTier, T> tileEntityFactory, ContainerFactory<T, C> containerFactory, NetworkNodeFactory<N> networkNodeFactory) {
         this.name = name;
+        this.blockFactory = blockFactory;
+        this.tileEntityFactory = tileEntityFactory;
         this.containerFactory = containerFactory;
         this.networkNodeFactory = networkNodeFactory;
-        for (CableTier tier : CableTier.VALUES) {
-            String id = getName(tier);
-            blocks.put(tier, BLOCKS.register(id, () -> blockFactory.apply(tier)));
-            items.put(tier, ITEMS.register(id, () -> new BaseBlockItem(getBlock(tier), new Item.Properties().tab(RS.MAIN_GROUP))));
-            tileEntityTypes.put(tier, TILE_ENTITY_TYPES.register(id, () -> TileEntityType.Builder.of(() -> tileEntityFactory.apply(tier), getBlock(tier)).build(null)));
-            containerTypes.put(tier, CONTAINER_TYPES.register(id, () -> IForgeContainerType.create((windowId, inv, data) -> {
-                        BlockPos pos = data.readBlockPos();
-                        TileEntity tile = inv.player.getCommandSenderWorld().getBlockEntity(pos);
-                        if (tile == null) {
-                            CableTiers.LOGGER.error("Expected tile entity of type " + id + ", but found none");
-                            return null;
-                        }
-
-                        TileEntityType<T> tileEntityType = getTileEntityType(tier);
-                        if (tile.getType() != tileEntityType) {
-                            CableTiers.LOGGER.error("Wrong type of tile entity, expected " + tileEntityType.getRegistryName() + ", but got " + tile.getType().getRegistryName());
-                            return null;
-                        }
-
-                        return createContainer(windowId, inv.player, (T) tile, tier);
-                    })
-            ));
-        }
     }
 
     public B getBlock(CableTier tier) {
@@ -126,8 +117,36 @@ public class ContentType<B extends BaseBlock, T extends BaseTile, C extends Cont
         return networkNodeFactory.create(world, pos, tier);
     }
 
+    private void initContent() {
+        for (CableTier tier : CableTier.VALUES) {
+            String id = getName(tier);
+            blocks.put(tier, BLOCKS.register(id, () -> blockFactory.apply(tier)));
+            items.put(tier, ITEMS.register(id, () -> new BaseBlockItem(getBlock(tier), new Item.Properties().tab(RS.MAIN_GROUP))));
+            tileEntityTypes.put(tier, TILE_ENTITY_TYPES.register(id, () -> TileEntityType.Builder.of(() -> tileEntityFactory.apply(tier), getBlock(tier)).build(null)));
+            containerTypes.put(tier, CONTAINER_TYPES.register(id, () -> IForgeContainerType.create((windowId, inv, data) -> {
+                        BlockPos pos = data.readBlockPos();
+                        TileEntity tile = inv.player.getCommandSenderWorld().getBlockEntity(pos);
+                        if (tile == null) {
+                            CableTiers.LOGGER.error("Expected tile entity of type " + id + ", but found none");
+                            return null;
+                        }
+
+                        TileEntityType<T> tileEntityType = getTileEntityType(tier);
+                        if (tile.getType() != tileEntityType) {
+                            CableTiers.LOGGER.error("Wrong type of tile entity, expected " + tileEntityType.getRegistryName() + ", but got " + tile.getType().getRegistryName());
+                            return null;
+                        }
+
+                        return createContainer(windowId, inv.player, (T) tile, tier);
+                    })
+            ));
+        }
+    }
+
     public static void init() {
-        // NO-OP, for class loading purposes
+        for (ContentType<?, ?, ?, ?> type : ContentType.CONTENT_TYPES) {
+            type.initContent();
+        }
     }
 
     @SubscribeEvent

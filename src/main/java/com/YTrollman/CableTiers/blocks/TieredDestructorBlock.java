@@ -49,7 +49,6 @@ public class TieredDestructorBlock extends CableBlock {
         return BlockDirection.ANY;
     }
 
-    @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return ContentType.DESTRUCTOR.getTileEntityType(tier).create();

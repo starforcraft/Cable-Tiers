@@ -22,7 +22,6 @@ public class TieredImporterTileEntity extends NetworkNodeTile<TieredImporterNetw
     public TieredImporterTileEntity(CableTier tier) {
         super(ContentType.IMPORTER.getTileEntityType(tier));
         this.tier = tier;
-
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(WHITELIST_BLACKLIST);
         dataManager.addWatchedParameter(TYPE);

@@ -52,7 +52,7 @@ public class TieredDestructorScreen extends BaseScreen<TieredDestructorContainer
 
     private static class TieredDestructorPickupSideButton extends SideButton {
 
-        public TieredDestructorPickupSideButton(BaseScreen<?> screen) {
+        private TieredDestructorPickupSideButton(BaseScreen<?> screen) {
             super(screen);
         }
 

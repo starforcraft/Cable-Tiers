@@ -4,8 +4,6 @@ import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.CableTiers;
 import com.YTrollman.CableTiers.ContentType;
 import com.YTrollman.CableTiers.gui.*;
-import com.YTrollman.CableTiers.registry.ModBlocks;
-import com.YTrollman.CableTiers.registry.ModContainers;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
@@ -24,22 +22,10 @@ public class ClientEventHandler {
                 RenderTypeLookup.setRenderLayer(type.getBlock(tier), RenderType.cutout());
             }
 
+            ScreenManager.register(ContentType.EXPORTER.getContainerType(tier), TieredExporterScreen::new);
             ScreenManager.register(ContentType.IMPORTER.getContainerType(tier), TieredImporterScreen::new);
+            ScreenManager.register(ContentType.CONSTRUCTOR.getContainerType(tier), TieredConstructorScreen::new);
             ScreenManager.register(ContentType.DESTRUCTOR.getContainerType(tier), TieredDestructorScreen::new);
         }
-
-        ScreenManager.register(ModContainers.ELITE_CONSTRUCTOR_CONTAINER.get(), EliteConstructorScreen::new);
-        ScreenManager.register(ModContainers.ELITE_EXPORTER_CONTAINER.get(), EliteExporterScreen::new);
-        ScreenManager.register(ModContainers.ULTRA_CONSTRUCTOR_CONTAINER.get(), UltraConstructorScreen::new);
-        ScreenManager.register(ModContainers.ULTRA_EXPORTER_CONTAINER.get(), UltraExporterScreen::new);
-        ScreenManager.register(ModContainers.CREATIVE_CONSTRUCTOR_CONTAINER.get(), CreativeConstructorScreen::new);
-        ScreenManager.register(ModContainers.CREATIVE_EXPORTER_CONTAINER.get(), CreativeExporterScreen::new);
-
-        RenderTypeLookup.setRenderLayer(ModBlocks.ELITE_CONSTRUCTOR.get(), RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.ELITE_EXPORTER.get(), RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.ULTRA_CONSTRUCTOR.get(), RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.ULTRA_EXPORTER.get(), RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.CREATIVE_CONSTRUCTOR.get(), RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.CREATIVE_EXPORTER.get(), RenderType.cutout());
     }
 }

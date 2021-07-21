@@ -29,7 +29,6 @@ public class TieredDestructorTileEntity extends NetworkNodeTile<TieredDestructor
     public TieredDestructorTileEntity(CableTier tier) {
         super(ContentType.DESTRUCTOR.getTileEntityType(tier));
         this.tier = tier;
-
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(WHITELIST_BLACKLIST);
         dataManager.addWatchedParameter(TYPE);
