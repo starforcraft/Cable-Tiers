@@ -5,10 +5,7 @@ import com.YTrollman.CableTiers.blocks.TieredDestructorBlock;
 import com.YTrollman.CableTiers.blocks.TieredExporterBlock;
 import com.YTrollman.CableTiers.blocks.TieredImporterBlock;
 import com.YTrollman.CableTiers.container.*;
-import com.YTrollman.CableTiers.node.TieredConstructorNetworkNode;
-import com.YTrollman.CableTiers.node.TieredDestructorNetworkNode;
-import com.YTrollman.CableTiers.node.TieredExporterNetworkNode;
-import com.YTrollman.CableTiers.node.TieredImporterNetworkNode;
+import com.YTrollman.CableTiers.node.*;
 import com.YTrollman.CableTiers.tileentity.*;
 import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.apiimpl.API;
@@ -39,7 +36,7 @@ import java.util.function.Function;
 import static com.YTrollman.CableTiers.registry.RegistryHandler.*;
 
 @Mod.EventBusSubscriber(modid = CableTiers.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class ContentType<B extends BaseBlock, T extends TieredTileEntity<N>, C extends TieredContainer<T, N>, N extends NetworkNode> {
+public class ContentType<B extends BaseBlock, T extends TieredTileEntity<N>, C extends TieredContainer<T, N>, N extends TieredNetworkNode<N>> {
 
     public static final ContentType<TieredImporterBlock, TieredImporterTileEntity, TieredImporterContainer, TieredImporterNetworkNode> IMPORTER = new ContentType<>(
             "importer",

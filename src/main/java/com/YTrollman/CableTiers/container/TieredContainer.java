@@ -2,8 +2,8 @@ package com.YTrollman.CableTiers.container;
 
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
+import com.YTrollman.CableTiers.node.TieredNetworkNode;
 import com.YTrollman.CableTiers.tileentity.TieredTileEntity;
-import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.container.BaseContainer;
 import com.refinedmods.refinedstorage.container.slot.filter.FilterSlot;
 import com.refinedmods.refinedstorage.container.slot.filter.FluidFilterSlot;
@@ -13,7 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class TieredContainer<T extends TieredTileEntity<N>, N extends NetworkNode> extends BaseContainer {
+public class TieredContainer<T extends TieredTileEntity<N>, N extends TieredNetworkNode<N>> extends BaseContainer {
 
     private final ContentType<?, T, ? extends TieredContainer<T, N>, N> contentType;
 

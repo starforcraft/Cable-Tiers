@@ -3,13 +3,13 @@ package com.YTrollman.CableTiers.gui;
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
 import com.YTrollman.CableTiers.container.TieredContainer;
+import com.YTrollman.CableTiers.node.TieredNetworkNode;
 import com.YTrollman.CableTiers.tileentity.TieredTileEntity;
-import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.screen.BaseScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 
-public abstract class TieredScreen<T extends TieredTileEntity<N>, C extends TieredContainer<T, N>, N extends NetworkNode> extends BaseScreen<C> {
+public abstract class TieredScreen<T extends TieredTileEntity<N>, C extends TieredContainer<T, N>, N extends TieredNetworkNode<N>> extends BaseScreen<C> {
 
     protected TieredScreen(C container, int xSize, int ySize, PlayerInventory inventory, ITextComponent title) {
         super(container, xSize, ySize, inventory, title);

@@ -2,8 +2,8 @@ package com.YTrollman.CableTiers.blocks;
 
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
+import com.YTrollman.CableTiers.node.TieredNetworkNode;
 import com.YTrollman.CableTiers.tileentity.TieredTileEntity;
-import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.block.BlockDirection;
 import com.refinedmods.refinedstorage.block.CableBlock;
 import com.refinedmods.refinedstorage.block.shape.ShapeCache;
@@ -27,18 +27,18 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-public abstract class TieredCableBlock<T extends TieredTileEntity<N>, N extends NetworkNode> extends CableBlock {
+public abstract class TieredCableBlock<T extends TieredTileEntity<N>, N extends TieredNetworkNode<N>> extends CableBlock {
 
-    private final ContentType<?, T, ?, N> contentType;
+    private final ContentType<? extends TieredCableBlock<T, N>, T, ?, N> contentType;
     private final CableTier tier;
 
-    protected TieredCableBlock(ContentType<?, T, ?, N> contentType, CableTier tier) {
+    protected TieredCableBlock(ContentType<? extends TieredCableBlock<T, N>, T, ?, N> contentType, CableTier tier) {
         super(BlockUtils.DEFAULT_GLASS_PROPERTIES);
         this.contentType = contentType;
         this.tier = tier;
     }
 
-    public ContentType<?, T, ?, N> getContentType() {
+    public ContentType<? extends TieredCableBlock<T, N>, T, ?, N> getContentType() {
         return contentType;
     }
 
