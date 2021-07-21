@@ -151,7 +151,9 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
                     entity.setItem(remaining);
                 }
 
-                break;
+                if (tier != CableTier.CREATIVE) {
+                    break;
+                }
             }
         }
     }
