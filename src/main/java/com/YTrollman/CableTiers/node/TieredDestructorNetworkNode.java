@@ -47,6 +47,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TieredDestructorNetworkNode extends NetworkNode implements IComparable, IWhitelistBlacklist, IType {
@@ -133,7 +134,9 @@ public class TieredDestructorNetworkNode extends NetworkNode implements ICompara
 
     private void pickupItems() {
         BlockPos front = pos.relative(getDirection());
-        for (ItemEntity entity : world.getEntitiesOfClass(ItemEntity.class, new AxisAlignedBB(front), EntityPredicates.ENTITY_STILL_ALIVE)) {
+        List<ItemEntity> droppedItems = new ArrayList<>();
+        world.getChunkAt(front).getEntitiesOfClass(ItemEntity.class, new AxisAlignedBB(front), droppedItems, EntityPredicates.ENTITY_STILL_ALIVE);
+        for (ItemEntity entity : droppedItems) {
             ItemStack droppedItem = entity.getItem();
             if (droppedItem.isEmpty() || !IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, droppedItem)) {
                 continue;
