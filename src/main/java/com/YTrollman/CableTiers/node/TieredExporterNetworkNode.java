@@ -55,9 +55,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
         this.fluidFilters = new FluidInventory(tier.getSlots()).addListener(new NetworkNodeFluidInventoryListener(this));
         this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
                 4,
-                tier == CableTier.ELITE ?
-                        new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.STACK, UpgradeItem.Type.REGULATOR } :
-                        new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR }
+                CheckTierUpgrade(tier)
         )
                 .addListener(new NetworkNodeInventoryListener(this))
                 .addListener((handler, slot, reading) ->
@@ -88,6 +86,23 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
                         }
                     }
                 });
+    }
+
+    private UpgradeItem.Type[] CheckTierUpgrade(CableTier tier)
+    {
+        if(tier == CableTier.ELITE)
+        {
+            return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR };
+        }
+        else if(tier == CableTier.ULTRA)
+        {
+            return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR };
+        }
+        else if(tier == CableTier.CREATIVE)
+        {
+            return new UpgradeItem.Type[] { UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR };
+        }
+        return null;
     }
 
     @Override

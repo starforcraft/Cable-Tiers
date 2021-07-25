@@ -77,7 +77,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
         this.fluidFilters = new FluidInventory(tier.getSlots()).addListener(new NetworkNodeFluidInventoryListener(this));
         this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
                 4,
-                tier == CableTier.CREATIVE ? new UpgradeItem.Type[] {} : new UpgradeItem.Type[] { UpgradeItem.Type.SILK_TOUCH, UpgradeItem.Type.FORTUNE_1, UpgradeItem.Type.FORTUNE_2, UpgradeItem.Type.FORTUNE_3 })
+                new UpgradeItem.Type[] { UpgradeItem.Type.SILK_TOUCH, UpgradeItem.Type.FORTUNE_1, UpgradeItem.Type.FORTUNE_2, UpgradeItem.Type.FORTUNE_3 })
                 .addListener(new NetworkNodeInventoryListener(this))
                 .addListener((handler, slot, reading) -> tool = createTool());
         this.tool = createTool();
