@@ -65,15 +65,15 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
     public int getEnergyUsage() {
         if(getTier() == CableTier.ELITE)
         {
-            return (4 * CableConfig.ELITE_ENERGY_COST.get()) * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage());
+            return (4 * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ELITE_ENERGY_COST.get();
         }
         else if(getTier() == CableTier.ULTRA)
         {
-            return (4 * CableConfig.ULTRA_ENERGY_COST.get()) * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage());
+            return (4 * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ULTRA_ENERGY_COST.get();
         }
         else if(getTier() == CableTier.CREATIVE)
         {
-            return (4 * CableConfig.CREATIVE_ENERGY_COST.get()) * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage());
+            return (4 * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage())) * CableConfig.CREATIVE_ENERGY_COST.get();
         }
         return 0;
     }
