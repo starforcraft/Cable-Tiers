@@ -33,6 +33,12 @@ repositories {
         name = "RS maven"
         url = "https://repo.refinedmods.com"
     }
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 version = "${mod_version}"
@@ -132,6 +138,8 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.5:${jei_version}")
 
     implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
+
+    implementation fg.deobf("curse.maven:spark-361579:3337641")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
