@@ -55,7 +55,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
         this.fluidFilters = new FluidInventory(tier.getSlots()).addListener(new NetworkNodeFluidInventoryListener(this));
         this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
                 4,
-                CheckTierUpgrade(tier)
+                CheckTierUpgrade()
         )
                 .addListener(new NetworkNodeInventoryListener(this))
                 .addListener((handler, slot, reading) ->
@@ -88,17 +88,17 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
                 });
     }
 
-    private UpgradeItem.Type[] CheckTierUpgrade(CableTier tier)
+    private UpgradeItem.Type[] CheckTierUpgrade()
     {
-        if(tier == CableTier.ELITE)
+        if(getTier() == CableTier.ELITE)
         {
             return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR };
         }
-        else if(tier == CableTier.ULTRA)
+        else if(getTier() == CableTier.ULTRA)
         {
             return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR };
         }
-        else if(tier == CableTier.CREATIVE)
+        else if(getTier() == CableTier.CREATIVE)
         {
             return new UpgradeItem.Type[] { UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR };
         }
@@ -107,8 +107,19 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
 
     @Override
     public int getEnergyUsage() {
-        // TODO: change energy cost for higher tiers (wasn't implemented before)
-        return 4 * (RS.SERVER_CONFIG.getExporter().getUsage() + upgrades.getEnergyUsage());
+        if(getTier() == CableTier.ELITE)
+        {
+            return (4 * CableConfig.ELITE_ENERGY_COST.get()) * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage());
+        }
+        else if(getTier() == CableTier.ULTRA)
+        {
+            return (4 * CableConfig.ULTRA_ENERGY_COST.get()) * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage());
+        }
+        else if(getTier() == CableTier.CREATIVE)
+        {
+            return (4 * CableConfig.CREATIVE_ENERGY_COST.get()) * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage());
+        }
+        return 0;
     }
 
     private int getSpeedMultiplier() {

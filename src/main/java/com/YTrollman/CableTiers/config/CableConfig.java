@@ -9,11 +9,15 @@ public class CableConfig {
     public static ForgeConfigSpec.IntValue ELITE_IMPORTER_SPEED;
     public static ForgeConfigSpec.IntValue ELITE_CONSTRUCTOR_SPEED;
     public static ForgeConfigSpec.IntValue ELITE_DESTRUCTOR_SPEED;
+    public static ForgeConfigSpec.IntValue ELITE_ENERGY_COST;
 
     public static ForgeConfigSpec.IntValue ULTRA_EXPORTER_SPEED;
     public static ForgeConfigSpec.IntValue ULTRA_IMPORTER_SPEED;
     public static ForgeConfigSpec.IntValue ULTRA_CONSTRUCTOR_SPEED;
     public static ForgeConfigSpec.IntValue ULTRA_DESTRUCTOR_SPEED;
+    public static ForgeConfigSpec.IntValue ULTRA_ENERGY_COST;
+
+    public static ForgeConfigSpec.IntValue CREATIVE_ENERGY_COST;
 
     public static void init(ForgeConfigSpec.Builder client) {
         client.comment("Cable Tiers Options");
@@ -30,6 +34,9 @@ public class CableConfig {
         ELITE_DESTRUCTOR_SPEED = client
                 .comment("\nElite Destructor Speed")
                 .defineInRange("elitedestructorspeed", CableTier.ELITE.getDefaultSpeedMultiplier(), 1, 20);
+        ELITE_ENERGY_COST = client
+                .comment("\nElite Energy Cost Multiplier")
+                .defineInRange("eliteenergycost", 2, 0, Integer.MAX_VALUE);
 
         ULTRA_EXPORTER_SPEED = client
                 .comment("\nUltra Exporter Speed")
@@ -43,5 +50,12 @@ public class CableConfig {
         ULTRA_DESTRUCTOR_SPEED = client
                 .comment("\nUltra Destructor Speed")
                 .defineInRange("ultradestructorspeed", CableTier.ULTRA.getDefaultSpeedMultiplier(), 1, 20);
+        ULTRA_ENERGY_COST = client
+                .comment("\nUltra Energy Cost Multiplier")
+                .defineInRange("ultraenergycost", 4, 0, Integer.MAX_VALUE);
+
+        CREATIVE_ENERGY_COST = client
+                .comment("\nCreative Energy Cost Multiplier")
+                .defineInRange("creativeenergycost", 0, 0, Integer.MAX_VALUE);
     }
 }

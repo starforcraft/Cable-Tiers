@@ -72,8 +72,19 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
 
     @Override
     public int getEnergyUsage() {
-        // TODO: change energy cost for higher tiers (wasn't implemented before)
-        return 4 * (RS.SERVER_CONFIG.getConstructor().getUsage() + upgrades.getEnergyUsage());
+        if(getTier() == CableTier.ELITE)
+        {
+            return (4 * CableConfig.ELITE_ENERGY_COST.get()) * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage());
+        }
+        else if(getTier() == CableTier.ULTRA)
+        {
+            return (4 * CableConfig.ULTRA_ENERGY_COST.get()) * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage());
+        }
+        else if(getTier() == CableTier.CREATIVE)
+        {
+            return (4 * CableConfig.CREATIVE_ENERGY_COST.get()) * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage());
+        }
+        return 0;
     }
 
     @Override
