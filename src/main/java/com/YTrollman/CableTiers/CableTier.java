@@ -2,20 +2,20 @@ package com.YTrollman.CableTiers;
 
 public enum CableTier {
 
-    ELITE("elite", 2, 18),
-    ULTRA("ultra", 6, 36),
-    CREATIVE("creative", -1, 54);
+    ELITE("elite", 2, 2),
+    ULTRA("ultra", 6, 4),
+    CREATIVE("creative", -1, 6);
 
     public static final CableTier[] VALUES = values();
 
     private final String name;
     private final int defaultSpeedMultiplier;
-    private final int slots;
+    private final int slotsMultiplier;
 
-    CableTier(String name, int defaultSpeedMultiplier, int slots) {
+    CableTier(String name, int defaultSpeedMultiplier, int slotsMultiplier) {
         this.name = name;
         this.defaultSpeedMultiplier = defaultSpeedMultiplier;
-        this.slots = slots;
+        this.slotsMultiplier = slotsMultiplier;
     }
 
     public String getName() {
@@ -26,7 +26,7 @@ public enum CableTier {
         return defaultSpeedMultiplier;
     }
 
-    public int getSlots() {
-        return slots;
+    public int getSlotsMultiplier() {
+        return slotsMultiplier;
     }
 }

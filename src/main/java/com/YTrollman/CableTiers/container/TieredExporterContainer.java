@@ -43,7 +43,7 @@ public class TieredExporterContainer extends TieredContainer<TieredExporterTileE
     private void initSlots() {
         addUpgradeSlots(getNode().getUpgrades());
         addFilterSlots(getNode().getItemFilters(), hasRegulatorMode ? FilterSlot.FILTER_ALLOW_SIZE : 0, getNode().getFluidFilters(), hasRegulatorMode ? FluidFilterSlot.FILTER_ALLOW_SIZE : 0, getNode());
-        addPlayerInventory(8, 37 + 18 * MathUtil.ceilDiv(getTier().getSlots(), 9));
+        addPlayerInventory(8, 37 + 18 * MathUtil.ceilDiv(9 * getTier().getSlotsMultiplier(), 9));
 
         transferManager.addBiTransfer(getPlayer().inventory, getNode().getUpgrades());
         transferManager.addFilterTransfer(getPlayer().inventory, getNode().getItemFilters(), getNode().getFluidFilters(), getNode()::getType);

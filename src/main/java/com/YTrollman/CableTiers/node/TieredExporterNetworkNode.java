@@ -51,8 +51,8 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
 
     public TieredExporterNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.EXPORTER, tier);
-        this.itemFilters = new BaseItemHandler(tier.getSlots()).addListener(new NetworkNodeInventoryListener(this));
-        this.fluidFilters = new FluidInventory(tier.getSlots()).addListener(new NetworkNodeFluidInventoryListener(this));
+        this.itemFilters = new BaseItemHandler(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
+        this.fluidFilters = new FluidInventory(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
         this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
                 4,
                 CheckTierUpgrade()

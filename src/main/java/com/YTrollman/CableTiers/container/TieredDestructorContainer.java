@@ -16,7 +16,7 @@ public class TieredDestructorContainer extends TieredContainer<TieredDestructorT
     private void initSlots() {
         addUpgradeSlots(getNode().getUpgrades());
         addFilterSlots(getNode().getItemFilters(), getNode().getFluidFilters(), getNode());
-        addPlayerInventory(8, 37 + 18 * MathUtil.ceilDiv(getTier().getSlots(), 9));
+        addPlayerInventory(8, 37 + 18 * MathUtil.ceilDiv(9 * getTier().getSlotsMultiplier(), 9));
 
         transferManager.addBiTransfer(getPlayer().inventory, getNode().getUpgrades());
         transferManager.addFilterTransfer(getPlayer().inventory, getNode().getItemFilters(), getNode().getFluidFilters(), getNode()::getType);

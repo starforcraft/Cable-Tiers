@@ -18,7 +18,7 @@ import net.minecraft.util.text.TextFormatting;
 public class TieredDestructorScreen extends TieredScreen<TieredDestructorTileEntity, TieredDestructorContainer, TieredDestructorNetworkNode> {
 
     public TieredDestructorScreen(TieredDestructorContainer container, PlayerInventory inventory, ITextComponent title) {
-        super(container, 211, 119 + 18 * MathUtil.ceilDiv(container.getTier().getSlots(), 9), inventory, title);
+        super(container, 211, 119 + 18 * MathUtil.ceilDiv(9 * container.getTier().getSlotsMultiplier(), 9), inventory, title);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class TieredDestructorScreen extends TieredScreen<TieredDestructorTileEnt
     @Override
     public void renderForeground(MatrixStack matrixStack, int mouseX, int mouseY) {
         renderString(matrixStack, 7, 7, title.getString());
-        renderString(matrixStack, 7, 24 + 18 * MathUtil.ceilDiv(getTier().getSlots(), 9), I18n.get("container.inventory"));
+        renderString(matrixStack, 7, 24 + 18 * MathUtil.ceilDiv(9 * getTier().getSlotsMultiplier(), 9), I18n.get("container.inventory"));
     }
 
     private static class TieredDestructorPickupSideButton extends SideButton {

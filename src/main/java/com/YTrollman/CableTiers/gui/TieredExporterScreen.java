@@ -20,7 +20,7 @@ public class TieredExporterScreen extends TieredScreen<TieredExporterTileEntity,
     private boolean hasRegulatorMode;
 
     public TieredExporterScreen(TieredExporterContainer container, PlayerInventory inventory, ITextComponent title) {
-        super(container, 211, 119 + 18 * MathUtil.ceilDiv(container.getTier().getSlots(), 9), inventory, title);
+        super(container, 211, 119 + 18 * MathUtil.ceilDiv(9 * container.getTier().getSlotsMultiplier(), 9), inventory, title);
         this.hasRegulatorMode = hasRegulatorMode();
     }
 
@@ -53,6 +53,6 @@ public class TieredExporterScreen extends TieredScreen<TieredExporterTileEntity,
     @Override
     public void renderForeground(MatrixStack matrixStack, int i, int i1) {
         renderString(matrixStack, 7, 7, RenderUtils.shorten(title.getString(), 26));
-        renderString(matrixStack, 7, 24 + 18 * MathUtil.ceilDiv(getTier().getSlots(), 9), new TranslationTextComponent("container.inventory").getString());
+        renderString(matrixStack, 7, 24 + 18 * MathUtil.ceilDiv(9 * getTier().getSlotsMultiplier(), 9), new TranslationTextComponent("container.inventory").getString());
     }
 }
