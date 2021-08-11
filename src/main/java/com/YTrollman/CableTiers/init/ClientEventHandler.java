@@ -3,10 +3,7 @@ package com.YTrollman.CableTiers.init;
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.CableTiers;
 import com.YTrollman.CableTiers.ContentType;
-import com.YTrollman.CableTiers.gui.TieredConstructorScreen;
-import com.YTrollman.CableTiers.gui.TieredDestructorScreen;
-import com.YTrollman.CableTiers.gui.TieredExporterScreen;
-import com.YTrollman.CableTiers.gui.TieredImporterScreen;
+import com.YTrollman.CableTiers.gui.*;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
@@ -29,6 +26,7 @@ public class ClientEventHandler {
             ScreenManager.register(ContentType.IMPORTER.getContainerType(tier), TieredImporterScreen::new);
             ScreenManager.register(ContentType.CONSTRUCTOR.getContainerType(tier), TieredConstructorScreen::new);
             ScreenManager.register(ContentType.DESTRUCTOR.getContainerType(tier), TieredDestructorScreen::new);
+            ScreenManager.register(ContentType.DISK_MANIPULATOR.getContainerType(tier), TieredDiskManipulatorScreen::new);
         }
     }
 }
