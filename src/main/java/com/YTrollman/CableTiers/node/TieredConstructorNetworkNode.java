@@ -66,8 +66,25 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
         super(world, pos, ContentType.CONSTRUCTOR, tier);
         this.itemFilters = new BaseItemHandler(1).addListener(new NetworkNodeInventoryListener(this));
         this.fluidFilters = new FluidInventory(1).addListener(new NetworkNodeFluidInventoryListener(this));
-        this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, UpgradeItem.Type.CRAFTING)
+        this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, CheckTierUpgrade())
                 .addListener(new NetworkNodeInventoryListener(this));
+    }
+
+    private UpgradeItem.Type[] CheckTierUpgrade()
+    {
+        if(getTier() == CableTier.ELITE)
+        {
+            return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK, UpgradeItem.Type.CRAFTING };
+        }
+        else if(getTier() == CableTier.ULTRA)
+        {
+            return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING };
+        }
+        else if(getTier() == CableTier.CREATIVE)
+        {
+            return new UpgradeItem.Type[] { UpgradeItem.Type.CRAFTING };
+        }
+        return null;
     }
 
     @Override
