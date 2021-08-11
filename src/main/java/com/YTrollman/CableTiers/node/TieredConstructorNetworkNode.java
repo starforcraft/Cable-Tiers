@@ -1,6 +1,7 @@
 package com.YTrollman.CableTiers.node;
 
 import com.YTrollman.CableTiers.CableTier;
+import com.YTrollman.CableTiers.CableTiers;
 import com.YTrollman.CableTiers.ContentType;
 import com.YTrollman.CableTiers.config.CableConfig;
 import com.YTrollman.CableTiers.tileentity.TieredConstructorTileEntity;
@@ -53,6 +54,8 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     private static final int BASE_SPEED = 20;
     private static final int SPEED_INCREASE = 4;
 
+    private int currentSlot;
+
     private final BaseItemHandler itemFilters;
     private final FluidInventory fluidFilters;
 
@@ -64,8 +67,8 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
 
     public TieredConstructorNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.CONSTRUCTOR, tier);
-        this.itemFilters = new BaseItemHandler(1).addListener(new NetworkNodeInventoryListener(this));
-        this.fluidFilters = new FluidInventory(1).addListener(new NetworkNodeFluidInventoryListener(this));
+        this.itemFilters = new BaseItemHandler(1 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
+        this.fluidFilters = new FluidInventory(1 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
         this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, CheckTierUpgrade())
                 .addListener(new NetworkNodeInventoryListener(this));
     }
@@ -120,8 +123,14 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
             }
         }
 
-        if (type == IType.ITEMS && !itemFilters.getStackInSlot(0).isEmpty()) {
-            ItemStack stack = itemFilters.getStackInSlot(0);
+        if (++currentSlot >= 1 * getTier().getSlotsMultiplier()) {
+            currentSlot = 0;
+        }
+        CableTiers.LOGGER.info(currentSlot);
+
+        if (type == IType.ITEMS && !itemFilters.getStackInSlot(currentSlot).isEmpty()) {
+
+            ItemStack stack = itemFilters.getStackInSlot(currentSlot);
 
             if (drop) {
                 extractAndDropItem(stack);
@@ -130,8 +139,8 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
             } else if (stack.getItem() instanceof BlockItem) {
                 extractAndPlaceBlock(stack);
             }
-        } else if (type == IType.FLUIDS && !fluidFilters.getFluid(0).isEmpty()) {
-            extractAndPlaceFluid(fluidFilters.getFluid(0));
+        } else if (type == IType.FLUIDS && !fluidFilters.getFluid(currentSlot).isEmpty()) {
+            extractAndPlaceFluid(fluidFilters.getFluid(currentSlot));
         }
     }
 

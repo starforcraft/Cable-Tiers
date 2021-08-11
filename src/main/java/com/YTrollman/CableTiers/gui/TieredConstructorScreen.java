@@ -1,10 +1,10 @@
 package com.YTrollman.CableTiers.gui;
 
+import com.YTrollman.CableTiers.CableTiers;
 import com.YTrollman.CableTiers.container.TieredConstructorContainer;
 import com.YTrollman.CableTiers.node.TieredConstructorNetworkNode;
 import com.YTrollman.CableTiers.tileentity.TieredConstructorTileEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.screen.BaseScreen;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.ExactModeSideButton;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.RedstoneModeSideButton;
@@ -33,7 +33,7 @@ public class TieredConstructorScreen extends TieredScreen<TieredConstructorTileE
 
     @Override
     public void renderBackground(MatrixStack matrixStack, int x, int y, int mouseX, int mouseY) {
-        bindTexture(RS.ID, "gui/constructor.png");
+        bindTexture(CableTiers.MOD_ID, "gui/" + getTier().getName() + "_constructor.png");
         blit(matrixStack, x, y, 0, 0, imageWidth, imageHeight);
     }
 
