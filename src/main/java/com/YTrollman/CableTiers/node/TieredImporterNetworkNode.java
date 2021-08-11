@@ -194,39 +194,46 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
     private boolean doFluidExtraction(IFluidHandler handler) {
         int startSlot = currentSlot;
 
-        while (true) {
-            FluidStack stack = handler.getFluidInTank(currentSlot);
-            if (!stack.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack)) {
-                int interactionAmount = interactWithStacks() ? (getTier() == CableTier.CREATIVE ? stack.getAmount() : 64 * FluidAttributes.BUCKET_VOLUME) : FluidAttributes.BUCKET_VOLUME;
-                FluidStack toExtract = stack.copy();
-                toExtract.setAmount(interactionAmount);
+        if(handler.getTanks() != 0)
+        {
+            while (true) {
+                FluidStack stack = handler.getFluidInTank(currentSlot);
+                if (!stack.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack)) {
+                    int interactionAmount = interactWithStacks() ? (getTier() == CableTier.CREATIVE ? stack.getAmount() : 64 * FluidAttributes.BUCKET_VOLUME) : FluidAttributes.BUCKET_VOLUME;
+                    FluidStack toExtract = stack.copy();
+                    toExtract.setAmount(interactionAmount);
 
-                FluidStack result = handler.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
-                if (!result.isEmpty()) {
-                    int remaining = network.insertFluid(result, result.getAmount(), Action.SIMULATE).getAmount();
-                    int inserted = result.getAmount() - remaining;
-                    if (inserted > 0) {
-                        toExtract = stack.copy();
-                        toExtract.setAmount(inserted);
+                    FluidStack result = handler.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
+                    if (!result.isEmpty()) {
+                        int remaining = network.insertFluid(result, result.getAmount(), Action.SIMULATE).getAmount();
+                        int inserted = result.getAmount() - remaining;
+                        if (inserted > 0) {
+                            toExtract = stack.copy();
+                            toExtract.setAmount(inserted);
 
-                        result = handler.drain(toExtract, IFluidHandler.FluidAction.EXECUTE);
-                        FluidStack actualRemainder = network.insertFluidTracked(result, result.getAmount());
-                        if (!actualRemainder.isEmpty()) {
-                            throw new RuntimeException("could not insert extracted fluid stack into network");
+                            result = handler.drain(toExtract, IFluidHandler.FluidAction.EXECUTE);
+                            FluidStack actualRemainder = network.insertFluidTracked(result, result.getAmount());
+                            if (!actualRemainder.isEmpty()) {
+                                throw new RuntimeException("could not insert extracted fluid stack into network");
+                            }
+
+                            return true;
                         }
-
-                        return true;
                     }
                 }
-            }
 
-            if (++currentSlot >= handler.getTanks()) {
-                currentSlot = 0;
-            }
+                if (++currentSlot >= handler.getTanks()) {
+                    currentSlot = 0;
+                }
 
-            if (currentSlot == startSlot) {
-                return false;
+                if (currentSlot == startSlot) {
+                    return false;
+                }
             }
+        }
+        else
+        {
+            return false;
         }
     }
 
