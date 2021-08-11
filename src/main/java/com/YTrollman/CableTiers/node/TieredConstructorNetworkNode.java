@@ -126,7 +126,6 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
         if (++currentSlot >= 1 * getTier().getSlotsMultiplier()) {
             currentSlot = 0;
         }
-        CableTiers.LOGGER.info(currentSlot);
 
         if (type == IType.ITEMS && !itemFilters.getStackInSlot(currentSlot).isEmpty()) {
 
