@@ -31,7 +31,7 @@ public class TieredDiskManipulatorTileEntity extends TieredTileEntity<TieredDisk
 
     private final LazyOptional<IItemHandler> diskCapability = LazyOptional.of(() -> getNode().getDisks());
 
-    private final DiskState[] diskState = new DiskState[6];
+    private final DiskState[] diskState = new DiskState[6 * checkTierMultiplier()];
 
     public TieredDiskManipulatorTileEntity(CableTier tier) {
         super(ContentType.DISK_MANIPULATOR, tier);
@@ -42,6 +42,23 @@ public class TieredDiskManipulatorTileEntity extends TieredTileEntity<TieredDisk
         dataManager.addWatchedParameter(IO_MODE);
 
         Arrays.fill(diskState, DiskState.NONE);
+    }
+
+    private int checkTierMultiplier()
+    {
+        if(getTier() == CableTier.ELITE)
+        {
+            return 2;
+        }
+        else if(getTier() == CableTier.ULTRA)
+        {
+            return 3;
+        }
+        else if(getTier() == CableTier.CREATIVE)
+        {
+            return 4;
+        }
+        return 0;
     }
 
     /*@Override

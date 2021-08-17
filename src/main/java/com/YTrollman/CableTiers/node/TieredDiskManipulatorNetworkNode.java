@@ -63,8 +63,8 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
     private int type = IType.ITEMS;
     private int ioMode = IO_MODE_INSERT;
 
-    private final IStorageDisk<ItemStack>[] itemDisks = new IStorageDisk[6];
-    private final IStorageDisk<FluidStack>[] fluidDisks = new IStorageDisk[6];
+    private final IStorageDisk<ItemStack>[] itemDisks = new IStorageDisk[6 * checkTierMultiplier()];
+    private final IStorageDisk<FluidStack>[] fluidDisks = new IStorageDisk[6 * checkTierMultiplier()];
 
     private final UpgradeItemHandler upgrades;
 
@@ -73,8 +73,8 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
 
     private final ProxyItemHandler disks;
 
-    private final BaseItemHandler itemFilters = new BaseItemHandler(9).addListener(new NetworkNodeInventoryListener(this));
-    private final FluidInventory fluidFilters = new FluidInventory(9).addListener(new NetworkNodeFluidInventoryListener(this));
+    private final BaseItemHandler itemFilters = new BaseItemHandler(9 * checkTierMultiplier()).addListener(new NetworkNodeInventoryListener(this));
+    private final FluidInventory fluidFilters = new FluidInventory(9 * checkTierMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
 
     public TieredDiskManipulatorNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.DISK_MANIPULATOR, tier);
@@ -90,7 +90,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                 return count;
             }
         }.addListener(new NetworkNodeInventoryListener(this));
-        this.outputDisks = new BaseItemHandler(3)
+        this.outputDisks = new BaseItemHandler(3 * checkTierMultiplier())
                 .addValidator(new StorageDiskItemValidator())
                 .addListener(new NetworkNodeInventoryListener(this))
                 .addListener(((handler, slot, reading) -> {
@@ -98,7 +98,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                         StackUtils.createStorages(
                                 (ServerWorld) world,
                                 handler.getStackInSlot(slot),
-                                3 + slot,
+                                3 * checkTierMultiplier() + slot,
                                 itemDisks,
                                 fluidDisks,
                                 s -> new TieredStorageDiskItemManipulatorWrapper(TieredDiskManipulatorNetworkNode.this, s),
@@ -110,7 +110,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                         }
                     }
                 }));
-        this.inputDisks = new BaseItemHandler(3)
+        this.inputDisks = new BaseItemHandler(3 * checkTierMultiplier())
                 .addValidator(new StorageDiskItemValidator())
                 .addListener(new NetworkNodeInventoryListener(this))
                 .addListener((handler, slot, reading) -> {
@@ -177,11 +177,11 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
 
         int slot = 0;
         if (type == IType.ITEMS) {
-            while (slot < 3 && (itemDisks[slot] == null || isItemDiskDone(itemDisks[slot], slot))) {
+            while (slot < 3 * checkTierMultiplier() && (itemDisks[slot] == null || isItemDiskDone(itemDisks[slot], slot))) {
                 slot++;
             }
 
-            if (slot == 3) {
+            if (slot == 3 * checkTierMultiplier()) {
                 return;
             }
 
@@ -193,11 +193,11 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                 extractItemFromNetwork(storage, slot);
             }
         } else if (type == IType.FLUIDS) {
-            while (slot < 3 && (fluidDisks[slot] == null || isFluidDiskDone(fluidDisks[slot], slot))) {
+            while (slot < 3 * checkTierMultiplier() && (fluidDisks[slot] == null || isFluidDiskDone(fluidDisks[slot], slot))) {
                 slot++;
             }
 
-            if (slot == 3) {
+            if (slot == 3 * checkTierMultiplier()) {
                 return;
             }
 
@@ -411,11 +411,11 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
         ItemStack disk = inputDisks.getStackInSlot(slot);
         if (!disk.isEmpty()) {
             int i = 0;
-            while (i < 3 && !outputDisks.getStackInSlot(i).isEmpty()) {
+            while (i < 3 * checkTierMultiplier() && !outputDisks.getStackInSlot(i).isEmpty()) {
                 i++;
             }
 
-            if (i == 3) {
+            if (i == 3 * checkTierMultiplier()) {
                 return;
             }
 
@@ -425,9 +425,9 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
     }
 
     public DiskState[] getDiskState() {
-        DiskState[] diskStates = new DiskState[6];
+        DiskState[] diskStates = new DiskState[6 * checkTierMultiplier()];
 
-        for (int i = 0; i < 6; ++i) {
+        for (int i = 0; i < 6 * checkTierMultiplier(); ++i) {
             DiskState state = DiskState.NONE;
 
             if (itemDisks[i] != null || fluidDisks[i] != null) {
@@ -445,6 +445,23 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
         }
 
         return diskStates;
+    }
+
+    private int checkTierMultiplier()
+    {
+        if(getTier() == CableTier.ELITE)
+        {
+            return 2;
+        }
+        else if(getTier() == CableTier.ULTRA)
+        {
+            return 3;
+        }
+        else if(getTier() == CableTier.CREATIVE)
+        {
+            return 4;
+        }
+        return 0;
     }
 
     @Override
@@ -601,7 +618,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                             WorldUtils.updateBlock(diskManipulator.getWorld(), diskManipulator.getPos());
                         }
                     },
-                    (IStorageDiskContainerContext) diskManipulator
+                    diskManipulator
             );
             this.lastState = DiskState.get(getStored(), getCapacity());
         }
@@ -700,7 +717,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                             WorldUtils.updateBlock(diskManipulator.getWorld(), diskManipulator.getPos());
                         }
                     },
-                    (IStorageDiskContainerContext) diskManipulator
+                    diskManipulator
             );
             this.lastState = DiskState.get(getStored(), getCapacity());
         }
@@ -780,5 +797,4 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
             return parent.getFactoryId();
         }
     }
-
 }

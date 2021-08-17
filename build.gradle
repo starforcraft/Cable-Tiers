@@ -18,16 +18,10 @@ repositories {
     maven {
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven"
-        content {
-            includeGroup 'mezz.jei'
-        }
     }
     maven {
         name = "ModMaven"
         url = "https://modmaven.dev"
-        content {
-            includeGroup 'mezz.jei'
-        }
     }
     maven {
         name = "RS maven"
