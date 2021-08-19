@@ -19,18 +19,9 @@ public class TieredDiskManipulatorContainer extends TieredContainer<TieredDiskMa
             for (int i = 0; i < 3; ++i)
             {
                 addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 3, 44, 71 + (i * 18)));
-            }
-            for (int i = 0; i < 3; ++i)
-            {
                 addSlot(new SlotItemHandler(getNode().getInputDisks(), i, 26, 71 + (i * 18)));
-            }
 
-            for (int i = 0; i < 3; ++i)
-            {
                 addSlot(new SlotItemHandler(getNode().getOutputDisks(), i + 3, 134, 71 + (i * 18)));
-            }
-            for (int i = 0; i < 3; ++i)
-            {
                 addSlot(new SlotItemHandler(getNode().getOutputDisks(), i, 116, 71 + (i * 18)));
             }
 
@@ -38,71 +29,35 @@ public class TieredDiskManipulatorContainer extends TieredContainer<TieredDiskMa
         }
         else if(getTier() == CableTier.ULTRA)
         {
-            for (int i = 0; i < 4; ++i)
+            for (int i = 0; i < 3; ++i)
             {
-                addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 4, 44, 87 + (i * 18)));
-            }
-            for (int i = 0; i < 4; ++i)
-            {
-                addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 4, 26, 87 + (i * 18)));
-            }
-            for (int i = 0; i < 4; ++i)
-            {
-                addSlot(new SlotItemHandler(getNode().getInputDisks(), i, 8, 87 + (i * 18)));
+                addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 6, 44, 89 + (i * 18)));
+                addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 3, 26, 89 + (i * 18)));
+                addSlot(new SlotItemHandler(getNode().getInputDisks(), i, 8, 89 + (i * 18)));
+
+                addSlot(new SlotItemHandler(getNode().getOutputDisks(), i + 6, 152, 89 + (i * 18)));
+                addSlot(new SlotItemHandler(getNode().getOutputDisks(), i + 3, 134, 89 + (i * 18)));
+                addSlot(new SlotItemHandler(getNode().getOutputDisks(), i, 116, 89 + (i * 18)));
             }
 
-            for (int i = 0; i < 4; ++i)
-            {
-                addSlot(new SlotItemHandler(getNode().getOutputDisks(), i + 4, 152, 87 + (i * 18)));
-            }
-            for (int i = 0; i < 4; ++i)
-            {
-                addSlot(new SlotItemHandler(getNode().getOutputDisks(), i + 4, 134, 87 + (i * 18)));
-            }
-            for (int i = 0; i < 4; ++i)
-            {
-                addSlot(new SlotItemHandler(getNode().getOutputDisks(), i, 116, 87 + (i * 18)));
-            }
-
-            addPlayerInventory(8, 174);
+            addPlayerInventory(8, 161);
         }
         else if(getTier() == CableTier.CREATIVE)
         {
-            for (int i = 0; i < 4; ++i)
+            for (int i = 0; i < 3; ++i)
             {
-                addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 12, 59, 91 + (i * 18)));
-            }
-            for (int i = 0; i < 4; ++i)
-            {
-                addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 8, 41, 91 + (i * 18)));
-            }
-            for (int i = 0; i < 4; ++i)
-            {
-                addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 4, 23, 91 + (i * 18)));
-            }
-            for (int i = 0; i < 4; ++i)
-            {
-                addSlot(new SlotItemHandler(getNode().getInputDisks(), i, 5, 91 + (i * 18)));
+                addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 9, 59, 106 + (i * 18)));
+                addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 6, 41, 106 + (i * 18)));
+                addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 3, 23, 106 + (i * 18)));
+                addSlot(new SlotItemHandler(getNode().getInputDisks(), i, 5, 106 + (i * 18)));
+
+                addSlot(new SlotItemHandler(getNode().getOutputDisks(), i + 9, 155, 106 + (i * 18)));
+                addSlot(new SlotItemHandler(getNode().getOutputDisks(), i + 6, 137, 106 + (i * 18)));
+                addSlot(new SlotItemHandler(getNode().getOutputDisks(), i + 3, 119, 106 + (i * 18)));
+                addSlot(new SlotItemHandler(getNode().getOutputDisks(), i, 101, 106 + (i * 18)));
             }
 
-            for (int i = 0; i < 4; ++i)
-            {
-                addSlot(new SlotItemHandler(getNode().getOutputDisks(), i + 12, 155, 91 + (i * 18)));
-            }
-            for (int i = 0; i < 4; ++i)
-            {
-                addSlot(new SlotItemHandler(getNode().getOutputDisks(), i + 8, 137, 91 + (i * 18)));
-            }
-            for (int i = 0; i < 4; ++i)
-            {
-                addSlot(new SlotItemHandler(getNode().getOutputDisks(), i + 4, 119, 91 + (i * 18)));
-            }
-            for (int i = 0; i < 4; ++i)
-            {
-                addSlot(new SlotItemHandler(getNode().getOutputDisks(), i, 101, 91 + (i * 18)));
-            }
-
-            addPlayerInventory(8, 173);
+            addPlayerInventory(8, 174);
         }
 
         addUpgradeSlots(getNode().getUpgrades());

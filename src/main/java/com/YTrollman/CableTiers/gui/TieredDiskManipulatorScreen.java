@@ -19,7 +19,7 @@ import net.minecraft.util.text.TextFormatting;
 public class TieredDiskManipulatorScreen extends TieredScreen<TieredDiskManipulatorTileEntity, TieredDiskManipulatorContainer, TieredDiskManipulatorNetworkNode> {
 
     public TieredDiskManipulatorScreen(TieredDiskManipulatorContainer container, PlayerInventory playerInventory, ITextComponent title) {
-        super(container, 211, 207 + 18 * MathUtil.ceilDiv(9 * (container.getTier() == CableTier.ELITE ? 2 : 3), 9), playerInventory, title);
+        super(container, container.getTier() == CableTier.CREATIVE ? 176 : 211, 245 + (container.getTier() == CableTier.CREATIVE ? 11 : 0), playerInventory, title);
     }
 
     @Override
@@ -38,26 +38,101 @@ public class TieredDiskManipulatorScreen extends TieredScreen<TieredDiskManipula
     }
 
     @Override
-    public void renderForeground(MatrixStack matrixStack, int mouseX, int mouseY) { //14
+    public void renderForeground(MatrixStack matrixStack, int mouseX, int mouseY) {
         renderString(matrixStack, 7, 7, title.getString());
-        renderString(matrixStack, 7, 131, I18n.get("container.inventory"));
-        renderString(matrixStack, 39, inOutText(), I18n.get("gui.refinedstorage.disk_manipulator.in"));
-        renderString(matrixStack, 125, inOutText(), I18n.get("gui.refinedstorage.disk_manipulator.out"));
+        renderString(matrixStack, 7, screenText("Inv", true), I18n.get("container.inventory"));
+        renderString(matrixStack, screenText("In", false), screenText("In", true), I18n.get("gui.refinedstorage.disk_manipulator.in"));
+        renderString(matrixStack, screenText("Out", false), screenText("Out", true), I18n.get("gui.refinedstorage.disk_manipulator.out"));
     }
 
-    private int inOutText()
+    private int screenText(String whatText, boolean isY)
     {
         if(getTier() == CableTier.ELITE)
         {
-            return 59;
+            if(whatText.equals("In"))
+            {
+                if(isY)
+                {
+                    return 60;
+                }
+                else
+                {
+                    return 39;
+                }
+            }
+            else if(whatText.equals("Out"))
+            {
+                if(isY)
+                {
+                    return 60;
+                }
+                else
+                {
+                    return 125;
+                }
+            }
+            else if(whatText.equals("Inv"))
+            {
+                return 131;
+            }
         }
         else if(getTier() == CableTier.ULTRA)
         {
-            return 76;
+            if(whatText.equals("In"))
+            {
+                if(isY)
+                {
+                    return 78;
+                }
+                else
+                {
+                    return 29;
+                }
+            }
+            else if(whatText.equals("Out"))
+            {
+                if(isY)
+                {
+                    return 78;
+                }
+                else
+                {
+                    return 134;
+                }
+            }
+            else if(whatText.equals("Inv"))
+            {
+                return 149;
+            }
         }
         else if(getTier() == CableTier.CREATIVE)
         {
-            return 100;
+            if(whatText.equals("In"))
+            {
+                if(isY)
+                {
+                    return 95;
+                }
+                else
+                {
+                    return 35;
+                }
+            }
+            else if(whatText.equals("Out"))
+            {
+                if(isY)
+                {
+                    return 95;
+                }
+                else
+                {
+                    return 128;
+                }
+            }
+            else if(whatText.equals("Inv"))
+            {
+                return 163;
+            }
         }
         return 0;
     }

@@ -78,7 +78,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
 
     public TieredDiskManipulatorNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.DISK_MANIPULATOR, tier);
-        this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, CheckTierUpgrade()) {
+        this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(getTier() == CableTier.CREATIVE ? 0 : 4, CheckTierUpgrade2()) {
             @Override
             public int getStackInteractCount() {
                 int count = super.getStackInteractCount();
@@ -133,7 +133,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
         this.disks = new ProxyItemHandler(inputDisks, outputDisks);
     }
 
-    private UpgradeItem.Type[] CheckTierUpgrade()
+    private UpgradeItem.Type[] CheckTierUpgrade2()
     {
         if(getTier() == CableTier.ELITE)
         {
@@ -217,7 +217,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
         for (int i = 0; i < stacks.size(); ++i) {
             ItemStack stack = stacks.get(i);
 
-            ItemStack extracted = storage.extract(stack, upgrades.getStackInteractCount(), compare, Action.PERFORM);
+            ItemStack extracted = storage.extract(stack, getStackInteractCount(), compare, Action.PERFORM);
             if (extracted.isEmpty()) {
                 continue;
             }
@@ -254,7 +254,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
         for (int i = 0; i < stacks.size(); ++i) {
             ItemStack stack = stacks.get(i);
 
-            ItemStack extracted = storage.extract(stack, upgrades.getStackInteractCount(), compare, Action.SIMULATE);
+            ItemStack extracted = storage.extract(stack, getStackInteractCount(), compare, Action.SIMULATE);
             if (extracted.isEmpty()) {
                 continue;
             }
@@ -283,7 +283,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
             }
 
             if (toExtract != null) {
-                extracted = network.extractItem(toExtract, upgrades.getStackInteractCount(), compare, Action.PERFORM);
+                extracted = network.extractItem(toExtract, getStackInteractCount(), compare, Action.PERFORM);
             }
         } else {
             while (itemFilters.getSlots() > i && extracted.isEmpty()) {
@@ -294,7 +294,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                 }
 
                 if (!filterStack.isEmpty()) {
-                    extracted = network.extractItem(filterStack, upgrades.getStackInteractCount(), compare, Action.PERFORM);
+                    extracted = network.extractItem(filterStack, getStackInteractCount(), compare, Action.PERFORM);
                 }
             }
         }
@@ -318,7 +318,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
         while (extracted.isEmpty() && stacks.size() > i) {
             FluidStack stack = stacks.get(i++);
 
-            extracted = storage.extract(stack, upgrades.getStackInteractCount(), compare, Action.PERFORM);
+            extracted = storage.extract(stack, getStackInteractCount(), compare, Action.PERFORM);
         }
 
         if (extracted.isEmpty()) {
@@ -352,7 +352,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
         for (int i = 0; i < stacks.size(); ++i) {
             FluidStack stack = stacks.get(i);
 
-            FluidStack extracted = storage.extract(stack, upgrades.getStackInteractCount(), compare, Action.SIMULATE);
+            FluidStack extracted = storage.extract(stack, getStackInteractCount(), compare, Action.SIMULATE);
             if (extracted.isEmpty()) {
                 continue;
             }
@@ -381,7 +381,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
             }
 
             if (toExtract != null) {
-                extracted = network.extractFluid(toExtract, upgrades.getStackInteractCount(), compare, Action.PERFORM);
+                extracted = network.extractFluid(toExtract, getStackInteractCount(), compare, Action.PERFORM);
             }
         } else {
             while (fluidFilters.getSlots() > i && extracted.isEmpty()) {
@@ -392,7 +392,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                 }
 
                 if (!filterStack.isEmpty()) {
-                    extracted = network.extractFluid(filterStack, upgrades.getStackInteractCount(), compare, Action.PERFORM);
+                    extracted = network.extractFluid(filterStack, getStackInteractCount(), compare, Action.PERFORM);
                 }
             }
         }
@@ -445,6 +445,23 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
         }
 
         return diskStates;
+    }
+
+    private int getStackInteractCount()
+    {
+        if(getTier() == CableTier.CREATIVE)
+        {
+            return Integer.MAX_VALUE;
+        }
+        else if(getTier() == CableTier.ULTRA)
+        {
+            return 64 * CableConfig.ULTRA_DISK_MANIPULATOR_SPEED.get();
+        }
+        else if(getTier() == CableTier.ELITE)
+        {
+            return upgrades.getStackInteractCount() * CableConfig.ELITE_DISK_MANIPULATOR_SPEED.get();
+        }
+        return 0;
     }
 
     private int checkTierMultiplier()
