@@ -1,4 +1,5 @@
 {
+	"itemGroup.cabletiers" : "Cable Tiers",
 	"block.cabletiers.elite_exporter": "Elite Exporter",
 	"block.cabletiers.elite_importer": "Elite Importer",
 	"block.cabletiers.elite_constructor": "Elite Konstrukteur",

@@ -15,17 +15,23 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -141,7 +147,7 @@ public class ContentType<B extends BaseBlock, T extends TieredTileEntity<N>, C e
         for (CableTier tier : CableTier.VALUES) {
             String id = getName(tier);
             blocks.put(tier, BLOCKS.register(id, () -> blockFactory.apply(tier)));
-            items.put(tier, ITEMS.register(id, () -> new BaseBlockItem(getBlock(tier), new Item.Properties().tab(RS.MAIN_GROUP))));
+            items.put(tier, ITEMS.register(id, () -> new BaseBlockItem(getBlock(tier), new Item.Properties().tab(CABLE_TIERS))));
             tileEntityTypes.put(tier, TILE_ENTITY_TYPES.register(id, () -> TileEntityType.Builder.of(() -> tileEntityFactory.apply(tier), getBlock(tier)).build(null)));
             containerTypes.put(tier, CONTAINER_TYPES.register(id, () -> IForgeContainerType.create((windowId, inv, data) -> {
                         BlockPos pos = data.readBlockPos();
@@ -183,4 +189,14 @@ public class ContentType<B extends BaseBlock, T extends TieredTileEntity<N>, C e
     private interface NetworkNodeFactory<N> {
         N create(World world, BlockPos pos, CableTier tier);
     }
+
+    public static final ItemGroup CABLE_TIERS = (new ItemGroup(CableTiers.MOD_ID) {
+
+        @Override
+        @Nonnull
+        @OnlyIn(Dist.CLIENT)
+        public ItemStack makeIcon() {
+            return new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("cabletiers:creative_importer")));
+        }
+    });
 }
