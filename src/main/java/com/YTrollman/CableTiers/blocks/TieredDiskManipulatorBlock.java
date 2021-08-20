@@ -4,23 +4,20 @@ import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
 import com.YTrollman.CableTiers.node.TieredDiskManipulatorNetworkNode;
 import com.YTrollman.CableTiers.tileentity.TieredDiskManipulatorTileEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
+import com.refinedmods.refinedstorage.block.BlockDirection;
 
-public class TieredDiskManipulatorBlock extends TieredCableBlock<TieredDiskManipulatorTileEntity, TieredDiskManipulatorNetworkNode> {
+public class TieredDiskManipulatorBlock extends TieredNetworkBlock<TieredDiskManipulatorTileEntity, TieredDiskManipulatorNetworkNode> {
 
     public TieredDiskManipulatorBlock(CableTier tier) {
         super(ContentType.DISK_MANIPULATOR, tier);
     }
 
-    @Override
-    public boolean hasConnectedState() {
-        return true;
+    public BlockDirection getDirection() {
+        return BlockDirection.HORIZONTAL;
     }
 
     @Override
-    protected VoxelShape getHeadShape(BlockState state) {
-        return VoxelShapes.box(0,0,0,1,1,1);
+    public boolean hasConnectedState() {
+        return true;
     }
 }

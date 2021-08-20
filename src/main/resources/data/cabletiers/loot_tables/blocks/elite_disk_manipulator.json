@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "cabletiers:elite_destructor"
+          "name": "cabletiers:elite_disk_manipulator"
         }
       ],
       "conditions": [

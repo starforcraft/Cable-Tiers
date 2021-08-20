@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"textures": {
 		"0": "cabletiers:blocks/disk_manipulator_side",
-		"1": "cabletiers:blocks/ultra_disk_manipulator_front",
+		"1": "cabletiers:blocks/elite_disk_manipulator_front_disconnected",
 		"2": "cabletiers:blocks/disk_manipulator_bottom",
 		"3": "cabletiers:blocks/disk_manipulator_top",
 		"particle": "cabletiers:blocks/disk_manipulator_side"

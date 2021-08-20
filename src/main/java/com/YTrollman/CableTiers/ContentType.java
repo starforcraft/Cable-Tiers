@@ -176,15 +176,11 @@ public class ContentType<B extends BaseBlock, T extends TieredTileEntity<N>, C e
 
     @FunctionalInterface
     private interface ContainerFactory<T extends BaseTile, C extends Container> {
-
         C create(int windowId, PlayerEntity player, T tile);
-
     }
 
     @FunctionalInterface
     private interface NetworkNodeFactory<N> {
-
         N create(World world, BlockPos pos, CableTier tier);
-
     }
 }
