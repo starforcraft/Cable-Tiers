@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IMI",
+    "MAM",
+    "IMI"
+  ],
+  "key": {
+    "A": { "item": "minecraft:dragon_head" },
+    "I": { "item": "minecraft:netherite_block" },
+    "M": { "item": "cabletiers:elite_requester" }
+  },
+  "result": {
+    "item": "cabletiers:ultra_requester",
+    "count": 1
+  }
+}

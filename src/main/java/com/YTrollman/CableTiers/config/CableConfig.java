@@ -10,7 +10,6 @@ public class CableConfig {
     public static ForgeConfigSpec.IntValue ELITE_CONSTRUCTOR_SPEED;
     public static ForgeConfigSpec.IntValue ELITE_DESTRUCTOR_SPEED;
     public static ForgeConfigSpec.IntValue ELITE_DISK_MANIPULATOR_SPEED;
-    public static ForgeConfigSpec.IntValue ELITE_REQUESTER_SPEED;
     public static ForgeConfigSpec.IntValue ELITE_REQUESTER_MAX_CRAFT_AMOUNT;
     public static ForgeConfigSpec.IntValue ELITE_ENERGY_COST;
 
@@ -19,7 +18,6 @@ public class CableConfig {
     public static ForgeConfigSpec.IntValue ULTRA_CONSTRUCTOR_SPEED;
     public static ForgeConfigSpec.IntValue ULTRA_DESTRUCTOR_SPEED;
     public static ForgeConfigSpec.IntValue ULTRA_DISK_MANIPULATOR_SPEED;
-    public static ForgeConfigSpec.IntValue ULTRA_REQUESTER_SPEED;
     public static ForgeConfigSpec.IntValue ULTRA_REQUESTER_MAX_CRAFT_AMOUNT;
     public static ForgeConfigSpec.IntValue ULTRA_ENERGY_COST;
 
@@ -43,9 +41,6 @@ public class CableConfig {
         ELITE_DISK_MANIPULATOR_SPEED = client
                 .comment("\nElite Disk Manipulator Speed")
                 .defineInRange("elitediskmanipulatorspeed", CableTier.ELITE.getDefaultSpeedMultiplier(), 1, 20);
-        ELITE_REQUESTER_SPEED = client
-                .comment("\nElite Requester Speed")
-                .defineInRange("eliterequesterspeed", CableTier.ELITE.getDefaultSpeedMultiplier(), 1, 20);
         ELITE_REQUESTER_MAX_CRAFT_AMOUNT = client
                 .comment("\nElite Requester Max Craft Amount")
                 .defineInRange("eliterequestermaxcraftamount", 2000, 1, Integer.MAX_VALUE);
@@ -68,9 +63,6 @@ public class CableConfig {
         ULTRA_DISK_MANIPULATOR_SPEED = client
                 .comment("\nUltra Disk Manipulator Speed")
                 .defineInRange("ultradiskmanipulatorspeed", CableTier.ULTRA.getDefaultSpeedMultiplier(), 1, 20);
-        ULTRA_REQUESTER_SPEED = client
-                .comment("\nUltra Requester Speed")
-                .defineInRange("ultrarequesterspeed", CableTier.ULTRA.getDefaultSpeedMultiplier(), 1, 20);
         ULTRA_REQUESTER_MAX_CRAFT_AMOUNT = client
                 .comment("\nUltra Requester Max Craft Amount")
                 .defineInRange("ultrarequestermaxcraftamount", 6000, 1, Integer.MAX_VALUE);
