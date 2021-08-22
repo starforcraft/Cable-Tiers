@@ -1,13 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "IMI",
+    "DMD",
     "MAM",
-    "IMI"
+    "DMD"
   ],
   "key": {
-    "A": { "item": "minecraft:dragon_head" },
-    "I": { "item": "minecraft:netherite_block" },
+    "A": { "item": "refinedstorage:advanced_processor" },
+    "D": { "item": "minecraft:diamond_block" },
     "M": { "item": "cabletiers:elite_requester" }
   },
   "result": {
