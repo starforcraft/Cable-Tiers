@@ -1,0 +1,6 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"all": "cabletiers:blocks/elite_requester_disconnected"
+	}
+}

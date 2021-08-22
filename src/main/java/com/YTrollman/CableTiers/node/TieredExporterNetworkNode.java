@@ -235,7 +235,6 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
                             work = true;
                         }
                     }
-
                 }
             }
 

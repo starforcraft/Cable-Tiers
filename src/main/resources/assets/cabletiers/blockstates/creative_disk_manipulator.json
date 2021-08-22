@@ -4,14 +4,14 @@
       "model": "cabletiers:block/creative_disk_manipulator_disconnected"
     },
     "connected=true,direction=north": {
-      "model": "cabletiers:block/creative_disk_manipulator"
+      "model": "cabletiers:block/creative_disk_manipulator_connected"
     },
     "connected=false,direction=south": {
       "model": "cabletiers:block/creative_disk_manipulator_disconnected",
       "y": 180
     },
     "connected=true,direction=south": {
-      "model": "cabletiers:block/creative_disk_manipulator",
+      "model": "cabletiers:block/creative_disk_manipulator_connected",
       "y": 180
     },
     "connected=false,direction=west": {
@@ -19,7 +19,7 @@
       "y": 270
     },
     "connected=true,direction=west": {
-      "model": "cabletiers:block/creative_disk_manipulator",
+      "model": "cabletiers:block/creative_disk_manipulator_connected",
       "y": 270
     },
     "connected=false,direction=east": {
@@ -27,7 +27,7 @@
       "y": 90
     },
     "connected=true,direction=east": {
-      "model": "cabletiers:block/creative_disk_manipulator",
+      "model": "cabletiers:block/creative_disk_manipulator_connected",
       "y": 90
     }
   }

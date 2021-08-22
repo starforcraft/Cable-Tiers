@@ -27,6 +27,7 @@ public class ClientEventHandler {
             ScreenManager.register(ContentType.CONSTRUCTOR.getContainerType(tier), TieredConstructorScreen::new);
             ScreenManager.register(ContentType.DESTRUCTOR.getContainerType(tier), TieredDestructorScreen::new);
             ScreenManager.register(ContentType.DISK_MANIPULATOR.getContainerType(tier), TieredDiskManipulatorScreen::new);
+            ScreenManager.register(ContentType.REQUESTER.getContainerType(tier), TieredRequesterScreen::new);
         }
     }
 }

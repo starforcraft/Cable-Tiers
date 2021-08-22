@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "cabletiers:creative_disk_manipulator"
+    },
+    "title": {
+      "translate": "advancements.cabletiers.creative_disk_manipulator"
+    },
+    "description": {
+      "translate": "advancements.cabletiers.creative_disk_manipulator.description"
+    }
+  },
+  "parent": "cabletiers:ultra_disk_manipulator",
+  "criteria": {
+    "creative_disk_manipulator_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "cabletiers:creative_disk_manipulator"
+          }
+        ]
+      }
+    }
+  }
+}

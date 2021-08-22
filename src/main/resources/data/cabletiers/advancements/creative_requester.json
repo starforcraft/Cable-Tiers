@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "cabletiers:creative_requester"
+    },
+    "title": {
+      "translate": "advancements.cabletiers.creative_requester"
+    },
+    "description": {
+      "translate": "advancements.cabletiers.creative_requester.description"
+    }
+  },
+  "parent": "cabletiers:ultra_requester",
+  "criteria": {
+    "creative_requester_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "cabletiers:creative_requester"
+          }
+        ]
+      }
+    }
+  }
+}
