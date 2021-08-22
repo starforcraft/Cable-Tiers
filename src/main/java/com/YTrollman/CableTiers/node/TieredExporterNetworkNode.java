@@ -220,7 +220,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
                     if (extracted.isEmpty()) {
                         if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {
                             network.getCraftingManager().request(new SlottedCraftingRequest(this, filterSlot), filter, toTransfer);
-                            work = true;
+                            work = false;
                         }
                     } else {
                         int remaining = ItemHandlerHelper.insertItemStacked(handler, extracted, true).getCount();
@@ -309,7 +309,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
                     if (extracted.isEmpty()) {
                         if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {
                             network.getCraftingManager().request(new SlottedCraftingRequest(this, filterSlot), filter, toTransfer);
-                            work = true;
+                            work = false;
                         }
                     } else {
                         int inserted = handler.fill(extracted, IFluidHandler.FluidAction.SIMULATE);
