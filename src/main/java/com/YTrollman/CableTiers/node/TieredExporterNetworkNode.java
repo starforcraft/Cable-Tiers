@@ -228,9 +228,9 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
                         if (inserted > 0) {
                             extracted = network.extractItem(filter, inserted, compare, Action.PERFORM);
                             ItemStack actualRemainder = ItemHandlerHelper.insertItemStacked(handler, extracted, false);
-                            if (!actualRemainder.isEmpty()) {
+                            /*if (!actualRemainder.isEmpty()) {
                                 throw new RuntimeException("could not insert extracted item stack into item handler");
-                            }
+                            }*/
 
                             work = true;
                         }

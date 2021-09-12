@@ -25,13 +25,13 @@ This mod adds Cable Tiers.
 [[dependencies.cabletiers]]
     modId="forge"
     mandatory=true
-    versionRange="[34.1.0,)"
+    versionRange="[36.1.0,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.cabletiers]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16,)"
+    versionRange="[1.16.5,)"
     ordering="NONE"
     side="BOTH"
