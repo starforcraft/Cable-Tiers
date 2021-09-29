@@ -212,9 +212,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
                     InventoryHelper.dropItemStack(world, front.getX() + 0.5, front.getY() + 0.5, front.getZ() + 0.5, drop);
                 } else {
                     ItemStack remainder = network.insertItemTracked(drop, drop.getCount());
-                    if (!remainder.isEmpty()) {
-                        throw new RuntimeException("could not insert dropped item stack into network");
-                    }
+
                 }
             }
         }
@@ -233,9 +231,6 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
                     result = fluidBlock.drain(world, front, IFluidHandler.FluidAction.EXECUTE);
 
                     FluidStack remainder = network.insertFluidTracked(result, result.getAmount());
-                    if (!remainder.isEmpty()) {
-                        throw new RuntimeException("could not insert drained fluid stack into network");
-                    }
 
                     return;
                 }
@@ -250,9 +245,6 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
                 if (!result.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, result) && network.insertFluid(result, result.getAmount(), Action.SIMULATE).isEmpty()) {
                     result = new FluidStack(bucketPickupHandler.takeLiquid(world, front, frontBlockState), FluidAttributes.BUCKET_VOLUME);
                     FluidStack remainder = network.insertFluidTracked(result, result.getAmount());
-                    if (!remainder.isEmpty()) {
-                        throw new RuntimeException("could not insert drained fluid stack into network");
-                    }
 
                     return;
                 }

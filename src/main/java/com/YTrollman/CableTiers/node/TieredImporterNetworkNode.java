@@ -154,9 +154,6 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
                     if (inserted > 0) {
                         result = handler.extractItem(currentSlot, inserted, false);
                         ItemStack actualRemainder = network.insertItemTracked(result, result.getCount());
-                        if (!actualRemainder.isEmpty()) {
-                            throw new RuntimeException("could not insert extracted item stack into network");
-                        }
 
                         return true;
                     }
@@ -213,9 +210,6 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
 
                             result = handler.drain(toExtract, IFluidHandler.FluidAction.EXECUTE);
                             FluidStack actualRemainder = network.insertFluidTracked(result, result.getAmount());
-                            if (!actualRemainder.isEmpty()) {
-                                throw new RuntimeException("could not insert extracted fluid stack into network");
-                            }
 
                             return true;
                         }
