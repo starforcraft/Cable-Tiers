@@ -312,7 +312,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
                         int inserted = handler.fill(extracted, IFluidHandler.FluidAction.SIMULATE);
                         if (inserted > 0) {
                             extracted = network.extractFluid(filter, inserted, compare, Action.PERFORM);
-                            int actuallyInserted = handler.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
+                            //int actuallyInserted = handler.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
 
                             work = true;
                         }

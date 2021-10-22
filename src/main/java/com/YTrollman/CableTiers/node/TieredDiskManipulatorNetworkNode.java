@@ -78,7 +78,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
 
     public TieredDiskManipulatorNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.DISK_MANIPULATOR, tier);
-        this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(getTier() == CableTier.CREATIVE ? 0 : 4, CheckTierUpgrade2()) {
+        this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(getTier() == CableTier.CREATIVE ? 0 : 4, CheckTierUpgrade()) {
             @Override
             public int getStackInteractCount() {
                 int count = super.getStackInteractCount();
@@ -133,7 +133,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
         this.disks = new ProxyItemHandler(inputDisks, outputDisks);
     }
 
-    private UpgradeItem.Type[] CheckTierUpgrade2()
+    private UpgradeItem.Type[] CheckTierUpgrade()
     {
         if(getTier() == CableTier.ELITE)
         {
@@ -171,8 +171,16 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
     public void update() {
         super.update();
 
-        if (!canUpdate() || ticks % upgrades.getSpeed() != 0) {
+        if (!canUpdate())
+        {
             return;
+        }
+
+        if(getTier() != CableTier.CREATIVE)
+        {
+            if (ticks % upgrades.getSpeed() != 0) {
+                return;
+            }
         }
 
         int slot = 0;
