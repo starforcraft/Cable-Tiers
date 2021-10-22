@@ -134,6 +134,7 @@ dependencies {
     implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
     implementation fg.deobf("curse.maven:rsrequestify-307788:3425634")
 
+    implementation fg.deobf("curse.maven:extrastorage-410168:3443945")
     implementation fg.deobf("curse.maven:spark-361579:3337641")
 }
 

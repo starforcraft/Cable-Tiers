@@ -6,7 +6,6 @@ import com.YTrollman.CableTiers.config.CableConfig;
 import com.YTrollman.CableTiers.tileentity.TieredRequesterTileEntity;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingTask;
 import com.refinedmods.refinedstorage.api.util.Action;
-import com.refinedmods.refinedstorage.config.ServerConfig;
 import com.refinedmods.refinedstorage.inventory.fluid.FluidInventory;
 import com.refinedmods.refinedstorage.inventory.item.BaseItemHandler;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeFluidInventoryListener;

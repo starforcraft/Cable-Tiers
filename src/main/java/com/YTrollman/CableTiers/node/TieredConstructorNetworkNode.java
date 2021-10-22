@@ -134,7 +134,7 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
             if (drop) {
                 extractAndDropItem(stack);
             } else if (stack.getItem() == Items.FIREWORK_ROCKET) {
-                extractAndSpawnFireworks(stack); // TODO: maybe add a dispenser mode instead?
+                extractAndSpawnFireworks(stack);
             } else if (stack.getItem() instanceof BlockItem) {
                 extractAndPlaceBlock(stack);
             }
