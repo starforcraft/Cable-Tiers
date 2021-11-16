@@ -1,7 +1,10 @@
 package com.YTrollman.CableTiers;
 
 import com.YTrollman.CableTiers.config.Config;
+import com.YTrollman.CableTiers.init.ClientEventHandler;
 import com.YTrollman.CableTiers.registry.RegistryHandler;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -16,6 +19,7 @@ public class CableTiers {
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
     public CableTiers() {
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientEventHandler::new);
         RegistryHandler.init();
         ContentType.init();
 

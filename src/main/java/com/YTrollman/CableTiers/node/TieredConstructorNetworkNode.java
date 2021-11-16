@@ -1,13 +1,14 @@
 package com.YTrollman.CableTiers.node;
 
 import com.YTrollman.CableTiers.CableTier;
-import com.YTrollman.CableTiers.CableTiers;
 import com.YTrollman.CableTiers.ContentType;
 import com.YTrollman.CableTiers.config.CableConfig;
 import com.YTrollman.CableTiers.tileentity.TieredConstructorTileEntity;
 import com.refinedmods.refinedstorage.RS;
+import com.refinedmods.refinedstorage.api.network.node.ICoverable;
 import com.refinedmods.refinedstorage.api.util.Action;
 import com.refinedmods.refinedstorage.api.util.IComparer;
+import com.refinedmods.refinedstorage.apiimpl.network.node.cover.CoverManager;
 import com.refinedmods.refinedstorage.inventory.fluid.FluidInventory;
 import com.refinedmods.refinedstorage.inventory.item.BaseItemHandler;
 import com.refinedmods.refinedstorage.inventory.item.UpgradeItemHandler;
@@ -44,7 +45,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 
-public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstructorNetworkNode> implements IComparable, IType {
+public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstructorNetworkNode> implements IComparable, IType, ICoverable {
 
     private static final String NBT_COMPARE = "Compare";
     private static final String NBT_TYPE = "Type";
@@ -59,18 +60,20 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     private final BaseItemHandler itemFilters;
     private final FluidInventory fluidFilters;
 
-    private final UpgradeItemHandler upgrades;
+    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, CheckTierUpgrade())
+            .addListener(new NetworkNodeInventoryListener(this));;
 
     private int compare = IComparer.COMPARE_NBT;
     private int type = IType.ITEMS;
     private boolean drop = false;
 
+    private CoverManager coverManager;
+
     public TieredConstructorNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.CONSTRUCTOR, tier);
+        this.coverManager = new CoverManager(this);
         this.itemFilters = new BaseItemHandler(1 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
         this.fluidFilters = new FluidInventory(1 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
-        this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, CheckTierUpgrade())
-                .addListener(new NetworkNodeInventoryListener(this));
     }
 
     private UpgradeItem.Type[] CheckTierUpgrade()
@@ -235,12 +238,16 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     @Override
     public void read(CompoundNBT tag) {
         super.read(tag);
+        if (tag.contains(CoverManager.NBT_COVER_MANAGER)){
+            this.coverManager.readFromNbt(tag.getCompound(CoverManager.NBT_COVER_MANAGER));
+        }
         StackUtils.readItems(upgrades, 1, tag);
     }
 
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         super.write(tag);
+        tag.put(CoverManager.NBT_COVER_MANAGER, this.coverManager.writeToNbt());
         StackUtils.writeItems(upgrades, 1, tag);
         return tag;
     }
@@ -310,6 +317,11 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     @Override
     public FluidInventory getFluidFilters() {
         return fluidFilters;
+    }
+
+    @Override
+    public CoverManager getCoverManager() {
+        return coverManager;
     }
 
     private class NetworkFluidHandler implements IFluidHandler {

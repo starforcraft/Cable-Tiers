@@ -5,8 +5,10 @@ import com.YTrollman.CableTiers.ContentType;
 import com.YTrollman.CableTiers.config.CableConfig;
 import com.YTrollman.CableTiers.tileentity.TieredDestructorTileEntity;
 import com.refinedmods.refinedstorage.RS;
+import com.refinedmods.refinedstorage.api.network.node.ICoverable;
 import com.refinedmods.refinedstorage.api.util.Action;
 import com.refinedmods.refinedstorage.api.util.IComparer;
+import com.refinedmods.refinedstorage.apiimpl.network.node.cover.CoverManager;
 import com.refinedmods.refinedstorage.inventory.fluid.FluidInventory;
 import com.refinedmods.refinedstorage.inventory.item.BaseItemHandler;
 import com.refinedmods.refinedstorage.inventory.item.UpgradeItemHandler;
@@ -48,7 +50,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestructorNetworkNode> implements IComparable, IWhitelistBlacklist, IType {
+public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestructorNetworkNode> implements IComparable, IWhitelistBlacklist, IType, ICoverable {
 
     private static final String NBT_COMPARE = "Compare";
     private static final String NBT_MODE = "Mode";
@@ -62,25 +64,26 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
     private final BaseItemHandler itemFilters;
     private final FluidInventory fluidFilters;
 
-    private final UpgradeItemHandler upgrades;
+    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
+            4,
+            new UpgradeItem.Type[] { UpgradeItem.Type.SILK_TOUCH, UpgradeItem.Type.FORTUNE_1, UpgradeItem.Type.FORTUNE_2, UpgradeItem.Type.FORTUNE_3 })
+            .addListener(new NetworkNodeInventoryListener(this))
+            .addListener((handler, slot, reading) -> tool = createTool());;
 
     private int compare = IComparer.COMPARE_NBT;
     private int mode = IWhitelistBlacklist.BLACKLIST;
     private int type = IType.ITEMS;
     private boolean pickupItem = false;
 
-    private ItemStack tool;
+    private ItemStack tool = createTool();
+
+    private CoverManager coverManager;
 
     public TieredDestructorNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.DESTRUCTOR, tier);
+        this.coverManager = new CoverManager(this);
         this.itemFilters = new BaseItemHandler(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
         this.fluidFilters = new FluidInventory(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
-        this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
-                4,
-                new UpgradeItem.Type[] { UpgradeItem.Type.SILK_TOUCH, UpgradeItem.Type.FORTUNE_1, UpgradeItem.Type.FORTUNE_2, UpgradeItem.Type.FORTUNE_3 })
-                .addListener(new NetworkNodeInventoryListener(this))
-                .addListener((handler, slot, reading) -> tool = createTool());
-        this.tool = createTool();
     }
 
     @Override
@@ -293,12 +296,16 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
     @Override
     public void read(CompoundNBT tag) {
         super.read(tag);
+        if (tag.contains(CoverManager.NBT_COVER_MANAGER)){
+            this.coverManager.readFromNbt(tag.getCompound(CoverManager.NBT_COVER_MANAGER));
+        }
         StackUtils.readItems(upgrades, 1, tag);
     }
 
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         super.write(tag);
+        tag.put(CoverManager.NBT_COVER_MANAGER, this.coverManager.writeToNbt());
         StackUtils.writeItems(upgrades, 1, tag);
         return tag;
     }
@@ -372,5 +379,10 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
 
     public void setPickupItem(boolean pickupItem) {
         this.pickupItem = pickupItem;
+    }
+
+    @Override
+    public CoverManager getCoverManager() {
+        return coverManager;
     }
 }

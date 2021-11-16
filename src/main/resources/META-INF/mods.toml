@@ -18,7 +18,7 @@ This mod adds Cable Tiers.
 [[dependencies.cabletiers]]
     modId="refinedstorage"
     mandatory=true
-    versionRange="[1.9,)"
+    versionRange="[1.9.16,)"
     ordering="NONE"
     side="BOTH"
 

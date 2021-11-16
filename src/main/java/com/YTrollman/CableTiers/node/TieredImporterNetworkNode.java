@@ -5,8 +5,10 @@ import com.YTrollman.CableTiers.ContentType;
 import com.YTrollman.CableTiers.config.CableConfig;
 import com.YTrollman.CableTiers.tileentity.TieredImporterTileEntity;
 import com.refinedmods.refinedstorage.RS;
+import com.refinedmods.refinedstorage.api.network.node.ICoverable;
 import com.refinedmods.refinedstorage.api.util.Action;
 import com.refinedmods.refinedstorage.api.util.IComparer;
+import com.refinedmods.refinedstorage.apiimpl.network.node.cover.CoverManager;
 import com.refinedmods.refinedstorage.inventory.fluid.FluidInventory;
 import com.refinedmods.refinedstorage.inventory.item.BaseItemHandler;
 import com.refinedmods.refinedstorage.inventory.item.UpgradeItemHandler;
@@ -30,7 +32,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterNetworkNode> implements IComparable, IWhitelistBlacklist, IType {
+public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterNetworkNode> implements IComparable, IWhitelistBlacklist, IType, ICoverable {
 
     private static final String NBT_COMPARE = "Compare";
     private static final String NBT_MODE = "Mode";
@@ -51,8 +53,12 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
 
     private int currentSlot;
 
+    private final CoverManager coverManager;
+
+
     public TieredImporterNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.IMPORTER, tier);
+        this.coverManager = new CoverManager(this);
         this.itemFilters = new BaseItemHandler(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
         this.fluidFilters = new FluidInventory(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
         this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
@@ -256,6 +262,7 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         super.write(tag);
+        tag.put(CoverManager.NBT_COVER_MANAGER, this.coverManager.writeToNbt());
         StackUtils.writeItems(upgrades, 1, tag);
         return tag;
     }
@@ -274,6 +281,9 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
     @Override
     public void read(CompoundNBT tag) {
         super.read(tag);
+        if (tag.contains(CoverManager.NBT_COVER_MANAGER)){
+            this.coverManager.readFromNbt(tag.getCompound(CoverManager.NBT_COVER_MANAGER));
+        }
         StackUtils.readItems(upgrades, 1, tag);
     }
 
@@ -323,5 +333,10 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
     @Override
     public FluidInventory getFluidFilters() {
         return fluidFilters;
+    }
+
+    @Override
+    public CoverManager getCoverManager() {
+        return coverManager;
     }
 }
