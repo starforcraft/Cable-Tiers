@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 
 public class TieredDestructorTileEntity extends TieredTileEntity<TieredDestructorNetworkNode> {
 
-    public static final TileDataParameter<CompoundNBT, TieredExporterTileEntity> COVER_MANAGER = new TileDataParameter<>(DataSerializers.COMPOUND_TAG, new CompoundNBT(),
+    public static final TileDataParameter<CompoundNBT, TieredDestructorTileEntity> COVER_MANAGER = new TileDataParameter<>(DataSerializers.COMPOUND_TAG, new CompoundNBT(),
             t -> t.getNode().getCoverManager().writeToNbt(),
             (t, v) -> t.getNode().getCoverManager().readFromNbt(v),
             (initial, p) -> {});
