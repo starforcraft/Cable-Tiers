@@ -8,7 +8,6 @@ import com.YTrollman.CableTiers.util.MathUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.refinedmods.refinedstorage.screen.BaseScreen;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.*;
-import com.refinedmods.refinedstorage.tile.NetworkNodeTile;
 import com.refinedmods.refinedstorage.tile.data.TileDataManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
@@ -23,7 +22,7 @@ public class TieredDestructorScreen extends TieredScreen<TieredDestructorTileEnt
 
     @Override
     public void onPostInit(int x, int y) {
-        addSideButton(new RedstoneModeSideButton(this, NetworkNodeTile.REDSTONE_MODE));
+        addSideButton(new RedstoneModeSideButton(this, TieredDestructorTileEntity.REDSTONE_MODE));
         addSideButton(new TypeSideButton(this, TieredDestructorTileEntity.TYPE));
         addSideButton(new WhitelistBlacklistSideButton(this, TieredDestructorTileEntity.WHITELIST_BLACKLIST));
         addSideButton(new ExactModeSideButton(this, TieredDestructorTileEntity.COMPARE));

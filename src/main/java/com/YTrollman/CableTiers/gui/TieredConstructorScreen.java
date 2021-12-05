@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage.screen.widget.sidebutton.ExactModeSideButt
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.RedstoneModeSideButton;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.SideButton;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.TypeSideButton;
-import com.refinedmods.refinedstorage.tile.NetworkNodeTile;
 import com.refinedmods.refinedstorage.tile.data.TileDataManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
@@ -25,7 +24,7 @@ public class TieredConstructorScreen extends TieredScreen<TieredConstructorTileE
 
     @Override
     public void onPostInit(int x, int y) {
-        addSideButton(new RedstoneModeSideButton(this, NetworkNodeTile.REDSTONE_MODE));
+        addSideButton(new RedstoneModeSideButton(this, TieredConstructorTileEntity.REDSTONE_MODE));
         addSideButton(new TypeSideButton(this, TieredConstructorTileEntity.TYPE));
         addSideButton(new ExactModeSideButton(this, TieredConstructorTileEntity.COMPARE));
         addSideButton(new TieredConstructorDropSideButton(this));

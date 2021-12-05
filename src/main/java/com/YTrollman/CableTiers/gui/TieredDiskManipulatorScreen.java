@@ -5,11 +5,9 @@ import com.YTrollman.CableTiers.CableTiers;
 import com.YTrollman.CableTiers.container.TieredDiskManipulatorContainer;
 import com.YTrollman.CableTiers.node.TieredDiskManipulatorNetworkNode;
 import com.YTrollman.CableTiers.tileentity.TieredDiskManipulatorTileEntity;
-import com.YTrollman.CableTiers.util.MathUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.refinedmods.refinedstorage.screen.BaseScreen;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.*;
-import com.refinedmods.refinedstorage.tile.NetworkNodeTile;
 import com.refinedmods.refinedstorage.tile.data.TileDataManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
@@ -24,7 +22,7 @@ public class TieredDiskManipulatorScreen extends TieredScreen<TieredDiskManipula
 
     @Override
     public void onPostInit(int x, int y) {
-        addSideButton(new RedstoneModeSideButton(this, NetworkNodeTile.REDSTONE_MODE));
+        addSideButton(new RedstoneModeSideButton(this, TieredDiskManipulatorTileEntity.REDSTONE_MODE));
         addSideButton(new TieredIoModeSideButton(this));
         addSideButton(new TypeSideButton(this, TieredDiskManipulatorTileEntity.TYPE));
         addSideButton(new WhitelistBlacklistSideButton(this, TieredDiskManipulatorTileEntity.WHITELIST_BLACKLIST));
