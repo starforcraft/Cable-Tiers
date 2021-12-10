@@ -21,9 +21,11 @@ import com.refinedmods.refinedstorage.tile.config.IType;
 import com.refinedmods.refinedstorage.tile.config.IWhitelistBlacklist;
 import com.refinedmods.refinedstorage.util.StackUtils;
 import com.refinedmods.refinedstorage.util.WorldUtils;
+import mekanism.common.registries.MekanismBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -31,6 +33,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.List;
 
 public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterNetworkNode> implements IComparable, IWhitelistBlacklist, IType, ICoverable {
 
@@ -55,6 +60,7 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
 
     private final CoverManager coverManager;
 
+    private final List<String> blacklist = (List<String>) CableConfig.CREATIVE_IMPORTER_FLUID_BLOCK_BLACKLIST.get();
 
     public TieredImporterNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.IMPORTER, tier);
@@ -159,7 +165,8 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
                     int inserted = result.getCount() - remaining;
                     if (inserted > 0) {
                         result = handler.extractItem(currentSlot, inserted, false);
-                        ItemStack actualRemainder = network.insertItemTracked(result, result.getCount());
+
+                        network.insertItemTracked(result, result.getCount());
 
                         return true;
                     }
@@ -178,27 +185,32 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
 
     private void fluidUpdate() {
         IFluidHandler handler = WorldUtils.getFluidHandler(getFacingTile(), getDirection().getOpposite());
-        if (handler == null) {
-            return;
-        }
-
-        if (currentSlot >= handler.getTanks()) {
-            currentSlot = 0;
-        }
-
-        if (getTier() == CableTier.CREATIVE) {
-            while (doFluidExtraction(handler)) {
+        TileEntity facing = getFacingTile();
+        for(int i = 0; i < blacklist.size(); i++) {
+            if (facing == null || facing.getBlockState().is(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blacklist.get(i))))) {
+                return;
             }
-        } else {
-            doFluidExtraction(handler);
+            if (handler == null) {
+                return;
+            }
+
+            if (currentSlot >= handler.getTanks()) {
+                currentSlot = 0;
+            }
+
+            if (getTier() == CableTier.CREATIVE) {
+                while (doFluidExtraction(handler)) {
+                }
+            } else {
+                doFluidExtraction(handler);
+            }
         }
     }
 
     private boolean doFluidExtraction(IFluidHandler handler) {
         int startSlot = currentSlot;
 
-        if(handler.getTanks() != 0)
-        {
+        if(handler.getTanks() != 0) {
             while (true) {
                 FluidStack stack = handler.getFluidInTank(currentSlot);
                 if (!stack.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack)) {
@@ -217,6 +229,10 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
                             result = handler.drain(toExtract, IFluidHandler.FluidAction.EXECUTE);
                             FluidStack actualRemainder = network.insertFluidTracked(result, result.getAmount());
 
+                            if (!actualRemainder.isEmpty()) {
+                                result.shrink(actualRemainder.getAmount());
+                            }
+
                             return true;
                         }
                     }
@@ -231,8 +247,7 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
                 }
             }
         }
-        else
-        {
+        else {
             return false;
         }
     }

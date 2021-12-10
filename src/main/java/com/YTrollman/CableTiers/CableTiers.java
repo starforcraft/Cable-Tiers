@@ -23,7 +23,7 @@ public class CableTiers {
         RegistryHandler.init();
         ContentType.init();
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.client_config);
-        Config.loadConfig(Config.client_config, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-client.toml").toString());
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.common_config);
+        Config.loadConfig(Config.common_config, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-common.toml").toString());
     }
 }

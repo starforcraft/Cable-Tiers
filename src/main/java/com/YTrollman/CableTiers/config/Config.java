@@ -13,13 +13,13 @@ import java.io.File;
 @Mod.EventBusSubscriber(modid = CableTiers.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Config {
 
-    public static final ForgeConfigSpec client_config;
+    public static final ForgeConfigSpec common_config;
 
-    private static final ForgeConfigSpec.Builder client_builder = new ForgeConfigSpec.Builder();
+    private static final ForgeConfigSpec.Builder common_builder = new ForgeConfigSpec.Builder();
 
     static {
-        CableConfig.init(client_builder);
-        client_config = client_builder.build();
+        CableConfig.init(common_builder);
+        common_config = common_builder.build();
     }
 
     public static void loadConfig(ForgeConfigSpec config, String path) {

@@ -228,13 +228,24 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
                             work = false;
                         }
                     } else {
-                        int remaining = ItemHandlerHelper.insertItemStacked(handler, extracted, true).getCount();
-                        int inserted = extracted.getCount() - remaining;
-                        if (inserted > 0) {
-                            extracted = network.extractItem(filter, inserted, compare, Action.PERFORM);
-                            ItemStack actualRemainder = ItemHandlerHelper.insertItemStacked(handler, extracted, false);
+                        if(getTier() == CableTier.ELITE) {
+                            int remaining = ItemHandlerHelper.insertItem(handler, extracted, true).getCount();
+                            int inserted = extracted.getCount() - remaining;
+                            if (inserted > 0) {
+                                extracted = network.extractItem(filter, inserted, compare, Action.PERFORM);
+                                ItemHandlerHelper.insertItem(handler, extracted, false);
 
-                            work = true;
+                                work = true;
+                            }
+                        } else {
+                            int remaining = ItemHandlerHelper.insertItemStacked(handler, extracted, true).getCount();
+                            int inserted = extracted.getCount() - remaining;
+                            if (inserted > 0) {
+                                extracted = network.extractItem(filter, inserted, compare, Action.PERFORM);
+                                ItemHandlerHelper.insertItemStacked(handler, extracted, false);
+
+                                work = true;
+                            }
                         }
                     }
                 }
@@ -317,7 +328,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
                         int inserted = handler.fill(extracted, IFluidHandler.FluidAction.SIMULATE);
                         if (inserted > 0) {
                             extracted = network.extractFluid(filter, inserted, compare, Action.PERFORM);
-                            int actuallyInserted = handler.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
+                            handler.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
 
                             work = true;
                         }

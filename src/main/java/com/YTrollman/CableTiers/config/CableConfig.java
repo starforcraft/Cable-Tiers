@@ -1,7 +1,10 @@
 package com.YTrollman.CableTiers.config;
 
 import com.YTrollman.CableTiers.CableTier;
+import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
+
+import java.util.List;
 
 public class CableConfig {
 
@@ -22,56 +25,60 @@ public class CableConfig {
     public static ForgeConfigSpec.IntValue ULTRA_ENERGY_COST;
 
     public static ForgeConfigSpec.IntValue CREATIVE_ENERGY_COST;
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> CREATIVE_IMPORTER_FLUID_BLOCK_BLACKLIST;
 
-    public static void init(ForgeConfigSpec.Builder client) {
-        client.comment("Cable Tiers Options");
+    public static void init(ForgeConfigSpec.Builder common) {
+        common.comment("Cable Tiers Options");
 
-        ELITE_EXPORTER_SPEED = client
+        ELITE_EXPORTER_SPEED = common
                 .comment("\nElite Exporter Speed")
                 .defineInRange("eliteexporterspeed", CableTier.ELITE.getDefaultSpeedMultiplier(), 1, 9);
-        ELITE_IMPORTER_SPEED = client
+        ELITE_IMPORTER_SPEED = common
                 .comment("\nElite Importer Speed")
                 .defineInRange("eliteimporterspeed", CableTier.ELITE.getDefaultSpeedMultiplier(), 1, 9);
-        ELITE_CONSTRUCTOR_SPEED = client
+        ELITE_CONSTRUCTOR_SPEED = common
                 .comment("\nElite Constructor Speed")
                 .defineInRange("eliteconstructorspeed", CableTier.ELITE.getDefaultSpeedMultiplier(), 1, 20);
-        ELITE_DESTRUCTOR_SPEED = client
+        ELITE_DESTRUCTOR_SPEED = common
                 .comment("\nElite Destructor Speed")
                 .defineInRange("elitedestructorspeed", CableTier.ELITE.getDefaultSpeedMultiplier(), 1, 20);
-        ELITE_DISK_MANIPULATOR_SPEED = client
+        ELITE_DISK_MANIPULATOR_SPEED = common
                 .comment("\nElite Disk Manipulator Speed")
                 .defineInRange("elitediskmanipulatorspeed", CableTier.ELITE.getDefaultSpeedMultiplier(), 1, 20);
-        ELITE_REQUESTER_MAX_CRAFT_AMOUNT = client
+        ELITE_REQUESTER_MAX_CRAFT_AMOUNT = common
                 .comment("\nElite Requester Max Craft Amount")
                 .defineInRange("eliterequestermaxcraftamount", 2000, 1, Integer.MAX_VALUE);
-        ELITE_ENERGY_COST = client
+        ELITE_ENERGY_COST = common
                 .comment("\nElite Energy Cost Multiplier")
                 .defineInRange("eliteenergycost", 2, 0, Integer.MAX_VALUE);
 
-        ULTRA_EXPORTER_SPEED = client
+        ULTRA_EXPORTER_SPEED = common
                 .comment("\nUltra Exporter Speed")
                 .defineInRange("ultraexporterspeed", CableTier.ULTRA.getDefaultSpeedMultiplier(), 1, 9);
-        ULTRA_IMPORTER_SPEED = client
+        ULTRA_IMPORTER_SPEED = common
                 .comment("\nUltra Importer Speed")
                 .defineInRange("ultraimporterspeed", CableTier.ULTRA.getDefaultSpeedMultiplier(), 1, 9);
-        ULTRA_CONSTRUCTOR_SPEED = client
+        ULTRA_CONSTRUCTOR_SPEED = common
                 .comment("\nUltra Constructor Speed")
                 .defineInRange("ultraconstructorspeed", CableTier.ULTRA.getDefaultSpeedMultiplier(), 1, 20);
-        ULTRA_DESTRUCTOR_SPEED = client
+        ULTRA_DESTRUCTOR_SPEED = common
                 .comment("\nUltra Destructor Speed")
                 .defineInRange("ultradestructorspeed", CableTier.ULTRA.getDefaultSpeedMultiplier(), 1, 20);
-        ULTRA_DISK_MANIPULATOR_SPEED = client
+        ULTRA_DISK_MANIPULATOR_SPEED = common
                 .comment("\nUltra Disk Manipulator Speed")
                 .defineInRange("ultradiskmanipulatorspeed", CableTier.ULTRA.getDefaultSpeedMultiplier(), 1, 20);
-        ULTRA_REQUESTER_MAX_CRAFT_AMOUNT = client
+        ULTRA_REQUESTER_MAX_CRAFT_AMOUNT = common
                 .comment("\nUltra Requester Max Craft Amount")
                 .defineInRange("ultrarequestermaxcraftamount", 6000, 1, Integer.MAX_VALUE);
-        ULTRA_ENERGY_COST = client
+        ULTRA_ENERGY_COST = common
                 .comment("\nUltra Energy Cost Multiplier")
                 .defineInRange("ultraenergycost", 4, 0, Integer.MAX_VALUE);
 
-        CREATIVE_ENERGY_COST = client
+        CREATIVE_ENERGY_COST = common
                 .comment("\nCreative Energy Cost Multiplier")
                 .defineInRange("creativeenergycost", 0, 0, Integer.MAX_VALUE);
+        CREATIVE_IMPORTER_FLUID_BLOCK_BLACKLIST = common
+                .comment("\nCreative Importer Fluid Block Blacklist \nFor Example mekanism:creative_fluid_tank")
+                .defineList("creativeImporterFluidBlockBlacklist", Lists.newArrayList("mekanism:creative_fluid_tank", "cookingforblockheads:sink"), o -> o instanceof String);
     }
 }
