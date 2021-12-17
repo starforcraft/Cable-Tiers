@@ -24,20 +24,20 @@ package com.YTrollman.CableTiers.node;
 
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
+import com.YTrollman.CableTiers.blockentity.TieredRequesterBlockEntity;
 import com.YTrollman.CableTiers.config.CableConfig;
-import com.YTrollman.CableTiers.tileentity.TieredRequesterTileEntity;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingTask;
 import com.refinedmods.refinedstorage.api.util.Action;
+import com.refinedmods.refinedstorage.blockentity.config.IType;
 import com.refinedmods.refinedstorage.inventory.fluid.FluidInventory;
 import com.refinedmods.refinedstorage.inventory.item.BaseItemHandler;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeFluidInventoryListener;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeInventoryListener;
-import com.refinedmods.refinedstorage.tile.config.IType;
 import com.refinedmods.refinedstorage.util.StackUtils;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -58,8 +58,8 @@ public class TieredRequesterNetworkNode extends TieredNetworkNode<TieredRequeste
     private int attemptAmount = getTierMaxCraftAmount();
     private ICraftingTask craftingTask = null;
 
-    public TieredRequesterNetworkNode(World world, BlockPos pos, CableTier tier) {
-        super(world, pos, ContentType.REQUESTER, tier);
+    public TieredRequesterNetworkNode(Level level, BlockPos pos, CableTier tier) {
+        super(level, pos, ContentType.REQUESTER, tier);
     }
 
     @Override
@@ -189,7 +189,7 @@ public class TieredRequesterNetworkNode extends TieredNetworkNode<TieredRequeste
 
     @Override
     public int getType() {
-        return world.isClientSide ? TieredRequesterTileEntity.TYPE.getValue() : type;
+        return level.isClientSide ? TieredRequesterBlockEntity.TYPE.getValue() : type;
     }
 
     @Override
@@ -222,7 +222,7 @@ public class TieredRequesterNetworkNode extends TieredNetworkNode<TieredRequeste
     }
 
     @Override
-    public void read(CompoundNBT tag) {
+    public void read(CompoundTag tag) {
         super.read(tag);
         StackUtils.readItems(itemFilter, 0, tag);
         if (tag.contains(NBT_AMOUNT)) {
@@ -234,7 +234,7 @@ public class TieredRequesterNetworkNode extends TieredNetworkNode<TieredRequeste
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundTag write(CompoundTag tag) {
         super.write(tag);
         StackUtils.writeItems(itemFilter, 0, tag);
         tag.putInt(NBT_AMOUNT, amount);
@@ -243,7 +243,7 @@ public class TieredRequesterNetworkNode extends TieredNetworkNode<TieredRequeste
     }
 
     @Override
-    public CompoundNBT writeConfiguration(CompoundNBT tag) {
+    public CompoundTag writeConfiguration(CompoundTag tag) {
         super.writeConfiguration(tag);
         tag.putInt(NBT_TYPE, type);
         StackUtils.writeItems(itemFilter, 0, tag);
@@ -254,7 +254,7 @@ public class TieredRequesterNetworkNode extends TieredNetworkNode<TieredRequeste
     }
 
     @Override
-    public void readConfiguration(CompoundNBT tag) {
+    public void readConfiguration(CompoundTag tag) {
         super.readConfiguration(tag);
         if (tag.contains(NBT_TYPE)) {
             type = tag.getInt(NBT_TYPE);

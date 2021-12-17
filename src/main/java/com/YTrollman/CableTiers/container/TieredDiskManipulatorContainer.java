@@ -2,13 +2,14 @@ package com.YTrollman.CableTiers.container;
 
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
+import com.YTrollman.CableTiers.blockentity.TieredDiskManipulatorBlockEntity;
 import com.YTrollman.CableTiers.node.TieredDiskManipulatorNetworkNode;
-import com.YTrollman.CableTiers.tileentity.TieredDiskManipulatorTileEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class TieredDiskManipulatorContainer extends TieredContainer<TieredDiskManipulatorTileEntity, TieredDiskManipulatorNetworkNode> {
-    public TieredDiskManipulatorContainer(int windowId, PlayerEntity player, TieredDiskManipulatorTileEntity tile) {
+public class TieredDiskManipulatorContainer extends TieredContainerMenu<TieredDiskManipulatorBlockEntity, TieredDiskManipulatorNetworkNode> {
+
+    public TieredDiskManipulatorContainer(int windowId, Player player, TieredDiskManipulatorBlockEntity tile) {
         super(ContentType.DISK_MANIPULATOR, tile, player, windowId);
         initSlots();
     }
@@ -63,9 +64,9 @@ public class TieredDiskManipulatorContainer extends TieredContainer<TieredDiskMa
         addUpgradeSlots(getNode().getUpgrades());
         addFilterSlots(getNode().getItemFilters(), getNode().getFluidFilters(), getNode());
 
-        transferManager.addBiTransfer(getPlayer().inventory, getNode().getUpgrades());
-        transferManager.addBiTransfer(getPlayer().inventory, getNode().getInputDisks());
-        transferManager.addTransfer(getNode().getOutputDisks(), getPlayer().inventory);
-        transferManager.addFilterTransfer(getPlayer().inventory, getNode().getItemFilters(), getNode().getFluidFilters(), getNode()::getType);
+        transferManager.addBiTransfer(getPlayer().getInventory(), getNode().getUpgrades());
+        transferManager.addBiTransfer(getPlayer().getInventory(), getNode().getInputDisks());
+        transferManager.addTransfer(getNode().getOutputDisks(), getPlayer().getInventory());
+        transferManager.addFilterTransfer(getPlayer().getInventory(), getNode().getItemFilters(), getNode().getFluidFilters(), getNode()::getType);
     }
 }

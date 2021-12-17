@@ -3,10 +3,10 @@ package com.YTrollman.CableTiers.blocks;
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
 import com.YTrollman.CableTiers.node.TieredDiskManipulatorNetworkNode;
-import com.YTrollman.CableTiers.tileentity.TieredDiskManipulatorTileEntity;
+import com.YTrollman.CableTiers.blockentity.TieredDiskManipulatorBlockEntity;
 import com.refinedmods.refinedstorage.block.BlockDirection;
 
-public class TieredDiskManipulatorBlock extends TieredNetworkBlock<TieredDiskManipulatorTileEntity, TieredDiskManipulatorNetworkNode> {
+public class TieredDiskManipulatorBlock extends TieredNetworkBlock<TieredDiskManipulatorBlockEntity, TieredDiskManipulatorNetworkNode> {
 
     public TieredDiskManipulatorBlock(CableTier tier) {
         super(ContentType.DISK_MANIPULATOR, tier);

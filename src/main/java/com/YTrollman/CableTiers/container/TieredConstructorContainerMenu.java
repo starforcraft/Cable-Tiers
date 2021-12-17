@@ -3,15 +3,15 @@ package com.YTrollman.CableTiers.container;
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
 import com.YTrollman.CableTiers.node.TieredConstructorNetworkNode;
-import com.YTrollman.CableTiers.tileentity.TieredConstructorTileEntity;
+import com.YTrollman.CableTiers.blockentity.TieredConstructorBlockEntity;
+import com.refinedmods.refinedstorage.blockentity.config.IType;
 import com.refinedmods.refinedstorage.container.slot.filter.FilterSlot;
 import com.refinedmods.refinedstorage.container.slot.filter.FluidFilterSlot;
-import com.refinedmods.refinedstorage.tile.config.IType;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
-public class TieredConstructorContainer extends TieredContainer<TieredConstructorTileEntity, TieredConstructorNetworkNode> {
+public class TieredConstructorContainerMenu extends TieredContainerMenu<TieredConstructorBlockEntity, TieredConstructorNetworkNode> {
 
-    public TieredConstructorContainer(int windowId, PlayerEntity player, TieredConstructorTileEntity tile) {
+    public TieredConstructorContainerMenu(int windowId, Player player, TieredConstructorBlockEntity tile) {
         super(ContentType.CONSTRUCTOR, tile, player, windowId);
         initSlots();
     }
@@ -35,8 +35,8 @@ public class TieredConstructorContainer extends TieredContainer<TieredConstructo
 
         addPlayerInventory(8, 55);
 
-        transferManager.addBiTransfer(getPlayer().inventory, getNode().getUpgrades());
-        transferManager.addFilterTransfer(getPlayer().inventory, getNode().getItemFilters(), getNode().getFluidFilters(), getNode()::getType);
+        transferManager.addBiTransfer(getPlayer().getInventory(), getNode().getUpgrades());
+        transferManager.addFilterTransfer(getPlayer().getInventory(), getNode().getItemFilters(), getNode().getFluidFilters(), getNode()::getType);
     }
 
     private int checkTier()

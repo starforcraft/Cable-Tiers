@@ -2,39 +2,40 @@ package com.YTrollman.CableTiers.node;
 
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
+import com.YTrollman.CableTiers.blockentity.TieredConstructorBlockEntity;
 import com.YTrollman.CableTiers.config.CableConfig;
-import com.YTrollman.CableTiers.tileentity.TieredConstructorTileEntity;
 import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.api.network.node.ICoverable;
 import com.refinedmods.refinedstorage.api.util.Action;
 import com.refinedmods.refinedstorage.api.util.IComparer;
 import com.refinedmods.refinedstorage.apiimpl.network.node.cover.CoverManager;
+import com.refinedmods.refinedstorage.blockentity.config.IComparable;
+import com.refinedmods.refinedstorage.blockentity.config.IType;
 import com.refinedmods.refinedstorage.inventory.fluid.FluidInventory;
 import com.refinedmods.refinedstorage.inventory.item.BaseItemHandler;
 import com.refinedmods.refinedstorage.inventory.item.UpgradeItemHandler;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeFluidInventoryListener;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeInventoryListener;
 import com.refinedmods.refinedstorage.item.UpgradeItem;
-import com.refinedmods.refinedstorage.tile.config.IComparable;
-import com.refinedmods.refinedstorage.tile.config.IType;
 import com.refinedmods.refinedstorage.util.StackUtils;
 import com.refinedmods.refinedstorage.util.WorldUtils;
-import net.minecraft.dispenser.DefaultDispenseItemBehavior;
-import net.minecraft.dispenser.Position;
-import net.minecraft.entity.projectile.FireworkRocketEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.PositionImpl;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
@@ -44,6 +45,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstructorNetworkNode> implements IComparable, IType, ICoverable {
 
@@ -69,8 +71,8 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
 
     private CoverManager coverManager;
 
-    public TieredConstructorNetworkNode(World world, BlockPos pos, CableTier tier) {
-        super(world, pos, ContentType.CONSTRUCTOR, tier);
+    public TieredConstructorNetworkNode(Level level, BlockPos pos, CableTier tier) {
+        super(level, pos, ContentType.CONSTRUCTOR, tier);
         this.coverManager = new CoverManager(this);
         this.itemFilters = new BaseItemHandler(1 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
         this.fluidFilters = new FluidInventory(1 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
@@ -114,7 +116,7 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     public void update() {
         super.update();
 
-        if (!canUpdate() || !world.isLoaded(pos) || !world.isLoaded(pos.relative(getDirection()))) {
+        if (!canUpdate() || !level.isLoaded(pos) || !level.isLoaded(pos.relative(getDirection()))) {
             return;
         }
 
@@ -169,8 +171,8 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
                 if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {
                     network.getCraftingManager().request(this, stack, FluidAttributes.BUCKET_VOLUME);
                 }
-            } else if (!world.getBlockState(front).getFluidState().isSource()) {
-                FluidUtil.tryPlaceFluid(WorldUtils.getFakePlayer((ServerWorld) world, getOwner()), world, Hand.MAIN_HAND, front, new NetworkFluidHandler(StackUtils.copy(stack, FluidAttributes.BUCKET_VOLUME)), stack);
+            } else if (!level.getBlockState(front).getFluidState().isSource()) {
+                FluidUtil.tryPlaceFluid(WorldUtils.getFakePlayer((ServerLevel) level, getOwner()), level, InteractionHand.MAIN_HAND, front, new NetworkFluidHandler(StackUtils.copy(stack, FluidAttributes.BUCKET_VOLUME)), stack);
             }
         }
     }
@@ -178,15 +180,15 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     private void extractAndPlaceBlock(ItemStack stack) {
         ItemStack took = network.extractItem(stack, 1, compare, Action.SIMULATE);
         if (!took.isEmpty()) {
-            BlockItemUseContext ctx = new BlockItemUseContext(
-                    world,
-                    WorldUtils.getFakePlayer((ServerWorld) world, getOwner()),
-                    Hand.MAIN_HAND,
+            BlockPlaceContext ctx = new TieredConstructorBlockItemUseContext(
+                    level,
+                    WorldUtils.getFakePlayer((ServerLevel) level, getOwner()),
+                    InteractionHand.MAIN_HAND,
                     took,
-                    new BlockRayTraceResult(Vector3d.ZERO, getDirection(), pos, false)
+                    new BlockHitResult(Vec3.ZERO, getDirection(), pos, false)
             );
 
-            ActionResultType result = ForgeHooks.onPlaceItemIntoWorld(ctx);
+            InteractionResult result = ForgeHooks.onPlaceItemIntoWorld(ctx);
             if (result.consumesAction()) {
                 network.extractItem(stack, 1, Action.PERFORM);
             }
@@ -199,7 +201,7 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
         int interactionCount = interactWithStacks() ? stack.getMaxStackSize() : 1;
         ItemStack took = network.extractItem(stack, interactionCount, compare, Action.PERFORM);
         if (!took.isEmpty()) {
-            DefaultDispenseItemBehavior.spawnItem(world, took, 6, getDirection(), new Position(getDispensePositionX(), getDispensePositionY(), getDispensePositionZ()));
+            DefaultDispenseItemBehavior.spawnItem(level, took, 6, getDirection(), new PositionImpl(getDispensePositionX(), getDispensePositionY(), getDispensePositionZ()));
         } else if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {
             network.getCraftingManager().request(this, stack, 1);
         }
@@ -208,7 +210,7 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     private void extractAndSpawnFireworks(ItemStack stack) {
         ItemStack took = network.extractItem(stack, 1, compare, Action.PERFORM);
         if (!took.isEmpty()) {
-            world.addFreshEntity(new FireworkRocketEntity(world, getDispensePositionX(), getDispensePositionY(), getDispensePositionZ(), took));
+            level.addFreshEntity(new FireworkRocketEntity(level, getDispensePositionX(), getDispensePositionY(), getDispensePositionZ(), took));
         }
     }
 
@@ -236,7 +238,7 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     }
 
     @Override
-    public void read(CompoundNBT tag) {
+    public void read(CompoundTag tag) {
         super.read(tag);
         if (tag.contains(CoverManager.NBT_COVER_MANAGER)){
             this.coverManager.readFromNbt(tag.getCompound(CoverManager.NBT_COVER_MANAGER));
@@ -245,7 +247,7 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundTag write(CompoundTag tag) {
         super.write(tag);
         tag.put(CoverManager.NBT_COVER_MANAGER, this.coverManager.writeToNbt());
         StackUtils.writeItems(upgrades, 1, tag);
@@ -253,7 +255,7 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     }
 
     @Override
-    public CompoundNBT writeConfiguration(CompoundNBT tag) {
+    public CompoundTag writeConfiguration(CompoundTag tag) {
         super.writeConfiguration(tag);
         tag.putInt(NBT_COMPARE, compare);
         tag.putInt(NBT_TYPE, type);
@@ -264,7 +266,7 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     }
 
     @Override
-    public void readConfiguration(CompoundNBT tag) {
+    public void readConfiguration(CompoundTag tag) {
         super.readConfiguration(tag);
         if (tag.contains(NBT_COMPARE)) {
             compare = tag.getInt(NBT_COMPARE);
@@ -300,7 +302,7 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
 
     @Override
     public int getType() {
-        return world.isClientSide ? TieredConstructorTileEntity.TYPE.getValue() : type;
+        return level.isClientSide ? TieredConstructorBlockEntity.TYPE.getValue() : type;
     }
 
     @Override
@@ -322,6 +324,12 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     @Override
     public CoverManager getCoverManager() {
         return coverManager;
+    }
+
+    private static class TieredConstructorBlockItemUseContext extends BlockPlaceContext {
+        public TieredConstructorBlockItemUseContext(Level level, @Nullable Player player, InteractionHand hand, ItemStack stack, BlockHitResult rayTraceResult) {
+            super(level, player, hand, stack, rayTraceResult);
+        }
     }
 
     private class NetworkFluidHandler implements IFluidHandler {

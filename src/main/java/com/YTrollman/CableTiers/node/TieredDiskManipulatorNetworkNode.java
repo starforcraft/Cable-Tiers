@@ -12,6 +12,10 @@ import com.refinedmods.refinedstorage.api.util.Action;
 import com.refinedmods.refinedstorage.api.util.IComparer;
 import com.refinedmods.refinedstorage.api.util.StackListEntry;
 import com.refinedmods.refinedstorage.apiimpl.network.node.DiskState;
+import com.refinedmods.refinedstorage.blockentity.DiskManipulatorBlockEntity;
+import com.refinedmods.refinedstorage.blockentity.config.IComparable;
+import com.refinedmods.refinedstorage.blockentity.config.IType;
+import com.refinedmods.refinedstorage.blockentity.config.IWhitelistBlacklist;
 import com.refinedmods.refinedstorage.inventory.fluid.FluidInventory;
 import com.refinedmods.refinedstorage.inventory.item.BaseItemHandler;
 import com.refinedmods.refinedstorage.inventory.item.ProxyItemHandler;
@@ -20,18 +24,14 @@ import com.refinedmods.refinedstorage.inventory.item.validator.StorageDiskItemVa
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeFluidInventoryListener;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeInventoryListener;
 import com.refinedmods.refinedstorage.item.UpgradeItem;
-import com.refinedmods.refinedstorage.tile.DiskManipulatorTile;
-import com.refinedmods.refinedstorage.tile.config.IComparable;
-import com.refinedmods.refinedstorage.tile.config.IType;
-import com.refinedmods.refinedstorage.tile.config.IWhitelistBlacklist;
 import com.refinedmods.refinedstorage.util.StackUtils;
 import com.refinedmods.refinedstorage.util.WorldUtils;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandler;
@@ -76,8 +76,8 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
     private final BaseItemHandler itemFilters = new BaseItemHandler(9 * checkTierMultiplier()).addListener(new NetworkNodeInventoryListener(this));
     private final FluidInventory fluidFilters = new FluidInventory(9 * checkTierMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
 
-    public TieredDiskManipulatorNetworkNode(World world, BlockPos pos, CableTier tier) {
-        super(world, pos, ContentType.DISK_MANIPULATOR, tier);
+    public TieredDiskManipulatorNetworkNode(Level level, BlockPos pos, CableTier tier) {
+        super(level, pos, ContentType.DISK_MANIPULATOR, tier);
         this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(getTier() == CableTier.CREATIVE ? 0 : 4, CheckTierUpgrade()) {
             @Override
             public int getStackInteractCount() {
@@ -94,9 +94,9 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                 .addValidator(new StorageDiskItemValidator())
                 .addListener(new NetworkNodeInventoryListener(this))
                 .addListener(((handler, slot, reading) -> {
-                    if (!world.isClientSide) {
+                    if (!level.isClientSide) {
                         StackUtils.createStorages(
-                                (ServerWorld) world,
+                                (ServerLevel) level,
                                 handler.getStackInSlot(slot),
                                 3 * checkTierMultiplier() + slot,
                                 itemDisks,
@@ -106,7 +106,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                         );
 
                         if (!reading) {
-                            WorldUtils.updateBlock(world, pos);
+                            WorldUtils.updateBlock(level, pos);
                         }
                     }
                 }));
@@ -114,9 +114,9 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                 .addValidator(new StorageDiskItemValidator())
                 .addListener(new NetworkNodeInventoryListener(this))
                 .addListener((handler, slot, reading) -> {
-                    if (!world.isClientSide) {
+                    if (!level.isClientSide) {
                         StackUtils.createStorages(
-                                (ServerWorld) world,
+                                (ServerLevel) level,
                                 handler.getStackInSlot(slot),
                                 slot,
                                 itemDisks,
@@ -126,7 +126,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                         );
 
                         if (!reading) {
-                            WorldUtils.updateBlock(world, pos);
+                            WorldUtils.updateBlock(level, pos);
                         }
                     }
                 });
@@ -501,7 +501,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
 
     @Override
     public int getType() {
-        return world.isClientSide ? DiskManipulatorTile.TYPE.getValue() : type;
+        return level.isClientSide ? DiskManipulatorBlockEntity.TYPE.getValue() : type;
     }
 
     @Override
@@ -554,7 +554,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
     }
 
     @Override
-    public void read(CompoundNBT tag) {
+    public void read(CompoundTag tag) {
         super.read(tag);
 
         StackUtils.readItems(upgrades, 3, tag);
@@ -563,7 +563,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundTag write(CompoundTag tag) {
         super.write(tag);
 
         StackUtils.writeItems(upgrades, 3, tag);
@@ -574,7 +574,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
     }
 
     @Override
-    public CompoundNBT writeConfiguration(CompoundNBT tag) {
+    public CompoundTag writeConfiguration(CompoundTag tag) {
         super.writeConfiguration(tag);
 
         StackUtils.writeItems(itemFilters, 1, tag);
@@ -589,7 +589,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
     }
 
     @Override
-    public void readConfiguration(CompoundNBT tag) {
+    public void readConfiguration(CompoundTag tag) {
         super.readConfiguration(tag);
 
         StackUtils.readItems(itemFilters, 1, tag);
@@ -640,7 +640,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                         if (lastState != currentState) {
                             lastState = currentState;
 
-                            WorldUtils.updateBlock(diskManipulator.getWorld(), diskManipulator.getPos());
+                            WorldUtils.updateBlock(diskManipulator.getLevel(), diskManipulator.getPos());
                         }
                     },
                     diskManipulator
@@ -665,7 +665,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
         }
 
         @Override
-        public CompoundNBT writeToNbt() {
+        public CompoundTag writeToNbt() {
             return parent.writeToNbt();
         }
 
@@ -739,7 +739,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                         if (lastState != currentState) {
                             lastState = currentState;
 
-                            WorldUtils.updateBlock(diskManipulator.getWorld(), diskManipulator.getPos());
+                            WorldUtils.updateBlock(diskManipulator.getLevel(), diskManipulator.getPos());
                         }
                     },
                     diskManipulator
@@ -764,7 +764,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
         }
 
         @Override
-        public CompoundNBT writeToNbt() {
+        public CompoundTag writeToNbt() {
             return parent.writeToNbt();
         }
 

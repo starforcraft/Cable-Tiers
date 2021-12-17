@@ -2,45 +2,45 @@ package com.YTrollman.CableTiers.gui;
 
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.CableTiers;
+import com.YTrollman.CableTiers.blockentity.TieredDiskManipulatorBlockEntity;
 import com.YTrollman.CableTiers.container.TieredDiskManipulatorContainer;
 import com.YTrollman.CableTiers.node.TieredDiskManipulatorNetworkNode;
-import com.YTrollman.CableTiers.tileentity.TieredDiskManipulatorTileEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationManager;
 import com.refinedmods.refinedstorage.screen.BaseScreen;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.*;
-import com.refinedmods.refinedstorage.tile.data.TileDataManager;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 
-public class TieredDiskManipulatorScreen extends TieredScreen<TieredDiskManipulatorTileEntity, TieredDiskManipulatorContainer, TieredDiskManipulatorNetworkNode> {
+public class TieredDiskManipulatorScreen extends TieredScreen<TieredDiskManipulatorBlockEntity, TieredDiskManipulatorContainer, TieredDiskManipulatorNetworkNode> {
 
-    public TieredDiskManipulatorScreen(TieredDiskManipulatorContainer container, PlayerInventory playerInventory, ITextComponent title) {
-        super(container, container.getTier() == CableTier.CREATIVE ? 176 : 211, 245 + (container.getTier() == CableTier.CREATIVE ? 11 : 0), playerInventory, title);
+    public TieredDiskManipulatorScreen(TieredDiskManipulatorContainer container, Inventory inventory, Component title) {
+        super(container, container.getTier() == CableTier.CREATIVE ? 176 : 211, 245 + (container.getTier() == CableTier.CREATIVE ? 11 : 0), inventory, title);
     }
 
     @Override
     public void onPostInit(int x, int y) {
-        addSideButton(new RedstoneModeSideButton(this, TieredDiskManipulatorTileEntity.REDSTONE_MODE));
+        addSideButton(new RedstoneModeSideButton(this, TieredDiskManipulatorBlockEntity.REDSTONE_MODE));
         addSideButton(new TieredIoModeSideButton(this));
-        addSideButton(new TypeSideButton(this, TieredDiskManipulatorTileEntity.TYPE));
-        addSideButton(new WhitelistBlacklistSideButton(this, TieredDiskManipulatorTileEntity.WHITELIST_BLACKLIST));
-        addSideButton(new ExactModeSideButton(this, TieredDiskManipulatorTileEntity.COMPARE));
+        addSideButton(new TypeSideButton(this, TieredDiskManipulatorBlockEntity.TYPE));
+        addSideButton(new WhitelistBlacklistSideButton(this, TieredDiskManipulatorBlockEntity.WHITELIST_BLACKLIST));
+        addSideButton(new ExactModeSideButton(this, TieredDiskManipulatorBlockEntity.COMPARE));
     }
 
     @Override
-    public void renderBackground(MatrixStack matrixStack, int x, int y, int mouseX, int mouseY) {
+    public void renderBackground(PoseStack poseStack, int x, int y, int mouseX, int mouseY) {
         bindTexture(CableTiers.MOD_ID, "gui/" + getTier().getName() + "_disk_manipulator.png");
-        blit(matrixStack, x, y, 0, 0, imageWidth, imageHeight);
+        blit(poseStack, x, y, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
-    public void renderForeground(MatrixStack matrixStack, int mouseX, int mouseY) {
-        renderString(matrixStack, 7, 7, title.getString());
-        renderString(matrixStack, 7, screenText("Inv", true), I18n.get("container.inventory"));
-        renderString(matrixStack, screenText("In", false), screenText("In", true), I18n.get("gui.refinedstorage.disk_manipulator.in"));
-        renderString(matrixStack, screenText("Out", false), screenText("Out", true), I18n.get("gui.refinedstorage.disk_manipulator.out"));
+    public void renderForeground(PoseStack poseStack, int mouseX, int mouseY) {
+        renderString(poseStack, 7, 7, title.getString());
+        renderString(poseStack, 7, screenText("Inv", true), I18n.get("container.inventory"));
+        renderString(poseStack, screenText("In", false), screenText("In", true), I18n.get("gui.refinedstorage.disk_manipulator.in"));
+        renderString(poseStack, screenText("Out", false), screenText("Out", true), I18n.get("gui.refinedstorage.disk_manipulator.out"));
     }
 
     private int screenText(String whatText, boolean isY)
@@ -142,17 +142,17 @@ public class TieredDiskManipulatorScreen extends TieredScreen<TieredDiskManipula
 
         @Override
         public String getTooltip() {
-            return I18n.get("sidebutton.refinedstorage.iomode") + "\n" + TextFormatting.GRAY + I18n.get("sidebutton.refinedstorage.iomode." + (TieredDiskManipulatorTileEntity.IO_MODE.getValue() == TieredDiskManipulatorNetworkNode.IO_MODE_INSERT ? "insert" : "extract"));
+            return I18n.get("sidebutton.refinedstorage.iomode") + "\n" + ChatFormatting.GRAY + I18n.get("sidebutton.refinedstorage.iomode." + (TieredDiskManipulatorBlockEntity.IO_MODE.getValue() == TieredDiskManipulatorNetworkNode.IO_MODE_INSERT ? "insert" : "extract"));
         }
 
         @Override
-        protected void renderButtonIcon(MatrixStack matrixStack, int x, int y) {
-            screen.blit(matrixStack, x, y, TieredDiskManipulatorTileEntity.IO_MODE.getValue() == TieredDiskManipulatorNetworkNode.IO_MODE_EXTRACT ? 0 : 16, 160, 16, 16);
+        protected void renderButtonIcon(PoseStack poseStack, int x, int y) {
+            screen.blit(poseStack, x, y, TieredDiskManipulatorBlockEntity.IO_MODE.getValue() == TieredDiskManipulatorNetworkNode.IO_MODE_EXTRACT ? 0 : 16, 160, 16, 16);
         }
 
         @Override
         public void onPress() {
-            TileDataManager.setParameter(TieredDiskManipulatorTileEntity.IO_MODE, TieredDiskManipulatorTileEntity.IO_MODE.getValue() == TieredDiskManipulatorNetworkNode.IO_MODE_INSERT ? TieredDiskManipulatorNetworkNode.IO_MODE_EXTRACT : TieredDiskManipulatorNetworkNode.IO_MODE_INSERT);
+            BlockEntitySynchronizationManager.setParameter(TieredDiskManipulatorBlockEntity.IO_MODE, TieredDiskManipulatorBlockEntity.IO_MODE.getValue() == TieredDiskManipulatorNetworkNode.IO_MODE_INSERT ? TieredDiskManipulatorNetworkNode.IO_MODE_EXTRACT : TieredDiskManipulatorNetworkNode.IO_MODE_INSERT);
         }
     }
 }

@@ -1,12 +1,12 @@
 package com.YTrollman.CableTiers.container;
 
 import com.YTrollman.CableTiers.ContentType;
+import com.YTrollman.CableTiers.blockentity.TieredRequesterBlockEntity;
 import com.YTrollman.CableTiers.node.TieredRequesterNetworkNode;
-import com.YTrollman.CableTiers.tileentity.TieredRequesterTileEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
-public class TieredRequesterContainer extends TieredContainer<TieredRequesterTileEntity, TieredRequesterNetworkNode> {
-    public TieredRequesterContainer(int windowId, PlayerEntity player, TieredRequesterTileEntity tile) {
+public class TieredRequesterContainer extends TieredContainerMenu<TieredRequesterBlockEntity, TieredRequesterNetworkNode> {
+    public TieredRequesterContainer(int windowId, Player player, TieredRequesterBlockEntity tile) {
         super(ContentType.REQUESTER, tile, player, windowId);
         initSlots();
     }
@@ -15,6 +15,6 @@ public class TieredRequesterContainer extends TieredContainer<TieredRequesterTil
         addFilterSlots(getNode().getItemFilters(), getNode().getFluidFilters(), getNode());
         addPlayerInventory(8, 55 + (18 * (getTier().getSlotsMultiplier() - 1)));
 
-        transferManager.addFilterTransfer(getPlayer().inventory, getNode().getItemFilters(), getNode().getFluidFilters(), getNode()::getType);
+        transferManager.addFilterTransfer(getPlayer().getInventory(), getNode().getItemFilters(), getNode().getFluidFilters(), getNode()::getType);
     }
 }

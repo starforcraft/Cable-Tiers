@@ -2,43 +2,43 @@ package com.YTrollman.CableTiers.node;
 
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
+import com.YTrollman.CableTiers.blockentity.TieredDestructorBlockEntity;
 import com.YTrollman.CableTiers.config.CableConfig;
-import com.YTrollman.CableTiers.tileentity.TieredDestructorTileEntity;
 import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.api.network.node.ICoverable;
 import com.refinedmods.refinedstorage.api.util.Action;
 import com.refinedmods.refinedstorage.api.util.IComparer;
 import com.refinedmods.refinedstorage.apiimpl.network.node.cover.CoverManager;
+import com.refinedmods.refinedstorage.blockentity.config.IComparable;
+import com.refinedmods.refinedstorage.blockentity.config.IType;
+import com.refinedmods.refinedstorage.blockentity.config.IWhitelistBlacklist;
 import com.refinedmods.refinedstorage.inventory.fluid.FluidInventory;
 import com.refinedmods.refinedstorage.inventory.item.BaseItemHandler;
 import com.refinedmods.refinedstorage.inventory.item.UpgradeItemHandler;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeFluidInventoryListener;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeInventoryListener;
 import com.refinedmods.refinedstorage.item.UpgradeItem;
-import com.refinedmods.refinedstorage.tile.config.IComparable;
-import com.refinedmods.refinedstorage.tile.config.IType;
-import com.refinedmods.refinedstorage.tile.config.IWhitelistBlacklist;
 import com.refinedmods.refinedstorage.util.StackUtils;
 import com.refinedmods.refinedstorage.util.WorldUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.IBucketPickupHandler;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Containers;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
@@ -47,7 +47,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestructorNetworkNode> implements IComparable, IWhitelistBlacklist, IType, ICoverable {
@@ -79,8 +78,8 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
 
     private CoverManager coverManager;
 
-    public TieredDestructorNetworkNode(World world, BlockPos pos, CableTier tier) {
-        super(world, pos, ContentType.DESTRUCTOR, tier);
+    public TieredDestructorNetworkNode(Level level, BlockPos pos, CableTier tier) {
+        super(level, pos, ContentType.DESTRUCTOR, tier);
         this.coverManager = new CoverManager(this);
         this.itemFilters = new BaseItemHandler(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
         this.fluidFilters = new FluidInventory(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
@@ -107,7 +106,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
     public void update() {
         super.update();
 
-        if (!canUpdate() || !world.isLoaded(pos) || !world.isLoaded(pos.relative(getDirection()))) {
+        if (!canUpdate() || !level.isLoaded(pos) || !level.isLoaded(pos.relative(getDirection()))) {
             return;
         }
 
@@ -143,79 +142,68 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
 
     private void pickupItems() {
         BlockPos front = pos.relative(getDirection());
-        List<ItemEntity> droppedItems = new ArrayList<>();
-        world.getChunkAt(front).getEntitiesOfClass(ItemEntity.class, new AxisAlignedBB(front), droppedItems, EntityPredicates.ENTITY_STILL_ALIVE);
+
+        List<ItemEntity> droppedItems = level.getEntitiesOfClass(ItemEntity.class, new AABB(front));
+
         for (ItemEntity entity : droppedItems) {
-            ItemStack droppedItem = entity.getItem();
-            if (droppedItem.isEmpty() || !IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, droppedItem)) {
-                continue;
-            }
+            ItemStack droppedItem = ((ItemEntity) entity).getItem();
 
-            ItemStack remaining = network.insertItemTracked(droppedItem.copy(), droppedItem.getCount());
-            int inserted = droppedItem.getCount() - remaining.getCount();
-            if (inserted > 0) {
-                if (remaining.isEmpty()) {
-                    entity.remove();
-                } else {
-                    entity.setItem(remaining);
-                }
+            if (IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, droppedItem) &&
+                    network.insertItem(droppedItem, droppedItem.getCount(), Action.SIMULATE).isEmpty()) {
+                network.insertItemTracked(droppedItem.copy(), droppedItem.getCount());
 
-                if (getTier() != CableTier.CREATIVE) {
-                    break;
-                }
+                entity.remove(Entity.RemovalReason.DISCARDED);
+
+                break;
             }
         }
     }
 
     private void breakBlock() {
         BlockPos front = pos.relative(getDirection());
-        BlockState frontBlockState = world.getBlockState(front);
-        if (frontBlockState.getDestroySpeed(world, front) < 0) {
-            return;
-        }
-
+        BlockState frontBlockState = level.getBlockState(front);
         Block frontBlock = frontBlockState.getBlock();
-        FakePlayer fakePlayer = WorldUtils.getFakePlayer((ServerWorld) world, getOwner());
-        ItemStack frontStack = frontBlock.getPickBlock(
+        ItemStack frontStack = frontBlock.getCloneItemStack(
                 frontBlockState,
-                new BlockRayTraceResult(Vector3d.ZERO, getDirection().getOpposite(), front, false),
-                world,
+                new BlockHitResult(Vec3.ZERO, getDirection().getOpposite(), front, false),
+                level,
                 front,
-                fakePlayer
-        );
-        if (frontStack.isEmpty() || !IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, frontStack)) {
-            return;
-        }
-
-        List<ItemStack> drops = Block.getDrops(
-                frontBlockState,
-                (ServerWorld) world,
-                front,
-                world.getBlockEntity(front),
-                fakePlayer,
-                tool
+                WorldUtils.getFakePlayer((ServerLevel) level, getOwner())
         );
 
-        for (ItemStack drop : drops) {
-            if (!network.insertItem(drop, drop.getCount(), Action.SIMULATE).isEmpty()) {
-                return;
-            }
-        }
-
-        BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(world, front, frontBlockState, fakePlayer);
-        if (!MinecraftForge.EVENT_BUS.post(e)) {
-            frontBlock.playerWillDestroy(world, front, frontBlockState, fakePlayer);
-
-            world.removeBlock(front, false);
+        if (!frontStack.isEmpty() &&
+                IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, frontStack) &&
+                frontBlockState.getDestroySpeed(level, front) != -1.0) {
+            List<ItemStack> drops = Block.getDrops(
+                    frontBlockState,
+                    (ServerLevel) level,
+                    front,
+                    level.getBlockEntity(front),
+                    WorldUtils.getFakePlayer((ServerLevel) level, getOwner()),
+                    tool
+            );
 
             for (ItemStack drop : drops) {
-                // We check if the controller isn't null here because when a destructor faces a node and removes it
-                // it will essentially remove this block itself from the network without knowing
-                if (network == null) {
-                    InventoryHelper.dropItemStack(world, front.getX() + 0.5, front.getY() + 0.5, front.getZ() + 0.5, drop);
-                } else {
-                    ItemStack remainder = network.insertItemTracked(drop, drop.getCount());
+                if (!network.insertItem(drop, drop.getCount(), Action.SIMULATE).isEmpty()) {
+                    return;
+                }
+            }
 
+            BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(level, front, frontBlockState, WorldUtils.getFakePlayer((ServerLevel) level, getOwner()));
+
+            if (!MinecraftForge.EVENT_BUS.post(e)) {
+                frontBlock.playerWillDestroy(level, front, frontBlockState, WorldUtils.getFakePlayer((ServerLevel) level, getOwner()));
+
+                level.removeBlock(front, false);
+
+                for (ItemStack drop : drops) {
+                    // We check if the controller isn't null here because when a destructor faces a node and removes it
+                    // it will essentially remove this block itself from the network without knowing
+                    if (network == null) {
+                        Containers.dropItemStack(level, front.getX(), front.getY(), front.getZ(), drop);
+                    } else {
+                        network.insertItemTracked(drop, drop.getCount());
+                    }
                 }
             }
         }
@@ -223,33 +211,34 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
 
     private void breakFluid() {
         BlockPos front = pos.relative(getDirection());
-        BlockState frontBlockState = world.getBlockState(front);
+        BlockState frontBlockState = level.getBlockState(front);
         Block frontBlock = frontBlockState.getBlock();
 
-        if (frontBlock instanceof IFluidBlock) {
-            IFluidBlock fluidBlock = (IFluidBlock) frontBlock;
-            if (fluidBlock.canDrain(world, front)) {
-                FluidStack result = fluidBlock.drain(world, front, IFluidHandler.FluidAction.SIMULATE);
-                if (!result.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, result) && network.insertFluid(result, result.getAmount(), Action.SIMULATE).isEmpty()) {
-                    result = fluidBlock.drain(world, front, IFluidHandler.FluidAction.EXECUTE);
+        if (frontBlock instanceof LiquidBlock) {
+            // @Volatile: Logic from FlowingFluidBlock#pickupFluid
+            if (frontBlockState.getValue(LiquidBlock.LEVEL) == 0) {
+                Fluid fluid = ((LiquidBlock) frontBlock).getFluid();
 
-                    FluidStack remainder = network.insertFluidTracked(result, result.getAmount());
+                FluidStack stack = new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME);
 
-                    return;
+                if (IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack) &&
+                        network.insertFluid(stack, stack.getAmount(), Action.SIMULATE).isEmpty()) {
+                    network.insertFluidTracked(stack, stack.getAmount());
+
+                    level.setBlock(front, Blocks.AIR.defaultBlockState(), 11);
                 }
             }
-        }
+        } else if (frontBlock instanceof IFluidBlock) {
+            IFluidBlock fluidBlock = (IFluidBlock) frontBlock;
 
-        if (frontBlock instanceof IBucketPickupHandler) {
-            IBucketPickupHandler bucketPickupHandler = (IBucketPickupHandler) frontBlock;
-            FluidState fluidState = world.getFluidState(front);
-            if (!fluidState.isEmpty()) {
-                FluidStack result = new FluidStack(fluidState.getType(), FluidAttributes.BUCKET_VOLUME);
-                if (!result.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, result) && network.insertFluid(result, result.getAmount(), Action.SIMULATE).isEmpty()) {
-                    result = new FluidStack(bucketPickupHandler.takeLiquid(world, front, frontBlockState), FluidAttributes.BUCKET_VOLUME);
-                    FluidStack remainder = network.insertFluidTracked(result, result.getAmount());
+            if (fluidBlock.canDrain(level, front)) {
+                FluidStack simulatedDrain = fluidBlock.drain(level, front, IFluidHandler.FluidAction.SIMULATE);
 
-                    return;
+                if (IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, simulatedDrain) &&
+                        network.insertFluid(simulatedDrain, simulatedDrain.getAmount(), Action.SIMULATE).isEmpty()) {
+                    FluidStack drained = fluidBlock.drain(level, front, IFluidHandler.FluidAction.EXECUTE);
+
+                    network.insertFluidTracked(drained, drained.getAmount());
                 }
             }
         }
@@ -294,7 +283,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
     }
 
     @Override
-    public void read(CompoundNBT tag) {
+    public void read(CompoundTag tag) {
         super.read(tag);
         if (tag.contains(CoverManager.NBT_COVER_MANAGER)){
             this.coverManager.readFromNbt(tag.getCompound(CoverManager.NBT_COVER_MANAGER));
@@ -303,7 +292,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundTag write(CompoundTag tag) {
         super.write(tag);
         tag.put(CoverManager.NBT_COVER_MANAGER, this.coverManager.writeToNbt());
         StackUtils.writeItems(upgrades, 1, tag);
@@ -311,7 +300,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
     }
 
     @Override
-    public CompoundNBT writeConfiguration(CompoundNBT tag) {
+    public CompoundTag writeConfiguration(CompoundTag tag) {
         super.writeConfiguration(tag);
         tag.putInt(NBT_COMPARE, compare);
         tag.putInt(NBT_MODE, mode);
@@ -323,7 +312,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
     }
 
     @Override
-    public void readConfiguration(CompoundNBT tag) {
+    public void readConfiguration(CompoundTag tag) {
         super.readConfiguration(tag);
         if (tag.contains(NBT_COMPARE)) {
             compare = tag.getInt(NBT_COMPARE);
@@ -354,7 +343,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
 
     @Override
     public int getType() {
-        return world.isClientSide ? TieredDestructorTileEntity.TYPE.getValue() : type;
+        return level.isClientSide ? TieredDestructorBlockEntity.TYPE.getValue() : type;
     }
 
     @Override

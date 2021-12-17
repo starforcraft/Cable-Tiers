@@ -2,16 +2,16 @@ package com.YTrollman.CableTiers.gui;
 
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
-import com.YTrollman.CableTiers.container.TieredContainer;
+import com.YTrollman.CableTiers.blockentity.TieredBlockEntity;
+import com.YTrollman.CableTiers.container.TieredContainerMenu;
 import com.YTrollman.CableTiers.node.TieredNetworkNode;
-import com.YTrollman.CableTiers.tileentity.TieredTileEntity;
 import com.refinedmods.refinedstorage.screen.BaseScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 
-public abstract class TieredScreen<T extends TieredTileEntity<N>, C extends TieredContainer<T, N>, N extends TieredNetworkNode<N>> extends BaseScreen<C> {
+public abstract class TieredScreen<T extends TieredBlockEntity<N>, C extends TieredContainerMenu<T, N>, N extends TieredNetworkNode<N>> extends BaseScreen<C> {
 
-    protected TieredScreen(C container, int xSize, int ySize, PlayerInventory inventory, ITextComponent title) {
+    protected TieredScreen(C container, int xSize, int ySize, Inventory inventory, Component title) {
         super(container, xSize, ySize, inventory, title);
     }
 
@@ -23,8 +23,8 @@ public abstract class TieredScreen<T extends TieredTileEntity<N>, C extends Tier
         return menu.getTier();
     }
 
-    public T getTile() {
-        return menu.getTile();
+    public T getBlockEntity() {
+        return menu.getBlockEntity();
     }
 
     public N getNode() {

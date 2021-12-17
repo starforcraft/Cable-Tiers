@@ -2,8 +2,8 @@ package com.YTrollman.CableTiers.node;
 
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
+import com.YTrollman.CableTiers.blockentity.TieredExporterBlockEntity;
 import com.YTrollman.CableTiers.config.CableConfig;
-import com.YTrollman.CableTiers.tileentity.TieredExporterTileEntity;
 import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.api.network.node.ICoverable;
 import com.refinedmods.refinedstorage.api.util.Action;
@@ -11,20 +11,20 @@ import com.refinedmods.refinedstorage.api.util.IComparer;
 import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.SlottedCraftingRequest;
 import com.refinedmods.refinedstorage.apiimpl.network.node.cover.CoverManager;
+import com.refinedmods.refinedstorage.blockentity.config.IComparable;
+import com.refinedmods.refinedstorage.blockentity.config.IType;
 import com.refinedmods.refinedstorage.inventory.fluid.FluidInventory;
 import com.refinedmods.refinedstorage.inventory.item.BaseItemHandler;
 import com.refinedmods.refinedstorage.inventory.item.UpgradeItemHandler;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeFluidInventoryListener;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeInventoryListener;
 import com.refinedmods.refinedstorage.item.UpgradeItem;
-import com.refinedmods.refinedstorage.tile.config.IComparable;
-import com.refinedmods.refinedstorage.tile.config.IType;
 import com.refinedmods.refinedstorage.util.StackUtils;
 import com.refinedmods.refinedstorage.util.WorldUtils;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -53,8 +53,8 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
 
     private final CoverManager coverManager;
 
-    public TieredExporterNetworkNode(World world, BlockPos pos, CableTier tier) {
-        super(world, pos, ContentType.EXPORTER, tier);
+    public TieredExporterNetworkNode(Level level, BlockPos pos, CableTier tier) {
+        super(level, pos, ContentType.EXPORTER, tier);
         this.coverManager = new CoverManager(this);
         this.itemFilters = new BaseItemHandler(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
         this.fluidFilters = new FluidInventory(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
@@ -150,7 +150,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
     public void update() {
         super.update();
 
-        if (!canUpdate() || !world.isLoaded(pos) || !world.isLoaded(pos.relative(getDirection()))) {
+        if (!canUpdate() || !level.isLoaded(pos) || !level.isLoaded(pos.relative(getDirection()))) {
             return;
         }
 
@@ -170,7 +170,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
     }
 
     private void itemUpdate() {
-        IItemHandler handler = WorldUtils.getItemHandler(getFacingTile(), getDirection().getOpposite());
+        IItemHandler handler = WorldUtils.getItemHandler(getFacingBlockEntity(), getDirection().getOpposite());
         if (handler == null || handler.getSlots() <= 0) {
             return;
         }
@@ -266,7 +266,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
     }
 
     private void fluidUpdate() {
-        IFluidHandler handler = WorldUtils.getFluidHandler(getFacingTile(), getDirection().getOpposite());
+        IFluidHandler handler = WorldUtils.getFluidHandler(getFacingBlockEntity(), getDirection().getOpposite());
         if (handler == null || handler.getTanks() <= 0) {
             return;
         }
@@ -363,7 +363,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundTag write(CompoundTag tag) {
         super.write(tag);
         tag.put(CoverManager.NBT_COVER_MANAGER, this.coverManager.writeToNbt());
         StackUtils.writeItems(upgrades, 1, tag);
@@ -371,7 +371,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
     }
 
     @Override
-    public CompoundNBT writeConfiguration(CompoundNBT tag) {
+    public CompoundTag writeConfiguration(CompoundTag tag) {
         super.writeConfiguration(tag);
         tag.putInt(NBT_COMPARE, compare);
         tag.putInt(NBT_TYPE, type);
@@ -381,7 +381,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
     }
 
     @Override
-    public void read(CompoundNBT tag) {
+    public void read(CompoundTag tag) {
         super.read(tag);
         if (tag.contains(CoverManager.NBT_COVER_MANAGER)){
             this.coverManager.readFromNbt(tag.getCompound(CoverManager.NBT_COVER_MANAGER));
@@ -390,7 +390,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
     }
 
     @Override
-    public void readConfiguration(CompoundNBT tag) {
+    public void readConfiguration(CompoundTag tag) {
         super.readConfiguration(tag);
         if (tag.contains(NBT_COMPARE)) {
             compare = tag.getInt(NBT_COMPARE);
@@ -415,7 +415,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
 
     @Override
     public int getType() {
-        return world.isClientSide ? TieredExporterTileEntity.TYPE.getValue() : type;
+        return level.isClientSide ? TieredExporterBlockEntity.TYPE.getValue() : type;
     }
 
     @Override

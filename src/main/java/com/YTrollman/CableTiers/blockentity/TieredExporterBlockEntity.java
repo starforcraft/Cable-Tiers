@@ -1,36 +1,36 @@
-package com.YTrollman.CableTiers.tileentity;
+package com.YTrollman.CableTiers.blockentity;
 
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
 import com.YTrollman.CableTiers.node.TieredExporterNetworkNode;
 import com.refinedmods.refinedstorage.apiimpl.network.node.cover.CoverManager;
-import com.refinedmods.refinedstorage.tile.config.IComparable;
-import com.refinedmods.refinedstorage.tile.config.IType;
-import com.refinedmods.refinedstorage.tile.data.TileDataManager;
-import com.refinedmods.refinedstorage.tile.data.TileDataParameter;
+import com.refinedmods.refinedstorage.blockentity.config.IComparable;
+import com.refinedmods.refinedstorage.blockentity.config.IType;
+import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationManager;
+import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationParameter;
 import com.refinedmods.refinedstorage.util.WorldUtils;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 
 import javax.annotation.Nonnull;
 
-public class TieredExporterTileEntity extends TieredTileEntity<TieredExporterNetworkNode> {
+public class TieredExporterBlockEntity extends TieredBlockEntity<TieredExporterNetworkNode> {
 
-    public static final TileDataParameter<CompoundNBT, TieredExporterTileEntity> COVER_MANAGER = new TileDataParameter<>(DataSerializers.COMPOUND_TAG, new CompoundNBT(),
+    public static final BlockEntitySynchronizationParameter<CompoundTag, TieredExporterBlockEntity> COVER_MANAGER = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.COMPOUND_TAG, new CompoundTag(),
             t -> t.getNode().getCoverManager().writeToNbt(),
             (t, v) -> t.getNode().getCoverManager().readFromNbt(v),
             (initial, p) -> {});
 
-    public static final TileDataParameter<Integer, TieredExporterTileEntity> COMPARE = IComparable.createParameter();
-    public static final TileDataParameter<Integer, TieredExporterTileEntity> TYPE = IType.createParameter();
+    public static final BlockEntitySynchronizationParameter<Integer, TieredExporterBlockEntity> COMPARE = IComparable.createParameter();
+    public static final BlockEntitySynchronizationParameter<Integer, TieredExporterBlockEntity> TYPE = IType.createParameter();
 
     static {
-        TileDataManager.registerParameter(COVER_MANAGER);
+        BlockEntitySynchronizationManager.registerParameter(COVER_MANAGER);
     }
 
-    public TieredExporterTileEntity(CableTier tier) {
+    public TieredExporterBlockEntity(CableTier tier) {
         super(ContentType.EXPORTER, tier);
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(TYPE);
@@ -44,7 +44,7 @@ public class TieredExporterTileEntity extends TieredTileEntity<TieredExporterNet
     }
 
     @Override
-    public CompoundNBT writeUpdate(CompoundNBT tag) {
+    public CompoundTag writeUpdate(CompoundTag tag) {
         super.writeUpdate(tag);
         tag.put(CoverManager.NBT_COVER_MANAGER, this.getNode().getCoverManager().writeToNbt());
 
@@ -52,7 +52,7 @@ public class TieredExporterTileEntity extends TieredTileEntity<TieredExporterNet
     }
 
     @Override
-    public void readUpdate(CompoundNBT tag) {
+    public void readUpdate(CompoundTag tag) {
         super.readUpdate(tag);
 
         this.getNode().getCoverManager().readFromNbt(tag.getCompound(CoverManager.NBT_COVER_MANAGER));

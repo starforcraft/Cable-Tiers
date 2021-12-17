@@ -1,45 +1,45 @@
 package com.YTrollman.CableTiers.gui;
 
 import com.YTrollman.CableTiers.CableTiers;
-import com.YTrollman.CableTiers.container.TieredConstructorContainer;
+import com.YTrollman.CableTiers.blockentity.TieredConstructorBlockEntity;
+import com.YTrollman.CableTiers.container.TieredConstructorContainerMenu;
 import com.YTrollman.CableTiers.node.TieredConstructorNetworkNode;
-import com.YTrollman.CableTiers.tileentity.TieredConstructorTileEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationManager;
 import com.refinedmods.refinedstorage.screen.BaseScreen;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.ExactModeSideButton;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.RedstoneModeSideButton;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.SideButton;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.TypeSideButton;
-import com.refinedmods.refinedstorage.tile.data.TileDataManager;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 
-public class TieredConstructorScreen extends TieredScreen<TieredConstructorTileEntity, TieredConstructorContainer, TieredConstructorNetworkNode> {
+public class TieredConstructorScreen extends TieredScreen<TieredConstructorBlockEntity, TieredConstructorContainerMenu, TieredConstructorNetworkNode> {
 
-    public TieredConstructorScreen(TieredConstructorContainer container, PlayerInventory inventory, ITextComponent title) {
+    public TieredConstructorScreen(TieredConstructorContainerMenu container, Inventory inventory, Component title) {
         super(container, 211, 137, inventory, title);
     }
 
     @Override
     public void onPostInit(int x, int y) {
-        addSideButton(new RedstoneModeSideButton(this, TieredConstructorTileEntity.REDSTONE_MODE));
-        addSideButton(new TypeSideButton(this, TieredConstructorTileEntity.TYPE));
-        addSideButton(new ExactModeSideButton(this, TieredConstructorTileEntity.COMPARE));
+        addSideButton(new RedstoneModeSideButton(this, TieredConstructorBlockEntity.REDSTONE_MODE));
+        addSideButton(new TypeSideButton(this, TieredConstructorBlockEntity.TYPE));
+        addSideButton(new ExactModeSideButton(this, TieredConstructorBlockEntity.COMPARE));
         addSideButton(new TieredConstructorDropSideButton(this));
     }
 
     @Override
-    public void renderBackground(MatrixStack matrixStack, int x, int y, int mouseX, int mouseY) {
+    public void renderBackground(PoseStack poseStack, int x, int y, int mouseX, int mouseY) {
         bindTexture(CableTiers.MOD_ID, "gui/" + getTier().getName() + "_constructor.png");
-        blit(matrixStack, x, y, 0, 0, imageWidth, imageHeight);
+        blit(poseStack, x, y, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
-    public void renderForeground(MatrixStack matrixStack, int mouseX, int mouseY) {
-        renderString(matrixStack, 7, 7, title.getString());
-        renderString(matrixStack, 7, 42, I18n.get("container.inventory"));
+    public void renderForeground(PoseStack poseStack, int mouseX, int mouseY) {
+        renderString(poseStack, 7, 7, title.getString());
+        renderString(poseStack, 7, 42, I18n.get("container.inventory"));
     }
 
     private static class TieredConstructorDropSideButton extends SideButton {
@@ -49,18 +49,18 @@ public class TieredConstructorScreen extends TieredScreen<TieredConstructorTileE
         }
 
         @Override
-        protected void renderButtonIcon(MatrixStack matrixStack, int x, int y) {
-            screen.blit(matrixStack, x, y, 64 + (Boolean.TRUE.equals(TieredConstructorTileEntity.DROP.getValue()) ? 16 : 0), 16, 16, 16);
+        protected void renderButtonIcon(PoseStack poseStack, int x, int y) {
+            screen.blit(poseStack, x, y, 64 + (Boolean.TRUE.equals(TieredConstructorBlockEntity.DROP.getValue()) ? 16 : 0), 16, 16, 16);
         }
 
         @Override
         public String getTooltip() {
-            return I18n.get("sidebutton.refinedstorage.constructor.drop") + "\n" + TextFormatting.GRAY + I18n.get(Boolean.TRUE.equals(TieredConstructorTileEntity.DROP.getValue()) ? "gui.yes" : "gui.no");
+            return I18n.get("sidebutton.refinedstorage.constructor.drop") + "\n" + ChatFormatting.GRAY + I18n.get(Boolean.TRUE.equals(TieredConstructorBlockEntity.DROP.getValue()) ? "gui.yes" : "gui.no");
         }
 
         @Override
         public void onPress() {
-            TileDataManager.setParameter(TieredConstructorTileEntity.DROP, !TieredConstructorTileEntity.DROP.getValue());
+            BlockEntitySynchronizationManager.setParameter(TieredConstructorBlockEntity.DROP, !TieredConstructorBlockEntity.DROP.getValue());
         }
     }
 }

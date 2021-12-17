@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://maven.minecraftforge.net' }
         mavenCentral()
     }
     dependencies {
@@ -8,23 +8,30 @@ buildscript {
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'idea'
 apply plugin: 'maven-publish'
 
 repositories {
     maven {
         name = "Progwml6 maven"
-        url = "https://dvs1.progwml6.com/files/maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
     }
     maven {
         name = "ModMaven"
-        url = "https://modmaven.dev"
+        url = "https://modmaven.k-4u.nl"
     }
     maven {
-        name = "RS maven"
-        url = "https://repo.refinedmods.com"
+        url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
+        /* As of december 2021, GitHub packages requires authentication.
+           The password below is a personal access token that has read access to the Refined Mods repos.
+           It can be reused in other projects.
+           See: https://github.community/t/download-from-github-package-registry-without-authentication/14407/38 and
+                https://github.community/t/download-from-github-package-registry-without-authentication/14407/44
+         */
+        credentials {
+            username = "anything"
+            password = "\u0067hp_pnP5hVDYXXhhXwe21IEkrUzGjquUJL0xjLzb"
+        }
     }
     maven {
         url "https://www.cursemaven.com"
@@ -35,10 +42,10 @@ repositories {
 }
 
 version = "${mod_version}"
-group = "com.YTrollman.CableTiers" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "com.YTrollman.CableTiers"
 archivesBaseName = "${modid}"
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
@@ -108,16 +115,17 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    compileOnly fg.deobf("mezz.jei:jei-1.16.5:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.16.5:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-1.18.1:${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.18.1:${jei_version}")
 
-    //implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
-    implementation fg.deobf("curse.maven:refinedstorage-243076:3527504")
-    implementation fg.deobf("curse.maven:rsrequestify-307788:3501351")
+    implementation fg.deobf("com.refinedmods:refinedstorage:1.10.0-beta.3") {
+        transitive false
+    }
+    //implementation fg.deobf("curse.maven:rsrequestify-307788:3501351")
 
-    implementation fg.deobf("curse.maven:extrastorage-410168:3527726")
-    implementation fg.deobf("curse.maven:spark-361579:3337641")
-    implementation fg.deobf("curse.maven:mekanism-268560:3206392")
+    //implementation fg.deobf("curse.maven:extrastorage-410168:3527726")
+    implementation fg.deobf("curse.maven:spark-361579:3542245")
+    //implementation fg.deobf("curse.maven:mekanism-268560:3206392")
 }
 
 jar {
@@ -128,14 +136,13 @@ jar {
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : "${project.name}",
                 "Implementation-Version"  : "${project.version}",
-                "Implementation-Vendor"   : "examplemodsareus",
+                "Implementation-Vendor"   : "cabletierssareus",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
 
 jar.finalizedBy('reobfJar')
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -143,14 +150,8 @@ publishing {
         }
     }
     repositories {
-        maven { url "file:///${project.projectDir}/mcmodsrepo" }
-    }
-}
-
-idea {
-    module {
-        ['run', 'out', 'logs'].each {
-            excludeDirs += project.file(it)
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
         }
     }
 }

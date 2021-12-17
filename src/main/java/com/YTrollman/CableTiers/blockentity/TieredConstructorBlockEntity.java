@@ -1,40 +1,40 @@
-package com.YTrollman.CableTiers.tileentity;
+package com.YTrollman.CableTiers.blockentity;
 
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
 import com.YTrollman.CableTiers.node.TieredConstructorNetworkNode;
 import com.refinedmods.refinedstorage.apiimpl.network.node.cover.CoverManager;
-import com.refinedmods.refinedstorage.tile.config.IComparable;
-import com.refinedmods.refinedstorage.tile.config.IType;
-import com.refinedmods.refinedstorage.tile.data.TileDataManager;
-import com.refinedmods.refinedstorage.tile.data.TileDataParameter;
+import com.refinedmods.refinedstorage.blockentity.config.IComparable;
+import com.refinedmods.refinedstorage.blockentity.config.IType;
+import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationManager;
+import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationParameter;
 import com.refinedmods.refinedstorage.util.WorldUtils;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 
 import javax.annotation.Nonnull;
 
-public class TieredConstructorTileEntity extends TieredTileEntity<TieredConstructorNetworkNode> {
+public class TieredConstructorBlockEntity extends TieredBlockEntity<TieredConstructorNetworkNode> {
 
-    public static final TileDataParameter<CompoundNBT, TieredConstructorTileEntity> COVER_MANAGER = new TileDataParameter<>(DataSerializers.COMPOUND_TAG, new CompoundNBT(),
+    public static final BlockEntitySynchronizationParameter<CompoundTag, TieredConstructorBlockEntity> COVER_MANAGER = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.COMPOUND_TAG, new CompoundTag(),
             t -> t.getNode().getCoverManager().writeToNbt(),
             (t, v) -> t.getNode().getCoverManager().readFromNbt(v),
             (initial, p) -> {});
 
-    public static final TileDataParameter<Integer, TieredConstructorTileEntity> COMPARE = IComparable.createParameter();
-    public static final TileDataParameter<Integer, TieredConstructorTileEntity> TYPE = IType.createParameter();
-    public static final TileDataParameter<Boolean, TieredConstructorTileEntity> DROP = new TileDataParameter<>(DataSerializers.BOOLEAN, false, t -> t.getNode().isDrop(), (t, v) -> {
+    public static final BlockEntitySynchronizationParameter<Integer, TieredConstructorBlockEntity> COMPARE = IComparable.createParameter();
+    public static final BlockEntitySynchronizationParameter<Integer, TieredConstructorBlockEntity> TYPE = IType.createParameter();
+    public static final BlockEntitySynchronizationParameter<Boolean, TieredConstructorBlockEntity> DROP = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.BOOLEAN, false, t -> t.getNode().isDrop(), (t, v) -> {
         t.getNode().setDrop(v);
         t.getNode().markDirty();
     });
 
     static {
-        TileDataManager.registerParameter(COVER_MANAGER);
+        BlockEntitySynchronizationManager.registerParameter(COVER_MANAGER);
     }
 
-    public TieredConstructorTileEntity(CableTier tier) {
+    public TieredConstructorBlockEntity(CableTier tier) {
         super(ContentType.CONSTRUCTOR, tier);
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(TYPE);
@@ -49,7 +49,7 @@ public class TieredConstructorTileEntity extends TieredTileEntity<TieredConstruc
     }
 
     @Override
-    public CompoundNBT writeUpdate(CompoundNBT tag) {
+    public CompoundTag writeUpdate(CompoundTag tag) {
         super.writeUpdate(tag);
         tag.put(CoverManager.NBT_COVER_MANAGER, this.getNode().getCoverManager().writeToNbt());
 
@@ -57,7 +57,7 @@ public class TieredConstructorTileEntity extends TieredTileEntity<TieredConstruc
     }
 
     @Override
-    public void readUpdate(CompoundNBT tag) {
+    public void readUpdate(CompoundTag tag) {
         super.readUpdate(tag);
 
         this.getNode().getCoverManager().readFromNbt(tag.getCompound(CoverManager.NBT_COVER_MANAGER));
