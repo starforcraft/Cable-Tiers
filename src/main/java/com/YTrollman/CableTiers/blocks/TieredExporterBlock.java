@@ -9,7 +9,6 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 
 public class TieredExporterBlock extends TieredCableBlock<TieredExporterTileEntity, TieredExporterNetworkNode> {
-
     private static final VoxelShape LINE_NORTH_1 = box(6.0, 6.0, 0.0, 10.0, 10.0, 2.0);
     private static final VoxelShape LINE_NORTH_2 = box(5.0, 5.0, 2.0, 11.0, 11.0, 4.0);
     private static final VoxelShape LINE_NORTH_3 = box(3.0, 3.0, 4.0, 13.0, 13.0, 6.0);

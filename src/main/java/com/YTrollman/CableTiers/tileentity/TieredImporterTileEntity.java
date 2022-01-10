@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage.apiimpl.network.node.cover.CoverManager;
 import com.refinedmods.refinedstorage.tile.config.IComparable;
 import com.refinedmods.refinedstorage.tile.config.IType;
 import com.refinedmods.refinedstorage.tile.config.IWhitelistBlacklist;
-import com.refinedmods.refinedstorage.tile.data.TileDataManager;
 import com.refinedmods.refinedstorage.tile.data.TileDataParameter;
 import com.refinedmods.refinedstorage.util.WorldUtils;
 import net.minecraft.nbt.CompoundNBT;
@@ -18,22 +17,18 @@ import net.minecraftforge.client.model.data.ModelDataMap;
 import javax.annotation.Nonnull;
 
 public class TieredImporterTileEntity extends TieredTileEntity<TieredImporterNetworkNode> {
+    public static final TileDataParameter<Integer, TieredImporterTileEntity> COMPARE = IComparable.createParameter();
+    public static final TileDataParameter<Integer, TieredImporterTileEntity> WHITELIST_BLACKLIST = IWhitelistBlacklist.createParameter();
+    public static final TileDataParameter<Integer, TieredImporterTileEntity> TYPE = IType.createParameter();
 
     public static final TileDataParameter<CompoundNBT, TieredImporterTileEntity> COVER_MANAGER = new TileDataParameter<>(DataSerializers.COMPOUND_TAG, new CompoundNBT(),
             t -> t.getNode().getCoverManager().writeToNbt(),
             (t, v) -> t.getNode().getCoverManager().readFromNbt(v),
             (initial, p) -> {});
 
-    public static final TileDataParameter<Integer, TieredImporterTileEntity> COMPARE = IComparable.createParameter();
-    public static final TileDataParameter<Integer, TieredImporterTileEntity> WHITELIST_BLACKLIST = IWhitelistBlacklist.createParameter();
-    public static final TileDataParameter<Integer, TieredImporterTileEntity> TYPE = IType.createParameter();
-
-    static {
-        TileDataManager.registerParameter(COVER_MANAGER);
-    }
-
     public TieredImporterTileEntity(CableTier tier) {
         super(ContentType.IMPORTER, tier);
+
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(WHITELIST_BLACKLIST);
         dataManager.addWatchedParameter(TYPE);
@@ -49,6 +44,7 @@ public class TieredImporterTileEntity extends TieredTileEntity<TieredImporterNet
     @Override
     public CompoundNBT writeUpdate(CompoundNBT tag) {
         super.writeUpdate(tag);
+
         tag.put(CoverManager.NBT_COVER_MANAGER, this.getNode().getCoverManager().writeToNbt());
 
         return tag;

@@ -22,7 +22,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public abstract class TieredNetworkBlock<T extends TieredTileEntity<N>, N extends TieredNetworkNode<N>> extends NetworkNodeBlock {
-
     private final ContentType<? extends TieredNetworkBlock<T, N>, T, ?, N> contentType;
     private final CableTier tier;
 

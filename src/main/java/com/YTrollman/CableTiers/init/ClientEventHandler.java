@@ -4,6 +4,7 @@ import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.CableTiers;
 import com.YTrollman.CableTiers.ContentType;
 import com.YTrollman.CableTiers.gui.*;
+import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.render.BakedModelOverrideRegistry;
 import com.refinedmods.refinedstorage.render.model.BakedModelCableCover;
 import com.refinedmods.refinedstorage.render.model.FullbrightBakedModel;
@@ -17,7 +18,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public class ClientEventHandler {
-
     private static final BakedModelOverrideRegistry bakedModelOverrideRegistry = new BakedModelOverrideRegistry();
 
     public ClientEventHandler() {
@@ -38,10 +38,10 @@ public class ClientEventHandler {
             ScreenManager.register(ContentType.DISK_MANIPULATOR.getContainerType(tier), TieredDiskManipulatorScreen::new);
             ScreenManager.register(ContentType.REQUESTER.getContainerType(tier), TieredRequesterScreen::new);
 
-            bakedModelOverrideRegistry.add(new ResourceLocation("cabletiers", ContentType.EXPORTER.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
-            bakedModelOverrideRegistry.add(new ResourceLocation("cabletiers", ContentType.IMPORTER.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
-            bakedModelOverrideRegistry.add(new ResourceLocation("cabletiers", ContentType.CONSTRUCTOR.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
-            bakedModelOverrideRegistry.add(new ResourceLocation("cabletiers", ContentType.DESTRUCTOR.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
+            bakedModelOverrideRegistry.add(new ResourceLocation(CableTiers.MOD_ID, ContentType.EXPORTER.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
+            bakedModelOverrideRegistry.add(new ResourceLocation(CableTiers.MOD_ID, ContentType.IMPORTER.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
+            bakedModelOverrideRegistry.add(new ResourceLocation(CableTiers.MOD_ID, ContentType.CONSTRUCTOR.getName(tier)), (base, registry) ->  new BakedModelCableCover(new FullbrightBakedModel(base, true, new ResourceLocation(RS.ID, "block/constructor/cutouts/connected"))));
+            bakedModelOverrideRegistry.add(new ResourceLocation(CableTiers.MOD_ID, ContentType.DESTRUCTOR.getName(tier)), (base, registry) -> new BakedModelCableCover(new FullbrightBakedModel(base, true, new ResourceLocation(RS.ID, "block/destructor/cutouts/connected"))));
         }
     }
 
@@ -50,7 +50,7 @@ public class ClientEventHandler {
         FullbrightBakedModel.invalidateCache();
 
         for (ResourceLocation id : e.getModelRegistry().keySet()) {
-            BakedModelOverrideRegistry.BakedModelOverrideFactory factory = bakedModelOverrideRegistry.get(new ResourceLocation(id.getNamespace(), id.getPath()));
+            BakedModelOverrideRegistry.BakedModelOverrideFactory factory = this.bakedModelOverrideRegistry.get(new ResourceLocation(id.getNamespace(), id.getPath()));
 
             if (factory != null) {
                 e.getModelRegistry().put(id, factory.create(e.getModelRegistry().get(id), e.getModelRegistry()));

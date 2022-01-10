@@ -9,7 +9,6 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 
 public class TieredConstructorBlock extends TieredCableBlock<TieredConstructorTileEntity, TieredConstructorNetworkNode> {
-
     private static final VoxelShape HEAD_NORTH = VoxelShapes.or(box(2, 2, 0, 14, 14, 2), HOLDER_NORTH);
     private static final VoxelShape HEAD_EAST = VoxelShapes.or(box(14, 2, 2, 16, 14, 14), HOLDER_EAST);
     private static final VoxelShape HEAD_SOUTH = VoxelShapes.or(box(2, 2, 14, 14, 14, 16), HOLDER_SOUTH);
