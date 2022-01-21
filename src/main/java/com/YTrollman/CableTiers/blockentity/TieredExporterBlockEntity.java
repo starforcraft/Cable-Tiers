@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage.util.LevelUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 
@@ -31,8 +32,8 @@ public class TieredExporterBlockEntity extends TieredBlockEntity<TieredExporterN
         BlockEntitySynchronizationManager.registerParameter(COVER_MANAGER);
     }
 
-    public TieredExporterBlockEntity(CableTier tier, BlockPos pos) {
-        super(ContentType.EXPORTER, tier, pos);
+    public TieredExporterBlockEntity(CableTier tier, BlockPos pos, BlockState state) {
+        super(ContentType.EXPORTER, tier, pos, state);
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(TYPE);
         dataManager.addWatchedParameter(COVER_MANAGER);

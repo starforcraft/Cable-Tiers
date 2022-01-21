@@ -6,14 +6,15 @@ import com.YTrollman.CableTiers.node.TieredNetworkNode;
 import com.refinedmods.refinedstorage.blockentity.NetworkNodeBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class TieredBlockEntity<N extends TieredNetworkNode<N>> extends NetworkNodeBlockEntity<N> {
 
     private final ContentType<?, ? extends TieredBlockEntity<N>, ?, N> contentType;
     private final CableTier tier;
 
-    protected TieredBlockEntity(ContentType<?, ? extends TieredBlockEntity<N>, ?, N> contentType, CableTier tier, BlockPos pos) {
-        super(contentType.getBlockEntityType(tier), pos, contentType.getBlock(tier).defaultBlockState());
+    protected TieredBlockEntity(ContentType<?, ? extends TieredBlockEntity<N>, ?, N> contentType, CableTier tier, BlockPos pos, BlockState state) {
+        super(contentType.getBlockEntityType(tier), pos, state);
         this.contentType = contentType;
         this.tier = tier;
     }
