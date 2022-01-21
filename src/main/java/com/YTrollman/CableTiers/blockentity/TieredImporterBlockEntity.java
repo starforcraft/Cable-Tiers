@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage.apiimpl.network.node.cover.CoverManager;
 import com.refinedmods.refinedstorage.blockentity.config.IComparable;
 import com.refinedmods.refinedstorage.blockentity.config.IType;
 import com.refinedmods.refinedstorage.blockentity.config.IWhitelistBlacklist;
-import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationManager;
 import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationParameter;
 import com.refinedmods.refinedstorage.util.LevelUtils;
 import net.minecraft.core.BlockPos;
@@ -20,22 +19,18 @@ import net.minecraftforge.client.model.data.ModelDataMap;
 import javax.annotation.Nonnull;
 
 public class TieredImporterBlockEntity extends TieredBlockEntity<TieredImporterNetworkNode> {
+    public static final BlockEntitySynchronizationParameter<Integer, TieredImporterBlockEntity> COMPARE = IComparable.createParameter();
+    public static final BlockEntitySynchronizationParameter<Integer, TieredImporterBlockEntity> WHITELIST_BLACKLIST = IWhitelistBlacklist.createParameter();
+    public static final BlockEntitySynchronizationParameter<Integer, TieredImporterBlockEntity> TYPE = IType.createParameter();
 
     public static final BlockEntitySynchronizationParameter<CompoundTag, TieredImporterBlockEntity> COVER_MANAGER = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.COMPOUND_TAG, new CompoundTag(),
             t -> t.getNode().getCoverManager().writeToNbt(),
             (t, v) -> t.getNode().getCoverManager().readFromNbt(v),
             (initial, p) -> {});
 
-    public static final BlockEntitySynchronizationParameter<Integer, TieredImporterBlockEntity> COMPARE = IComparable.createParameter();
-    public static final BlockEntitySynchronizationParameter<Integer, TieredImporterBlockEntity> WHITELIST_BLACKLIST = IWhitelistBlacklist.createParameter();
-    public static final BlockEntitySynchronizationParameter<Integer, TieredImporterBlockEntity> TYPE = IType.createParameter();
-
-    static {
-        BlockEntitySynchronizationManager.registerParameter(COVER_MANAGER);
-    }
-
     public TieredImporterBlockEntity(CableTier tier, BlockPos pos, BlockState state) {
         super(ContentType.IMPORTER, tier, pos, state);
+
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(WHITELIST_BLACKLIST);
         dataManager.addWatchedParameter(TYPE);

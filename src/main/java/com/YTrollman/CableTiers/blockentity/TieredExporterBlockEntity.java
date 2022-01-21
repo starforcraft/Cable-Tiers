@@ -6,7 +6,6 @@ import com.YTrollman.CableTiers.node.TieredExporterNetworkNode;
 import com.refinedmods.refinedstorage.apiimpl.network.node.cover.CoverManager;
 import com.refinedmods.refinedstorage.blockentity.config.IComparable;
 import com.refinedmods.refinedstorage.blockentity.config.IType;
-import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationManager;
 import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationParameter;
 import com.refinedmods.refinedstorage.util.LevelUtils;
 import net.minecraft.core.BlockPos;
@@ -19,21 +18,17 @@ import net.minecraftforge.client.model.data.ModelDataMap;
 import javax.annotation.Nonnull;
 
 public class TieredExporterBlockEntity extends TieredBlockEntity<TieredExporterNetworkNode> {
+    public static final BlockEntitySynchronizationParameter<Integer, TieredExporterBlockEntity> COMPARE = IComparable.createParameter();
+    public static final BlockEntitySynchronizationParameter<Integer, TieredExporterBlockEntity> TYPE = IType.createParameter();
 
-    public static final BlockEntitySynchronizationParameter<CompoundTag, TieredExporterBlockEntity> COVER_MANAGER = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.COMPOUND_TAG, new CompoundTag(),
+    public static final BlockEntitySynchronizationParameter<CompoundTag, TieredImporterBlockEntity> COVER_MANAGER = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.COMPOUND_TAG, new CompoundTag(),
             t -> t.getNode().getCoverManager().writeToNbt(),
             (t, v) -> t.getNode().getCoverManager().readFromNbt(v),
             (initial, p) -> {});
 
-    public static final BlockEntitySynchronizationParameter<Integer, TieredExporterBlockEntity> COMPARE = IComparable.createParameter();
-    public static final BlockEntitySynchronizationParameter<Integer, TieredExporterBlockEntity> TYPE = IType.createParameter();
-
-    static {
-        BlockEntitySynchronizationManager.registerParameter(COVER_MANAGER);
-    }
-
     public TieredExporterBlockEntity(CableTier tier, BlockPos pos, BlockState state) {
         super(ContentType.EXPORTER, tier, pos, state);
+
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(TYPE);
         dataManager.addWatchedParameter(COVER_MANAGER);

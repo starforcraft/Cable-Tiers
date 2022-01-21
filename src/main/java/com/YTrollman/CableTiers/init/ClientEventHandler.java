@@ -1,6 +1,7 @@
 package com.YTrollman.CableTiers.init;
 
 import com.YTrollman.CableTiers.CableTier;
+import com.YTrollman.CableTiers.CableTiers;
 import com.YTrollman.CableTiers.ContentType;
 import com.YTrollman.CableTiers.gui.*;
 import com.refinedmods.refinedstorage.render.BakedModelOverrideRegistry;
@@ -37,10 +38,10 @@ public class ClientEventHandler {
             MenuScreens.register(ContentType.DISK_MANIPULATOR.getContainerType(tier), TieredDiskManipulatorScreen::new);
             MenuScreens.register(ContentType.REQUESTER.getContainerType(tier), TieredRequesterScreen::new);
 
-            bakedModelOverrideRegistry.add(new ResourceLocation("cabletiers", ContentType.EXPORTER.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
-            bakedModelOverrideRegistry.add(new ResourceLocation("cabletiers", ContentType.IMPORTER.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
-            bakedModelOverrideRegistry.add(new ResourceLocation("cabletiers", ContentType.CONSTRUCTOR.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
-            bakedModelOverrideRegistry.add(new ResourceLocation("cabletiers", ContentType.DESTRUCTOR.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
+            bakedModelOverrideRegistry.add(new ResourceLocation(CableTiers.MOD_ID, ContentType.EXPORTER.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
+            bakedModelOverrideRegistry.add(new ResourceLocation(CableTiers.MOD_ID, ContentType.IMPORTER.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
+            bakedModelOverrideRegistry.add(new ResourceLocation(CableTiers.MOD_ID, ContentType.CONSTRUCTOR.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
+            bakedModelOverrideRegistry.add(new ResourceLocation(CableTiers.MOD_ID, ContentType.DESTRUCTOR.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
         }
     }
 
@@ -49,7 +50,7 @@ public class ClientEventHandler {
         FullbrightBakedModel.invalidateCache();
 
         for (ResourceLocation id : e.getModelRegistry().keySet()) {
-            BakedModelOverrideRegistry.BakedModelOverrideFactory factory = bakedModelOverrideRegistry.get(new ResourceLocation(id.getNamespace(), id.getPath()));
+            BakedModelOverrideRegistry.BakedModelOverrideFactory factory = this.bakedModelOverrideRegistry.get(new ResourceLocation(id.getNamespace(), id.getPath()));
 
             if (factory != null) {
                 e.getModelRegistry().put(id, factory.create(e.getModelRegistry().get(id), e.getModelRegistry()));
