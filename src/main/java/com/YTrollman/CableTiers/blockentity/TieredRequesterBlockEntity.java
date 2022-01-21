@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizatio
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class TieredRequesterBlockEntity extends TieredBlockEntity<TieredRequesterNetworkNode> {
     public static final BlockEntitySynchronizationParameter<Integer, TieredRequesterBlockEntity> TYPE = IType.createParameter();
@@ -20,8 +21,8 @@ public class TieredRequesterBlockEntity extends TieredBlockEntity<TieredRequeste
     public static final BlockEntitySynchronizationParameter<Boolean, TieredRequesterBlockEntity> MISSING = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.BOOLEAN, false, tileRequester -> tileRequester.getNode().isMissingItems(), (tileRequester, aBoolean) -> {
     });
 
-    public TieredRequesterBlockEntity(CableTier tier, BlockPos pos) {
-        super(ContentType.REQUESTER, tier, pos);
+    public TieredRequesterBlockEntity(CableTier tier, BlockPos pos, BlockState state) {
+        super(ContentType.REQUESTER, tier, pos, state);
 
         this.dataManager.addWatchedParameter(TYPE);
         this.dataManager.addWatchedParameter(AMOUNT);

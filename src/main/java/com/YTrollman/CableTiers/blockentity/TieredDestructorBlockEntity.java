@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage.util.LevelUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 
@@ -37,8 +38,8 @@ public class TieredDestructorBlockEntity extends TieredBlockEntity<TieredDestruc
         BlockEntitySynchronizationManager.registerParameter(COVER_MANAGER);
     }
 
-    public TieredDestructorBlockEntity(CableTier tier, BlockPos pos) {
-        super(ContentType.DESTRUCTOR, tier, pos);
+    public TieredDestructorBlockEntity(CableTier tier, BlockPos pos, BlockState state) {
+        super(ContentType.DESTRUCTOR, tier, pos, state);
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(WHITELIST_BLACKLIST);
         dataManager.addWatchedParameter(TYPE);

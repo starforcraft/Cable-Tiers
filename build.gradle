@@ -124,7 +124,7 @@ dependencies {
     //implementation fg.deobf("curse.maven:rsrequestify-307788:3501351")
 
     implementation fg.deobf("curse.maven:extrastorage-410168:3584356")
-    implementation fg.deobf("curse.maven:spark-361579:3542245")
+    implementation fg.deobf("curse.maven:spark-361579:3591172")
     //implementation fg.deobf("curse.maven:mekanism-268560:3206392")
 }
 

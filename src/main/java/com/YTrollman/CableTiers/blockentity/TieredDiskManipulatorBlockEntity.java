@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage.blockentity.config.IWhitelistBlacklist;
 import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationParameter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
@@ -34,8 +35,8 @@ public class TieredDiskManipulatorBlockEntity extends TieredBlockEntity<TieredDi
 
     private final DiskState[] diskState = new DiskState[6 * checkTierMultiplier()];
 
-    public TieredDiskManipulatorBlockEntity(CableTier tier, BlockPos pos) {
-        super(ContentType.DISK_MANIPULATOR, tier, pos);
+    public TieredDiskManipulatorBlockEntity(CableTier tier, BlockPos pos, BlockState state) {
+        super(ContentType.DISK_MANIPULATOR, tier, pos, state);
 
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(WHITELIST_BLACKLIST);

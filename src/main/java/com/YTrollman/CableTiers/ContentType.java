@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeMenuType;
@@ -92,14 +93,14 @@ public class ContentType<B extends BaseBlock, T extends TieredBlockEntity<N>, C 
 
     private final String name;
     private final Function<CableTier, B> blockFactory;
-    private final Function<CableTier, T> tileEntityFactory;
+    private final BlockEntityFactory<T> blockEntityFactory;
     private final MenuFactory<T, C> containerFactory;
     private final NetworkNodeFactory<N> networkNodeFactory;
 
-    private ContentType(String name, Function<CableTier, B> blockFactory, Function<CableTier, T> tileEntityFactory, MenuFactory<T, C> containerFactory, NetworkNodeFactory<N> networkNodeFactory) {
+    private ContentType(String name, Function<CableTier, B> blockFactory, BlockEntityFactory<T> blockEntityFactory, MenuFactory<T, C> containerFactory, NetworkNodeFactory<N> networkNodeFactory) {
         this.name = name;
         this.blockFactory = blockFactory;
-        this.tileEntityFactory = tileEntityFactory;
+        this.blockEntityFactory = blockEntityFactory;
         this.containerFactory = containerFactory;
         this.networkNodeFactory = networkNodeFactory;
     }
@@ -154,7 +155,7 @@ public class ContentType<B extends BaseBlock, T extends TieredBlockEntity<N>, C 
             String id = getName(tier);
             blocks.put(tier, BLOCKS.register(id, () -> blockFactory.apply(tier)));
             items.put(tier, ITEMS.register(id, () -> new BaseBlockItem(getBlock(tier), new Item.Properties().tab(CABLE_TIERS))));
-            blockEntityTypes.put(tier, BLOCK_ENTITY_TYPES.register(id, () -> BlockEntityType.Builder.of((pos, state) -> tileEntityFactory.apply(tier), getBlock(tier)).build(null)));
+            blockEntityTypes.put(tier, BLOCK_ENTITY_TYPES.register(id, () -> BlockEntityType.Builder.of((pos, state) -> blockEntityFactory.create(tier, pos, state), getBlock(tier)).build(null)));
             containerTypes.put(tier, CONTAINER_TYPES.register(id, () -> IForgeMenuType.create((windowId, inv, data) -> {
                         BlockPos pos = data.readBlockPos();
                         BlockEntity tile = inv.player.getCommandSenderWorld().getBlockEntity(pos);
@@ -163,9 +164,9 @@ public class ContentType<B extends BaseBlock, T extends TieredBlockEntity<N>, C 
                             return null;
                         }
 
-                        BlockEntityType<T> tileEntityType = getBlockEntityType(tier);
-                        if (tile.getType() != tileEntityType) {
-                            CableTiers.LOGGER.error("Wrong type of tile entity, expected " + tileEntityType.getRegistryName() + ", but got " + tile.getType().getRegistryName());
+                        BlockEntityType<T> blockEntityType = getBlockEntityType(tier);
+                        if (tile.getType() != blockEntityType) {
+                            CableTiers.LOGGER.error("Wrong type of block entity, expected " + blockEntityType.getRegistryName() + ", but got " + tile.getType().getRegistryName());
                             return null;
                         }
 
@@ -184,6 +185,11 @@ public class ContentType<B extends BaseBlock, T extends TieredBlockEntity<N>, C 
             });
             getBlockEntityType(tier).create(BlockPos.ZERO, null).getDataManager().getParameters().forEach(BlockEntitySynchronizationManager::registerParameter);
         }
+    }
+
+    @FunctionalInterface
+    private interface BlockEntityFactory<T extends BaseBlockEntity> {
+        T create(CableTier tier, BlockPos pos, BlockState state);
     }
 
     @FunctionalInterface

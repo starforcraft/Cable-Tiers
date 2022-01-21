@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage.util.LevelUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 
@@ -35,8 +36,8 @@ public class TieredConstructorBlockEntity extends TieredBlockEntity<TieredConstr
         BlockEntitySynchronizationManager.registerParameter(COVER_MANAGER);
     }
 
-    public TieredConstructorBlockEntity(CableTier tier, BlockPos pos) {
-        super(ContentType.CONSTRUCTOR, tier, pos);
+    public TieredConstructorBlockEntity(CableTier tier, BlockPos pos, BlockState state) {
+        super(ContentType.CONSTRUCTOR, tier, pos, state);
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(TYPE);
         dataManager.addWatchedParameter(DROP);
