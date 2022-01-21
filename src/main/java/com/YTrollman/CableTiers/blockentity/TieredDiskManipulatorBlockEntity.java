@@ -34,8 +34,8 @@ public class TieredDiskManipulatorBlockEntity extends TieredBlockEntity<TieredDi
 
     private final DiskState[] diskState = new DiskState[6 * checkTierMultiplier()];
 
-    public TieredDiskManipulatorBlockEntity(CableTier tier) {
-        super(ContentType.DISK_MANIPULATOR, tier);
+    public TieredDiskManipulatorBlockEntity(CableTier tier, BlockPos pos) {
+        super(ContentType.DISK_MANIPULATOR, tier, pos);
 
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(WHITELIST_BLACKLIST);

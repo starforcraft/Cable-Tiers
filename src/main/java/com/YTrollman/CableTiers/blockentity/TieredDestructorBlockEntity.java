@@ -37,8 +37,8 @@ public class TieredDestructorBlockEntity extends TieredBlockEntity<TieredDestruc
         BlockEntitySynchronizationManager.registerParameter(COVER_MANAGER);
     }
 
-    public TieredDestructorBlockEntity(CableTier tier) {
-        super(ContentType.DESTRUCTOR, tier);
+    public TieredDestructorBlockEntity(CableTier tier, BlockPos pos) {
+        super(ContentType.DESTRUCTOR, tier, pos);
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(WHITELIST_BLACKLIST);
         dataManager.addWatchedParameter(TYPE);

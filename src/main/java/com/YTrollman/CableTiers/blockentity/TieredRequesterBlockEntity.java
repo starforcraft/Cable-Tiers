@@ -20,8 +20,8 @@ public class TieredRequesterBlockEntity extends TieredBlockEntity<TieredRequeste
     public static final BlockEntitySynchronizationParameter<Boolean, TieredRequesterBlockEntity> MISSING = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.BOOLEAN, false, tileRequester -> tileRequester.getNode().isMissingItems(), (tileRequester, aBoolean) -> {
     });
 
-    public TieredRequesterBlockEntity(CableTier tier) {
-        super(ContentType.REQUESTER, tier);
+    public TieredRequesterBlockEntity(CableTier tier, BlockPos pos) {
+        super(ContentType.REQUESTER, tier, pos);
 
         this.dataManager.addWatchedParameter(TYPE);
         this.dataManager.addWatchedParameter(AMOUNT);

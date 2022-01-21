@@ -33,8 +33,8 @@ public class TieredImporterBlockEntity extends TieredBlockEntity<TieredImporterN
         BlockEntitySynchronizationManager.registerParameter(COVER_MANAGER);
     }
 
-    public TieredImporterBlockEntity(CableTier tier) {
-        super(ContentType.IMPORTER, tier);
+    public TieredImporterBlockEntity(CableTier tier, BlockPos pos) {
+        super(ContentType.IMPORTER, tier, pos);
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(WHITELIST_BLACKLIST);
         dataManager.addWatchedParameter(TYPE);

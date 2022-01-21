@@ -35,8 +35,8 @@ public class TieredConstructorBlockEntity extends TieredBlockEntity<TieredConstr
         BlockEntitySynchronizationManager.registerParameter(COVER_MANAGER);
     }
 
-    public TieredConstructorBlockEntity(CableTier tier) {
-        super(ContentType.CONSTRUCTOR, tier);
+    public TieredConstructorBlockEntity(CableTier tier, BlockPos pos) {
+        super(ContentType.CONSTRUCTOR, tier, pos);
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(TYPE);
         dataManager.addWatchedParameter(DROP);

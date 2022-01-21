@@ -31,8 +31,8 @@ public class TieredExporterBlockEntity extends TieredBlockEntity<TieredExporterN
         BlockEntitySynchronizationManager.registerParameter(COVER_MANAGER);
     }
 
-    public TieredExporterBlockEntity(CableTier tier) {
-        super(ContentType.EXPORTER, tier);
+    public TieredExporterBlockEntity(CableTier tier, BlockPos pos) {
+        super(ContentType.EXPORTER, tier, pos);
         dataManager.addWatchedParameter(COMPARE);
         dataManager.addWatchedParameter(TYPE);
         dataManager.addWatchedParameter(COVER_MANAGER);
