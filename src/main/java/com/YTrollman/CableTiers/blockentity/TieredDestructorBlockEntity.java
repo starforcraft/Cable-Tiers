@@ -9,7 +9,8 @@ import com.refinedmods.refinedstorage.blockentity.config.IType;
 import com.refinedmods.refinedstorage.blockentity.config.IWhitelistBlacklist;
 import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationManager;
 import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationParameter;
-import com.refinedmods.refinedstorage.util.WorldUtils;
+import com.refinedmods.refinedstorage.util.LevelUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraftforge.client.model.data.IModelData;
@@ -67,6 +68,6 @@ public class TieredDestructorBlockEntity extends TieredBlockEntity<TieredDestruc
 
         requestModelDataUpdate();
 
-        WorldUtils.updateBlock(level, worldPosition);
+        LevelUtils.updateBlock(level, worldPosition);
     }
 }

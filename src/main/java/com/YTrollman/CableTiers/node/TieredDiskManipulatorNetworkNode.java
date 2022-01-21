@@ -24,8 +24,8 @@ import com.refinedmods.refinedstorage.inventory.item.validator.StorageDiskItemVa
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeFluidInventoryListener;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeInventoryListener;
 import com.refinedmods.refinedstorage.item.UpgradeItem;
+import com.refinedmods.refinedstorage.util.LevelUtils;
 import com.refinedmods.refinedstorage.util.StackUtils;
-import com.refinedmods.refinedstorage.util.WorldUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -106,7 +106,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                         );
 
                         if (!reading) {
-                            WorldUtils.updateBlock(level, pos);
+                            LevelUtils.updateBlock(level, pos);
                         }
                     }
                 }));
@@ -126,7 +126,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                         );
 
                         if (!reading) {
-                            WorldUtils.updateBlock(level, pos);
+                            LevelUtils.updateBlock(level, pos);
                         }
                     }
                 });
@@ -640,7 +640,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                         if (lastState != currentState) {
                             lastState = currentState;
 
-                            WorldUtils.updateBlock(diskManipulator.getLevel(), diskManipulator.getPos());
+                            LevelUtils.updateBlock(diskManipulator.getLevel(), diskManipulator.getPos());
                         }
                     },
                     diskManipulator
@@ -739,7 +739,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                         if (lastState != currentState) {
                             lastState = currentState;
 
-                            WorldUtils.updateBlock(diskManipulator.getLevel(), diskManipulator.getPos());
+                            LevelUtils.updateBlock(diskManipulator.getLevel(), diskManipulator.getPos());
                         }
                     },
                     diskManipulator

@@ -19,8 +19,8 @@ import com.refinedmods.refinedstorage.inventory.item.UpgradeItemHandler;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeFluidInventoryListener;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeInventoryListener;
 import com.refinedmods.refinedstorage.item.UpgradeItem;
+import com.refinedmods.refinedstorage.util.LevelUtils;
 import com.refinedmods.refinedstorage.util.StackUtils;
-import com.refinedmods.refinedstorage.util.WorldUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -170,7 +170,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
     }
 
     private void itemUpdate() {
-        IItemHandler handler = WorldUtils.getItemHandler(getFacingBlockEntity(), getDirection().getOpposite());
+        IItemHandler handler = LevelUtils.getItemHandler(getFacingBlockEntity(), getDirection().getOpposite());
         if (handler == null || handler.getSlots() <= 0) {
             return;
         }
@@ -266,7 +266,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
     }
 
     private void fluidUpdate() {
-        IFluidHandler handler = WorldUtils.getFluidHandler(getFacingBlockEntity(), getDirection().getOpposite());
+        IFluidHandler handler = LevelUtils.getFluidHandler(getFacingBlockEntity(), getDirection().getOpposite());
         if (handler == null || handler.getTanks() <= 0) {
             return;
         }

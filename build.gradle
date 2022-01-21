@@ -118,12 +118,12 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-1.18.1:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.18.1:${jei_version}")
 
-    implementation fg.deobf("com.refinedmods:refinedstorage:1.10.0-beta.3") {
+    implementation fg.deobf("com.refinedmods:refinedstorage:1.10.0-beta.4") {
         transitive false
     }
     //implementation fg.deobf("curse.maven:rsrequestify-307788:3501351")
 
-    //implementation fg.deobf("curse.maven:extrastorage-410168:3527726")
+    implementation fg.deobf("curse.maven:extrastorage-410168:3584356")
     implementation fg.deobf("curse.maven:spark-361579:3542245")
     //implementation fg.deobf("curse.maven:mekanism-268560:3206392")
 }

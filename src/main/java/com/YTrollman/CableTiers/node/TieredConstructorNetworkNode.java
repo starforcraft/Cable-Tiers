@@ -17,8 +17,8 @@ import com.refinedmods.refinedstorage.inventory.item.UpgradeItemHandler;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeFluidInventoryListener;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeInventoryListener;
 import com.refinedmods.refinedstorage.item.UpgradeItem;
+import com.refinedmods.refinedstorage.util.LevelUtils;
 import com.refinedmods.refinedstorage.util.StackUtils;
-import com.refinedmods.refinedstorage.util.WorldUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.PositionImpl;
@@ -63,7 +63,7 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     private final FluidInventory fluidFilters;
 
     private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, CheckTierUpgrade())
-            .addListener(new NetworkNodeInventoryListener(this));;
+            .addListener(new NetworkNodeInventoryListener(this));
 
     private int compare = IComparer.COMPARE_NBT;
     private int type = IType.ITEMS;
@@ -172,7 +172,7 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
                     network.getCraftingManager().request(this, stack, FluidAttributes.BUCKET_VOLUME);
                 }
             } else if (!level.getBlockState(front).getFluidState().isSource()) {
-                FluidUtil.tryPlaceFluid(WorldUtils.getFakePlayer((ServerLevel) level, getOwner()), level, InteractionHand.MAIN_HAND, front, new NetworkFluidHandler(StackUtils.copy(stack, FluidAttributes.BUCKET_VOLUME)), stack);
+                FluidUtil.tryPlaceFluid(LevelUtils.getFakePlayer((ServerLevel) level, getOwner()), level, InteractionHand.MAIN_HAND, front, new NetworkFluidHandler(StackUtils.copy(stack, FluidAttributes.BUCKET_VOLUME)), stack);
             }
         }
     }
@@ -182,7 +182,7 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
         if (!took.isEmpty()) {
             BlockPlaceContext ctx = new TieredConstructorBlockItemUseContext(
                     level,
-                    WorldUtils.getFakePlayer((ServerLevel) level, getOwner()),
+                    LevelUtils.getFakePlayer((ServerLevel) level, getOwner()),
                     InteractionHand.MAIN_HAND,
                     took,
                     new BlockHitResult(Vec3.ZERO, getDirection(), pos, false)

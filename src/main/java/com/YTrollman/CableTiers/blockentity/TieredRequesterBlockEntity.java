@@ -7,6 +7,7 @@ import com.YTrollman.CableTiers.node.TieredRequesterNetworkNode;
 import com.refinedmods.refinedstorage.blockentity.config.IType;
 import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationParameter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataSerializers;
 
 public class TieredRequesterBlockEntity extends TieredBlockEntity<TieredRequesterNetworkNode> {

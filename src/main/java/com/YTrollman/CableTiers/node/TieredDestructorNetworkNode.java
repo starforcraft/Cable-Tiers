@@ -18,8 +18,8 @@ import com.refinedmods.refinedstorage.inventory.item.UpgradeItemHandler;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeFluidInventoryListener;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeInventoryListener;
 import com.refinedmods.refinedstorage.item.UpgradeItem;
+import com.refinedmods.refinedstorage.util.LevelUtils;
 import com.refinedmods.refinedstorage.util.StackUtils;
-import com.refinedmods.refinedstorage.util.WorldUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -67,7 +67,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
             4,
             new UpgradeItem.Type[] { UpgradeItem.Type.SILK_TOUCH, UpgradeItem.Type.FORTUNE_1, UpgradeItem.Type.FORTUNE_2, UpgradeItem.Type.FORTUNE_3 })
             .addListener(new NetworkNodeInventoryListener(this))
-            .addListener((handler, slot, reading) -> tool = createTool());;
+            .addListener((handler, slot, reading) -> tool = createTool());
 
     private int compare = IComparer.COMPARE_NBT;
     private int mode = IWhitelistBlacklist.BLACKLIST;
@@ -168,7 +168,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
                 new BlockHitResult(Vec3.ZERO, getDirection().getOpposite(), front, false),
                 level,
                 front,
-                WorldUtils.getFakePlayer((ServerLevel) level, getOwner())
+                LevelUtils.getFakePlayer((ServerLevel) level, getOwner())
         );
 
         if (!frontStack.isEmpty() &&
@@ -179,7 +179,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
                     (ServerLevel) level,
                     front,
                     level.getBlockEntity(front),
-                    WorldUtils.getFakePlayer((ServerLevel) level, getOwner()),
+                    LevelUtils.getFakePlayer((ServerLevel) level, getOwner()),
                     tool
             );
 
@@ -189,10 +189,10 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
                 }
             }
 
-            BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(level, front, frontBlockState, WorldUtils.getFakePlayer((ServerLevel) level, getOwner()));
+            BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(level, front, frontBlockState, LevelUtils.getFakePlayer((ServerLevel) level, getOwner()));
 
             if (!MinecraftForge.EVENT_BUS.post(e)) {
-                frontBlock.playerWillDestroy(level, front, frontBlockState, WorldUtils.getFakePlayer((ServerLevel) level, getOwner()));
+                frontBlock.playerWillDestroy(level, front, frontBlockState, LevelUtils.getFakePlayer((ServerLevel) level, getOwner()));
 
                 level.removeBlock(front, false);
 

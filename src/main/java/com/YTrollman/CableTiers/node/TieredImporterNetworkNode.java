@@ -19,8 +19,8 @@ import com.refinedmods.refinedstorage.inventory.item.UpgradeItemHandler;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeFluidInventoryListener;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeInventoryListener;
 import com.refinedmods.refinedstorage.item.UpgradeItem;
+import com.refinedmods.refinedstorage.util.LevelUtils;
 import com.refinedmods.refinedstorage.util.StackUtils;
-import com.refinedmods.refinedstorage.util.WorldUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -133,7 +133,7 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
             return;
         }
 
-        IItemHandler handler = WorldUtils.getItemHandler(facing, getDirection().getOpposite());
+        IItemHandler handler = LevelUtils.getItemHandler(facing, getDirection().getOpposite());
         if (handler == null || handler.getSlots() <= 0) {
             return;
         }
@@ -183,7 +183,7 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
     }
 
     private void fluidUpdate() {
-        IFluidHandler handler = WorldUtils.getFluidHandler(getFacingBlockEntity(), getDirection().getOpposite());
+        IFluidHandler handler = LevelUtils.getFluidHandler(getFacingBlockEntity(), getDirection().getOpposite());
         BlockEntity facing = getFacingBlockEntity();
         for(int i = 0; i < blacklist.size(); i++) {
             if (facing == null || facing.getBlockState().is(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blacklist.get(i))))) {
