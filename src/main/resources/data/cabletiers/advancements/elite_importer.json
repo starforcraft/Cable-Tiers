@@ -17,7 +17,9 @@
       "conditions": {
         "items": [
           {
-            "item": "cabletiers:elite_importer"
+            "items": [
+              "cabletiers:elite_importer"
+            ]
           }
         ]
       }

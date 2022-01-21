@@ -17,7 +17,9 @@
       "conditions": {
         "items": [
           {
-            "item": "cabletiers:creative_destructor"
+            "items": [
+              "cabletiers:creative_destructor"
+            ]
           }
         ]
       }

@@ -17,7 +17,9 @@
       "conditions": {
         "items": [
           {
-            "item": "cabletiers:creative_disk_manipulator"
+            "items": [
+              "cabletiers:creative_disk_manipulator"
+            ]
           }
         ]
       }

@@ -17,7 +17,9 @@
       "conditions": {
         "items": [
           {
-            "item": "cabletiers:elite_disk_manipulator"
+            "items": [
+              "cabletiers:elite_disk_manipulator"
+            ]
           }
         ]
       }

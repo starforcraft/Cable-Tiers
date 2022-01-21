@@ -17,7 +17,9 @@
       "conditions": {
         "items": [
           {
-            "item": "cabletiers:creative_exporter"
+            "items": [
+              "cabletiers:creative_exporter"
+            ]
           }
         ]
       }

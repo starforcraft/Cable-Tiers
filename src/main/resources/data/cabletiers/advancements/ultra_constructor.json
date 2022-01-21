@@ -17,7 +17,9 @@
       "conditions": {
         "items": [
           {
-            "item": "cabletiers:ultra_constructor"
+            "items": [
+              "cabletiers:ultra_constructor"
+            ]
           }
         ]
       }
