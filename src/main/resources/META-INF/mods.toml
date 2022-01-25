@@ -15,14 +15,14 @@ description="This mod adds Tiered RS Things."
 [[dependencies.cabletiers]]
     modId="refinedstorage"
     mandatory=true
-    versionRange="[1.10.0-beta.1,)"
+    versionRange="[1.10.0,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.cabletiers]]
     modId="forge"
     mandatory=true
-    versionRange="[39.0.0,)"
+    versionRange="[39.0.59,)"
     ordering="NONE"
     side="BOTH"
 
