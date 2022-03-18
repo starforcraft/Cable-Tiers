@@ -4,7 +4,6 @@ import com.YTrollman.CableTiers.blocks.*;
 import com.YTrollman.CableTiers.container.*;
 import com.YTrollman.CableTiers.node.*;
 import com.YTrollman.CableTiers.tileentity.*;
-import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.block.BaseBlock;
