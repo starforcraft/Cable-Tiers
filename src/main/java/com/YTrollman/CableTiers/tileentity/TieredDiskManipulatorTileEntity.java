@@ -4,15 +4,11 @@ import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
 import com.YTrollman.CableTiers.node.TieredDiskManipulatorNetworkNode;
 import com.refinedmods.refinedstorage.apiimpl.network.node.DiskState;
-import com.refinedmods.refinedstorage.apiimpl.network.node.diskmanipulator.DiskManipulatorNetworkNode;
 import com.refinedmods.refinedstorage.tile.config.IComparable;
 import com.refinedmods.refinedstorage.tile.config.IType;
 import com.refinedmods.refinedstorage.tile.config.IWhitelistBlacklist;
 import com.refinedmods.refinedstorage.tile.data.TileDataParameter;
 import net.minecraft.network.datasync.DataSerializers;
-import net.minecraftforge.client.model.data.ModelProperty;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
 
 import java.util.Arrays;
 
@@ -20,16 +16,16 @@ public class TieredDiskManipulatorTileEntity extends TieredTileEntity<TieredDisk
     public static final TileDataParameter<Integer, TieredDiskManipulatorTileEntity> COMPARE = IComparable.createParameter();
     public static final TileDataParameter<Integer, TieredDiskManipulatorTileEntity> WHITELIST_BLACKLIST = IWhitelistBlacklist.createParameter();
     public static final TileDataParameter<Integer, TieredDiskManipulatorTileEntity> TYPE = IType.createParameter();
-    public static final TileDataParameter<Integer, TieredDiskManipulatorTileEntity> IO_MODE = new TileDataParameter<>(DataSerializers.INT, DiskManipulatorNetworkNode.IO_MODE_INSERT, t -> t.getNode().getIoMode(), (t, v) -> {
+    public static final TileDataParameter<Integer, TieredDiskManipulatorTileEntity> IO_MODE = new TileDataParameter<>(DataSerializers.INT, TieredDiskManipulatorNetworkNode.IO_MODE_INSERT, t -> t.getNode().getIoMode(), (t, v) -> {
         t.getNode().setIoMode(v);
         t.getNode().markDirty();
     });
 
-    public static final ModelProperty<DiskState[]> DISK_STATE_PROPERTY = new ModelProperty<>();
+    //public static final ModelProperty<DiskState[]> DISK_STATE_PROPERTY = new ModelProperty<>();
 
-    private static final String NBT_DISK_STATE = "DiskStates";
+    //private static final String NBT_DISK_STATE = "DiskStates";
 
-    private final LazyOptional<IItemHandler> diskCapability = LazyOptional.of(() -> getNode().getDisks());
+    //private final LazyOptional<IItemHandler> diskCapability = LazyOptional.of(() -> getNode().getDisks());
 
     private final DiskState[] diskState = new DiskState[6 * checkTierMultiplier()];
 
@@ -44,18 +40,14 @@ public class TieredDiskManipulatorTileEntity extends TieredTileEntity<TieredDisk
         Arrays.fill(diskState, DiskState.NONE);
     }
 
-    private int checkTierMultiplier()
-    {
-        if(getTier() == CableTier.ELITE)
-        {
+    private int checkTierMultiplier() {
+        if(getTier() == CableTier.ELITE) {
             return 2;
         }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        else if(getTier() == CableTier.ULTRA) {
             return 3;
         }
-        else if(getTier() == CableTier.CREATIVE)
-        {
+        else if(getTier() == CableTier.CREATIVE) {
             return 4;
         }
         return 0;

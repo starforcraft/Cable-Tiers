@@ -42,7 +42,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class TieredRequesterNetworkNode extends TieredNetworkNode<TieredRequesterNetworkNode> implements IType {
-
     private static final String NBT_TYPE = "Type";
     private static final String NBT_FLUID_FILTERS = "FluidFilter";
     private static final String NBT_AMOUNT = "Amount";
@@ -64,16 +63,11 @@ public class TieredRequesterNetworkNode extends TieredNetworkNode<TieredRequeste
 
     @Override
     public int getEnergyUsage() {
-        if(getTier() == CableTier.ELITE)
-        {
+        if(getTier() == CableTier.ELITE) {
             return 10 * CableConfig.ELITE_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        } else if(getTier() == CableTier.ULTRA) {
             return 10 * CableConfig.ULTRA_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.CREATIVE)
-        {
+        } else if(getTier() == CableTier.CREATIVE) {
             return 10 * CableConfig.CREATIVE_ENERGY_COST.get();
         }
         return 0;
@@ -85,10 +79,8 @@ public class TieredRequesterNetworkNode extends TieredNetworkNode<TieredRequeste
         if (network == null) return;
         if(!canUpdate()) return;
 
-        if(!(getTier() == CableTier.CREATIVE))
-        {
-            if(ticks % 70 == 0)
-            {
+        if(!(getTier() == CableTier.CREATIVE)) {
+            if(ticks % 70 == 0) {
                 return;
             }
         }
@@ -167,22 +159,14 @@ public class TieredRequesterNetworkNode extends TieredNetworkNode<TieredRequeste
         }
     }
 
-    private int getTierMaxCraftAmount()
-    {
-        if(getTier() == CableTier.CREATIVE)
-        {
+    private int getTierMaxCraftAmount() {
+        if(getTier() == CableTier.CREATIVE) {
             return Integer.MAX_VALUE;
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        } else if(getTier() == CableTier.ULTRA) {
             return CableConfig.ULTRA_REQUESTER_MAX_CRAFT_AMOUNT.get();
-        }
-        else if(getTier() == CableTier.ELITE)
-        {
+        } else if(getTier() == CableTier.ELITE) {
             return CableConfig.ELITE_REQUESTER_MAX_CRAFT_AMOUNT.get();
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }

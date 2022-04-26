@@ -34,7 +34,7 @@ repositories {
 }
 
 version = "${mod_version}"
-group = "com.YTrollman.CableTiers" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "com.YTrollman.CableTiers"
 archivesBaseName = "${modid}"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
@@ -116,7 +116,8 @@ dependencies {
     implementation fg.deobf("curse.maven:refinedstorage-243076:3527504")
     implementation fg.deobf("curse.maven:rsrequestify-307788:3501351")
 
-    implementation fg.deobf("curse.maven:extrastorage-410168:3527726")
+    implementation fg.deobf("curse.maven:cookingforblockheads-231484:3445172")
+    implementation fg.deobf("curse.maven:extrastorage-410168:3631492")
     implementation fg.deobf("curse.maven:spark-361579:3337641")
     implementation fg.deobf("curse.maven:mekanism-268560:3206392")
 }
@@ -126,7 +127,7 @@ jar {
         attributes([
                 "Specification-Title"     : "cabletiers",
                 "Specification-Vendor"    : "examplemodsareus",
-                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Specification-Version"   : "1",
                 "Implementation-Title"    : "${project.name}",
                 "Implementation-Version"  : "${project.version}",
                 "Implementation-Vendor"   : "examplemodsareus",
@@ -137,22 +138,3 @@ jar {
 }
 
 jar.finalizedBy('reobfJar')
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven { url "file:///${project.projectDir}/mcmodsrepo" }
-    }
-}
-
-idea {
-    module {
-        ['run', 'out', 'logs'].each {
-            excludeDirs += project.file(it)
-        }
-    }
-}

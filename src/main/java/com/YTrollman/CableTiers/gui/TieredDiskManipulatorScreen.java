@@ -43,92 +43,53 @@ public class TieredDiskManipulatorScreen extends TieredScreen<TieredDiskManipula
         renderString(matrixStack, screenText("Out", false), screenText("Out", true), I18n.get("gui.refinedstorage.disk_manipulator.out"));
     }
 
-    private int screenText(String whatText, boolean isY)
-    {
-        if(getTier() == CableTier.ELITE)
-        {
-            if(whatText.equals("In"))
-            {
-                if(isY)
-                {
+    private int screenText(String whatText, boolean isY) {
+        if(getTier() == CableTier.ELITE) {
+            if(whatText.equals("In")) {
+                if(isY) {
                     return 60;
-                }
-                else
-                {
+                } else {
                     return 39;
                 }
-            }
-            else if(whatText.equals("Out"))
-            {
-                if(isY)
-                {
+            } else if(whatText.equals("Out")) {
+                if(isY) {
                     return 60;
-                }
-                else
-                {
+                } else {
                     return 125;
                 }
-            }
-            else if(whatText.equals("Inv"))
-            {
+            } else if(whatText.equals("Inv")) {
                 return 131;
             }
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
-            if(whatText.equals("In"))
-            {
-                if(isY)
-                {
+        } else if(getTier() == CableTier.ULTRA) {
+            if(whatText.equals("In")) {
+                if(isY) {
                     return 78;
-                }
-                else
-                {
+                } else {
                     return 29;
                 }
-            }
-            else if(whatText.equals("Out"))
-            {
-                if(isY)
-                {
+            } else if(whatText.equals("Out")) {
+                if(isY) {
                     return 78;
-                }
-                else
-                {
+                } else {
                     return 134;
                 }
-            }
-            else if(whatText.equals("Inv"))
-            {
+            } else if(whatText.equals("Inv")) {
                 return 149;
             }
-        }
-        else if(getTier() == CableTier.CREATIVE)
-        {
-            if(whatText.equals("In"))
-            {
-                if(isY)
-                {
+        } else if(getTier() == CableTier.CREATIVE) {
+            if(whatText.equals("In")) {
+                if(isY) {
                     return 95;
-                }
-                else
-                {
+                } else {
                     return 35;
                 }
-            }
-            else if(whatText.equals("Out"))
-            {
-                if(isY)
-                {
+            } else if(whatText.equals("Out")) {
+                if(isY) {
                     return 95;
-                }
-                else
-                {
+                } else {
                     return 128;
                 }
-            }
-            else if(whatText.equals("Inv"))
-            {
+            } else if(whatText.equals("Inv")) {
                 return 163;
             }
         }

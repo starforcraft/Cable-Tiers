@@ -46,7 +46,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import javax.annotation.Nonnull;
 
 public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstructorNetworkNode> implements IComparable, IType, ICoverable {
-
     private static final String NBT_COMPARE = "Compare";
     private static final String NBT_TYPE = "Type";
     private static final String NBT_DROP = "Drop";
@@ -55,13 +54,11 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     private static final int BASE_SPEED = 20;
     private static final int SPEED_INCREASE = 4;
 
-    private int currentSlot;
+    private final BaseItemHandler itemFilters = new BaseItemHandler(getTier().getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
+    private final FluidInventory fluidFilters = new FluidInventory(getTier().getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
 
-    private final BaseItemHandler itemFilters;
-    private final FluidInventory fluidFilters;
-
-    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, CheckTierUpgrade())
-            .addListener(new NetworkNodeInventoryListener(this));;
+    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, checkTierUpgrades())
+            .addListener(new NetworkNodeInventoryListener(this));
 
     private int compare = IComparer.COMPARE_NBT;
     private int type = IType.ITEMS;
@@ -72,22 +69,14 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     public TieredConstructorNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.CONSTRUCTOR, tier);
         this.coverManager = new CoverManager(this);
-        this.itemFilters = new BaseItemHandler(1 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
-        this.fluidFilters = new FluidInventory(1 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
     }
 
-    private UpgradeItem.Type[] CheckTierUpgrade()
-    {
-        if(getTier() == CableTier.ELITE)
-        {
+    private UpgradeItem.Type[] checkTierUpgrades() {
+        if(getTier() == CableTier.ELITE) {
             return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK, UpgradeItem.Type.CRAFTING };
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        } else if(getTier() == CableTier.ULTRA) {
             return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING };
-        }
-        else if(getTier() == CableTier.CREATIVE)
-        {
+        } else if(getTier() == CableTier.CREATIVE) {
             return new UpgradeItem.Type[] { UpgradeItem.Type.CRAFTING };
         }
         return null;
@@ -95,16 +84,11 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
 
     @Override
     public int getEnergyUsage() {
-        if(getTier() == CableTier.ELITE)
-        {
+        if(getTier() == CableTier.ELITE) {
             return (4 * (RS.SERVER_CONFIG.getConstructor().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ELITE_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        } else if(getTier() == CableTier.ULTRA) {
             return (4 * (RS.SERVER_CONFIG.getConstructor().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ULTRA_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.CREATIVE)
-        {
+        } else if(getTier() == CableTier.CREATIVE) {
             return (4 * (RS.SERVER_CONFIG.getConstructor().getUsage() + upgrades.getEnergyUsage())) * CableConfig.CREATIVE_ENERGY_COST.get();
         }
         return 0;
@@ -126,23 +110,20 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
             }
         }
 
-        if (++currentSlot >= 1 * getTier().getSlotsMultiplier()) {
-            currentSlot = 0;
-        }
+        for(int i = 0; i < itemFilters.getSlots(); i++) {
+            if (type == IType.ITEMS && !itemFilters.getStackInSlot(i).isEmpty()) {
+                ItemStack stack = itemFilters.getStackInSlot(i);
 
-        if (type == IType.ITEMS && !itemFilters.getStackInSlot(currentSlot).isEmpty()) {
-
-            ItemStack stack = itemFilters.getStackInSlot(currentSlot);
-
-            if (drop) {
-                extractAndDropItem(stack);
-            } else if (stack.getItem() == Items.FIREWORK_ROCKET) {
-                extractAndSpawnFireworks(stack);
-            } else if (stack.getItem() instanceof BlockItem) {
-                extractAndPlaceBlock(stack);
+                if (drop) {
+                    extractAndDropItem(stack);
+                } else if (stack.getItem() == Items.FIREWORK_ROCKET) {
+                    extractAndSpawnFireworks(stack);
+                } else if (stack.getItem() instanceof BlockItem) {
+                    extractAndPlaceBlock(stack);
+                }
+            } else if (type == IType.FLUIDS && !fluidFilters.getFluid(i).isEmpty()) {
+                extractAndPlaceFluid(fluidFilters.getFluid(i));
             }
-        } else if (type == IType.FLUIDS && !fluidFilters.getFluid(currentSlot).isEmpty()) {
-            extractAndPlaceFluid(fluidFilters.getFluid(currentSlot));
         }
     }
 

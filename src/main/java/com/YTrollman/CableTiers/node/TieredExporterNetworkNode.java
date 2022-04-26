@@ -33,7 +33,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterNetworkNode> implements IComparable, IType, ICoverable {
-
     private static final String NBT_COMPARE = "Compare";
     private static final String NBT_TYPE = "Type";
     private static final String NBT_FLUID_FILTERS = "FluidFilters";
@@ -41,10 +40,40 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
     private static final int BASE_SPEED = 9;
     private static final int SPEED_INCREASE = 2;
 
-    private final BaseItemHandler itemFilters;
-    private final FluidInventory fluidFilters;
+    private final BaseItemHandler itemFilters = new BaseItemHandler(9 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
+    private final FluidInventory fluidFilters = new FluidInventory(9 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
 
-    private final UpgradeItemHandler upgrades;
+    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
+            4,
+            checkTierUpgrades())
+            .addListener(new NetworkNodeInventoryListener(this))
+            .addListener((handler, slot, reading) -> {
+                if (!reading && !getUpgrades().hasUpgrade(UpgradeItem.Type.REGULATOR)) {
+                    boolean changed = false;
+
+                    for (int i = 0; i < itemFilters.getSlots(); i++) {
+                        ItemStack filteredItem = itemFilters.getStackInSlot(i);
+
+                        if (filteredItem.getCount() > 1) {
+                            filteredItem.setCount(1);
+                            changed = true;
+                        }
+                    }
+
+                    for (int i = 0; i < fluidFilters.getSlots(); i++) {
+                        FluidStack filteredFluid = fluidFilters.getFluid(i);
+
+                        if (!filteredFluid.isEmpty() && filteredFluid.getAmount() != FluidAttributes.BUCKET_VOLUME) {
+                            filteredFluid.setAmount(FluidAttributes.BUCKET_VOLUME);
+                            changed = true;
+                        }
+                    }
+
+                    if (changed) {
+                        markDirty();
+                    }
+                }
+            });
 
     private int compare = IComparer.COMPARE_NBT;
     private int type = IType.ITEMS;
@@ -56,55 +85,16 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
     public TieredExporterNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.EXPORTER, tier);
         this.coverManager = new CoverManager(this);
-        this.itemFilters = new BaseItemHandler(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
-        this.fluidFilters = new FluidInventory(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
-        this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
-                4,
-                CheckTierUpgrade()
-        )
-                .addListener(new NetworkNodeInventoryListener(this))
-                .addListener((handler, slot, reading) ->
-                {
-                    if (!reading && !getUpgrades().hasUpgrade(UpgradeItem.Type.REGULATOR)) {
-                        boolean changed = false;
-
-                        for (int i = 0; i < itemFilters.getSlots(); i++) {
-                            ItemStack filteredItem = itemFilters.getStackInSlot(i);
-
-                            if (filteredItem.getCount() > 1) {
-                                filteredItem.setCount(1);
-                                changed = true;
-                            }
-                        }
-
-                        for (int i = 0; i < fluidFilters.getSlots(); i++) {
-                            FluidStack filteredFluid = fluidFilters.getFluid(i);
-
-                            if (!filteredFluid.isEmpty() && filteredFluid.getAmount() != FluidAttributes.BUCKET_VOLUME) {
-                                filteredFluid.setAmount(FluidAttributes.BUCKET_VOLUME);
-                                changed = true;
-                            }
-                        }
-
-                        if (changed) {
-                            markDirty();
-                        }
-                    }
-                });
     }
 
-    private UpgradeItem.Type[] CheckTierUpgrade()
-    {
-        if(getTier() == CableTier.ELITE)
-        {
+    private UpgradeItem.Type[] checkTierUpgrades() {
+        if(getTier() == CableTier.ELITE) {
             return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR };
         }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        else if(getTier() == CableTier.ULTRA) {
             return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR };
         }
-        else if(getTier() == CableTier.CREATIVE)
-        {
+        else if(getTier() == CableTier.CREATIVE) {
             return new UpgradeItem.Type[] { UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR };
         }
         return null;
@@ -112,16 +102,13 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
 
     @Override
     public int getEnergyUsage() {
-        if(getTier() == CableTier.ELITE)
-        {
+        if(getTier() == CableTier.ELITE) {
             return (4 * (RS.SERVER_CONFIG.getExporter().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ELITE_ENERGY_COST.get();
         }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        else if(getTier() == CableTier.ULTRA) {
             return (4 * (RS.SERVER_CONFIG.getExporter().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ULTRA_ENERGY_COST.get();
         }
-        else if(getTier() == CableTier.CREATIVE)
-        {
+        else if(getTier() == CableTier.CREATIVE) {
             return (4 * (RS.SERVER_CONFIG.getExporter().getUsage() + upgrades.getEnergyUsage())) * CableConfig.CREATIVE_ENERGY_COST.get();
         }
         return 0;

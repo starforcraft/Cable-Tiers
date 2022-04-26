@@ -3,6 +3,7 @@ package com.YTrollman.CableTiers.node;
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
 import com.YTrollman.CableTiers.config.CableConfig;
+import com.YTrollman.CableTiers.tileentity.TieredDiskManipulatorTileEntity;
 import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.api.storage.AccessType;
 import com.refinedmods.refinedstorage.api.storage.disk.IStorageDisk;
@@ -20,7 +21,6 @@ import com.refinedmods.refinedstorage.inventory.item.validator.StorageDiskItemVa
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeFluidInventoryListener;
 import com.refinedmods.refinedstorage.inventory.listener.NetworkNodeInventoryListener;
 import com.refinedmods.refinedstorage.item.UpgradeItem;
-import com.refinedmods.refinedstorage.tile.DiskManipulatorTile;
 import com.refinedmods.refinedstorage.tile.config.IComparable;
 import com.refinedmods.refinedstorage.tile.config.IType;
 import com.refinedmods.refinedstorage.tile.config.IWhitelistBlacklist;
@@ -48,7 +48,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDiskManipulatorNetworkNode> implements IComparable, IWhitelistBlacklist, IType, IStorageDiskContainerContext {
-
     public static final int IO_MODE_INSERT = 0;
     public static final int IO_MODE_EXTRACT = 1;
 
@@ -66,85 +65,67 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
     private final IStorageDisk<ItemStack>[] itemDisks = new IStorageDisk[6 * checkTierMultiplier()];
     private final IStorageDisk<FluidStack>[] fluidDisks = new IStorageDisk[6 * checkTierMultiplier()];
 
-    private final UpgradeItemHandler upgrades;
+    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(getTier() == CableTier.CREATIVE ? 0 : 4, checkTierUpgrades()) {
+        @Override
+        public int getStackInteractCount() {
+            int count = super.getStackInteractCount();
 
-    private final BaseItemHandler inputDisks;
-    private final BaseItemHandler outputDisks;
+            if (type == IType.FLUIDS) {
+                count *= FluidAttributes.BUCKET_VOLUME;
+            }
 
-    private final ProxyItemHandler disks;
+            return count;
+        }
+    }.addListener(new NetworkNodeInventoryListener(this));
+
+    private final BaseItemHandler inputDisks = new BaseItemHandler(3 * checkTierMultiplier())
+            .addValidator(new StorageDiskItemValidator())
+            .addListener(new NetworkNodeInventoryListener(this))
+            .addListener((handler, slot, reading) -> {
+                if (!world.isClientSide) {
+                    StackUtils.createStorages(
+                            (ServerWorld) world,
+                            handler.getStackInSlot(slot),
+                            slot,
+                            itemDisks,
+                            fluidDisks,
+                            s -> new TieredStorageDiskItemManipulatorWrapper(TieredDiskManipulatorNetworkNode.this, s),
+                            s -> new TieredStorageDiskFluidManipulatorWrapper(TieredDiskManipulatorNetworkNode.this, s)
+                    );
+
+                    if (!reading) {
+                        WorldUtils.updateBlock(world, pos);
+                    }
+                }
+            });
+    private final BaseItemHandler outputDisks = new UpgradeItemHandler(getTier() == CableTier.CREATIVE ? 0 : 4, checkTierUpgrades()) {
+        @Override
+        public int getStackInteractCount() {
+            int count = super.getStackInteractCount();
+
+            if (type == IType.FLUIDS) {
+                count *= FluidAttributes.BUCKET_VOLUME;
+            }
+
+            return count;
+        }
+    }.addListener(new NetworkNodeInventoryListener(this));
+
+    private final ProxyItemHandler disks = new ProxyItemHandler(inputDisks, outputDisks);
 
     private final BaseItemHandler itemFilters = new BaseItemHandler(9 * checkTierMultiplier()).addListener(new NetworkNodeInventoryListener(this));
     private final FluidInventory fluidFilters = new FluidInventory(9 * checkTierMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
 
     public TieredDiskManipulatorNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.DISK_MANIPULATOR, tier);
-        this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(getTier() == CableTier.CREATIVE ? 0 : 4, CheckTierUpgrade()) {
-            @Override
-            public int getStackInteractCount() {
-                int count = super.getStackInteractCount();
-
-                if (type == IType.FLUIDS) {
-                    count *= FluidAttributes.BUCKET_VOLUME;
-                }
-
-                return count;
-            }
-        }.addListener(new NetworkNodeInventoryListener(this));
-        this.outputDisks = new BaseItemHandler(3 * checkTierMultiplier())
-                .addValidator(new StorageDiskItemValidator())
-                .addListener(new NetworkNodeInventoryListener(this))
-                .addListener(((handler, slot, reading) -> {
-                    if (!world.isClientSide) {
-                        StackUtils.createStorages(
-                                (ServerWorld) world,
-                                handler.getStackInSlot(slot),
-                                3 * checkTierMultiplier() + slot,
-                                itemDisks,
-                                fluidDisks,
-                                s -> new TieredStorageDiskItemManipulatorWrapper(TieredDiskManipulatorNetworkNode.this, s),
-                                s -> new TieredStorageDiskFluidManipulatorWrapper(TieredDiskManipulatorNetworkNode.this, s)
-                        );
-
-                        if (!reading) {
-                            WorldUtils.updateBlock(world, pos);
-                        }
-                    }
-                }));
-        this.inputDisks = new BaseItemHandler(3 * checkTierMultiplier())
-                .addValidator(new StorageDiskItemValidator())
-                .addListener(new NetworkNodeInventoryListener(this))
-                .addListener((handler, slot, reading) -> {
-                    if (!world.isClientSide) {
-                        StackUtils.createStorages(
-                                (ServerWorld) world,
-                                handler.getStackInSlot(slot),
-                                slot,
-                                itemDisks,
-                                fluidDisks,
-                                s -> new TieredStorageDiskItemManipulatorWrapper(TieredDiskManipulatorNetworkNode.this, s),
-                                s -> new TieredStorageDiskFluidManipulatorWrapper(TieredDiskManipulatorNetworkNode.this, s)
-                        );
-
-                        if (!reading) {
-                            WorldUtils.updateBlock(world, pos);
-                        }
-                    }
-                });
-        this.disks = new ProxyItemHandler(inputDisks, outputDisks);
     }
 
-    private UpgradeItem.Type[] CheckTierUpgrade()
-    {
-        if(getTier() == CableTier.ELITE)
-        {
+    private UpgradeItem.Type[] checkTierUpgrades() {
+        if(getTier() == CableTier.ELITE) {
             return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK };
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        } else if(getTier() == CableTier.ULTRA) {
             return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED };
-        }
-        else if(getTier() == CableTier.CREATIVE)
-        {
+        } else if(getTier() == CableTier.CREATIVE) {
             return new UpgradeItem.Type[] { };
         }
         return null;
@@ -152,16 +133,11 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
 
     @Override
     public int getEnergyUsage() {
-        if(getTier() == CableTier.ELITE)
-        {
+        if(getTier() == CableTier.ELITE) {
             return (4 * (RS.SERVER_CONFIG.getDiskManipulator().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ELITE_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        } else if(getTier() == CableTier.ULTRA) {
             return (4 * (RS.SERVER_CONFIG.getDiskManipulator().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ULTRA_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.CREATIVE)
-        {
+        } else if(getTier() == CableTier.CREATIVE) {
             return (4 * (RS.SERVER_CONFIG.getDiskManipulator().getUsage() + upgrades.getEnergyUsage())) * CableConfig.CREATIVE_ENERGY_COST.get();
         }
         return 0;
@@ -171,13 +147,11 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
     public void update() {
         super.update();
 
-        if (!canUpdate())
-        {
+        if (!canUpdate()) {
             return;
         }
 
-        if(getTier() != CableTier.CREATIVE)
-        {
+        if(getTier() != CableTier.CREATIVE) {
             if (ticks % upgrades.getSpeed() != 0) {
                 return;
             }
@@ -432,7 +406,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
         }
     }
 
-    public DiskState[] getDiskState() {
+    /*public DiskState[] getDiskState() {
         DiskState[] diskStates = new DiskState[6 * checkTierMultiplier()];
 
         for (int i = 0; i < 6 * checkTierMultiplier(); ++i) {
@@ -453,37 +427,29 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
         }
 
         return diskStates;
-    }
+    }*/
 
-    private int getStackInteractCount()
-    {
-        if(getTier() == CableTier.CREATIVE)
-        {
+    private int getStackInteractCount() {
+        if(getTier() == CableTier.CREATIVE) {
             return Integer.MAX_VALUE;
         }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        else if(getTier() == CableTier.ULTRA) {
             return 64 * CableConfig.ULTRA_DISK_MANIPULATOR_SPEED.get();
         }
-        else if(getTier() == CableTier.ELITE)
-        {
+        else if(getTier() == CableTier.ELITE) {
             return upgrades.getStackInteractCount() * CableConfig.ELITE_DISK_MANIPULATOR_SPEED.get();
         }
         return 0;
     }
 
-    private int checkTierMultiplier()
-    {
-        if(getTier() == CableTier.ELITE)
-        {
+    private int checkTierMultiplier() {
+        if(getTier() == CableTier.ELITE) {
             return 2;
         }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        else if(getTier() == CableTier.ULTRA) {
             return 3;
         }
-        else if(getTier() == CableTier.CREATIVE)
-        {
+        else if(getTier() == CableTier.CREATIVE) {
             return 4;
         }
         return 0;
@@ -501,7 +467,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
 
     @Override
     public int getType() {
-        return world.isClientSide ? DiskManipulatorTile.TYPE.getValue() : type;
+        return world.isClientSide ? TieredDiskManipulatorTileEntity.TYPE.getValue() : type;
     }
 
     @Override

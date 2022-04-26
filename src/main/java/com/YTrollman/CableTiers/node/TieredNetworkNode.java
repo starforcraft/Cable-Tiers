@@ -9,7 +9,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public abstract class TieredNetworkNode<N extends TieredNetworkNode<N>> extends NetworkNode {
-
     private final ContentType<?, ? extends TieredTileEntity<N>, ?, N> contentType;
     private final CableTier tier;
     private final ResourceLocation id;

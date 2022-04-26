@@ -19,8 +19,7 @@ public class TieredConstructorContainer extends TieredContainer<TieredConstructo
     private void initSlots() {
         addUpgradeSlots(getNode().getUpgrades());
 
-        for(int i = 0; i < getTier().getSlotsMultiplier(); i++)
-        {
+        for(int i = 0; i < getTier().getSlotsMultiplier(); i++) {
             int x = (35 + (18 * checkTier())) + (18 * i);
 
             addSlot(new FilterSlot(
@@ -39,18 +38,12 @@ public class TieredConstructorContainer extends TieredContainer<TieredConstructo
         transferManager.addFilterTransfer(getPlayer().inventory, getNode().getItemFilters(), getNode().getFluidFilters(), getNode()::getType);
     }
 
-    private int checkTier()
-    {
-        if(getTier() == CableTier.CREATIVE)
-        {
+    private int checkTier() {
+        if(getTier() == CableTier.CREATIVE) {
             return 0;
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        } else if(getTier() == CableTier.ULTRA) {
             return 1;
-        }
-        else if(getTier() == CableTier.ELITE)
-        {
+        } else if(getTier() == CableTier.ELITE) {
             return 2;
         }
         return 0;

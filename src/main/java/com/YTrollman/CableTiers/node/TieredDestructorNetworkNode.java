@@ -51,7 +51,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestructorNetworkNode> implements IComparable, IWhitelistBlacklist, IType, ICoverable {
-
     private static final String NBT_COMPARE = "Compare";
     private static final String NBT_MODE = "Mode";
     private static final String NBT_TYPE = "Type";
@@ -61,14 +60,12 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
     private static final int BASE_SPEED = 20;
     private static final int SPEED_INCREASE = 4;
 
-    private final BaseItemHandler itemFilters;
-    private final FluidInventory fluidFilters;
+    private final BaseItemHandler itemFilters = new BaseItemHandler(9 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
+    private final FluidInventory fluidFilters = new FluidInventory(9 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
 
-    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
-            4,
-            new UpgradeItem.Type[] { UpgradeItem.Type.SILK_TOUCH, UpgradeItem.Type.FORTUNE_1, UpgradeItem.Type.FORTUNE_2, UpgradeItem.Type.FORTUNE_3 })
+    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, checkTierUpgrades())
             .addListener(new NetworkNodeInventoryListener(this))
-            .addListener((handler, slot, reading) -> tool = createTool());;
+            .addListener((handler, slot, reading) -> tool = createTool());
 
     private int compare = IComparer.COMPARE_NBT;
     private int mode = IWhitelistBlacklist.BLACKLIST;
@@ -82,22 +79,23 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
     public TieredDestructorNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.DESTRUCTOR, tier);
         this.coverManager = new CoverManager(this);
-        this.itemFilters = new BaseItemHandler(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
-        this.fluidFilters = new FluidInventory(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
+    }
+
+    private UpgradeItem.Type[] checkTierUpgrades() {
+        if(getTier() == CableTier.CREATIVE) {
+            return new UpgradeItem.Type[] { UpgradeItem.Type.SILK_TOUCH, UpgradeItem.Type.FORTUNE_1, UpgradeItem.Type.FORTUNE_2, UpgradeItem.Type.FORTUNE_3 };
+        } else {
+            return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.SILK_TOUCH, UpgradeItem.Type.FORTUNE_1, UpgradeItem.Type.FORTUNE_2, UpgradeItem.Type.FORTUNE_3 };
+        }
     }
 
     @Override
     public int getEnergyUsage() {
-        if(getTier() == CableTier.ELITE)
-        {
+        if(getTier() == CableTier.ELITE) {
             return (4 * (RS.SERVER_CONFIG.getDestructor().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ELITE_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        } else if(getTier() == CableTier.ULTRA) {
             return (4 * (RS.SERVER_CONFIG.getDestructor().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ULTRA_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.CREATIVE)
-        {
+        } else if(getTier() == CableTier.CREATIVE) {
             return (4 * (RS.SERVER_CONFIG.getDestructor().getUsage() + upgrades.getEnergyUsage())) * CableConfig.CREATIVE_ENERGY_COST.get();
         }
         return 0;

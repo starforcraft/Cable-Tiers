@@ -14,10 +14,8 @@ public class TieredDiskManipulatorContainer extends TieredContainer<TieredDiskMa
     }
 
     private void initSlots() {
-        if(getTier() == CableTier.ELITE)
-        {
-            for (int i = 0; i < 3; ++i)
-            {
+        if(getTier() == CableTier.ELITE) {
+            for (int i = 0; i < 3; ++i) {
                 addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 3, 44, 71 + (i * 18)));
                 addSlot(new SlotItemHandler(getNode().getInputDisks(), i, 26, 71 + (i * 18)));
 
@@ -26,11 +24,8 @@ public class TieredDiskManipulatorContainer extends TieredContainer<TieredDiskMa
             }
 
             addPlayerInventory(8, 143);
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
-            for (int i = 0; i < 3; ++i)
-            {
+        } else if(getTier() == CableTier.ULTRA) {
+            for (int i = 0; i < 3; ++i) {
                 addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 6, 44, 89 + (i * 18)));
                 addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 3, 26, 89 + (i * 18)));
                 addSlot(new SlotItemHandler(getNode().getInputDisks(), i, 8, 89 + (i * 18)));
@@ -41,11 +36,8 @@ public class TieredDiskManipulatorContainer extends TieredContainer<TieredDiskMa
             }
 
             addPlayerInventory(8, 161);
-        }
-        else if(getTier() == CableTier.CREATIVE)
-        {
-            for (int i = 0; i < 3; ++i)
-            {
+        } else if(getTier() == CableTier.CREATIVE) {
+            for (int i = 0; i < 3; ++i) {
                 addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 9, 59, 106 + (i * 18)));
                 addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 6, 41, 106 + (i * 18)));
                 addSlot(new SlotItemHandler(getNode().getInputDisks(), i + 3, 23, 106 + (i * 18)));

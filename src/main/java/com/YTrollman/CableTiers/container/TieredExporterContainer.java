@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage.item.UpgradeItem;
 import net.minecraft.entity.player.PlayerEntity;
 
 public class TieredExporterContainer extends TieredContainer<TieredExporterTileEntity, TieredExporterNetworkNode> {
-
     private boolean hasRegulatorMode;
 
     public TieredExporterContainer(int windowId, PlayerEntity player, TieredExporterTileEntity tile) {

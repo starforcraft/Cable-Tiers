@@ -21,7 +21,6 @@ import com.refinedmods.refinedstorage.tile.config.IType;
 import com.refinedmods.refinedstorage.tile.config.IWhitelistBlacklist;
 import com.refinedmods.refinedstorage.util.StackUtils;
 import com.refinedmods.refinedstorage.util.WorldUtils;
-import mekanism.common.registries.MekanismBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -38,7 +37,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.List;
 
 public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterNetworkNode> implements IComparable, IWhitelistBlacklist, IType, ICoverable {
-
     private static final String NBT_COMPARE = "Compare";
     private static final String NBT_MODE = "Mode";
     private static final String NBT_TYPE = "Type";
@@ -47,10 +45,13 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
     private static final int BASE_SPEED = 9;
     private static final int SPEED_INCREASE = 2;
 
-    private final BaseItemHandler itemFilters;
-    private final FluidInventory fluidFilters;
+    private final BaseItemHandler itemFilters = new BaseItemHandler(9 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
+    private final FluidInventory fluidFilters = new FluidInventory(9 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
 
-    private final UpgradeItemHandler upgrades;
+    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
+            getTier() == CableTier.CREATIVE ? 0 : 4,
+            getTier() == CableTier.ELITE ? new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK } : new UpgradeItem.Type[] { UpgradeItem.Type.SPEED }
+    ).addListener(new NetworkNodeInventoryListener(this));
 
     private int compare = IComparer.COMPARE_NBT;
     private int mode = IWhitelistBlacklist.BLACKLIST;
@@ -65,26 +66,15 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
     public TieredImporterNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.IMPORTER, tier);
         this.coverManager = new CoverManager(this);
-        this.itemFilters = new BaseItemHandler(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
-        this.fluidFilters = new FluidInventory(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
-        this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
-                tier == CableTier.CREATIVE ? 0 : 4,
-                tier == CableTier.ELITE ? new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK } : new UpgradeItem.Type[] { UpgradeItem.Type.SPEED }
-        ).addListener(new NetworkNodeInventoryListener(this));
     }
 
     @Override
     public int getEnergyUsage() {
-        if(getTier() == CableTier.ELITE)
-        {
+        if(getTier() == CableTier.ELITE) {
             return (4 * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ELITE_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        } else if(getTier() == CableTier.ULTRA) {
             return (4 * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ULTRA_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.CREATIVE)
-        {
+        } else if(getTier() == CableTier.CREATIVE) {
             return (4 * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage())) * CableConfig.CREATIVE_ENERGY_COST.get();
         }
         return 0;
