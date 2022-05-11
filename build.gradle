@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
-        maven { url='https://repo.spongepowered.org/maven' }
+        maven { url = 'https://repo.spongepowered.org/maven' }
         mavenCentral()
     }
     dependencies {
@@ -17,10 +17,6 @@ apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
 repositories {
-    maven {
-        name = "Progwml6 maven"
-        url = "https://dvs1.progwml6.com/files/maven"
-    }
     maven {
         name = "ModMaven"
         url = "https://modmaven.dev"
@@ -113,7 +109,7 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-1.16.5:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.5:${jei_version}")
 
-    implementation fg.deobf("curse.maven:refinedstorage-243076:3527504")
+    implementation fg.deobf("curse.maven:refinedstorage-243076:3630064")
     implementation fg.deobf("curse.maven:rsrequestify-307788:3501351")
 
     implementation fg.deobf("curse.maven:cookingforblockheads-231484:3445172")

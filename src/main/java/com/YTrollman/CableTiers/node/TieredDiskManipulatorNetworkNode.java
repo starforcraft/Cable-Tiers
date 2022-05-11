@@ -65,59 +65,71 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
     private final IStorageDisk<ItemStack>[] itemDisks = new IStorageDisk[6 * checkTierMultiplier()];
     private final IStorageDisk<FluidStack>[] fluidDisks = new IStorageDisk[6 * checkTierMultiplier()];
 
-    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(getTier() == CableTier.CREATIVE ? 0 : 4, checkTierUpgrades()) {
-        @Override
-        public int getStackInteractCount() {
-            int count = super.getStackInteractCount();
+    private final UpgradeItemHandler upgrades;
 
-            if (type == IType.FLUIDS) {
-                count *= FluidAttributes.BUCKET_VOLUME;
-            }
+    private final BaseItemHandler inputDisks;
+    private final BaseItemHandler outputDisks;
 
-            return count;
-        }
-    }.addListener(new NetworkNodeInventoryListener(this));
-
-    private final BaseItemHandler inputDisks = new BaseItemHandler(3 * checkTierMultiplier())
-            .addValidator(new StorageDiskItemValidator())
-            .addListener(new NetworkNodeInventoryListener(this))
-            .addListener((handler, slot, reading) -> {
-                if (!world.isClientSide) {
-                    StackUtils.createStorages(
-                            (ServerWorld) world,
-                            handler.getStackInSlot(slot),
-                            slot,
-                            itemDisks,
-                            fluidDisks,
-                            s -> new TieredStorageDiskItemManipulatorWrapper(TieredDiskManipulatorNetworkNode.this, s),
-                            s -> new TieredStorageDiskFluidManipulatorWrapper(TieredDiskManipulatorNetworkNode.this, s)
-                    );
-
-                    if (!reading) {
-                        WorldUtils.updateBlock(world, pos);
-                    }
-                }
-            });
-    private final BaseItemHandler outputDisks = new UpgradeItemHandler(getTier() == CableTier.CREATIVE ? 0 : 4, checkTierUpgrades()) {
-        @Override
-        public int getStackInteractCount() {
-            int count = super.getStackInteractCount();
-
-            if (type == IType.FLUIDS) {
-                count *= FluidAttributes.BUCKET_VOLUME;
-            }
-
-            return count;
-        }
-    }.addListener(new NetworkNodeInventoryListener(this));
-
-    private final ProxyItemHandler disks = new ProxyItemHandler(inputDisks, outputDisks);
+    private final ProxyItemHandler disks;
 
     private final BaseItemHandler itemFilters = new BaseItemHandler(9 * checkTierMultiplier()).addListener(new NetworkNodeInventoryListener(this));
     private final FluidInventory fluidFilters = new FluidInventory(9 * checkTierMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
 
     public TieredDiskManipulatorNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.DISK_MANIPULATOR, tier);
+        this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(getTier() == CableTier.CREATIVE ? 0 : 4, checkTierUpgrades()) {
+            @Override
+            public int getStackInteractCount() {
+                int count = super.getStackInteractCount();
+
+                if (type == IType.FLUIDS) {
+                    count *= FluidAttributes.BUCKET_VOLUME;
+                }
+
+                return count;
+            }
+        }.addListener(new NetworkNodeInventoryListener(this));
+        this.outputDisks = new BaseItemHandler(3 * checkTierMultiplier())
+                .addValidator(new StorageDiskItemValidator())
+                .addListener(new NetworkNodeInventoryListener(this))
+                .addListener(((handler, slot, reading) -> {
+                    if (!world.isClientSide) {
+                        StackUtils.createStorages(
+                                (ServerWorld) world,
+                                handler.getStackInSlot(slot),
+                                3 * checkTierMultiplier() + slot,
+                                itemDisks,
+                                fluidDisks,
+                                s -> new TieredStorageDiskItemManipulatorWrapper(TieredDiskManipulatorNetworkNode.this, s),
+                                s -> new TieredStorageDiskFluidManipulatorWrapper(TieredDiskManipulatorNetworkNode.this, s)
+                        );
+
+                        if (!reading) {
+                            WorldUtils.updateBlock(world, pos);
+                        }
+                    }
+                }));
+        this.inputDisks = new BaseItemHandler(3 * checkTierMultiplier())
+                .addValidator(new StorageDiskItemValidator())
+                .addListener(new NetworkNodeInventoryListener(this))
+                .addListener((handler, slot, reading) -> {
+                    if (!world.isClientSide) {
+                        StackUtils.createStorages(
+                                (ServerWorld) world,
+                                handler.getStackInSlot(slot),
+                                slot,
+                                itemDisks,
+                                fluidDisks,
+                                s -> new TieredStorageDiskItemManipulatorWrapper(TieredDiskManipulatorNetworkNode.this, s),
+                                s -> new TieredStorageDiskFluidManipulatorWrapper(TieredDiskManipulatorNetworkNode.this, s)
+                        );
+
+                        if (!reading) {
+                            WorldUtils.updateBlock(world, pos);
+                        }
+                    }
+                });
+        this.disks = new ProxyItemHandler(inputDisks, outputDisks);
     }
 
     private UpgradeItem.Type[] checkTierUpgrades() {
