@@ -62,8 +62,7 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     private final BaseItemHandler itemFilters;
     private final FluidInventory fluidFilters;
 
-    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, CheckTierUpgrade())
-            .addListener(new NetworkNodeInventoryListener(this));
+    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, CheckTierUpgrade()).addListener(new NetworkNodeInventoryListener(this));
 
     private int compare = IComparer.COMPARE_NBT;
     private int type = IType.ITEMS;
@@ -78,35 +77,24 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
         this.fluidFilters = new FluidInventory(1 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
     }
 
-    private UpgradeItem.Type[] CheckTierUpgrade()
-    {
-        if(getTier() == CableTier.ELITE)
-        {
-            return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK, UpgradeItem.Type.CRAFTING };
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
-            return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING };
-        }
-        else if(getTier() == CableTier.CREATIVE)
-        {
-            return new UpgradeItem.Type[] { UpgradeItem.Type.CRAFTING };
+    private UpgradeItem.Type[] CheckTierUpgrade() {
+        if (getTier() == CableTier.ELITE) {
+            return new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK, UpgradeItem.Type.CRAFTING};
+        } else if (getTier() == CableTier.ULTRA) {
+            return new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING};
+        } else if (getTier() == CableTier.CREATIVE) {
+            return new UpgradeItem.Type[]{UpgradeItem.Type.CRAFTING};
         }
         return null;
     }
 
     @Override
     public int getEnergyUsage() {
-        if(getTier() == CableTier.ELITE)
-        {
+        if (getTier() == CableTier.ELITE) {
             return (4 * (RS.SERVER_CONFIG.getConstructor().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ELITE_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        } else if (getTier() == CableTier.ULTRA) {
             return (4 * (RS.SERVER_CONFIG.getConstructor().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ULTRA_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.CREATIVE)
-        {
+        } else if (getTier() == CableTier.CREATIVE) {
             return (4 * (RS.SERVER_CONFIG.getConstructor().getUsage() + upgrades.getEnergyUsage())) * CableConfig.CREATIVE_ENERGY_COST.get();
         }
         return 0;
@@ -180,13 +168,7 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     private void extractAndPlaceBlock(ItemStack stack) {
         ItemStack took = network.extractItem(stack, 1, compare, Action.SIMULATE);
         if (!took.isEmpty()) {
-            BlockPlaceContext ctx = new TieredConstructorBlockItemUseContext(
-                    level,
-                    LevelUtils.getFakePlayer((ServerLevel) level, getOwner()),
-                    InteractionHand.MAIN_HAND,
-                    took,
-                    new BlockHitResult(Vec3.ZERO, getDirection(), pos, false)
-            );
+            BlockPlaceContext ctx = new TieredConstructorBlockItemUseContext(level, LevelUtils.getFakePlayer((ServerLevel) level, getOwner()), InteractionHand.MAIN_HAND, took, new BlockHitResult(Vec3.ZERO, getDirection(), pos, false));
 
             InteractionResult result = ForgeHooks.onPlaceItemIntoWorld(ctx);
             if (result.consumesAction()) {
@@ -240,7 +222,7 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     @Override
     public void read(CompoundTag tag) {
         super.read(tag);
-        if (tag.contains(CoverManager.NBT_COVER_MANAGER)){
+        if (tag.contains(CoverManager.NBT_COVER_MANAGER)) {
             this.coverManager.readFromNbt(tag.getCompound(CoverManager.NBT_COVER_MANAGER));
         }
         StackUtils.readItems(upgrades, 1, tag);

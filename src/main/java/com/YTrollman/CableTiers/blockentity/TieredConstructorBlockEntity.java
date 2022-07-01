@@ -25,10 +25,8 @@ public class TieredConstructorBlockEntity extends TieredBlockEntity<TieredConstr
         t.getNode().markDirty();
     });
 
-    public static final BlockEntitySynchronizationParameter<CompoundTag, TieredConstructorBlockEntity> COVER_MANAGER = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.COMPOUND_TAG, new CompoundTag(),
-            t -> t.getNode().getCoverManager().writeToNbt(),
-            (t, v) -> t.getNode().getCoverManager().readFromNbt(v),
-            (initial, p) -> {});
+    public static final BlockEntitySynchronizationParameter<CompoundTag, TieredConstructorBlockEntity> COVER_MANAGER = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.COMPOUND_TAG, new CompoundTag(), t -> t.getNode().getCoverManager().writeToNbt(), (t, v) -> t.getNode().getCoverManager().readFromNbt(v), (initial, p) -> {
+    });
 
     public TieredConstructorBlockEntity(CableTier tier, BlockPos pos, BlockState state) {
         super(ContentType.CONSTRUCTOR, tier, pos, state);

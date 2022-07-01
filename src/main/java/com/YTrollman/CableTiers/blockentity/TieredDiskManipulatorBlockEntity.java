@@ -46,18 +46,12 @@ public class TieredDiskManipulatorBlockEntity extends TieredBlockEntity<TieredDi
         Arrays.fill(diskState, DiskState.NONE);
     }
 
-    private int checkTierMultiplier()
-    {
-        if(getTier() == CableTier.ELITE)
-        {
+    private int checkTierMultiplier() {
+        if (getTier() == CableTier.ELITE) {
             return 2;
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        } else if (getTier() == CableTier.ULTRA) {
             return 3;
-        }
-        else if(getTier() == CableTier.CREATIVE)
-        {
+        } else if (getTier() == CableTier.CREATIVE) {
             return 4;
         }
         return 0;

@@ -23,7 +23,7 @@ public class MixinBakedModelCableCover {
         if (state == null) {
             return 6;
         } else {
-            BaseBlock block = (BaseBlock)state.getBlock();
+            BaseBlock block = (BaseBlock) state.getBlock();
             if (block == RSBlocks.CABLE.get()) {
                 return 6;
             } else {

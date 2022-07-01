@@ -21,10 +21,8 @@ public class TieredExporterBlockEntity extends TieredBlockEntity<TieredExporterN
     public static final BlockEntitySynchronizationParameter<Integer, TieredExporterBlockEntity> COMPARE = IComparable.createParameter();
     public static final BlockEntitySynchronizationParameter<Integer, TieredExporterBlockEntity> TYPE = IType.createParameter();
 
-    public static final BlockEntitySynchronizationParameter<CompoundTag, TieredExporterBlockEntity> COVER_MANAGER = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.COMPOUND_TAG, new CompoundTag(),
-            t -> t.getNode().getCoverManager().writeToNbt(),
-            (t, v) -> t.getNode().getCoverManager().readFromNbt(v),
-            (initial, p) -> {});
+    public static final BlockEntitySynchronizationParameter<CompoundTag, TieredExporterBlockEntity> COVER_MANAGER = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.COMPOUND_TAG, new CompoundTag(), t -> t.getNode().getCoverManager().writeToNbt(), (t, v) -> t.getNode().getCoverManager().readFromNbt(v), (initial, p) -> {
+    });
 
     public TieredExporterBlockEntity(CableTier tier, BlockPos pos, BlockState state) {
         super(ContentType.EXPORTER, tier, pos, state);

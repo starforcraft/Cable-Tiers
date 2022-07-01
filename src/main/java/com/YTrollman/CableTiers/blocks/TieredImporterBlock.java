@@ -2,8 +2,8 @@ package com.YTrollman.CableTiers.blocks;
 
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
-import com.YTrollman.CableTiers.node.TieredImporterNetworkNode;
 import com.YTrollman.CableTiers.blockentity.TieredImporterBlockEntity;
+import com.YTrollman.CableTiers.node.TieredImporterNetworkNode;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;

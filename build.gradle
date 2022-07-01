@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
-        maven { url='https://repo.spongepowered.org/maven' }
+        maven { url = 'https://repo.spongepowered.org/maven' }
         mavenCentral()
     }
     dependencies {
@@ -33,7 +33,7 @@ repositories {
          */
         credentials {
             username = "anything"
-            password = "\u0067hp_pnP5hVDYXXhhXwe21IEkrUzGjquUJL0xjLzb"
+            password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
     }
     maven {
@@ -52,7 +52,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    mappings channel: "official", version: "${mc_version}"
+    mappings channel: 'official', version: "${mc_version}"
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -121,44 +121,30 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    compileOnly fg.deobf("mezz.jei:jei-1.18.1:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.18.1:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}")
 
-    implementation fg.deobf("com.refinedmods:refinedstorage:1.10.0") {
+    implementation fg.deobf("com.refinedmods:refinedstorage:1.10.2") {
         transitive false
     }
-    implementation fg.deobf("curse.maven:rsrequestify-307788:3617200")
+    implementation fg.deobf('curse.maven:rsrequestify-307788:3617200')
 
-    implementation fg.deobf("curse.maven:extrastorage-410168:3584356")
-    implementation fg.deobf("curse.maven:spark-361579:3591172")
-    //implementation fg.deobf("curse.maven:mekanism-268560:3206392")
+    implementation fg.deobf('curse.maven:extrastorage-410168:3718149')
+    implementation fg.deobf('curse.maven:spark-361579:3824951')
+    implementation fg.deobf('curse.maven:mekanism-268560:3833669')
 }
 
 jar {
     manifest {
         attributes([
                 "Specification-Title"     : "cabletiers",
-                "Specification-Vendor"    : "cabletierssareus",
+                "Specification-Vendor"    : "cabletiers",
                 "Specification-Version"   : "1",
                 "Implementation-Title"    : "${project.name}",
                 "Implementation-Version"  : "${project.version}",
-                "Implementation-Vendor"   : "cabletierssareus",
+                "Implementation-Vendor"   : "cabletiers",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 "MixinConfigs": "${modid}.mixins.json"
         ])
-    }
-}
-
-jar.finalizedBy('reobfJar')
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/mcmodsrepo"
-        }
     }
 }

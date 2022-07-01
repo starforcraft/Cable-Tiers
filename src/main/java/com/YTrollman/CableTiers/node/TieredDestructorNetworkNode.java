@@ -63,11 +63,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
     private final BaseItemHandler itemFilters;
     private final FluidInventory fluidFilters;
 
-    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
-            4,
-            new UpgradeItem.Type[] { UpgradeItem.Type.SILK_TOUCH, UpgradeItem.Type.FORTUNE_1, UpgradeItem.Type.FORTUNE_2, UpgradeItem.Type.FORTUNE_3 })
-            .addListener(new NetworkNodeInventoryListener(this))
-            .addListener((handler, slot, reading) -> tool = createTool());
+    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, new UpgradeItem.Type[]{UpgradeItem.Type.SILK_TOUCH, UpgradeItem.Type.FORTUNE_1, UpgradeItem.Type.FORTUNE_2, UpgradeItem.Type.FORTUNE_3}).addListener(new NetworkNodeInventoryListener(this)).addListener((handler, slot, reading) -> tool = createTool());
 
     private int compare = IComparer.COMPARE_NBT;
     private int mode = IWhitelistBlacklist.BLACKLIST;
@@ -87,16 +83,11 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
 
     @Override
     public int getEnergyUsage() {
-        if(getTier() == CableTier.ELITE)
-        {
+        if (getTier() == CableTier.ELITE) {
             return (4 * (RS.SERVER_CONFIG.getDestructor().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ELITE_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        } else if (getTier() == CableTier.ULTRA) {
             return (4 * (RS.SERVER_CONFIG.getDestructor().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ULTRA_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.CREATIVE)
-        {
+        } else if (getTier() == CableTier.CREATIVE) {
             return (4 * (RS.SERVER_CONFIG.getDestructor().getUsage() + upgrades.getEnergyUsage())) * CableConfig.CREATIVE_ENERGY_COST.get();
         }
         return 0;
@@ -148,8 +139,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
         for (ItemEntity entity : droppedItems) {
             ItemStack droppedItem = ((ItemEntity) entity).getItem();
 
-            if (IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, droppedItem) &&
-                    network.insertItem(droppedItem, droppedItem.getCount(), Action.SIMULATE).isEmpty()) {
+            if (IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, droppedItem) && network.insertItem(droppedItem, droppedItem.getCount(), Action.SIMULATE).isEmpty()) {
                 network.insertItemTracked(droppedItem.copy(), droppedItem.getCount());
 
                 entity.remove(Entity.RemovalReason.DISCARDED);
@@ -163,25 +153,10 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
         BlockPos front = pos.relative(getDirection());
         BlockState frontBlockState = level.getBlockState(front);
         Block frontBlock = frontBlockState.getBlock();
-        ItemStack frontStack = frontBlock.getCloneItemStack(
-                frontBlockState,
-                new BlockHitResult(Vec3.ZERO, getDirection().getOpposite(), front, false),
-                level,
-                front,
-                LevelUtils.getFakePlayer((ServerLevel) level, getOwner())
-        );
+        ItemStack frontStack = frontBlock.getCloneItemStack(frontBlockState, new BlockHitResult(Vec3.ZERO, getDirection().getOpposite(), front, false), level, front, LevelUtils.getFakePlayer((ServerLevel) level, getOwner()));
 
-        if (!frontStack.isEmpty() &&
-                IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, frontStack) &&
-                frontBlockState.getDestroySpeed(level, front) != -1.0) {
-            List<ItemStack> drops = Block.getDrops(
-                    frontBlockState,
-                    (ServerLevel) level,
-                    front,
-                    level.getBlockEntity(front),
-                    LevelUtils.getFakePlayer((ServerLevel) level, getOwner()),
-                    tool
-            );
+        if (!frontStack.isEmpty() && IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, frontStack) && frontBlockState.getDestroySpeed(level, front) != -1.0) {
+            List<ItemStack> drops = Block.getDrops(frontBlockState, (ServerLevel) level, front, level.getBlockEntity(front), LevelUtils.getFakePlayer((ServerLevel) level, getOwner()), tool);
 
             for (ItemStack drop : drops) {
                 if (!network.insertItem(drop, drop.getCount(), Action.SIMULATE).isEmpty()) {
@@ -221,8 +196,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
 
                 FluidStack stack = new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME);
 
-                if (IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack) &&
-                        network.insertFluid(stack, stack.getAmount(), Action.SIMULATE).isEmpty()) {
+                if (IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack) && network.insertFluid(stack, stack.getAmount(), Action.SIMULATE).isEmpty()) {
                     network.insertFluidTracked(stack, stack.getAmount());
 
                     level.setBlock(front, Blocks.AIR.defaultBlockState(), 11);
@@ -234,8 +208,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
             if (fluidBlock.canDrain(level, front)) {
                 FluidStack simulatedDrain = fluidBlock.drain(level, front, IFluidHandler.FluidAction.SIMULATE);
 
-                if (IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, simulatedDrain) &&
-                        network.insertFluid(simulatedDrain, simulatedDrain.getAmount(), Action.SIMULATE).isEmpty()) {
+                if (IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, simulatedDrain) && network.insertFluid(simulatedDrain, simulatedDrain.getAmount(), Action.SIMULATE).isEmpty()) {
                     FluidStack drained = fluidBlock.drain(level, front, IFluidHandler.FluidAction.EXECUTE);
 
                     network.insertFluidTracked(drained, drained.getAmount());
@@ -285,7 +258,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
     @Override
     public void read(CompoundTag tag) {
         super.read(tag);
-        if (tag.contains(CoverManager.NBT_COVER_MANAGER)){
+        if (tag.contains(CoverManager.NBT_COVER_MANAGER)) {
             this.coverManager.readFromNbt(tag.getCompound(CoverManager.NBT_COVER_MANAGER));
         }
         StackUtils.readItems(upgrades, 1, tag);

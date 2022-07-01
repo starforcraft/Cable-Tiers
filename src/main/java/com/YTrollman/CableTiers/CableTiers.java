@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(CableTiers.MOD_ID)
 public class CableTiers {
-
     public static final String MOD_ID = "cabletiers";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 

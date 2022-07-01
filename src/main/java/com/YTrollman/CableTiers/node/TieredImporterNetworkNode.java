@@ -23,7 +23,6 @@ import com.refinedmods.refinedstorage.util.LevelUtils;
 import com.refinedmods.refinedstorage.util.StackUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -32,12 +31,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.registries.ForgeRegistries;
-
-import java.util.List;
 
 public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterNetworkNode> implements IComparable, IWhitelistBlacklist, IType, ICoverable {
-
     private static final String NBT_COMPARE = "Compare";
     private static final String NBT_MODE = "Mode";
     private static final String NBT_TYPE = "Type";
@@ -59,31 +54,21 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
 
     private final CoverManager coverManager;
 
-    private final List<String> blacklist = (List<String>) CableConfig.CREATIVE_IMPORTER_FLUID_BLOCK_BLACKLIST.get();
-
     public TieredImporterNetworkNode(Level level, BlockPos pos, CableTier tier) {
         super(level, pos, ContentType.IMPORTER, tier);
         this.coverManager = new CoverManager(this);
         this.itemFilters = new BaseItemHandler(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
         this.fluidFilters = new FluidInventory(9 * tier.getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
-        this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
-                tier == CableTier.CREATIVE ? 0 : 4,
-                tier == CableTier.ELITE ? new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK } : new UpgradeItem.Type[] { UpgradeItem.Type.SPEED }
-        ).addListener(new NetworkNodeInventoryListener(this));
+        this.upgrades = (UpgradeItemHandler) new UpgradeItemHandler(tier == CableTier.CREATIVE ? 0 : 4, tier == CableTier.ELITE ? new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK} : new UpgradeItem.Type[]{UpgradeItem.Type.SPEED}).addListener(new NetworkNodeInventoryListener(this));
     }
 
     @Override
     public int getEnergyUsage() {
-        if(getTier() == CableTier.ELITE)
-        {
+        if (getTier() == CableTier.ELITE) {
             return (4 * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ELITE_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.ULTRA)
-        {
+        } else if (getTier() == CableTier.ULTRA) {
             return (4 * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ULTRA_ENERGY_COST.get();
-        }
-        else if(getTier() == CableTier.CREATIVE)
-        {
+        } else if (getTier() == CableTier.CREATIVE) {
             return (4 * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage())) * CableConfig.CREATIVE_ENERGY_COST.get();
         }
         return 0;
@@ -129,18 +114,16 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
 
     private void itemUpdate() {
         BlockEntity facing = getFacingBlockEntity();
-        if (facing == null || facing instanceof DiskDriveBlockEntity) {
-            return;
-        }
+        if (facing == null || facing instanceof DiskDriveBlockEntity) return;
 
         IItemHandler handler = LevelUtils.getItemHandler(facing, getDirection().getOpposite());
-        if (handler == null || handler.getSlots() <= 0) {
-            return;
-        }
+        if (handler == null || handler.getSlots() <= 0) return;
 
         if (currentSlot >= handler.getSlots()) {
             currentSlot = 0;
         }
+
+        if (network.getItemStorageCache().getList().getCount(handler.getStackInSlot(currentSlot)) == Integer.MAX_VALUE) return;
 
         if (getTier() == CableTier.CREATIVE) {
             while (doItemExtraction(handler)) {
@@ -155,6 +138,7 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
 
         while (true) {
             ItemStack stack = handler.getStackInSlot(currentSlot);
+
             if (!stack.isEmpty() && IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, stack)) {
                 int interactionCount = interactWithStacks() ? stack.getCount() : 1;
 
@@ -185,33 +169,30 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
     private void fluidUpdate() {
         IFluidHandler handler = LevelUtils.getFluidHandler(getFacingBlockEntity(), getDirection().getOpposite());
         BlockEntity facing = getFacingBlockEntity();
-        for(int i = 0; i < blacklist.size(); i++) {
-            if (facing == null || facing.getBlockState().is(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blacklist.get(i))))) {
-                return;
-            }
-            if (handler == null) {
-                return;
-            }
+        if (facing == null) return;
+        if (handler == null) return;
 
-            if (currentSlot >= handler.getTanks()) {
-                currentSlot = 0;
-            }
+        if (currentSlot >= handler.getTanks()) {
+            currentSlot = 0;
+        }
 
-            if (getTier() == CableTier.CREATIVE) {
-                while (doFluidExtraction(handler)) {
-                }
-            } else {
-                doFluidExtraction(handler);
+        if (network.getFluidStorageCache().getList().getCount(handler.getFluidInTank(currentSlot)) == Integer.MAX_VALUE) return;
+
+        if (getTier() == CableTier.CREATIVE) {
+            while (doFluidExtraction(handler)) {
             }
+        } else {
+            doFluidExtraction(handler);
         }
     }
 
     private boolean doFluidExtraction(IFluidHandler handler) {
         int startSlot = currentSlot;
 
-        if(handler.getTanks() != 0) {
+        if (handler.getTanks() != 0) {
             while (true) {
                 FluidStack stack = handler.getFluidInTank(currentSlot);
+
                 if (!stack.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack)) {
                     int interactionAmount = interactWithStacks() ? (getTier() == CableTier.CREATIVE ? stack.getAmount() : 64 * FluidAttributes.BUCKET_VOLUME) : FluidAttributes.BUCKET_VOLUME;
                     FluidStack toExtract = stack.copy();
@@ -245,8 +226,7 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
                     return false;
                 }
             }
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -295,7 +275,7 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
     @Override
     public void read(CompoundTag tag) {
         super.read(tag);
-        if (tag.contains(CoverManager.NBT_COVER_MANAGER)){
+        if (tag.contains(CoverManager.NBT_COVER_MANAGER)) {
             this.coverManager.readFromNbt(tag.getCompound(CoverManager.NBT_COVER_MANAGER));
         }
         StackUtils.readItems(upgrades, 1, tag);

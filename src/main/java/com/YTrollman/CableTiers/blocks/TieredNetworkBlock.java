@@ -2,8 +2,8 @@ package com.YTrollman.CableTiers.blocks;
 
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
-import com.YTrollman.CableTiers.node.TieredNetworkNode;
 import com.YTrollman.CableTiers.blockentity.TieredBlockEntity;
+import com.YTrollman.CableTiers.node.TieredNetworkNode;
 import com.refinedmods.refinedstorage.block.NetworkNodeBlock;
 import com.refinedmods.refinedstorage.container.factory.BlockEntityMenuProvider;
 import com.refinedmods.refinedstorage.util.BlockUtils;
@@ -47,20 +47,7 @@ public abstract class TieredNetworkBlock<T extends TieredBlockEntity<N>, N exten
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!level.isClientSide) {
-            return NetworkUtils.attemptModify (
-                    level,
-                    pos,
-                    player,
-                    () -> NetworkHooks.openGui(
-                            (ServerPlayer) player,
-                            new BlockEntityMenuProvider<T>(
-                                    new TranslatableComponent(getDescriptionId()),
-                                    (tile, windowId, inventory, p) -> contentType.createContainer(windowId, p, tile),
-                                    pos
-                            ),
-                            pos
-                    )
-            );
+            return NetworkUtils.attemptModify(level, pos, player, () -> NetworkHooks.openGui((ServerPlayer) player, new BlockEntityMenuProvider<T>(new TranslatableComponent(getDescriptionId()), (tile, windowId, inventory, p) -> contentType.createContainer(windowId, p, tile), pos), pos));
         }
 
         return InteractionResult.SUCCESS;

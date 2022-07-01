@@ -2,8 +2,8 @@ package com.YTrollman.CableTiers.blocks;
 
 import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
-import com.YTrollman.CableTiers.node.TieredNetworkNode;
 import com.YTrollman.CableTiers.blockentity.TieredBlockEntity;
+import com.YTrollman.CableTiers.node.TieredNetworkNode;
 import com.refinedmods.refinedstorage.block.BlockDirection;
 import com.refinedmods.refinedstorage.block.CableBlock;
 import com.refinedmods.refinedstorage.block.shape.ShapeCache;
@@ -73,22 +73,9 @@ public abstract class TieredCableBlock<T extends TieredBlockEntity<N>, N extends
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!level.isClientSide && CollisionUtils.isInBounds(getHeadShape(state), pos, hit.getLocation())) {
-            return NetworkUtils.attemptModify(
-                    level,
-                    pos,
-                    player,
-                    () -> NetworkHooks.openGui(
-                            (ServerPlayer) player,
-                            new BlockEntityMenuProvider<T>(
-                                    new TranslatableComponent(getDescriptionId()),
-                                    (tile, windowId, inventory, p) -> contentType.createContainer(windowId, p, tile),
-                                    pos
-                            ),
-                            pos
-                    )
-            );
+            return NetworkUtils.attemptModify(level, pos, player, () -> NetworkHooks.openGui((ServerPlayer) player, new BlockEntityMenuProvider<T>(new TranslatableComponent(getDescriptionId()), (tile, windowId, inventory, p) -> contentType.createContainer(windowId, p, tile), pos), pos));
         }
 
-        return InteractionResult .SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 }

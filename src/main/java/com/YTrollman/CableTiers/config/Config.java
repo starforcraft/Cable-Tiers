@@ -10,7 +10,6 @@ import java.io.File;
 
 @Mod.EventBusSubscriber(modid = CableTiers.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Config {
-
     public static final ForgeConfigSpec common_config;
 
     private static final ForgeConfigSpec.Builder common_builder = new ForgeConfigSpec.Builder();

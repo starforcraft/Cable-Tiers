@@ -40,51 +40,14 @@ import static com.YTrollman.CableTiers.registry.RegistryHandler.*;
 
 @Mod.EventBusSubscriber(modid = CableTiers.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ContentType<B extends BaseBlock, T extends TieredBlockEntity<N>, C extends TieredContainerMenu<T, N>, N extends TieredNetworkNode<N>> {
+    public static final ContentType<TieredImporterBlock, TieredImporterBlockEntity, TieredImporterContainerMenu, TieredImporterNetworkNode> IMPORTER = new ContentType<>("importer", TieredImporterBlock::new, TieredImporterBlockEntity::new, TieredImporterContainerMenu::new, TieredImporterNetworkNode::new);
+    public static final ContentType<TieredExporterBlock, TieredExporterBlockEntity, TieredExporterContainerMenu, TieredExporterNetworkNode> EXPORTER = new ContentType<>("exporter", TieredExporterBlock::new, TieredExporterBlockEntity::new, TieredExporterContainerMenu::new, TieredExporterNetworkNode::new);
+    public static final ContentType<TieredConstructorBlock, TieredConstructorBlockEntity, TieredConstructorContainerMenu, TieredConstructorNetworkNode> CONSTRUCTOR = new ContentType<>("constructor", TieredConstructorBlock::new, TieredConstructorBlockEntity::new, TieredConstructorContainerMenu::new, TieredConstructorNetworkNode::new);
+    public static final ContentType<TieredDestructorBlock, TieredDestructorBlockEntity, TieredDestructorContainerMenu, TieredDestructorNetworkNode> DESTRUCTOR = new ContentType<>("destructor", TieredDestructorBlock::new, TieredDestructorBlockEntity::new, TieredDestructorContainerMenu::new, TieredDestructorNetworkNode::new);
+    public static final ContentType<TieredDiskManipulatorBlock, TieredDiskManipulatorBlockEntity, TieredDiskManipulatorContainer, TieredDiskManipulatorNetworkNode> DISK_MANIPULATOR = new ContentType<>("disk_manipulator", TieredDiskManipulatorBlock::new, TieredDiskManipulatorBlockEntity::new, TieredDiskManipulatorContainer::new, TieredDiskManipulatorNetworkNode::new);
+    public static final ContentType<TieredRequesterBlock, TieredRequesterBlockEntity, TieredRequesterContainer, TieredRequesterNetworkNode> REQUESTER = new ContentType<>("requester", TieredRequesterBlock::new, TieredRequesterBlockEntity::new, TieredRequesterContainer::new, TieredRequesterNetworkNode::new);
 
-    public static final ContentType<TieredImporterBlock, TieredImporterBlockEntity, TieredImporterContainerMenu, TieredImporterNetworkNode> IMPORTER = new ContentType<>(
-            "importer",
-            TieredImporterBlock::new,
-            TieredImporterBlockEntity::new,
-            TieredImporterContainerMenu::new,
-            TieredImporterNetworkNode::new
-    );
-    public static final ContentType<TieredExporterBlock, TieredExporterBlockEntity, TieredExporterContainerMenu, TieredExporterNetworkNode> EXPORTER = new ContentType<>(
-            "exporter",
-            TieredExporterBlock::new,
-            TieredExporterBlockEntity::new,
-            TieredExporterContainerMenu::new,
-            TieredExporterNetworkNode::new
-    );
-    public static final ContentType<TieredConstructorBlock, TieredConstructorBlockEntity, TieredConstructorContainerMenu, TieredConstructorNetworkNode> CONSTRUCTOR = new ContentType<>(
-            "constructor",
-            TieredConstructorBlock::new,
-            TieredConstructorBlockEntity::new,
-            TieredConstructorContainerMenu::new,
-            TieredConstructorNetworkNode::new
-    );
-    public static final ContentType<TieredDestructorBlock, TieredDestructorBlockEntity, TieredDestructorContainerMenu, TieredDestructorNetworkNode> DESTRUCTOR = new ContentType<>(
-            "destructor",
-            TieredDestructorBlock::new,
-            TieredDestructorBlockEntity::new,
-            TieredDestructorContainerMenu::new,
-            TieredDestructorNetworkNode::new
-    );
-    public static final ContentType<TieredDiskManipulatorBlock, TieredDiskManipulatorBlockEntity, TieredDiskManipulatorContainer, TieredDiskManipulatorNetworkNode> DISK_MANIPULATOR = new ContentType<>(
-            "disk_manipulator",
-            TieredDiskManipulatorBlock::new,
-            TieredDiskManipulatorBlockEntity::new,
-            TieredDiskManipulatorContainer::new,
-            TieredDiskManipulatorNetworkNode::new
-    );
-    public static final ContentType<TieredRequesterBlock, TieredRequesterBlockEntity, TieredRequesterContainer, TieredRequesterNetworkNode> REQUESTER = new ContentType<>(
-            "requester",
-            TieredRequesterBlock::new,
-            TieredRequesterBlockEntity::new,
-            TieredRequesterContainer::new,
-            TieredRequesterNetworkNode::new
-    );
-
-    public static final ContentType<?, ?, ?, ?>[] CONTENT_TYPES = { EXPORTER, IMPORTER, CONSTRUCTOR, DESTRUCTOR, DISK_MANIPULATOR, REQUESTER };
+    public static final ContentType<?, ?, ?, ?>[] CONTENT_TYPES = {EXPORTER, IMPORTER, CONSTRUCTOR, DESTRUCTOR, DISK_MANIPULATOR, REQUESTER};
 
     private final Map<CableTier, RegistryObject<B>> blocks = new EnumMap<>(CableTier.class);
     private final Map<CableTier, RegistryObject<Item>> items = new EnumMap<>(CableTier.class);
@@ -157,22 +120,21 @@ public class ContentType<B extends BaseBlock, T extends TieredBlockEntity<N>, C 
             items.put(tier, ITEMS.register(id, () -> new BaseBlockItem(getBlock(tier), new Item.Properties().tab(CABLE_TIERS))));
             blockEntityTypes.put(tier, BLOCK_ENTITY_TYPES.register(id, () -> BlockEntityType.Builder.of((pos, state) -> blockEntityFactory.create(tier, pos, state), getBlock(tier)).build(null)));
             containerTypes.put(tier, CONTAINER_TYPES.register(id, () -> IForgeMenuType.create((windowId, inv, data) -> {
-                        BlockPos pos = data.readBlockPos();
-                        BlockEntity tile = inv.player.getCommandSenderWorld().getBlockEntity(pos);
-                        if (tile == null) {
-                            CableTiers.LOGGER.error("Expected tile entity of type " + id + ", but found none");
-                            return null;
-                        }
+                BlockPos pos = data.readBlockPos();
+                BlockEntity tile = inv.player.getCommandSenderWorld().getBlockEntity(pos);
+                if (tile == null) {
+                    CableTiers.LOGGER.error("Expected tile entity of type " + id + ", but found none");
+                    return null;
+                }
 
-                        BlockEntityType<T> blockEntityType = getBlockEntityType(tier);
-                        if (tile.getType() != blockEntityType) {
-                            CableTiers.LOGGER.error("Wrong type of block entity, expected " + blockEntityType.getRegistryName() + ", but got " + tile.getType().getRegistryName());
-                            return null;
-                        }
+                BlockEntityType<T> blockEntityType = getBlockEntityType(tier);
+                if (tile.getType() != blockEntityType) {
+                    CableTiers.LOGGER.error("Wrong type of block entity, expected " + blockEntityType.getRegistryName() + ", but got " + tile.getType().getRegistryName());
+                    return null;
+                }
 
-                        return createContainer(windowId, inv.player, (T) tile);
-                    })
-            ));
+                return createContainer(windowId, inv.player, (T) tile);
+            })));
         }
     }
 

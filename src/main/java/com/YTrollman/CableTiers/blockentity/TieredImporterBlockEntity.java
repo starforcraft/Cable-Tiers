@@ -23,10 +23,8 @@ public class TieredImporterBlockEntity extends TieredBlockEntity<TieredImporterN
     public static final BlockEntitySynchronizationParameter<Integer, TieredImporterBlockEntity> WHITELIST_BLACKLIST = IWhitelistBlacklist.createParameter();
     public static final BlockEntitySynchronizationParameter<Integer, TieredImporterBlockEntity> TYPE = IType.createParameter();
 
-    public static final BlockEntitySynchronizationParameter<CompoundTag, TieredImporterBlockEntity> COVER_MANAGER = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.COMPOUND_TAG, new CompoundTag(),
-            t -> t.getNode().getCoverManager().writeToNbt(),
-            (t, v) -> t.getNode().getCoverManager().readFromNbt(v),
-            (initial, p) -> {});
+    public static final BlockEntitySynchronizationParameter<CompoundTag, TieredImporterBlockEntity> COVER_MANAGER = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.COMPOUND_TAG, new CompoundTag(), t -> t.getNode().getCoverManager().writeToNbt(), (t, v) -> t.getNode().getCoverManager().readFromNbt(v), (initial, p) -> {
+    });
 
     public TieredImporterBlockEntity(CableTier tier, BlockPos pos, BlockState state) {
         super(ContentType.IMPORTER, tier, pos, state);
