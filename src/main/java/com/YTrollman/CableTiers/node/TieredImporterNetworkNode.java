@@ -114,16 +114,18 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
 
     private void itemUpdate() {
         BlockEntity facing = getFacingBlockEntity();
-        if (facing == null || facing instanceof DiskDriveBlockEntity) return;
+        if (facing == null || facing instanceof DiskDriveBlockEntity) {
+            return;
+        }
 
         IItemHandler handler = LevelUtils.getItemHandler(facing, getDirection().getOpposite());
-        if (handler == null || handler.getSlots() <= 0) return;
+        if (handler == null || handler.getSlots() <= 0) {
+            return;
+        }
 
         if (currentSlot >= handler.getSlots()) {
             currentSlot = 0;
         }
-
-        if (network.getItemStorageCache().getList().getCount(handler.getStackInSlot(currentSlot)) == Integer.MAX_VALUE) return;
 
         if (getTier() == CableTier.CREATIVE) {
             while (doItemExtraction(handler)) {
@@ -138,6 +140,8 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
 
         while (true) {
             ItemStack stack = handler.getStackInSlot(currentSlot);
+
+            if (network.getItemStorageCache().getList().getCount(stack) == Integer.MAX_VALUE) return false;
 
             if (!stack.isEmpty() && IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, stack)) {
                 int interactionCount = interactWithStacks() ? stack.getCount() : 1;
@@ -176,8 +180,6 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
             currentSlot = 0;
         }
 
-        if (network.getFluidStorageCache().getList().getCount(handler.getFluidInTank(currentSlot)) == Integer.MAX_VALUE) return;
-
         if (getTier() == CableTier.CREATIVE) {
             while (doFluidExtraction(handler)) {
             }
@@ -192,6 +194,8 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
         if (handler.getTanks() != 0) {
             while (true) {
                 FluidStack stack = handler.getFluidInTank(currentSlot);
+
+                if (network.getFluidStorageCache().getList().getCount(stack) == Integer.MAX_VALUE) return false;
 
                 if (!stack.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack)) {
                     int interactionAmount = interactWithStacks() ? (getTier() == CableTier.CREATIVE ? stack.getAmount() : 64 * FluidAttributes.BUCKET_VOLUME) : FluidAttributes.BUCKET_VOLUME;
