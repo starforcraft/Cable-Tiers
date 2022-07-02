@@ -54,22 +54,14 @@ public class TieredContainer<T extends TieredTileEntity<N>, N extends TieredNetw
             int x = 8 + 18 * (i % 9);
             int y = 20 + 18 * (i / 9);
 
-            addSlot(new FilterSlot(
-                    itemFilters,
-                    i, x, y,
-                    itemFlags
-            ).setEnableHandler(() -> type.getType() == IType.ITEMS));
+            addSlot(new FilterSlot(itemFilters, i, x, y, itemFlags).setEnableHandler(() -> type.getType() == IType.ITEMS));
         }
 
         for (int i = 0; i < fluidFilters.getSlots(); i++) {
             int x = 8 + 18 * (i % 9);
             int y = 20 + 18 * (i / 9);
 
-            addSlot(new FluidFilterSlot(
-                    fluidFilters,
-                    i, x, y,
-                    fluidFlags
-            ).setEnableHandler(() -> type.getType() == IType.FLUIDS));
+            addSlot(new FluidFilterSlot(fluidFilters, i, x, y, fluidFlags).setEnableHandler(() -> type.getType() == IType.FLUIDS));
         }
     }
 }

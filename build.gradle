@@ -37,7 +37,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    mappings channel: "official", version: "${mc_version}"
+    mappings channel: 'official', version: "${mc_version}"
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -122,15 +122,13 @@ jar {
     manifest {
         attributes([
                 "Specification-Title"     : "cabletiers",
-                "Specification-Vendor"    : "examplemodsareus",
+                "Specification-Vendor"    : "cabletiers",
                 "Specification-Version"   : "1",
                 "Implementation-Title"    : "${project.name}",
                 "Implementation-Version"  : "${project.version}",
-                "Implementation-Vendor"   : "examplemodsareus",
+                "Implementation-Vendor"   : "cabletiers",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 "MixinConfigs": "${modid}.mixins.json"
         ])
     }
 }
-
-jar.finalizedBy('reobfJar')

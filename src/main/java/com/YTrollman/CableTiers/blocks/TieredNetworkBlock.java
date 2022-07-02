@@ -47,20 +47,7 @@ public abstract class TieredNetworkBlock<T extends TieredTileEntity<N>, N extend
     @Override
     public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         if (!world.isClientSide) {
-            return NetworkUtils.attemptModify (
-                    world,
-                    pos,
-                    player,
-                    () -> NetworkHooks.openGui(
-                            (ServerPlayerEntity) player,
-                            new PositionalTileContainerProvider<T>(
-                                    new TranslationTextComponent(getDescriptionId()),
-                                    (tile, windowId, inventory, p) -> contentType.createContainer(windowId, p, tile),
-                                    pos
-                            ),
-                            pos
-                    )
-            );
+            return NetworkUtils.attemptModify(world, pos, player, () -> NetworkHooks.openGui((ServerPlayerEntity) player, new PositionalTileContainerProvider<T>(new TranslationTextComponent(getDescriptionId()), (tile, windowId, inventory, p) -> contentType.createContainer(windowId, p, tile), pos), pos));
         }
 
         return ActionResultType.SUCCESS;

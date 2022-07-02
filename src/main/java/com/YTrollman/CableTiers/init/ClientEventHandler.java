@@ -40,7 +40,7 @@ public class ClientEventHandler {
 
             bakedModelOverrideRegistry.add(new ResourceLocation(CableTiers.MOD_ID, ContentType.EXPORTER.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
             bakedModelOverrideRegistry.add(new ResourceLocation(CableTiers.MOD_ID, ContentType.IMPORTER.getName(tier)), (base, registry) -> new BakedModelCableCover(base));
-            bakedModelOverrideRegistry.add(new ResourceLocation(CableTiers.MOD_ID, ContentType.CONSTRUCTOR.getName(tier)), (base, registry) ->  new BakedModelCableCover(new FullbrightBakedModel(base, true, new ResourceLocation(RS.ID, "block/constructor/cutouts/connected"))));
+            bakedModelOverrideRegistry.add(new ResourceLocation(CableTiers.MOD_ID, ContentType.CONSTRUCTOR.getName(tier)), (base, registry) -> new BakedModelCableCover(new FullbrightBakedModel(base, true, new ResourceLocation(RS.ID, "block/constructor/cutouts/connected"))));
             bakedModelOverrideRegistry.add(new ResourceLocation(CableTiers.MOD_ID, ContentType.DESTRUCTOR.getName(tier)), (base, registry) -> new BakedModelCableCover(new FullbrightBakedModel(base, true, new ResourceLocation(RS.ID, "block/destructor/cutouts/connected"))));
         }
     }

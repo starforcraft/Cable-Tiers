@@ -24,7 +24,6 @@ import com.refinedmods.refinedstorage.util.WorldUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -32,9 +31,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.registries.ForgeRegistries;
-
-import java.util.List;
 
 public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterNetworkNode> implements IComparable, IWhitelistBlacklist, IType, ICoverable {
     private static final String NBT_COMPARE = "Compare";
@@ -48,10 +44,7 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
     private final BaseItemHandler itemFilters = new BaseItemHandler(9 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
     private final FluidInventory fluidFilters = new FluidInventory(9 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
 
-    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(
-            getTier() == CableTier.CREATIVE ? 0 : 4,
-            getTier() == CableTier.ELITE ? new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK } : new UpgradeItem.Type[] { UpgradeItem.Type.SPEED }
-    ).addListener(new NetworkNodeInventoryListener(this));
+    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(getTier() == CableTier.CREATIVE ? 0 : 4, getTier() == CableTier.ELITE ? new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK} : new UpgradeItem.Type[]{UpgradeItem.Type.SPEED}).addListener(new NetworkNodeInventoryListener(this));
 
     private int compare = IComparer.COMPARE_NBT;
     private int mode = IWhitelistBlacklist.BLACKLIST;
@@ -61,8 +54,6 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
 
     private final CoverManager coverManager;
 
-    private final List<String> blacklist = (List<String>) CableConfig.CREATIVE_IMPORTER_FLUID_BLOCK_BLACKLIST.get();
-
     public TieredImporterNetworkNode(World world, BlockPos pos, CableTier tier) {
         super(world, pos, ContentType.IMPORTER, tier);
         this.coverManager = new CoverManager(this);
@@ -70,11 +61,11 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
 
     @Override
     public int getEnergyUsage() {
-        if(getTier() == CableTier.ELITE) {
+        if (getTier() == CableTier.ELITE) {
             return (4 * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ELITE_ENERGY_COST.get();
-        } else if(getTier() == CableTier.ULTRA) {
+        } else if (getTier() == CableTier.ULTRA) {
             return (4 * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ULTRA_ENERGY_COST.get();
-        } else if(getTier() == CableTier.CREATIVE) {
+        } else if (getTier() == CableTier.CREATIVE) {
             return (4 * (RS.SERVER_CONFIG.getImporter().getUsage() + upgrades.getEnergyUsage())) * CableConfig.CREATIVE_ENERGY_COST.get();
         }
         return 0;
@@ -146,6 +137,9 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
 
         while (true) {
             ItemStack stack = handler.getStackInSlot(currentSlot);
+
+            if (network.getItemStorageCache().getList().getCount(stack) == Integer.MAX_VALUE) return false;
+
             if (!stack.isEmpty() && IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, stack)) {
                 int interactionCount = interactWithStacks() ? stack.getCount() : 1;
 
@@ -176,33 +170,30 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
     private void fluidUpdate() {
         IFluidHandler handler = WorldUtils.getFluidHandler(getFacingTile(), getDirection().getOpposite());
         TileEntity facing = getFacingTile();
-        for(int i = 0; i < blacklist.size(); i++) {
-            if (facing == null || facing.getBlockState().is(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blacklist.get(i))))) {
-                return;
-            }
-            if (handler == null) {
-                return;
-            }
+        if (facing == null) return;
+        if (handler == null) return;
 
-            if (currentSlot >= handler.getTanks()) {
-                currentSlot = 0;
-            }
+        if (currentSlot >= handler.getTanks()) {
+            currentSlot = 0;
+        }
 
-            if (getTier() == CableTier.CREATIVE) {
-                while (doFluidExtraction(handler)) {
-                }
-            } else {
-                doFluidExtraction(handler);
+        if (getTier() == CableTier.CREATIVE) {
+            while (doFluidExtraction(handler)) {
             }
+        } else {
+            doFluidExtraction(handler);
         }
     }
 
     private boolean doFluidExtraction(IFluidHandler handler) {
         int startSlot = currentSlot;
 
-        if(handler.getTanks() != 0) {
+        if (handler.getTanks() != 0) {
             while (true) {
                 FluidStack stack = handler.getFluidInTank(currentSlot);
+
+                if (network.getFluidStorageCache().getList().getCount(stack) == Integer.MAX_VALUE) return false;
+
                 if (!stack.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack)) {
                     int interactionAmount = interactWithStacks() ? (getTier() == CableTier.CREATIVE ? stack.getAmount() : 64 * FluidAttributes.BUCKET_VOLUME) : FluidAttributes.BUCKET_VOLUME;
                     FluidStack toExtract = stack.copy();
@@ -236,8 +227,7 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
                     return false;
                 }
             }
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -286,7 +276,7 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
     @Override
     public void read(CompoundNBT tag) {
         super.read(tag);
-        if (tag.contains(CoverManager.NBT_COVER_MANAGER)){
+        if (tag.contains(CoverManager.NBT_COVER_MANAGER)) {
             this.coverManager.readFromNbt(tag.getCompound(CoverManager.NBT_COVER_MANAGER));
         }
         StackUtils.readItems(upgrades, 1, tag);

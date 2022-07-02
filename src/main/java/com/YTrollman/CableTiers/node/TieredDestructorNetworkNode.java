@@ -63,9 +63,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
     private final BaseItemHandler itemFilters = new BaseItemHandler(9 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeInventoryListener(this));
     private final FluidInventory fluidFilters = new FluidInventory(9 * getTier().getSlotsMultiplier()).addListener(new NetworkNodeFluidInventoryListener(this));
 
-    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, checkTierUpgrades())
-            .addListener(new NetworkNodeInventoryListener(this))
-            .addListener((handler, slot, reading) -> tool = createTool());
+    private final UpgradeItemHandler upgrades = (UpgradeItemHandler) new UpgradeItemHandler(4, checkTierUpgrades()).addListener(new NetworkNodeInventoryListener(this)).addListener((handler, slot, reading) -> tool = createTool());
 
     private int compare = IComparer.COMPARE_NBT;
     private int mode = IWhitelistBlacklist.BLACKLIST;
@@ -82,20 +80,20 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
     }
 
     private UpgradeItem.Type[] checkTierUpgrades() {
-        if(getTier() == CableTier.CREATIVE) {
-            return new UpgradeItem.Type[] { UpgradeItem.Type.SILK_TOUCH, UpgradeItem.Type.FORTUNE_1, UpgradeItem.Type.FORTUNE_2, UpgradeItem.Type.FORTUNE_3 };
+        if (getTier() == CableTier.CREATIVE) {
+            return new UpgradeItem.Type[]{UpgradeItem.Type.SILK_TOUCH, UpgradeItem.Type.FORTUNE_1, UpgradeItem.Type.FORTUNE_2, UpgradeItem.Type.FORTUNE_3};
         } else {
-            return new UpgradeItem.Type[] { UpgradeItem.Type.SPEED, UpgradeItem.Type.SILK_TOUCH, UpgradeItem.Type.FORTUNE_1, UpgradeItem.Type.FORTUNE_2, UpgradeItem.Type.FORTUNE_3 };
+            return new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.SILK_TOUCH, UpgradeItem.Type.FORTUNE_1, UpgradeItem.Type.FORTUNE_2, UpgradeItem.Type.FORTUNE_3};
         }
     }
 
     @Override
     public int getEnergyUsage() {
-        if(getTier() == CableTier.ELITE) {
+        if (getTier() == CableTier.ELITE) {
             return (4 * (RS.SERVER_CONFIG.getDestructor().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ELITE_ENERGY_COST.get();
-        } else if(getTier() == CableTier.ULTRA) {
+        } else if (getTier() == CableTier.ULTRA) {
             return (4 * (RS.SERVER_CONFIG.getDestructor().getUsage() + upgrades.getEnergyUsage())) * CableConfig.ULTRA_ENERGY_COST.get();
-        } else if(getTier() == CableTier.CREATIVE) {
+        } else if (getTier() == CableTier.CREATIVE) {
             return (4 * (RS.SERVER_CONFIG.getDestructor().getUsage() + upgrades.getEnergyUsage())) * CableConfig.CREATIVE_ENERGY_COST.get();
         }
         return 0;
@@ -174,25 +172,12 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
 
         Block frontBlock = frontBlockState.getBlock();
         FakePlayer fakePlayer = WorldUtils.getFakePlayer((ServerWorld) world, getOwner());
-        ItemStack frontStack = frontBlock.getPickBlock(
-                frontBlockState,
-                new BlockRayTraceResult(Vector3d.ZERO, getDirection().getOpposite(), front, false),
-                world,
-                front,
-                fakePlayer
-        );
+        ItemStack frontStack = frontBlock.getPickBlock(frontBlockState, new BlockRayTraceResult(Vector3d.ZERO, getDirection().getOpposite(), front, false), world, front, fakePlayer);
         if (frontStack.isEmpty() || !IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, frontStack)) {
             return;
         }
 
-        List<ItemStack> drops = Block.getDrops(
-                frontBlockState,
-                (ServerWorld) world,
-                front,
-                world.getBlockEntity(front),
-                fakePlayer,
-                tool
-        );
+        List<ItemStack> drops = Block.getDrops(frontBlockState, (ServerWorld) world, front, world.getBlockEntity(front), fakePlayer, tool);
 
         for (ItemStack drop : drops) {
             if (!network.insertItem(drop, drop.getCount(), Action.SIMULATE).isEmpty()) {
@@ -294,7 +279,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
     @Override
     public void read(CompoundNBT tag) {
         super.read(tag);
-        if (tag.contains(CoverManager.NBT_COVER_MANAGER)){
+        if (tag.contains(CoverManager.NBT_COVER_MANAGER)) {
             this.coverManager.readFromNbt(tag.getCompound(CoverManager.NBT_COVER_MANAGER));
         }
         StackUtils.readItems(upgrades, 1, tag);

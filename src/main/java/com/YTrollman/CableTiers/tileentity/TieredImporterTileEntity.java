@@ -21,10 +21,8 @@ public class TieredImporterTileEntity extends TieredTileEntity<TieredImporterNet
     public static final TileDataParameter<Integer, TieredImporterTileEntity> WHITELIST_BLACKLIST = IWhitelistBlacklist.createParameter();
     public static final TileDataParameter<Integer, TieredImporterTileEntity> TYPE = IType.createParameter();
 
-    public static final TileDataParameter<CompoundNBT, TieredImporterTileEntity> COVER_MANAGER = new TileDataParameter<>(DataSerializers.COMPOUND_TAG, new CompoundNBT(),
-            t -> t.getNode().getCoverManager().writeToNbt(),
-            (t, v) -> t.getNode().getCoverManager().readFromNbt(v),
-            (initial, p) -> {});
+    public static final TileDataParameter<CompoundNBT, TieredImporterTileEntity> COVER_MANAGER = new TileDataParameter<>(DataSerializers.COMPOUND_TAG, new CompoundNBT(), t -> t.getNode().getCoverManager().writeToNbt(), (t, v) -> t.getNode().getCoverManager().readFromNbt(v), (initial, p) -> {
+    });
 
     public TieredImporterTileEntity(CableTier tier) {
         super(ContentType.IMPORTER, tier);

@@ -41,13 +41,11 @@ public class TieredDiskManipulatorTileEntity extends TieredTileEntity<TieredDisk
     }
 
     private int checkTierMultiplier() {
-        if(getTier() == CableTier.ELITE) {
+        if (getTier() == CableTier.ELITE) {
             return 2;
-        }
-        else if(getTier() == CableTier.ULTRA) {
+        } else if (getTier() == CableTier.ULTRA) {
             return 3;
-        }
-        else if(getTier() == CableTier.CREATIVE) {
+        } else if (getTier() == CableTier.CREATIVE) {
             return 4;
         }
         return 0;

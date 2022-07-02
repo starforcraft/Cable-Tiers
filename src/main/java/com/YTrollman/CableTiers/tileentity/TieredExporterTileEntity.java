@@ -19,10 +19,8 @@ public class TieredExporterTileEntity extends TieredTileEntity<TieredExporterNet
     public static final TileDataParameter<Integer, TieredExporterTileEntity> COMPARE = IComparable.createParameter();
     public static final TileDataParameter<Integer, TieredExporterTileEntity> TYPE = IType.createParameter();
 
-    public static final TileDataParameter<CompoundNBT, TieredExporterTileEntity> COVER_MANAGER = new TileDataParameter<>(DataSerializers.COMPOUND_TAG, new CompoundNBT(),
-            t -> t.getNode().getCoverManager().writeToNbt(),
-            (t, v) -> t.getNode().getCoverManager().readFromNbt(v),
-            (initial, p) -> {});
+    public static final TileDataParameter<CompoundNBT, TieredExporterTileEntity> COVER_MANAGER = new TileDataParameter<>(DataSerializers.COMPOUND_TAG, new CompoundNBT(), t -> t.getNode().getCoverManager().writeToNbt(), (t, v) -> t.getNode().getCoverManager().readFromNbt(v), (initial, p) -> {
+    });
 
     public TieredExporterTileEntity(CableTier tier) {
         super(ContentType.EXPORTER, tier);

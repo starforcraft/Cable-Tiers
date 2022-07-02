@@ -25,10 +25,8 @@ public class TieredDestructorTileEntity extends TieredTileEntity<TieredDestructo
         t.getNode().markDirty();
     });
 
-    public static final TileDataParameter<CompoundNBT, TieredDestructorTileEntity> COVER_MANAGER = new TileDataParameter<>(DataSerializers.COMPOUND_TAG, new CompoundNBT(),
-            t -> t.getNode().getCoverManager().writeToNbt(),
-            (t, v) -> t.getNode().getCoverManager().readFromNbt(v),
-            (initial, p) -> {});
+    public static final TileDataParameter<CompoundNBT, TieredDestructorTileEntity> COVER_MANAGER = new TileDataParameter<>(DataSerializers.COMPOUND_TAG, new CompoundNBT(), t -> t.getNode().getCoverManager().writeToNbt(), (t, v) -> t.getNode().getCoverManager().readFromNbt(v), (initial, p) -> {
+    });
 
     public TieredDestructorTileEntity(CableTier tier) {
         super(ContentType.DESTRUCTOR, tier);

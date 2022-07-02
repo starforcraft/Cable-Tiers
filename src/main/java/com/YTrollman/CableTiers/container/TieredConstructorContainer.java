@@ -19,17 +19,11 @@ public class TieredConstructorContainer extends TieredContainer<TieredConstructo
     private void initSlots() {
         addUpgradeSlots(getNode().getUpgrades());
 
-        for(int i = 0; i < getTier().getSlotsMultiplier(); i++) {
+        for (int i = 0; i < getTier().getSlotsMultiplier(); i++) {
             int x = (35 + (18 * checkTier())) + (18 * i);
 
-            addSlot(new FilterSlot(
-                    getNode().getItemFilters(),
-                    i, x, 20
-            ).setEnableHandler(() -> getNode().getType() == IType.ITEMS));
-            addSlot(new FluidFilterSlot(
-                    getNode().getFluidFilters(),
-                    i, x, 20, i
-            ).setEnableHandler(() -> getNode().getType() == IType.FLUIDS));
+            addSlot(new FilterSlot(getNode().getItemFilters(), i, x, 20).setEnableHandler(() -> getNode().getType() == IType.ITEMS));
+            addSlot(new FluidFilterSlot(getNode().getFluidFilters(), i, x, 20, i).setEnableHandler(() -> getNode().getType() == IType.FLUIDS));
         }
 
         addPlayerInventory(8, 55);
@@ -39,11 +33,11 @@ public class TieredConstructorContainer extends TieredContainer<TieredConstructo
     }
 
     private int checkTier() {
-        if(getTier() == CableTier.CREATIVE) {
+        if (getTier() == CableTier.CREATIVE) {
             return 0;
-        } else if(getTier() == CableTier.ULTRA) {
+        } else if (getTier() == CableTier.ULTRA) {
             return 1;
-        } else if(getTier() == CableTier.ELITE) {
+        } else if (getTier() == CableTier.ELITE) {
             return 2;
         }
         return 0;
