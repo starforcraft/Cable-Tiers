@@ -137,7 +137,11 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
         List<ItemEntity> droppedItems = level.getEntitiesOfClass(ItemEntity.class, new AABB(front));
 
         for (ItemEntity entity : droppedItems) {
-            ItemStack droppedItem = ((ItemEntity) entity).getItem();
+            if (entity.isRemoved()) {
+                continue;
+            }
+
+            ItemStack droppedItem = entity.getItem();
 
             if (IWhitelistBlacklist.acceptsItem(itemFilters, mode, compare, droppedItem) && network.insertItem(droppedItem, droppedItem.getCount(), Action.SIMULATE).isEmpty()) {
                 network.insertItemTracked(droppedItem.copy(), droppedItem.getCount());

@@ -121,7 +121,6 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
         }
 
         if (type == IType.ITEMS && !itemFilters.getStackInSlot(currentSlot).isEmpty()) {
-
             ItemStack stack = itemFilters.getStackInSlot(currentSlot);
 
             if (drop) {
@@ -168,11 +167,13 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     private void extractAndPlaceBlock(ItemStack stack) {
         ItemStack took = network.extractItem(stack, 1, compare, Action.SIMULATE);
         if (!took.isEmpty()) {
+            // We have to copy took as the forge hook clears the item.
+            final ItemStack tookCopy = took.copy();
             BlockPlaceContext ctx = new TieredConstructorBlockItemUseContext(level, LevelUtils.getFakePlayer((ServerLevel) level, getOwner()), InteractionHand.MAIN_HAND, took, new BlockHitResult(Vec3.ZERO, getDirection(), pos, false));
 
             InteractionResult result = ForgeHooks.onPlaceItemIntoWorld(ctx);
             if (result.consumesAction()) {
-                network.extractItem(stack, 1, Action.PERFORM);
+                network.extractItem(tookCopy, 1, Action.PERFORM);
             }
         } else if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {
             network.getCraftingManager().request(this, stack, 1);

@@ -47,7 +47,7 @@ public class ContentType<B extends BaseBlock, T extends TieredBlockEntity<N>, C 
     public static final ContentType<TieredDiskManipulatorBlock, TieredDiskManipulatorBlockEntity, TieredDiskManipulatorContainer, TieredDiskManipulatorNetworkNode> DISK_MANIPULATOR = new ContentType<>("disk_manipulator", TieredDiskManipulatorBlock::new, TieredDiskManipulatorBlockEntity::new, TieredDiskManipulatorContainer::new, TieredDiskManipulatorNetworkNode::new);
     public static final ContentType<TieredRequesterBlock, TieredRequesterBlockEntity, TieredRequesterContainer, TieredRequesterNetworkNode> REQUESTER = new ContentType<>("requester", TieredRequesterBlock::new, TieredRequesterBlockEntity::new, TieredRequesterContainer::new, TieredRequesterNetworkNode::new);
 
-    public static final ContentType<?, ?, ?, ?>[] CONTENT_TYPES = {EXPORTER, IMPORTER, CONSTRUCTOR, DESTRUCTOR, DISK_MANIPULATOR, REQUESTER};
+    public static final ContentType<?, ?, ?, ?>[] CONTENT_TYPES = { EXPORTER, IMPORTER, CONSTRUCTOR, DESTRUCTOR, DISK_MANIPULATOR, REQUESTER };
 
     private final Map<CableTier, RegistryObject<B>> blocks = new EnumMap<>(CableTier.class);
     private final Map<CableTier, RegistryObject<Item>> items = new EnumMap<>(CableTier.class);

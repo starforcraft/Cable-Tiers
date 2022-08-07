@@ -1,8 +1,9 @@
 package com.YTrollman.CableTiers;
 
 public enum CableTier {
-
-    ELITE("elite", 2, 2), ULTRA("ultra", 6, 4), CREATIVE("creative", -1, 6);
+    ELITE("elite", 2, 2),
+    ULTRA("ultra", 6, 4),
+    CREATIVE("creative", -1, 6);
 
     public static final CableTier[] VALUES = values();
 
