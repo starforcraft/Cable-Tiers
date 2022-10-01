@@ -129,7 +129,7 @@ public class ContentType<B extends BaseBlock, T extends TieredBlockEntity<N>, C 
 
                 BlockEntityType<T> blockEntityType = getBlockEntityType(tier);
                 if (tile.getType() != blockEntityType) {
-                    CableTiers.LOGGER.error("Wrong type of block entity, expected " + blockEntityType.getRegistryName() + ", but got " + tile.getType().getRegistryName());
+                    CableTiers.LOGGER.error("Wrong type of block entity, expected " + blockEntityType.toString() + ", but got " + tile.getType().toString());
                     return null;
                 }
 

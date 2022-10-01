@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage.container.factory.BlockEntityMenuProvider;
 import com.refinedmods.refinedstorage.util.BlockUtils;
 import com.refinedmods.refinedstorage.util.NetworkUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -47,7 +47,7 @@ public abstract class TieredNetworkBlock<T extends TieredBlockEntity<N>, N exten
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!level.isClientSide) {
-            return NetworkUtils.attemptModify(level, pos, player, () -> NetworkHooks.openGui((ServerPlayer) player, new BlockEntityMenuProvider<T>(new TranslatableComponent(getDescriptionId()), (tile, windowId, inventory, p) -> contentType.createContainer(windowId, p, tile), pos), pos));
+            return NetworkUtils.attemptModify(level, pos, player, () -> NetworkHooks.openScreen((ServerPlayer) player, new BlockEntityMenuProvider<T>(Component.translatable(getDescriptionId()), (tile, windowId, inventory, p) -> contentType.createContainer(windowId, p, tile), pos), pos));
         }
 
         return InteractionResult.SUCCESS;

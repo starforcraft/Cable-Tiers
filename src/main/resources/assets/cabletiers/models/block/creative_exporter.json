@@ -1,5 +1,5 @@
 {
-	"credit": "Made with Blockbench",
+	"render_type": "cutout",
 	"parent": "block/block",
 	"textures": {
 		"border": "cabletiers:blocks/creative_cable_part_border"

@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage.blockentity.config.IComparable;
 import com.refinedmods.refinedstorage.blockentity.config.IType;
 import com.refinedmods.refinedstorage.blockentity.config.IWhitelistBlacklist;
 import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationParameter;
+import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationSpec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,6 +30,15 @@ public class TieredDiskManipulatorBlockEntity extends TieredBlockEntity<TieredDi
 
     public static final ModelProperty<DiskState[]> DISK_STATE_PROPERTY = new ModelProperty<>();
 
+
+    public static BlockEntitySynchronizationSpec SPEC = BlockEntitySynchronizationSpec.builder()
+            .addWatchedParameter(REDSTONE_MODE)
+            .addWatchedParameter(COMPARE)
+            .addWatchedParameter(WHITELIST_BLACKLIST)
+            .addWatchedParameter(TYPE)
+            .addWatchedParameter(IO_MODE)
+            .build();
+
     private static final String NBT_DISK_STATE = "DiskStates";
 
     private final LazyOptional<IItemHandler> diskCapability = LazyOptional.of(() -> getNode().getDisks());
@@ -36,12 +46,7 @@ public class TieredDiskManipulatorBlockEntity extends TieredBlockEntity<TieredDi
     private final DiskState[] diskState = new DiskState[6 * checkTierMultiplier()];
 
     public TieredDiskManipulatorBlockEntity(CableTier tier, BlockPos pos, BlockState state) {
-        super(ContentType.DISK_MANIPULATOR, tier, pos, state);
-
-        dataManager.addWatchedParameter(COMPARE);
-        dataManager.addWatchedParameter(WHITELIST_BLACKLIST);
-        dataManager.addWatchedParameter(TYPE);
-        dataManager.addWatchedParameter(IO_MODE);
+        super(ContentType.DISK_MANIPULATOR, tier, pos, state, SPEC);
 
         Arrays.fill(diskState, DiskState.NONE);
     }

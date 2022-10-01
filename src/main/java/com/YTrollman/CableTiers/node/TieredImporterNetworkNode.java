@@ -26,8 +26,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -198,7 +198,7 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
                 if (network.getFluidStorageCache().getList().getCount(stack) == Integer.MAX_VALUE) return false;
 
                 if (!stack.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack)) {
-                    int interactionAmount = interactWithStacks() ? (getTier() == CableTier.CREATIVE ? stack.getAmount() : 64 * FluidAttributes.BUCKET_VOLUME) : FluidAttributes.BUCKET_VOLUME;
+                    int interactionAmount = interactWithStacks() ? (getTier() == CableTier.CREATIVE ? stack.getAmount() : 64 * FluidType.BUCKET_VOLUME) : FluidType.BUCKET_VOLUME;
                     FluidStack toExtract = stack.copy();
                     toExtract.setAmount(interactionAmount);
 

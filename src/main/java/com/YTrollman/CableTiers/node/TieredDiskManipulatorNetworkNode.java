@@ -32,8 +32,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -83,7 +83,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
                 int count = super.getStackInteractCount();
 
                 if (type == IType.FLUIDS) {
-                    count *= FluidAttributes.BUCKET_VOLUME;
+                    count *= FluidType.BUCKET_VOLUME;
                 }
 
                 return count;

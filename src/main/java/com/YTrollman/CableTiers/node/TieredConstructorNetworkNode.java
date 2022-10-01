@@ -37,8 +37,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -153,13 +153,13 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
     private void extractAndPlaceFluid(FluidStack stack) {
         BlockPos front = pos.relative(getDirection());
 
-        for (int x = 0; x < network.extractFluid(stack, FluidAttributes.BUCKET_VOLUME, compare, Action.SIMULATE).getAmount(); x++) {
-            if (network.extractFluid(stack, FluidAttributes.BUCKET_VOLUME, compare, Action.SIMULATE).getAmount() < FluidAttributes.BUCKET_VOLUME) {
+        for (int x = 0; x < network.extractFluid(stack, FluidType.BUCKET_VOLUME, compare, Action.SIMULATE).getAmount(); x++) {
+            if (network.extractFluid(stack, FluidType.BUCKET_VOLUME, compare, Action.SIMULATE).getAmount() < FluidType.BUCKET_VOLUME) {
                 if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {
-                    network.getCraftingManager().request(this, stack, FluidAttributes.BUCKET_VOLUME);
+                    network.getCraftingManager().request(this, stack, FluidType.BUCKET_VOLUME);
                 }
             } else if (!level.getBlockState(front).getFluidState().isSource()) {
-                FluidUtil.tryPlaceFluid(LevelUtils.getFakePlayer((ServerLevel) level, getOwner()), level, InteractionHand.MAIN_HAND, front, new NetworkFluidHandler(StackUtils.copy(stack, FluidAttributes.BUCKET_VOLUME)), stack);
+                FluidUtil.tryPlaceFluid(LevelUtils.getFakePlayer((ServerLevel) level, getOwner()), level, InteractionHand.MAIN_HAND, front, new NetworkFluidHandler(StackUtils.copy(stack, FluidType.BUCKET_VOLUME)), stack);
             }
         }
     }

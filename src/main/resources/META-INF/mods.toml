@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[39,)"
+loaderVersion="[43,)"
 license="MIT"
 issueTrackerURL="https://github.com/starforcraft/Cable-Tiers/issues/new/choose"
 [[mods]]
@@ -15,20 +15,20 @@ description="This mod adds Tiered RS Things."
 [[dependencies.cabletiers]]
     modId="refinedstorage"
     mandatory=true
-    versionRange="[1.10.0,)"
+    versionRange="[1.11.0,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.cabletiers]]
     modId="forge"
     mandatory=true
-    versionRange="[39.0.59,)"
+    versionRange="[43.1.1,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.cabletiers]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18,)"
+    versionRange="[1.19.2,)"
     ordering="NONE"
     side="BOTH"

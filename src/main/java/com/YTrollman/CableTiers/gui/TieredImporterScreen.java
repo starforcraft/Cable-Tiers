@@ -13,7 +13,6 @@ import com.refinedmods.refinedstorage.screen.widget.sidebutton.TypeSideButton;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.WhitelistBlacklistSideButton;
 import com.refinedmods.refinedstorage.util.RenderUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 
 public class TieredImporterScreen extends TieredScreen<TieredImporterBlockEntity, TieredImporterContainerMenu, TieredImporterNetworkNode> {
@@ -39,6 +38,6 @@ public class TieredImporterScreen extends TieredScreen<TieredImporterBlockEntity
     @Override
     public void renderForeground(PoseStack poseStack, int mouseX, int mouseY) {
         renderString(poseStack, 7, 7, RenderUtils.shorten(title.getString(), 26));
-        renderString(poseStack, 7, 24 + 18 * MathUtil.ceilDiv(9 * getTier().getSlotsMultiplier(), 9), new TranslatableComponent("container.inventory").getString());
+        renderString(poseStack, 7, 24 + 18 * MathUtil.ceilDiv(9 * getTier().getSlotsMultiplier(), 9), Component.translatable("container.inventory").getString());
     }
 }

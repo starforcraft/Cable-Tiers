@@ -8,13 +8,13 @@ import com.refinedmods.refinedstorage.blockentity.config.IComparable;
 import com.refinedmods.refinedstorage.blockentity.config.IType;
 import com.refinedmods.refinedstorage.blockentity.config.IWhitelistBlacklist;
 import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationParameter;
+import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationSpec;
 import com.refinedmods.refinedstorage.util.LevelUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
+import net.minecraftforge.client.model.data.ModelData;
 
 import javax.annotation.Nonnull;
 
@@ -26,24 +26,25 @@ public class TieredDestructorBlockEntity extends TieredBlockEntity<TieredDestruc
         t.getNode().setPickupItem(v);
         t.getNode().markDirty();
     });
-
     public static final BlockEntitySynchronizationParameter<CompoundTag, TieredDestructorBlockEntity> COVER_MANAGER = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.COMPOUND_TAG, new CompoundTag(), t -> t.getNode().getCoverManager().writeToNbt(), (t, v) -> t.getNode().getCoverManager().readFromNbt(v), (initial, p) -> {
     });
+    public static BlockEntitySynchronizationSpec SPEC = BlockEntitySynchronizationSpec.builder()
+            .addWatchedParameter(REDSTONE_MODE)
+            .addWatchedParameter(COMPARE)
+            .addWatchedParameter(WHITELIST_BLACKLIST)
+            .addWatchedParameter(TYPE)
+            .addWatchedParameter(PICKUP)
+            .addWatchedParameter(COVER_MANAGER)
+            .build();
 
     public TieredDestructorBlockEntity(CableTier tier, BlockPos pos, BlockState state) {
-        super(ContentType.DESTRUCTOR, tier, pos, state);
-
-        dataManager.addWatchedParameter(COMPARE);
-        dataManager.addWatchedParameter(WHITELIST_BLACKLIST);
-        dataManager.addWatchedParameter(TYPE);
-        dataManager.addWatchedParameter(PICKUP);
-        dataManager.addWatchedParameter(COVER_MANAGER);
+        super(ContentType.DESTRUCTOR, tier, pos, state, SPEC);
     }
 
     @Nonnull
     @Override
-    public IModelData getModelData() {
-        return new ModelDataMap.Builder().withInitial(CoverManager.PROPERTY, this.getNode().getCoverManager()).build();
+    public ModelData getModelData() {
+        return ModelData.builder().with(CoverManager.PROPERTY, this.getNode().getCoverManager()).build();
     }
 
     @Override

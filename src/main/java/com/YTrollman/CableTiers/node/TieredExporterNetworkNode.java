@@ -25,8 +25,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -73,8 +73,8 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
                 for (int i = 0; i < fluidFilters.getSlots(); i++) {
                     FluidStack filteredFluid = fluidFilters.getFluid(i);
 
-                    if (!filteredFluid.isEmpty() && filteredFluid.getAmount() != FluidAttributes.BUCKET_VOLUME) {
-                        filteredFluid.setAmount(FluidAttributes.BUCKET_VOLUME);
+                    if (!filteredFluid.isEmpty() && filteredFluid.getAmount() != FluidType.BUCKET_VOLUME) {
+                        filteredFluid.setAmount(FluidType.BUCKET_VOLUME);
                         changed = true;
                     }
                 }
@@ -273,7 +273,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
             boolean work = false;
             FluidStack filter = fluidFilters.getFluid(filterSlot);
             if (!filter.isEmpty()) {
-                int interactionCount = interactWithStacks() ? (getTier() == CableTier.CREATIVE ? Integer.MAX_VALUE : 64 * FluidAttributes.BUCKET_VOLUME) : FluidAttributes.BUCKET_VOLUME;
+                int interactionCount = interactWithStacks() ? (getTier() == CableTier.CREATIVE ? Integer.MAX_VALUE : 64 * FluidType.BUCKET_VOLUME) : FluidType.BUCKET_VOLUME;
 
                 int toTransfer;
                 if (upgrades.hasUpgrade(UpgradeItem.Type.REGULATOR)) {

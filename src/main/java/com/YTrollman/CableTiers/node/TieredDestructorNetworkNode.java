@@ -39,9 +39,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -198,7 +198,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
             if (frontBlockState.getValue(LiquidBlock.LEVEL) == 0) {
                 Fluid fluid = ((LiquidBlock) frontBlock).getFluid();
 
-                FluidStack stack = new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME);
+                FluidStack stack = new FluidStack(fluid, FluidType.BUCKET_VOLUME);
 
                 if (IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack) && network.insertFluid(stack, stack.getAmount(), Action.SIMULATE).isEmpty()) {
                     network.insertFluidTracked(stack, stack.getAmount());

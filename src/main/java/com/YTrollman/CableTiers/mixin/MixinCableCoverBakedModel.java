@@ -4,7 +4,7 @@ import com.YTrollman.CableTiers.CableTier;
 import com.YTrollman.CableTiers.ContentType;
 import com.refinedmods.refinedstorage.RSBlocks;
 import com.refinedmods.refinedstorage.block.BaseBlock;
-import com.refinedmods.refinedstorage.render.model.BakedModelCableCover;
+import com.refinedmods.refinedstorage.render.model.baked.CableCoverBakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,11 +12,12 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 import javax.annotation.Nullable;
 
-@Mixin(value = BakedModelCableCover.class)
-public class MixinBakedModelCableCover {
+@Mixin(value = CableCoverBakedModel.class)
+public class MixinCableCoverBakedModel {
 
     /**
      * @author
+     * @reason
      */
     @Overwrite
     private static int getHollowCoverSize(@Nullable BlockState state, Direction coverSide) {

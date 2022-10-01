@@ -3,7 +3,7 @@
   "package": "com.YTrollman.CableTiers.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinBakedModelCableCover"
+    "MixinCableCoverBakedModel"
   ],
   "minVersion": "0.8"
 }

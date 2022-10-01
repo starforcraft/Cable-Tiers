@@ -14,8 +14,6 @@ import com.refinedmods.refinedstorage.screen.widget.sidebutton.TypeSideButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 
 public class TieredRequesterScreen extends TieredScreen<TieredRequesterBlockEntity, TieredRequesterContainer, TieredRequesterNetworkNode> {
@@ -30,7 +28,7 @@ public class TieredRequesterScreen extends TieredScreen<TieredRequesterBlockEnti
     public void onPostInit(int x, int y) {
         addSideButton(new RedstoneModeSideButton(this, TieredRequesterBlockEntity.REDSTONE_MODE));
         addSideButton(new TypeSideButton(this, TieredRequesterBlockEntity.TYPE));
-        textField = new EditBox(Minecraft.getInstance().font, x + 86, y + 41 + (18 * (getTier().getSlotsMultiplier() - 1)), 80, 10, new TextComponent(""));
+        textField = new EditBox(Minecraft.getInstance().font, x + 86, y + 41 + (18 * (getTier().getSlotsMultiplier() - 1)), 80, 10, Component.literal(""));
         textField.setValue(TieredRequesterBlockEntity.AMOUNT.getValue() + "");
         textField.setValue(String.valueOf(DetectorBlockEntity.AMOUNT.getValue()));
         //textField.setEnableBackgroundDrawing(false);
@@ -73,9 +71,9 @@ public class TieredRequesterScreen extends TieredScreen<TieredRequesterBlockEnti
     @Override
     public void renderForeground(PoseStack poseStack, int mouseX, int mouseY) {
         renderString(poseStack, 7, 7, title.getString());
-        renderString(poseStack, 7, 43 + (18 * (getTier().getSlotsMultiplier() - 1)), new TranslatableComponent("container.inventory").getString());
+        renderString(poseStack, 7, 43 + (18 * (getTier().getSlotsMultiplier() - 1)), Component.translatable("container.inventory").getString());
         if (TieredRequesterBlockEntity.MISSING.getValue() && isHovering(153, 1, 16, 16, mouseX + leftPos, mouseY + topPos)) {
-            renderTooltip(poseStack, new TranslatableComponent("tooltip.refinedstoragerequestify:requester.missing"), mouseX, mouseY);
+            renderTooltip(poseStack, Component.literal("tooltip.refinedstoragerequestify:requester.missing"), mouseX, mouseY);
         }
     }
 }

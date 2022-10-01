@@ -1,5 +1,5 @@
 {
-	"credit": "Made with Blockbench",
+	"render_type": "cutout",
 	"textures": {
 		"2": "cabletiers:blocks/ultra_destructor",
 		"particle": "cabletiers:blocks/ultra_destructor"

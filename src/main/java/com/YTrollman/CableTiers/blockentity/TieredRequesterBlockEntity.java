@@ -6,6 +6,7 @@ import com.YTrollman.CableTiers.gui.TieredRequesterScreen;
 import com.YTrollman.CableTiers.node.TieredRequesterNetworkNode;
 import com.refinedmods.refinedstorage.blockentity.config.IType;
 import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationParameter;
+import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationSpec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -21,11 +22,13 @@ public class TieredRequesterBlockEntity extends TieredBlockEntity<TieredRequeste
     public static final BlockEntitySynchronizationParameter<Boolean, TieredRequesterBlockEntity> MISSING = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.BOOLEAN, false, tileRequester -> tileRequester.getNode().isMissingItems(), (tileRequester, aBoolean) -> {
     });
 
-    public TieredRequesterBlockEntity(CableTier tier, BlockPos pos, BlockState state) {
-        super(ContentType.REQUESTER, tier, pos, state);
+    public static BlockEntitySynchronizationSpec SPEC = BlockEntitySynchronizationSpec.builder()
+            .addWatchedParameter(TYPE)
+            .addWatchedParameter(AMOUNT)
+            .addWatchedParameter(MISSING)
+            .build();
 
-        this.dataManager.addWatchedParameter(TYPE);
-        this.dataManager.addWatchedParameter(AMOUNT);
-        this.dataManager.addParameter(MISSING);
+    public TieredRequesterBlockEntity(CableTier tier, BlockPos pos, BlockState state) {
+        super(ContentType.REQUESTER, tier, pos, state, SPEC);
     }
 }
