@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.YTrollman.CableTiers.mixin",
+  "package": "com.ultramega.cabletiers.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinCableCoverBakedModel"

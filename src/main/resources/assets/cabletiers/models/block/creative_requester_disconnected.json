@@ -1,6 +1,0 @@
-{
-	"parent": "block/cube_all",
-	"textures": {
-		"all": "cabletiers:blocks/creative_requester_disconnected"
-	}
-}

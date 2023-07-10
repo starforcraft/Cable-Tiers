@@ -1,8 +1,8 @@
 {
 	"render_type": "cutout",
 	"textures": {
-		"2": "cabletiers:blocks/elite_destructor",
-		"particle": "cabletiers:blocks/elite_destructor"
+		"2": "cabletiers:block/elite_destructor",
+		"particle": "cabletiers:block/elite_destructor"
 	},
 	"elements": [
 		{

@@ -2,7 +2,7 @@
 	"render_type": "cutout",
 	"parent": "block/block",
 	"textures": {
-		"border": "cabletiers:blocks/elite_cable_part_border"
+		"border": "cabletiers:block/elite_cable_part_border"
 	},
 	"elements": [
 		{

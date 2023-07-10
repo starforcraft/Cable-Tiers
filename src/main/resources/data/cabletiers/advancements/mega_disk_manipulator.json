@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "cabletiers:mega_disk_manipulator"
+    },
+    "title": {
+      "translate": "advancements.cabletiers.mega_disk_manipulator"
+    },
+    "description": {
+      "translate": "advancements.cabletiers.mega_disk_manipulator.description"
+    }
+  },
+  "parent": "cabletiers:ultra_disk_manipulator",
+  "criteria": {
+    "mega_disk_manipulator_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "cabletiers:mega_disk_manipulator"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

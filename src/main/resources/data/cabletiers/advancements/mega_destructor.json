@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "cabletiers:mega_destructor"
+    },
+    "title": {
+      "translate": "advancements.cabletiers.mega_destructor"
+    },
+    "description": {
+      "translate": "advancements.cabletiers.mega_destructor.description"
+    }
+  },
+  "parent": "cabletiers:ultra_destructor",
+  "criteria": {
+    "mega_destructor_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "cabletiers:mega_destructor"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

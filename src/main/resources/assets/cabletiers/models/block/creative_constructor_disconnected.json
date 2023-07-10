@@ -1,7 +1,0 @@
-{
-  "parent": "cabletiers:block/creative_constructor_destructor",
-  "textures": {
-    "front": "refinedstorage:block/constructor/constructor",
-    "cutout": "refinedstorage:block/constructor/cutouts/disconnected"
-  }
-}

@@ -1,6 +1,6 @@
 {
 	"parent": "block/cube_all",
 	"textures": {
-		"all": "cabletiers:blocks/ultra_requester_connected"
+		"all": "cabletiers:block/ultra_requester_connected"
 	}
 }

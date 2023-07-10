@@ -16,12 +16,8 @@ apply plugin: 'org.spongepowered.mixin'
 
 repositories {
     maven {
-        name = "Progwml6 maven"
-        url = "https://dvs1.progwml6.com/files/maven/"
-    }
-    maven {
-        name = "ModMaven"
-        url = "https://modmaven.k-4u.nl"
+        name = 'JEI'
+        url = "https://maven.blamejared.com/"
     }
     maven {
         name 'RS maven'
@@ -40,7 +36,7 @@ repositories {
 }
 
 version = "${mod_version}"
-group = "com.YTrollman.CableTiers"
+group = "com.ultramega.cabletiers"
 archivesBaseName = "${modid}"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -113,16 +109,17 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    runtimeOnly fg.deobf("mezz.jei:jei-1.19.2-forge:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
     implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}") {
         transitive false
     }
-    //implementation fg.deobf('curse.maven:rsrequestify-307788:3617200')
+    implementation fg.deobf('curse.maven:rsrequestify-307788:4629977')
 
-    //implementation fg.deobf('curse.maven:extrastorage-410168:3718149')
-    implementation fg.deobf('curse.maven:spark-361579:4002084')
-    implementation fg.deobf('curse.maven:mekanism-268560:3954410')
+    implementation fg.deobf('curse.maven:spark-361579:4587309')
+    implementation fg.deobf("curse.maven:functionalstorage-556861:4613951")
+    implementation fg.deobf("curse.maven:titanium-287342:4613890")
+    //implementation fg.deobf('curse.maven:mekanism-268560:3954410')
 }
 
 jar {

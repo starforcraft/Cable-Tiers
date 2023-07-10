@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "connected=true": {
+      "model": "cabletiers:block/mega_requester_connected"
+    },
+    "connected=false": {
+      "model": "cabletiers:block/mega_requester_disconnected"
+    }
+  }
+}
