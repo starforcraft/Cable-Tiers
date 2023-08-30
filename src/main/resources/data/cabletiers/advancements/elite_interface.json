@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "cabletiers:elite_interface"
+    },
+    "title": {
+      "translate": "advancements.cabletiers.elite_interface"
+    },
+    "description": {
+      "translate": "advancements.cabletiers.elite_interface.description"
+    }
+  },
+  "parent": "refinedstorage:interface_to_the_world",
+  "criteria": {
+    "elite_disk_manipulator_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "cabletiers:elite_interface"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

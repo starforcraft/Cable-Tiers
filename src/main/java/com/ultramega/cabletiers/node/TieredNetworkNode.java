@@ -51,6 +51,10 @@ public abstract class TieredNetworkNode<N extends TieredNetworkNode<N>> extends 
         return (int) ((getTier() == CableTier.ELITE ? (upgrades.hasUpgrade(UpgradeItem.Type.STACK) ? 64 : 1) : 64) * Math.pow(getTier().getSlotsMultiplier(), 3));
     }
 
+    public int getTieredStackInteractCount() {
+        return (int) (64 * Math.pow(getTier().getSlotsMultiplier(), 3));
+    }
+
     public double getSpeedMultiplier(int type) {
         Map<Integer, Double> configMap = new HashMap<>();
 
@@ -61,6 +65,7 @@ public abstract class TieredNetworkNode<N extends TieredNetworkNode<N>> extends 
                 configMap.put(2, CableConfig.ELITE_CONSTRUCTOR_SPEED.get());
                 configMap.put(3, CableConfig.ELITE_DESTRUCTOR_SPEED.get());
                 configMap.put(4, CableConfig.ELITE_DISK_MANIPULATOR_SPEED.get());
+                configMap.put(5, CableConfig.ELITE_INTERFACE_SPEED.get());
             }
             case ULTRA -> {
                 configMap.put(0, CableConfig.ULTRA_EXPORTER_SPEED.get());
@@ -68,6 +73,7 @@ public abstract class TieredNetworkNode<N extends TieredNetworkNode<N>> extends 
                 configMap.put(2, CableConfig.ULTRA_CONSTRUCTOR_SPEED.get());
                 configMap.put(3, CableConfig.ULTRA_DESTRUCTOR_SPEED.get());
                 configMap.put(4, CableConfig.ULTRA_DISK_MANIPULATOR_SPEED.get());
+                configMap.put(5, CableConfig.ULTRA_INTERFACE_SPEED.get());
             }
             case MEGA -> {
                 configMap.put(0, CableConfig.MEGA_EXPORTER_SPEED.get());
@@ -75,6 +81,7 @@ public abstract class TieredNetworkNode<N extends TieredNetworkNode<N>> extends 
                 configMap.put(2, CableConfig.MEGA_CONSTRUCTOR_SPEED.get());
                 configMap.put(3, CableConfig.MEGA_DESTRUCTOR_SPEED.get());
                 configMap.put(4, CableConfig.MEGA_DISK_MANIPULATOR_SPEED.get());
+                configMap.put(5, CableConfig.MEGA_INTERFACE_SPEED.get());
             }
         }
 

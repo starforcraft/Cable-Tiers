@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IOI",
+    "RAR",
+    "IEI"
+  ],
+  "key": {
+    "O": { "item": "cabletiers:ultra_importer" },
+    "E": { "item": "cabletiers:ultra_exporter" },
+    "A": { "item": "cabletiers:elite_interface" },
+    "I": { "item": "minecraft:diamond_block" },
+    "R": { "item": "minecraft:redstone_block" }
+  },
+  "result": {
+    "item": "cabletiers:ultra_interface",
+    "count": 1
+  }
+}

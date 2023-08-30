@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IOI",
+    "RAR",
+    "IEI"
+  ],
+  "key": {
+    "O": { "item": "cabletiers:mega_importer" },
+    "E": { "item": "cabletiers:mega_exporter" },
+    "A": { "item": "cabletiers:ultra_interface" },
+    "I": { "item": "minecraft:netherite_block" },
+    "R": { "item": "minecraft:redstone_block" }
+  },
+  "result": {
+    "item": "cabletiers:mega_interface",
+    "count": 1
+  }
+}

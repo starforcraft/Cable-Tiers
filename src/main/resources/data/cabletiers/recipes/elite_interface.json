@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IOI",
+    "RAR",
+    "IEI"
+  ],
+  "key": {
+    "O": { "item": "cabletiers:elite_importer" },
+    "E": { "item": "cabletiers:elite_exporter" },
+    "A": { "item": "refinedstorage:interface" },
+    "I": { "item": "minecraft:iron_block" },
+    "R": { "item": "minecraft:redstone_block" }
+  },
+  "result": {
+    "item": "cabletiers:elite_interface",
+    "count": 1
+  }
+}

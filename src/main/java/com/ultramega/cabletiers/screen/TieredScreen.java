@@ -1,4 +1,4 @@
-package com.ultramega.cabletiers.gui;
+package com.ultramega.cabletiers.screen;
 
 import com.refinedmods.refinedstorage.screen.BaseScreen;
 import com.ultramega.cabletiers.CableTier;

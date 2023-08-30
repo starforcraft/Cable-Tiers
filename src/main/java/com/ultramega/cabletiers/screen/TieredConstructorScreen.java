@@ -1,4 +1,4 @@
-package com.ultramega.cabletiers.gui;
+package com.ultramega.cabletiers.screen;
 
 import com.refinedmods.refinedstorage.blockentity.NetworkNodeBlockEntity;
 import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationManager;

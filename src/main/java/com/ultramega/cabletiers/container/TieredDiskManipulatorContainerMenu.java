@@ -7,8 +7,8 @@ import com.ultramega.cabletiers.node.diskmanipulator.TieredDiskManipulatorNetwor
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class TieredDiskManipulatorContainer extends TieredContainerMenu<TieredDiskManipulatorBlockEntity, TieredDiskManipulatorNetworkNode> {
-    public TieredDiskManipulatorContainer(int windowId, Player player, TieredDiskManipulatorBlockEntity tile) {
+public class TieredDiskManipulatorContainerMenu extends TieredContainerMenu<TieredDiskManipulatorBlockEntity, TieredDiskManipulatorNetworkNode> {
+    public TieredDiskManipulatorContainerMenu(int windowId, Player player, TieredDiskManipulatorBlockEntity tile) {
         super(ContentType.DISK_MANIPULATOR, tile, player, windowId);
         initSlots();
     }

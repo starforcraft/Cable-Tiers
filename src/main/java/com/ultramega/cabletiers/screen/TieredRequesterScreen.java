@@ -1,4 +1,4 @@
-package com.ultramega.cabletiers.gui;
+package com.ultramega.cabletiers.screen;
 
 import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.blockentity.DetectorBlockEntity;
@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage.screen.widget.sidebutton.RedstoneModeSideB
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.TypeSideButton;
 import com.ultramega.cabletiers.CableTiers;
 import com.ultramega.cabletiers.blockentity.TieredRequesterBlockEntity;
-import com.ultramega.cabletiers.container.TieredRequesterContainer;
+import com.ultramega.cabletiers.container.TieredRequesterContainerMenu;
 import com.ultramega.cabletiers.node.TieredRequesterNetworkNode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,10 +20,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.lwjgl.glfw.GLFW;
 
-public class TieredRequesterScreen extends TieredScreen<TieredRequesterBlockEntity, TieredRequesterContainer, TieredRequesterNetworkNode> {
+public class TieredRequesterScreen extends TieredScreen<TieredRequesterBlockEntity, TieredRequesterContainerMenu, TieredRequesterNetworkNode> {
     private EditBox textField;
 
-    public TieredRequesterScreen(TieredRequesterContainer container, Inventory inventory, Component title) {
+    public TieredRequesterScreen(TieredRequesterContainerMenu container, Inventory inventory, Component title) {
         super(container, 211, 137 + (18 * (container.getTier().getSlotsMultiplier() - 1)), inventory, title);
     }
 

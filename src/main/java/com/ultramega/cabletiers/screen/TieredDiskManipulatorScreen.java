@@ -1,4 +1,4 @@
-package com.ultramega.cabletiers.gui;
+package com.ultramega.cabletiers.screen;
 
 import com.refinedmods.refinedstorage.blockentity.NetworkNodeBlockEntity;
 import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationManager;
@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage.screen.widget.sidebutton.*;
 import com.ultramega.cabletiers.CableTier;
 import com.ultramega.cabletiers.CableTiers;
 import com.ultramega.cabletiers.blockentity.TieredDiskManipulatorBlockEntity;
-import com.ultramega.cabletiers.container.TieredDiskManipulatorContainer;
+import com.ultramega.cabletiers.container.TieredDiskManipulatorContainerMenu;
 import com.ultramega.cabletiers.node.diskmanipulator.TieredDiskManipulatorNetworkNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,8 +16,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public class TieredDiskManipulatorScreen extends TieredScreen<TieredDiskManipulatorBlockEntity, TieredDiskManipulatorContainer, TieredDiskManipulatorNetworkNode> {
-    public TieredDiskManipulatorScreen(TieredDiskManipulatorContainer container, Inventory inventory, Component title) {
+public class TieredDiskManipulatorScreen extends TieredScreen<TieredDiskManipulatorBlockEntity, TieredDiskManipulatorContainerMenu, TieredDiskManipulatorNetworkNode> {
+    public TieredDiskManipulatorScreen(TieredDiskManipulatorContainerMenu container, Inventory inventory, Component title) {
         super(container, 211, 245 + (container.getTier() == CableTier.MEGA ? 11 : 0), inventory, title);
     }
 
@@ -85,7 +85,7 @@ public class TieredDiskManipulatorScreen extends TieredScreen<TieredDiskManipula
     }
 
     public class TieredIoModeSideButton extends SideButton {
-        public TieredIoModeSideButton(BaseScreen<TieredDiskManipulatorContainer> screen) {
+        public TieredIoModeSideButton(BaseScreen<TieredDiskManipulatorContainerMenu> screen) {
             super(screen);
         }
 

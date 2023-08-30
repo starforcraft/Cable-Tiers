@@ -13,11 +13,11 @@ import org.spongepowered.asm.mixin.Overwrite;
 import javax.annotation.Nullable;
 
 @Mixin(value = CableCoverBakedModel.class)
-public class MixinCableCoverBakedModel {
+public abstract class MixinCableCoverBakedModel {
 
     /**
-     * @author
-     * @reason
+     * @author Ultramega
+     * @reason Makes cover work for tiered cables
      */
     @Overwrite
     private static int getHollowCoverSize(@Nullable BlockState state, Direction coverSide) {

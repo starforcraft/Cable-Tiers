@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "cabletiers:block/elite_interface_connected"
+  }
+}

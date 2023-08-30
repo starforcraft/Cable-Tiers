@@ -5,8 +5,8 @@ import com.ultramega.cabletiers.blockentity.TieredRequesterBlockEntity;
 import com.ultramega.cabletiers.node.TieredRequesterNetworkNode;
 import net.minecraft.world.entity.player.Player;
 
-public class TieredRequesterContainer extends TieredContainerMenu<TieredRequesterBlockEntity, TieredRequesterNetworkNode> {
-    public TieredRequesterContainer(int windowId, Player player, TieredRequesterBlockEntity tile) {
+public class TieredRequesterContainerMenu extends TieredContainerMenu<TieredRequesterBlockEntity, TieredRequesterNetworkNode> {
+    public TieredRequesterContainerMenu(int windowId, Player player, TieredRequesterBlockEntity tile) {
         super(ContentType.REQUESTER, tile, player, windowId);
         initSlots();
     }

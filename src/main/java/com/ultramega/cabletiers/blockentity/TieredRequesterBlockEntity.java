@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizatio
 import com.ultramega.cabletiers.CableTier;
 import com.ultramega.cabletiers.CableTiers;
 import com.ultramega.cabletiers.ContentType;
-import com.ultramega.cabletiers.gui.TieredRequesterScreen;
+import com.ultramega.cabletiers.screen.TieredRequesterScreen;
 import com.ultramega.cabletiers.node.TieredRequesterNetworkNode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

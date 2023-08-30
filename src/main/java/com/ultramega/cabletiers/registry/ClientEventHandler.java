@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage.render.model.baked.CableCoverBakedModel;
 import com.ultramega.cabletiers.CableTier;
 import com.ultramega.cabletiers.CableTiers;
 import com.ultramega.cabletiers.ContentType;
-import com.ultramega.cabletiers.gui.*;
+import com.ultramega.cabletiers.screen.*;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ModelEvent;
@@ -28,6 +28,7 @@ public class ClientEventHandler {
             MenuScreens.register(ContentType.CONSTRUCTOR.getContainerType(tier), TieredConstructorScreen::new);
             MenuScreens.register(ContentType.DESTRUCTOR.getContainerType(tier), TieredDestructorScreen::new);
             MenuScreens.register(ContentType.DISK_MANIPULATOR.getContainerType(tier), TieredDiskManipulatorScreen::new);
+            MenuScreens.register(ContentType.INTERFACE.getContainerType(tier), TieredInterfaceScreen::new);
             MenuScreens.register(ContentType.REQUESTER.getContainerType(tier), TieredRequesterScreen::new);
 
             BAKED_MODEL_OVERRIDE_REGISTRY.add(new ResourceLocation(CableTiers.MOD_ID, ContentType.EXPORTER.getName(tier)), (base, registry) -> new CableCoverBakedModel(base));
