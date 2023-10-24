@@ -16,7 +16,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class TieredInterfaceScreen extends TieredScreen<TieredInterfaceBlockEntity, TieredInterfaceContainerMenu, TieredInterfaceNetworkNode> {
     public TieredInterfaceScreen(TieredInterfaceContainerMenu container, Inventory inventory, Component title) {
-        super(container, container.getTier() == CableTier.ELITE ? 211 : 247, 267, inventory, title);
+        super(container, container.getTier() == CableTier.ELITE ? 211 : container.getTier() == CableTier.ULTRA ? 247 : 283, 267, inventory, title);
     }
 
     @Override
