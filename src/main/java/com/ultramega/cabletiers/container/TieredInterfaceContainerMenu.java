@@ -8,13 +8,12 @@ import com.ultramega.cabletiers.blockentity.TieredInterfaceBlockEntity;
 import com.ultramega.cabletiers.container.slot.TieredFilterSlot;
 import com.ultramega.cabletiers.node.TieredInterfaceNetworkNode;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
-import org.jetbrains.annotations.NotNull;
 
 public class TieredInterfaceContainerMenu extends TieredContainerMenu<TieredInterfaceBlockEntity, TieredInterfaceNetworkNode> {
     public TieredInterfaceContainerMenu(int windowId, Player player, TieredInterfaceBlockEntity tile) {
         super(ContentType.INTERFACE, tile, player, windowId);
+
         initSlots();
     }
 

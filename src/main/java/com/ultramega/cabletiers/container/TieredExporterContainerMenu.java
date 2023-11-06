@@ -15,6 +15,7 @@ public class TieredExporterContainerMenu extends TieredContainerMenu<TieredExpor
     public TieredExporterContainerMenu(int windowId, Player player, TieredExporterBlockEntity tile) {
         super(ContentType.EXPORTER, tile, player, windowId);
         this.hasRegulatorMode = hasRegulatorMode();
+
         initSlots();
     }
 
@@ -25,10 +26,7 @@ public class TieredExporterContainerMenu extends TieredContainerMenu<TieredExpor
     @Override
     public void broadcastChanges() {
         super.broadcastChanges();
-        checkRegulator();
-    }
 
-    public void checkRegulator() {
         boolean updatedHasRegulatorMode = hasRegulatorMode();
         if (hasRegulatorMode != updatedHasRegulatorMode) {
             hasRegulatorMode = updatedHasRegulatorMode;

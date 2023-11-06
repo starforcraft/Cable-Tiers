@@ -78,7 +78,7 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
         }
 
         int speed = Math.max(0, upgrades.getSpeed((int) (BASE_SPEED / speedMultiplier), 2));
-        if(speed != 0) {
+        if (speed != 0) {
             if (ticks % speed != 0) {
                 return;
             }
@@ -121,18 +121,15 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
             IFluidHandler handler = LevelUtils.getFluidHandler(getFacingBlockEntity(), getDirection().getOpposite());
 
             if (handler != null) {
-                FluidStack stack = handler.drain(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.SIMULATE);
+                FluidStack extractedSimulated = handler.drain(FluidType.BUCKET_VOLUME * getTieredStackInteractCount(upgrades), IFluidHandler.FluidAction.SIMULATE);
 
-                if (!stack.isEmpty() && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, stack) && network.insertFluid(stack, stack.getAmount(), Action.SIMULATE).isEmpty()) {
-                    FluidStack toDrain = handler.drain(FluidType.BUCKET_VOLUME * getTieredStackInteractCount(upgrades), IFluidHandler.FluidAction.SIMULATE);
+                if (!extractedSimulated.isEmpty()
+                        && IWhitelistBlacklist.acceptsFluid(fluidFilters, mode, compare, extractedSimulated)
+                        && network.insertFluid(extractedSimulated, extractedSimulated.getAmount(), Action.SIMULATE).isEmpty()) {
+                    FluidStack extracted = handler.drain(extractedSimulated, IFluidHandler.FluidAction.EXECUTE);
 
-                    if (!toDrain.isEmpty()) {
-                        FluidStack remainder = network.insertFluidTracked(toDrain, toDrain.getAmount());
-                        if (!remainder.isEmpty()) {
-                            toDrain.shrink(remainder.getAmount());
-                        }
-
-                        handler.drain(toDrain, IFluidHandler.FluidAction.EXECUTE);
+                    if (!extracted.isEmpty()) {
+                        network.insertFluidTracked(extracted, extracted.getAmount());
                     }
                 }
             }

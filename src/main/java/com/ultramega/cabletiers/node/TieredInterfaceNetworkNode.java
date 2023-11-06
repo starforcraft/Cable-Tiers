@@ -76,7 +76,8 @@ public class TieredInterfaceNetworkNode extends TieredNetworkNode<TieredInterfac
 
     private UpgradeItem.Type[] getTierUpgrades() {
         return switch (getTier()) {
-            case ELITE -> new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK, UpgradeItem.Type.CRAFTING};
+            case ELITE ->
+                    new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK, UpgradeItem.Type.CRAFTING};
             case ULTRA, MEGA -> new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING};
         };
     }
@@ -103,7 +104,7 @@ public class TieredInterfaceNetworkNode extends TieredNetworkNode<TieredInterfac
         }
 
         int speed = Math.max(0, upgrades.getSpeed((int) (BASE_SPEED / speedMultiplier), 2));
-        if(speed != 0) {
+        if (speed != 0) {
             if (ticks % speed != 0) {
                 return;
             }

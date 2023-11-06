@@ -57,6 +57,7 @@ public class TieredDestructorBlockEntity extends TieredBlockEntity<TieredDestruc
     @Override
     public CompoundTag writeUpdate(CompoundTag tag) {
         super.writeUpdate(tag);
+
         tag.put(CoverManager.NBT_COVER_MANAGER, this.getNode().getCoverManager().writeToNbt());
 
         return tag;

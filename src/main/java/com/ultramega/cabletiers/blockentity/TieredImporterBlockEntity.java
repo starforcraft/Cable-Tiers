@@ -52,6 +52,7 @@ public class TieredImporterBlockEntity extends TieredBlockEntity<TieredImporterN
     @Override
     public CompoundTag writeUpdate(CompoundTag tag) {
         super.writeUpdate(tag);
+
         tag.put(CoverManager.NBT_COVER_MANAGER, this.getNode().getCoverManager().writeToNbt());
 
         return tag;

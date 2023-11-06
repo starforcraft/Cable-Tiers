@@ -83,8 +83,10 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
 
     private UpgradeItem.Type[] getTierUpgrades() {
         return switch (getTier()) {
-            case ELITE -> new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR};
-            case ULTRA, MEGA -> new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR};
+            case ELITE ->
+                    new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR};
+            case ULTRA, MEGA ->
+                    new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR};
         };
     }
 
@@ -102,7 +104,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
         }
 
         int speed = Math.max(0, upgrades.getSpeed((int) (BASE_SPEED / speedMultiplier), 2));
-        if(speed != 0) {
+        if (speed != 0) {
             if (ticks % speed != 0) {
                 return;
             }

@@ -75,8 +75,8 @@ public class TieredRequesterNetworkNode extends TieredNetworkNode<TieredRequeste
         if (network == null) return;
         if (!canUpdate()) return;
 
-        int speed = (int)Math.max(0, 70 / speedMultiplier);
-        if(speed != 0) {
+        int speed = (int) Math.max(0, 70 / speedMultiplier);
+        if (speed != 0) {
             if (ticks % speed != 0) {
                 return;
             }

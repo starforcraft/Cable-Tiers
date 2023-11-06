@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 public class TieredImporterContainerMenu extends TieredContainerMenu<TieredImporterBlockEntity, TieredImporterNetworkNode> {
     public TieredImporterContainerMenu(int windowId, Player player, TieredImporterBlockEntity tile) {
         super(ContentType.IMPORTER, tile, player, windowId);
+
         initSlots();
     }
 

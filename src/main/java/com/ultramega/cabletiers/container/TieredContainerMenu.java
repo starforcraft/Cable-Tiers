@@ -77,22 +77,22 @@ public abstract class TieredContainerMenu<T extends TieredBlockEntity<N>, N exte
     }
 
     @Override
-    public ItemStack getItem(int p_18941_) {
+    public ItemStack getItem(int slot) {
         return null;
     }
 
     @Override
-    public ItemStack removeItem(int p_18942_, int p_18943_) {
+    public ItemStack removeItem(int slot, int amount) {
         return null;
     }
 
     @Override
-    public ItemStack removeItemNoUpdate(int p_18951_) {
+    public ItemStack removeItemNoUpdate(int slot) {
         return null;
     }
 
     @Override
-    public void setItem(int p_18944_, ItemStack p_18945_) {
+    public void setItem(int slot, ItemStack stack) {
 
     }
 

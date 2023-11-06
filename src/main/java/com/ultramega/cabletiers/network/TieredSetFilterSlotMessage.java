@@ -75,20 +75,19 @@ public class TieredSetFilterSlotMessage {
             };
 
             // Prevent the grid crafting matrix inventory listener from resetting the list.
-            if (container instanceof GridContainerMenu) {
-                IGrid grid = ((GridContainerMenu) container).getGrid();
+            if (container instanceof GridContainerMenu containerMenu) {
+                IGrid grid = containerMenu.getGrid();
                 //exclude output slots
-                if (grid instanceof GridNetworkNode && slot.getSlotIndex() < ((GridNetworkNode) grid).getAllowedTagList().getAllowedItemTags().size()) {
-                    Set<ResourceLocation> list = new HashSet<>(((GridNetworkNode) grid).getAllowedTagList().getAllowedItemTags().get(slot.getSlotIndex()));
+                if (grid instanceof GridNetworkNode networkNode && slot.getSlotIndex() < networkNode.getAllowedTagList().getAllowedItemTags().size()) {
+                    Set<ResourceLocation> list = new HashSet<>(networkNode.getAllowedTagList().getAllowedItemTags().get(slot.getSlotIndex()));
 
                     postAction = () -> {
-                        ((GridNetworkNode) grid).getAllowedTagList().setAllowedItemTags(slot.getSlotIndex(), list);
-                        ((GridNetworkNode) grid).markDirty();
+                        networkNode.getAllowedTagList().setAllowedItemTags(slot.getSlotIndex(), list);
+                        networkNode.markDirty();
                     };
                 }
             }
 
-            System.out.println(message.stack.getCount());
             slot.set(message.stack);
             postAction.run();
         }

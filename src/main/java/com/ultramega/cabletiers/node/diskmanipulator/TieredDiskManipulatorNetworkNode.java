@@ -121,7 +121,7 @@ public class TieredDiskManipulatorNetworkNode extends TieredNetworkNode<TieredDi
         }
 
         int speed = Math.max(0, upgrades.getSpeed((int) (BASE_SPEED / speedMultiplier), 2));
-        if(speed != 0) {
+        if (speed != 0) {
             if (ticks % speed != 0) {
                 return;
             }

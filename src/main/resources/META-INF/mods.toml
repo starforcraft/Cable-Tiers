@@ -15,7 +15,7 @@ description="This mod adds better Importer, Exporter, Constructor, Destructor, D
 [[dependencies.cabletiers]]
     modId="refinedstorage"
     mandatory=true
-    versionRange="[1.12,)"
+    versionRange="[1.12.4,)"
     ordering="NONE"
     side="BOTH"
 

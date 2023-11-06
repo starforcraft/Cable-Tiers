@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 public class TieredDestructorContainerMenu extends TieredContainerMenu<TieredDestructorBlockEntity, TieredDestructorNetworkNode> {
     public TieredDestructorContainerMenu(int windowId, Player player, TieredDestructorBlockEntity tile) {
         super(ContentType.DESTRUCTOR, tile, player, windowId);
+
         initSlots();
     }
 

@@ -53,6 +53,7 @@ public class ContentType<B extends BaseBlock, T extends TieredBlockEntity<N>, C 
     private final Map<CableTier, RegistryObject<Item>> items = new EnumMap<>(CableTier.class);
     private final Map<CableTier, RegistryObject<BlockEntityType<T>>> blockEntityTypes = new EnumMap<>(CableTier.class);
     private final Map<CableTier, RegistryObject<MenuType<C>>> containerTypes = new EnumMap<>(CableTier.class);
+    private final Map<CableTier, Class<N>> networkNodeClassTypes = new EnumMap<>(CableTier.class);
 
     private final String name;
     private final Function<CableTier, B> blockFactory;
@@ -97,6 +98,10 @@ public class ContentType<B extends BaseBlock, T extends TieredBlockEntity<N>, C 
         return containerTypes.get(tier).get();
     }
 
+    public Class<N> getNetworkNodeClass(CableTier tier) {
+        return networkNodeClassTypes.get(tier);
+    }
+
     public String getName(CableTier tier) {
         return tier.getName() + "_" + name;
     }
@@ -110,7 +115,9 @@ public class ContentType<B extends BaseBlock, T extends TieredBlockEntity<N>, C 
     }
 
     public N createNetworkNode(Level level, BlockPos pos, CableTier tier) {
-        return networkNodeFactory.create(level, pos, tier);
+        N networkNode = networkNodeFactory.create(level, pos, tier);
+        networkNodeClassTypes.put(tier, (Class<N>) networkNode.getClass());
+        return networkNode;
     }
 
     private void initContent() {

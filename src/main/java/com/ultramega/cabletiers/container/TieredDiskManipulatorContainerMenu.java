@@ -10,6 +10,7 @@ import net.minecraftforge.items.SlotItemHandler;
 public class TieredDiskManipulatorContainerMenu extends TieredContainerMenu<TieredDiskManipulatorBlockEntity, TieredDiskManipulatorNetworkNode> {
     public TieredDiskManipulatorContainerMenu(int windowId, Player player, TieredDiskManipulatorBlockEntity tile) {
         super(ContentType.DISK_MANIPULATOR, tile, player, windowId);
+
         initSlots();
     }
 

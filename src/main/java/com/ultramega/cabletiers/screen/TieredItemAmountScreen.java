@@ -1,6 +1,5 @@
 package com.ultramega.cabletiers.screen;
 
-import com.refinedmods.refinedstorage.RS;
 import com.refinedmods.refinedstorage.screen.BaseScreen;
 import com.refinedmods.refinedstorage.screen.ItemAmountScreen;
 import com.ultramega.cabletiers.CableTier;
@@ -9,7 +8,6 @@ import com.ultramega.cabletiers.network.TieredSetFilterSlotMessage;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.UnaryOperator;

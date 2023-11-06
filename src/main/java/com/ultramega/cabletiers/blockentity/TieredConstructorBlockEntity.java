@@ -54,6 +54,7 @@ public class TieredConstructorBlockEntity extends TieredBlockEntity<TieredConstr
     @Override
     public CompoundTag writeUpdate(CompoundTag tag) {
         super.writeUpdate(tag);
+
         tag.put(CoverManager.NBT_COVER_MANAGER, this.getNode().getCoverManager().writeToNbt());
 
         return tag;

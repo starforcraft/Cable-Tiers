@@ -92,7 +92,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
         }
 
         int speed = Math.max(0, upgrades.getSpeed((int) (BASE_SPEED / speedMultiplier), 4));
-        if(speed != 0) {
+        if (speed != 0) {
             if (ticks % speed != 0) {
                 return;
             }

@@ -1,7 +1,6 @@
 package com.ultramega.cabletiers.mixin;
 
 import com.refinedmods.refinedstorage.screen.BaseScreen;
-import com.refinedmods.refinedstorage.screen.grid.AlternativesScreen;
 import com.ultramega.cabletiers.CableTier;
 import com.ultramega.cabletiers.container.slot.TieredFilterSlot;
 import com.ultramega.cabletiers.screen.TieredItemAmountScreen;
@@ -36,7 +35,7 @@ public abstract class MixinBaseScreen extends AbstractContainerScreen {
                         minecraft.player,
                         slot.index,
                         slot.getItem(),
-                        getTieredStackInteractCount(filterSlot.getTier(), slot.getItem()),
+                        cableTiers$getTieredStackInteractCount(filterSlot.getTier(), slot.getItem()),
                         null
                 ));
                 ci.cancel();
@@ -45,7 +44,7 @@ public abstract class MixinBaseScreen extends AbstractContainerScreen {
     }
 
     @Unique
-    private int getTieredStackInteractCount(CableTier tier, ItemStack stack) {
+    private int cableTiers$getTieredStackInteractCount(CableTier tier, ItemStack stack) {
         return (int) (stack.getMaxStackSize() * Math.pow(tier.getSlotsMultiplier(), 3));
     }
 }

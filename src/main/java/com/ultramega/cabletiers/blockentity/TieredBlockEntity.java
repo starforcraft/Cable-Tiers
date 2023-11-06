@@ -14,7 +14,7 @@ public abstract class TieredBlockEntity<N extends TieredNetworkNode<N>> extends 
     private final CableTier tier;
 
     protected TieredBlockEntity(ContentType<?, ? extends TieredBlockEntity<N>, ?, N> contentType, CableTier tier, BlockPos pos, BlockState state, BlockEntitySynchronizationSpec specs) {
-        super(contentType.getBlockEntityType(tier), pos, state, specs);
+        super(contentType.getBlockEntityType(tier), pos, state, specs, contentType.getNetworkNodeClass(tier));
         this.contentType = contentType;
         this.tier = tier;
     }
