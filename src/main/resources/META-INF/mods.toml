@@ -9,20 +9,20 @@ displayName="Cable Tiers"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/cable-tiers"
 logoFile="logo.png"
 credits="Thanks for downloading this mod."
-authors="YTrollman"
-description="This mod adds Tiered RS Things."
+authors="Ultramega"
+description="This mod adds better Importer, Exporter, Constructor, Destructor, Disk Manipulator, Requester from Refined Storage and RSRequestify."
 
 [[dependencies.cabletiers]]
     modId="refinedstorage"
     mandatory=true
-    versionRange="[1.11.0,)"
+    versionRange="[1.11.7,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.cabletiers]]
     modId="forge"
     mandatory=true
-    versionRange="[43.1.1,)"
+    versionRange="[43.2,)"
     ordering="NONE"
     side="BOTH"
 
