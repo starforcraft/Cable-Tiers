@@ -64,7 +64,6 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
 
-            // property 'mixin.env.disableRefMap', 'true'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
 
@@ -82,7 +81,6 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
 
-            // property 'mixin.env.disableRefMap', 'true'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
 
@@ -101,7 +99,6 @@ minecraft {
 
             property 'forge.logging.console.level', 'debug'
 
-            // property 'mixin.env.disableRefMap', 'true'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
 
@@ -124,12 +121,12 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:${jei_version}")
 
-    implementation fg.deobf("com.refinedmods:refinedstorage:1.10.3") {
+    implementation fg.deobf("com.refinedmods:refinedstorage:1.10.6") {
         transitive false
     }
-    implementation fg.deobf('curse.maven:rsrequestify-307788:3617200')
+    //implementation fg.deobf('curse.maven:rsrequestify-307788:3617200')
 
-    implementation fg.deobf('curse.maven:extrastorage-410168:3718149')
+    implementation fg.deobf('curse.maven:extrastorage-410168:3888609')
     implementation fg.deobf('curse.maven:spark-361579:3824951')
     implementation fg.deobf('curse.maven:mekanism-268560:3833669')
 }
@@ -138,11 +135,11 @@ jar {
     manifest {
         attributes([
                 "Specification-Title"     : "cabletiers",
-                "Specification-Vendor"    : "cabletiers",
+                "Specification-Vendor"    : "ultramega",
                 "Specification-Version"   : "1",
                 "Implementation-Title"    : "${project.name}",
                 "Implementation-Version"  : "${project.version}",
-                "Implementation-Vendor"   : "cabletiers",
+                "Implementation-Vendor"   : "ultramega",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 "MixinConfigs": "${modid}.mixins.json"
         ])

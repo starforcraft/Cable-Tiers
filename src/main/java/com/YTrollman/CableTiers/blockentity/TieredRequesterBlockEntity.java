@@ -14,8 +14,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public class TieredRequesterBlockEntity extends TieredBlockEntity<TieredRequesterNetworkNode> {
     public static final BlockEntitySynchronizationParameter<Integer, TieredRequesterBlockEntity> TYPE = IType.createParameter();
     public static final BlockEntitySynchronizationParameter<Integer, TieredRequesterBlockEntity> AMOUNT = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.INT, 0, t -> t.getNode().getAmount(), (t, v) -> t.getNode().setAmount(v), (initial, p) -> Minecraft.getInstance().tell(() -> {
-        if (Minecraft.getInstance().screen instanceof TieredRequesterScreen) {
-            ((TieredRequesterScreen) Minecraft.getInstance().screen).getTextField().setValue(String.valueOf(p));
+        if (Minecraft.getInstance().screen instanceof TieredRequesterScreen tieredRequesterScreen) {
+            tieredRequesterScreen.getTextField().setValue(String.valueOf(p));
         }
     }));
     public static final BlockEntitySynchronizationParameter<Boolean, TieredRequesterBlockEntity> MISSING = new BlockEntitySynchronizationParameter<>(EntityDataSerializers.BOOLEAN, false, tileRequester -> tileRequester.getNode().isMissingItems(), (tileRequester, aBoolean) -> {

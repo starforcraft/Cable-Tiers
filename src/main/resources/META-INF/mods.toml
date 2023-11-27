@@ -15,7 +15,7 @@ description="This mod adds Tiered RS Things."
 [[dependencies.cabletiers]]
     modId="refinedstorage"
     mandatory=true
-    versionRange="[1.10.0,)"
+    versionRange="[1.10.6,)"
     ordering="NONE"
     side="BOTH"
 

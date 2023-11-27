@@ -42,7 +42,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class TieredRequesterNetworkNode extends TieredNetworkNode<TieredRequesterNetworkNode> implements IType {
-
     private static final String NBT_TYPE = "Type";
     private static final String NBT_FLUID_FILTERS = "FluidFilter";
     private static final String NBT_AMOUNT = "Amount";
@@ -80,7 +79,7 @@ public class TieredRequesterNetworkNode extends TieredNetworkNode<TieredRequeste
         if (network == null) return;
         if (!canUpdate()) return;
 
-        if (!(getTier() == CableTier.CREATIVE)) {
+        if (getTier() != CableTier.CREATIVE) {
             if (ticks % 70 == 0) {
                 return;
             }

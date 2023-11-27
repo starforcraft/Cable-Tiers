@@ -6,7 +6,6 @@ import com.YTrollman.CableTiers.container.TieredRequesterContainer;
 import com.YTrollman.CableTiers.node.TieredRequesterNetworkNode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.refinedmods.refinedstorage.RS;
-import com.refinedmods.refinedstorage.blockentity.DetectorBlockEntity;
 import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationManager;
 import com.refinedmods.refinedstorage.render.RenderSettings;
 import com.refinedmods.refinedstorage.screen.widget.sidebutton.RedstoneModeSideButton;
@@ -32,7 +31,6 @@ public class TieredRequesterScreen extends TieredScreen<TieredRequesterBlockEnti
         addSideButton(new TypeSideButton(this, TieredRequesterBlockEntity.TYPE));
         textField = new EditBox(Minecraft.getInstance().font, x + 86, y + 41 + (18 * (getTier().getSlotsMultiplier() - 1)), 80, 10, new TextComponent(""));
         textField.setValue(TieredRequesterBlockEntity.AMOUNT.getValue() + "");
-        textField.setValue(String.valueOf(DetectorBlockEntity.AMOUNT.getValue()));
         //textField.setEnableBackgroundDrawing(false);
         textField.setVisible(true);
         textField.setCanLoseFocus(true);

@@ -9,7 +9,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 
 public abstract class TieredNetworkNode<N extends TieredNetworkNode<N>> extends NetworkNode {
-
     private final ContentType<?, ? extends TieredBlockEntity<N>, ?, N> contentType;
     private final CableTier tier;
     private final ResourceLocation id;
