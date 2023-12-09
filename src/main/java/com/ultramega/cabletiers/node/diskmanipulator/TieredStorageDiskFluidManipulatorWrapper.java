@@ -25,7 +25,7 @@ public class TieredStorageDiskFluidManipulatorWrapper implements IStorageDisk<Fl
 
     public TieredStorageDiskFluidManipulatorWrapper(TieredDiskManipulatorNetworkNode diskManipulator, IStorageDisk<FluidStack> parent) {
         this.diskManipulator = diskManipulator;
-        this.parent = parent;
+        this.parent          = parent;
         this.setSettings(() -> {
             DiskState currentState = DiskState.get(getStored(), getCapacity());
 

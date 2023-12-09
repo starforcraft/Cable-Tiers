@@ -69,14 +69,13 @@ public class TieredConstructorNetworkNode extends TieredNetworkNode<TieredConstr
 
     public TieredConstructorNetworkNode(Level level, BlockPos pos, CableTier tier) {
         super(level, pos, ContentType.CONSTRUCTOR, tier);
-        this.coverManager = new CoverManager(this);
+        this.coverManager    = new CoverManager(this);
         this.speedMultiplier = getSpeedMultiplier(2);
     }
 
     private UpgradeItem.Type[] getTierUpgrades() {
         return switch (getTier()) {
-            case ELITE ->
-                    new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK, UpgradeItem.Type.CRAFTING};
+            case ELITE -> new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK, UpgradeItem.Type.CRAFTING};
             case ULTRA, MEGA -> new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING};
         };
     }

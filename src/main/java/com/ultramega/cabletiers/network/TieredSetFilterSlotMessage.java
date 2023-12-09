@@ -25,7 +25,7 @@ public class TieredSetFilterSlotMessage {
 
     public TieredSetFilterSlotMessage(int slotsMultiplier, int containerSlot, Item item, int itemAmount) {
         this.slotsMultiplier = slotsMultiplier;
-        this.containerSlot = containerSlot;
+        this.containerSlot   = containerSlot;
         ItemStack stack = new ItemStack(item);
         stack.setCount(itemAmount);
         this.stack = stack;
@@ -33,7 +33,7 @@ public class TieredSetFilterSlotMessage {
 
     public TieredSetFilterSlotMessage(int slotsMultiplier, int containerSlot, ItemStack stack, int itemAmount) {
         this.slotsMultiplier = slotsMultiplier;
-        this.containerSlot = containerSlot;
+        this.containerSlot   = containerSlot;
         stack.setCount(itemAmount);
         this.stack = stack;
     }

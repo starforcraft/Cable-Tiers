@@ -53,7 +53,7 @@ public class TieredImporterNetworkNode extends TieredNetworkNode<TieredImporterN
 
     public TieredImporterNetworkNode(Level level, BlockPos pos, CableTier tier) {
         super(level, pos, ContentType.IMPORTER, tier);
-        this.coverManager = new CoverManager(this);
+        this.coverManager    = new CoverManager(this);
         this.speedMultiplier = getSpeedMultiplier(1);
     }
 

@@ -29,7 +29,7 @@ public abstract class TieredNetworkBlock<T extends TieredBlockEntity<N>, N exten
     protected TieredNetworkBlock(ContentType<? extends TieredNetworkBlock<T, N>, T, ?, N> contentType, CableTier tier) {
         super(BlockUtils.DEFAULT_ROCK_PROPERTIES);
         this.contentType = contentType;
-        this.tier = tier;
+        this.tier        = tier;
     }
 
     public ContentType<? extends TieredNetworkBlock<T, N>, T, ?, N> getContentType() {

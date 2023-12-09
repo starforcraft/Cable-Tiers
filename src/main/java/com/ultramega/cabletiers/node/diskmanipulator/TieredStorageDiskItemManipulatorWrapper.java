@@ -25,7 +25,7 @@ public class TieredStorageDiskItemManipulatorWrapper implements IStorageDisk<Ite
 
     public TieredStorageDiskItemManipulatorWrapper(TieredDiskManipulatorNetworkNode diskManipulator, IStorageDisk<ItemStack> parent) {
         this.diskManipulator = diskManipulator;
-        this.parent = parent;
+        this.parent          = parent;
         this.setSettings(() -> {
             DiskState currentState = DiskState.get(getStored(), getCapacity());
 

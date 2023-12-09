@@ -96,7 +96,7 @@ public class TieredRequesterNetworkNode extends TieredNetworkNode<TieredRequeste
                     if (current == null || current.isEmpty() || current.getCount() < amount) {
                         int count = current == null || current.isEmpty() ? amount : amount - current.getCount();
                         if (count > 0) {
-                            craftingTask = network.getCraftingManager().request(this, filter, Math.min(attemptAmount, count));
+                            craftingTask   = network.getCraftingManager().request(this, filter, Math.min(attemptAmount, count));
                             isMissingItems = true;
                         }
                     } else {
@@ -131,7 +131,7 @@ public class TieredRequesterNetworkNode extends TieredNetworkNode<TieredRequeste
                     if (current.isEmpty() || current.getAmount() < amount) {
                         int count = current.isEmpty() ? amount : amount - current.getAmount();
                         if (count > 0) {
-                            craftingTask = network.getCraftingManager().request(this, filter, count);
+                            craftingTask   = network.getCraftingManager().request(this, filter, count);
                             isMissingItems = true;
                         }
                     } else {

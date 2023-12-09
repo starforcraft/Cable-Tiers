@@ -22,8 +22,8 @@ public abstract class TieredNetworkNode<N extends TieredNetworkNode<N>> extends 
     protected TieredNetworkNode(Level level, BlockPos pos, ContentType<?, ? extends TieredBlockEntity<N>, ?, N> contentType, CableTier tier) {
         super(level, pos);
         this.contentType = contentType;
-        this.tier = tier;
-        this.id = contentType.getId(tier);
+        this.tier        = tier;
+        this.id          = contentType.getId(tier);
     }
 
     public ContentType<?, ? extends TieredBlockEntity<N>, ?, N> getContentType() {

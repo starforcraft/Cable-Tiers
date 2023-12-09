@@ -36,7 +36,7 @@ public abstract class TieredCableBlock<T extends TieredBlockEntity<N>, N extends
     protected TieredCableBlock(ContentType<? extends TieredCableBlock<T, N>, T, ?, N> contentType, CableTier tier) {
         super(BlockUtils.DEFAULT_GLASS_PROPERTIES);
         this.contentType = contentType;
-        this.tier = tier;
+        this.tier        = tier;
     }
 
     public ContentType<? extends TieredCableBlock<T, N>, T, ?, N> getContentType() {

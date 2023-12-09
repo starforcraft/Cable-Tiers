@@ -13,7 +13,7 @@ public class TieredFilterSlot extends FilterSlot {
 
     public TieredFilterSlot(CableTier tier, IItemHandler handler, int inventoryIndex, int x, int y, int flags) {
         super(handler, inventoryIndex, x, y, flags);
-        this.tier = tier;
+        this.tier           = tier;
         this.inventoryIndex = inventoryIndex;
     }
 

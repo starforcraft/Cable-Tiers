@@ -62,10 +62,10 @@ public class ContentType<B extends BaseBlock, T extends TieredBlockEntity<N>, C 
     private final NetworkNodeFactory<N> networkNodeFactory;
 
     private ContentType(String name, Function<CableTier, B> blockFactory, BlockEntityFactory<T> blockEntityFactory, MenuFactory<T, C> containerFactory, NetworkNodeFactory<N> networkNodeFactory) {
-        this.name = name;
-        this.blockFactory = blockFactory;
+        this.name               = name;
+        this.blockFactory       = blockFactory;
         this.blockEntityFactory = blockEntityFactory;
-        this.containerFactory = containerFactory;
+        this.containerFactory   = containerFactory;
         this.networkNodeFactory = networkNodeFactory;
     }
 

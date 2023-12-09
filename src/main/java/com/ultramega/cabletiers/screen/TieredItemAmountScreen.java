@@ -19,9 +19,9 @@ public class TieredItemAmountScreen extends ItemAmountScreen {
 
     public TieredItemAmountScreen(CableTier tier, BaseScreen parent, Player player, int containerSlot, ItemStack stack, int maxAmount, @Nullable UnaryOperator<Screen> alternativesScreenFactory) {
         super(parent, player, containerSlot, stack, maxAmount, alternativesScreenFactory);
-        this.tier = tier;
+        this.tier          = tier;
         this.containerSlot = containerSlot;
-        this.stack = stack;
+        this.stack         = stack;
     }
 
     @Override

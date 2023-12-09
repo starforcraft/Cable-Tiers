@@ -74,7 +74,7 @@ public class TieredDestructorNetworkNode extends TieredNetworkNode<TieredDestruc
 
     public TieredDestructorNetworkNode(Level level, BlockPos pos, CableTier tier) {
         super(level, pos, ContentType.DESTRUCTOR, tier);
-        this.coverManager = new CoverManager(this);
+        this.coverManager    = new CoverManager(this);
         this.speedMultiplier = getSpeedMultiplier(3);
     }
 

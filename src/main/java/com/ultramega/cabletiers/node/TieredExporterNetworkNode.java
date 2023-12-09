@@ -77,16 +77,14 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
 
     public TieredExporterNetworkNode(Level level, BlockPos pos, CableTier tier) {
         super(level, pos, ContentType.EXPORTER, tier);
-        this.coverManager = new CoverManager(this);
+        this.coverManager    = new CoverManager(this);
         this.speedMultiplier = getSpeedMultiplier(0);
     }
 
     private UpgradeItem.Type[] getTierUpgrades() {
         return switch (getTier()) {
-            case ELITE ->
-                    new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR};
-            case ULTRA, MEGA ->
-                    new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR};
+            case ELITE -> new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.STACK, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR};
+            case ULTRA, MEGA -> new UpgradeItem.Type[]{UpgradeItem.Type.SPEED, UpgradeItem.Type.CRAFTING, UpgradeItem.Type.REGULATOR};
         };
     }
 
@@ -158,7 +156,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
 
                         if (took.isEmpty()) {
                             if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {
-                                network.getCraftingManager().request(new SlottedCraftingRequest(this, filterSlot), slot, stackSize);
+                                network.getCraftingManager().request(new SlottedCraftingRequest(this, filterSlot), slot, Math.min(slot.getCount(), stackSize));
                             }
                         } else {
                             ItemStack remainder = ItemHandlerHelper.insertItem(handler, took, true);

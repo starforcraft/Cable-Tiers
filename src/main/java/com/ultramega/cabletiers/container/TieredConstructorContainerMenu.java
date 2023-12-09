@@ -7,7 +7,6 @@ import com.ultramega.cabletiers.ContentType;
 import com.ultramega.cabletiers.blockentity.TieredConstructorBlockEntity;
 import com.ultramega.cabletiers.node.TieredConstructorNetworkNode;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 
 public class TieredConstructorContainerMenu extends TieredContainerMenu<TieredConstructorBlockEntity, TieredConstructorNetworkNode> {
     public TieredConstructorContainerMenu(int windowId, Player player, TieredConstructorBlockEntity tile) {

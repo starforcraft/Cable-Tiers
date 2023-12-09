@@ -12,9 +12,9 @@ public enum CableTier {
     private final int slotsMultiplier;
 
     CableTier(String name, double defaultSpeedMultiplier, int slotsMultiplier) {
-        this.name = name;
+        this.name                   = name;
         this.defaultSpeedMultiplier = defaultSpeedMultiplier;
-        this.slotsMultiplier = slotsMultiplier;
+        this.slotsMultiplier        = slotsMultiplier;
     }
 
     public String getName() {
