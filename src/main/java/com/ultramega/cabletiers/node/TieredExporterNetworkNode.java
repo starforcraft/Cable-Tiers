@@ -152,7 +152,8 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
                     }
 
                     if (stackSize > 0) {
-                        ItemStack took = network.extractItem(slot, stackSize, compare, Action.SIMULATE);
+                        //TODO: I don't like this temporary fix but I couldn't find a different way to solve the dupe bug
+                        ItemStack took = network.extractItem(slot, compare == 0 ? Math.min(slot.getMaxStackSize(), stackSize) : stackSize, compare, Action.SIMULATE);
 
                         if (took.isEmpty()) {
                             if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {
