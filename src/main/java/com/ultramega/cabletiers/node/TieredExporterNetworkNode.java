@@ -23,7 +23,6 @@ import com.ultramega.cabletiers.blockentity.TieredExporterBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
@@ -31,7 +30,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
-import org.jetbrains.annotations.NotNull;
 
 public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterNetworkNode> implements IComparable, IType, ICoverable {
     private static final String NBT_COMPARE = "Compare";
@@ -154,21 +152,22 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
                     }
 
                     if (stackSize > 0) {
-                        ItemStack took = network.extractItem(slot, stackSize, compare, Action.SIMULATE);
+                        //TODO: I don't like this temporary fix but I couldn't find a different way to solve the dupe bug
+                        ItemStack took = network.extractItem(slot, compare == 0 ? Math.min(slot.getMaxStackSize(), stackSize) : stackSize, compare, Action.SIMULATE);
 
                         if (took.isEmpty()) {
                             if (upgrades.hasUpgrade(UpgradeItem.Type.CRAFTING)) {
                                 network.getCraftingManager().request(new SlottedCraftingRequest(this, filterSlot), slot, Math.min(slot.getCount(), stackSize));
                             }
                         } else {
-                            ItemStack remainder = insertItem(handler, took, true);
+                            ItemStack remainder = ItemHandlerHelper.insertItem(handler, took, true);
 
                             int correctedStackSize = took.getCount() - remainder.getCount();
 
                             if (correctedStackSize > 0) {
                                 took = network.extractItem(slot, correctedStackSize, compare, Action.PERFORM);
 
-                                insertItem(handler, took, false);
+                                ItemHandlerHelper.insertItem(handler, took, false);
                             }
                         }
                     }
@@ -245,22 +244,6 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
                 filterSlot++;
             }
         }
-    }
-
-    public static ItemStack insertItem(IItemHandler dest, @NotNull ItemStack stack, boolean simulate) {
-        if (dest != null && !stack.isEmpty()) {
-            for(int i = 0; i < dest.getSlots(); ++i) {
-                if(!dest.getStackInSlot(i).isEmpty() || !ItemHandlerHelper.canItemStacksStack(dest.getStackInSlot(i), stack)) continue;
-
-                stack = dest.insertItem(i, stack, simulate);
-
-                if (stack.isEmpty()) {
-                    return ItemStack.EMPTY;
-                }
-            }
-        }
-
-        return stack;
     }
 
     @Override
