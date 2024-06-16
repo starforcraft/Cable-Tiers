@@ -250,7 +250,7 @@ public class TieredExporterNetworkNode extends TieredNetworkNode<TieredExporterN
     public static ItemStack insertItem(IItemHandler dest, @NotNull ItemStack stack, boolean simulate) {
         if (dest != null && !stack.isEmpty()) {
             for(int i = 0; i < dest.getSlots(); ++i) {
-                if(!dest.getStackInSlot(i).isEmpty() || !ItemHandlerHelper.canItemStacksStack(dest.getStackInSlot(i), stack)) continue;
+                if(!dest.getStackInSlot(i).isEmpty() && !ItemHandlerHelper.canItemStacksStack(dest.getStackInSlot(i), stack)) continue;
 
                 stack = dest.insertItem(i, stack, simulate);
 
