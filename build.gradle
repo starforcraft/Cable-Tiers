@@ -17,27 +17,6 @@ apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
-repositories {
-    maven {
-        name = 'JEI'
-        url = "https://maven.blamejared.com/"
-    }
-    maven {
-        name 'RS maven'
-        url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
-        credentials {
-            username = "anything"
-            password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
-        }
-    }
-    maven {
-        url "https://www.cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
-    }
-}
-
 version = "${mod_version}"
 group = "com.ultramega.cabletiers"
 archivesBaseName = "${modid}"
@@ -109,6 +88,27 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+repositories {
+    maven {
+        name = 'JEI'
+        url = "https://maven.blamejared.com/"
+    }
+    maven {
+        name 'RS maven'
+        url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
+        credentials {
+            username = "anything"
+            password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
+        }
+    }
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
@@ -119,6 +119,7 @@ dependencies {
     }
     implementation fg.deobf('curse.maven:rsrequestify-307788:4629977')
 
+    implementation fg.deobf('curse.maven:productivebees-377897:5381132')
     implementation fg.deobf('curse.maven:spark-361579:4587309')
     implementation fg.deobf("curse.maven:functionalstorage-556861:4613951")
     implementation fg.deobf("curse.maven:titanium-287342:4613890")
