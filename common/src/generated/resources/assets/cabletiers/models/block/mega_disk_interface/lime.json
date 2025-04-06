@@ -1,0 +1,5 @@
+{
+  "color": "lime",
+  "loader": "cabletiers:mega_disk_interface",
+  "tier": "mega"
+}

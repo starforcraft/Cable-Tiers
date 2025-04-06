@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_mega_constructors": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#cabletiers:mega_constructors"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cabletiers:coloring/brown_mega_constructor"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_mega_constructors"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cabletiers:coloring/brown_mega_constructor"
+    ]
+  }
+}

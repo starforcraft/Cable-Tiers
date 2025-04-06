@@ -1,0 +1,13 @@
+{
+  "parent": "refinedstorage:block/emissive_north_cutout",
+  "textures": {
+    "cutout": "refinedstorage:block/disk_interface/cutouts/pink",
+    "down": "cabletiers:block/disk_interface/bottom",
+    "east": "cabletiers:block/disk_interface/side",
+    "north": "cabletiers:block/disk_interface/ultra_front",
+    "particle": "cabletiers:block/disk_interface/side",
+    "south": "cabletiers:block/disk_interface/side",
+    "up": "cabletiers:block/disk_interface/top",
+    "west": "cabletiers:block/disk_interface/side"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "cabletiers:item/constructor/ultra_base",
+  "textures": {
+    "cable": "refinedstorage:block/cable/purple"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "cabletiers:item/importer/elite_base",
+  "textures": {
+    "cable": "refinedstorage:block/cable/black"
+  }
+}

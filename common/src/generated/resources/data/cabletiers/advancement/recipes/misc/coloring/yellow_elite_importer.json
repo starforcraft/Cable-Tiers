@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_elite_importers": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#cabletiers:elite_importers"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cabletiers:coloring/yellow_elite_importer"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_elite_importers"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cabletiers:coloring/yellow_elite_importer"
+    ]
+  }
+}

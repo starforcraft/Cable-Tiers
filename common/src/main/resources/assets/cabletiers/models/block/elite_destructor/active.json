@@ -1,0 +1,8 @@
+{
+  "parent": "cabletiers:block/constructor_destructor/active",
+  "textures": {
+    "border": "cabletiers:block/cable/elite_constructor_destructor",
+    "front": "refinedstorage:block/destructor/front",
+    "cutout": "refinedstorage:block/destructor/cutouts/active"
+  }
+}

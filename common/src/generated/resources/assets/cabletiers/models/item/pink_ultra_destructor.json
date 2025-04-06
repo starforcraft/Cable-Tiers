@@ -1,0 +1,6 @@
+{
+  "parent": "cabletiers:item/destructor/ultra_base",
+  "textures": {
+    "cable": "refinedstorage:block/cable/pink"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "cabletiers:item/destructor/mega_base",
+  "textures": {
+    "cable": "refinedstorage:block/cable/orange"
+  }
+}

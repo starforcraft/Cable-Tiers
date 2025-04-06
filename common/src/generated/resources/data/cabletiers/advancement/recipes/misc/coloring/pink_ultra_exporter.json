@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cabletiers:coloring/pink_ultra_exporter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_ultra_exporters": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#cabletiers:ultra_exporters"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_ultra_exporters"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cabletiers:coloring/pink_ultra_exporter"
+    ]
+  }
+}

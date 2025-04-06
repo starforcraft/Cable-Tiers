@@ -1,0 +1,6 @@
+{
+  "parent": "cabletiers:item/constructor/elite_base",
+  "textures": {
+    "cable": "refinedstorage:block/cable/yellow"
+  }
+}

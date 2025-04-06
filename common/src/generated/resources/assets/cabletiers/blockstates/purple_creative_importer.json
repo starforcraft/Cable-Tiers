@@ -1,0 +1,62 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "refinedstorage:block/cable/purple"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/creative_importer",
+        "x": 90
+      },
+      "when": {
+        "direction": "down"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/creative_importer",
+        "x": 270
+      },
+      "when": {
+        "direction": "up"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/creative_importer"
+      },
+      "when": {
+        "direction": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/creative_importer",
+        "x": 180
+      },
+      "when": {
+        "direction": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/creative_importer",
+        "y": 270
+      },
+      "when": {
+        "direction": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/creative_importer",
+        "y": 90
+      },
+      "when": {
+        "direction": "east"
+      }
+    }
+  ]
+}

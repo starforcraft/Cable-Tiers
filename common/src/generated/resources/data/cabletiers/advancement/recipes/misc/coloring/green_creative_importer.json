@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_creative_importers": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#cabletiers:creative_importers"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cabletiers:coloring/green_creative_importer"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_creative_importers"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cabletiers:coloring/green_creative_importer"
+    ]
+  }
+}

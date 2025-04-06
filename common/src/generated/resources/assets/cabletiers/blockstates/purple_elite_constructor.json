@@ -1,0 +1,127 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "refinedstorage:block/cable/purple"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/elite_constructor/active",
+        "x": 90
+      },
+      "when": {
+        "active": "true",
+        "direction": "down"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/elite_constructor/inactive",
+        "x": 90
+      },
+      "when": {
+        "active": "false",
+        "direction": "down"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/elite_constructor/active",
+        "x": 270
+      },
+      "when": {
+        "active": "true",
+        "direction": "up"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/elite_constructor/inactive",
+        "x": 270
+      },
+      "when": {
+        "active": "false",
+        "direction": "up"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/elite_constructor/active"
+      },
+      "when": {
+        "active": "true",
+        "direction": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/elite_constructor/inactive"
+      },
+      "when": {
+        "active": "false",
+        "direction": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/elite_constructor/active",
+        "x": 180
+      },
+      "when": {
+        "active": "true",
+        "direction": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/elite_constructor/inactive",
+        "x": 180
+      },
+      "when": {
+        "active": "false",
+        "direction": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/elite_constructor/active",
+        "y": 270
+      },
+      "when": {
+        "active": "true",
+        "direction": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/elite_constructor/inactive",
+        "y": 270
+      },
+      "when": {
+        "active": "false",
+        "direction": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/elite_constructor/active",
+        "y": 90
+      },
+      "when": {
+        "active": "true",
+        "direction": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "cabletiers:block/elite_constructor/inactive",
+        "y": 90
+      },
+      "when": {
+        "active": "false",
+        "direction": "east"
+      }
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "cabletiers:item/constructor/creative_base",
+  "textures": {
+    "cable": "refinedstorage:block/cable/lime"
+  }
+}

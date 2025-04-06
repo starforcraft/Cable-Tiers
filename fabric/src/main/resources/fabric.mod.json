@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "id": "cabletiers",
+  "version": "${version}",
+  "name": "Cable Tiers",
+  "description": "Cable Tiers is an addon for Refined Storage which adds better Importer, Exporter, Constructor, Destructor, Disk Manipulator, Interface.",
+  "authors": [
+    "Ultramega"
+  ],
+  "contact": {
+    "sources": "https://github.com/starforcraft/Cable-Tiers",
+    "issues": "https://github.com/starforcraft/Cable-Tiers/issues"
+  },
+  "icon": "logo.png",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.ultramega.cabletiers.fabric.ModInitializerImpl"
+    ],
+    "client": [
+      "com.ultramega.cabletiers.fabric.ClientModInitializerImpl"
+    ],
+    "refinedstorage_plugin": [
+      "com.ultramega.cabletiers.fabric.ModInitializerImpl"
+    ],
+    "modmenu": [
+      "com.ultramega.cabletiers.fabric.ModMenuApiImpl"
+    ]
+  },
+  "mixins": [
+    "cabletiers.mixins.json"
+  ],
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/WpUmcmUayN"
+      },
+      "parent": "refinedstorage"
+    }
+  },
+  "depends": {
+    "fabricloader": ">=0.14.6",
+    "fabric-api": "*",
+    "minecraft": "~1.21",
+    "refinedstorage": ">=2.0.0-beta.2",
+    "java": ">=21",
+    "cloth-config2": "*",
+    "team_reborn_energy": "*"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "cabletiers:item/importer/creative_base",
+  "textures": {
+    "cable": "refinedstorage:block/cable/magenta"
+  }
+}

@@ -1,0 +1,251 @@
+package com.ultramega.cabletiers.neoforge;
+
+import com.ultramega.cabletiers.common.AbstractModInitializer;
+import com.ultramega.cabletiers.common.CableTiers;
+import com.ultramega.cabletiers.common.Platform;
+import com.ultramega.cabletiers.common.packet.OpenAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.SetAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.UpdateAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.registry.BlockEntities;
+import com.ultramega.cabletiers.common.registry.CreativeModeTabItems;
+import com.ultramega.cabletiers.common.storage.diskinterface.AbstractTieredDiskInterfaceBlockEntity;
+import com.ultramega.cabletiers.common.utils.BlockEntityProvider;
+import com.ultramega.cabletiers.common.utils.BlockEntityProviders;
+import com.ultramega.cabletiers.common.utils.BlockEntityTypeFactory;
+import com.ultramega.cabletiers.neoforge.constructordestructor.ForgeTieredConstructorBlockEntity;
+import com.ultramega.cabletiers.neoforge.constructordestructor.ForgeTieredDestructorBlockEntity;
+import com.ultramega.cabletiers.neoforge.exporters.ForgeTieredExporterBlockEntity;
+import com.ultramega.cabletiers.neoforge.importers.ForgeTieredImporterBlockEntity;
+import com.ultramega.cabletiers.neoforge.storage.diskinterface.ForgeTieredDiskInterfaceBlockEntity;
+
+import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
+import com.refinedmods.refinedstorage.common.api.support.network.AbstractNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage.common.content.ExtendedMenuTypeFactory;
+import com.refinedmods.refinedstorage.common.content.RegistryCallback;
+import com.refinedmods.refinedstorage.common.support.packet.PacketHandler;
+import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
+import com.refinedmods.refinedstorage.neoforge.support.inventory.InsertExtractItemHandler;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.function.Supplier;
+
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.items.wrapper.RangedWrapper;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.IPayloadHandler;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.MOD_ID;
+
+@Mod(MOD_ID)
+public class ModInitializer extends AbstractModInitializer {
+    private static final BlockEntityProviders BLOCK_ENTITY_PROVIDERS = new BlockEntityProviders(
+        ForgeTieredImporterBlockEntity::new,
+        ForgeTieredExporterBlockEntity::new,
+        ForgeTieredDestructorBlockEntity::new,
+        ForgeTieredConstructorBlockEntity::new,
+        ForgeTieredDiskInterfaceBlockEntity::new
+    );
+
+    private final DeferredRegister<Item> itemRegistry = DeferredRegister.create(BuiltInRegistries.ITEM, MOD_ID);
+    private final DeferredRegister<Block> blockRegistry = DeferredRegister.create(BuiltInRegistries.BLOCK, MOD_ID);
+    private final DeferredRegister<BlockEntityType<?>> blockEntityTypeRegistry = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, MOD_ID);
+    private final DeferredRegister<MenuType<?>> menuTypeRegistry = DeferredRegister.create(BuiltInRegistries.MENU, MOD_ID);
+
+    public ModInitializer(final IEventBus eventBus, final ModContainer modContainer) {
+        final ConfigImpl config = new ConfigImpl();
+        modContainer.registerConfig(ModConfig.Type.COMMON, config.getSpec());
+        Platform.setConfigProvider(() -> config);
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+            eventBus.addListener(ClientModInitializer::onClientSetup);
+            eventBus.addListener(ClientModInitializer::onRegisterCustomModels);
+            eventBus.addListener(ClientModInitializer::onRegisterMenuScreens);
+        }
+
+        eventBus.addListener(this::onCommonSetup);
+        registerContent(eventBus);
+        eventBus.addListener(this::registerCapabilities);
+        eventBus.addListener(this::registerPackets);
+        eventBus.addListener(this::registerCreativeModeTabListener);
+    }
+
+    private void registerContent(final IEventBus eventBus) {
+        registerBlocks(eventBus);
+        registerItems(eventBus);
+        registerBlockEntities(eventBus);
+        registerMenus(eventBus);
+    }
+
+    private void registerBlocks(final IEventBus eventBus) {
+        final RegistryCallback<Block> callback = new ForgeRegistryCallback<>(blockRegistry);
+        registerBlocks(callback, BLOCK_ENTITY_PROVIDERS);
+        blockRegistry.register(eventBus);
+    }
+
+    private void registerItems(final IEventBus eventBus) {
+        final RegistryCallback<Item> callback = new ForgeRegistryCallback<>(itemRegistry);
+        registerItems(callback);
+        itemRegistry.register(eventBus);
+    }
+
+    private void registerBlockEntities(final IEventBus eventBus) {
+        registerBlockEntities(
+            new ForgeRegistryCallback<>(blockEntityTypeRegistry),
+            new BlockEntityTypeFactory() {
+                @SuppressWarnings("DataFlowIssue") // data type can be null
+                @Override
+                public <T extends BlockEntity> BlockEntityType<T> create(final CableTiers tier,
+                                                                         final BlockEntityProvider<T> factory,
+                                                                         final Block... allowedBlocks) {
+                    return new BlockEntityType<>((pos, state) -> factory.create(tier, pos, state), new HashSet<>(Arrays.asList(allowedBlocks)), null);
+                }
+            },
+            BLOCK_ENTITY_PROVIDERS
+        );
+        blockEntityTypeRegistry.register(eventBus);
+    }
+
+    private void registerMenus(final IEventBus eventBus) {
+        registerMenus(new ForgeRegistryCallback<>(menuTypeRegistry), new ExtendedMenuTypeFactory() {
+            @Override
+            public <T extends AbstractContainerMenu, D> MenuType<T> create(final MenuSupplier<T, D> supplier,
+                                                                           final StreamCodec<RegistryFriendlyByteBuf, D> streamCodec) {
+                return IMenuTypeExtension.create((syncId, inventory, buf) -> {
+                    final D data = streamCodec.decode(buf);
+                    return supplier.create(syncId, inventory, data);
+                });
+            }
+        });
+        menuTypeRegistry.register(eventBus);
+    }
+
+    private void onCommonSetup(final FMLCommonSetupEvent e) {
+        registerUpgradeMappings();
+    }
+
+    private void registerCapabilities(final RegisterCapabilitiesEvent event) {
+        for (final CableTiers tier : CableTiers.values()) {
+            registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredImporters(tier));
+            registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredExporters(tier));
+            registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredDestructors(tier));
+            registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredConstructors(tier));
+            registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredDiskInterfaces(tier));
+
+            event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                BlockEntities.INSTANCE.getTieredDiskInterfaces(tier),
+                (be, side) -> {
+                    final InvWrapper wrapper = new InvWrapper(be.getDiskInventory());
+                    return new InsertExtractItemHandler(
+                        new RangedWrapper(
+                            wrapper,
+                            0,
+                            AbstractTieredDiskInterfaceBlockEntity.AMOUNT_OF_DISKS / 2
+                        ),
+                        new RangedWrapper(
+                            wrapper,
+                            AbstractTieredDiskInterfaceBlockEntity.AMOUNT_OF_DISKS / 2,
+                            AbstractTieredDiskInterfaceBlockEntity.AMOUNT_OF_DISKS
+                        )
+                    );
+                }
+            );
+        }
+    }
+
+    private void registerNetworkNodeContainerProvider(
+        final RegisterCapabilitiesEvent event,
+        final BlockEntityType<? extends AbstractNetworkNodeContainerBlockEntity<?>> type
+    ) {
+        event.registerBlockEntity(
+            RefinedStorageNeoForgeApi.INSTANCE.getNetworkNodeContainerProviderCapability(),
+            type,
+            (be, side) -> be.getContainerProvider()
+        );
+    }
+
+    private void registerPackets(final RegisterPayloadHandlersEvent event) {
+        final PayloadRegistrar registrar = event.registrar(MOD_ID);
+        registerServerToClientPackets(registrar);
+        registerClientToServerPackets(registrar);
+    }
+
+    private static void registerServerToClientPackets(final PayloadRegistrar registrar) {
+        registrar.playToClient(
+            OpenAdvancedFilterPacket.PACKET_TYPE,
+            OpenAdvancedFilterPacket.STREAM_CODEC,
+            wrapHandler(OpenAdvancedFilterPacket::handle)
+        );
+        registrar.playToClient(
+            UpdateAdvancedFilterPacket.PACKET_TYPE,
+            UpdateAdvancedFilterPacket.STREAM_CODEC,
+            wrapHandler(UpdateAdvancedFilterPacket::handle)
+        );
+    }
+
+    private static void registerClientToServerPackets(final PayloadRegistrar registrar) {
+        registrar.playToServer(
+            SetAdvancedFilterPacket.PACKET_TYPE,
+            SetAdvancedFilterPacket.STREAM_CODEC,
+            wrapHandler(SetAdvancedFilterPacket::handle)
+        );
+    }
+
+    private static <T extends CustomPacketPayload> IPayloadHandler<T> wrapHandler(final PacketHandler<T> handler) {
+        return (packet, ctx) -> handler.handle(packet, ctx::player);
+    }
+
+    private void registerCreativeModeTabListener(final BuildCreativeModeTabContentsEvent e) {
+        final ResourceKey<CreativeModeTab> creativeModeTab = ResourceKey.create(
+            Registries.CREATIVE_MODE_TAB,
+            RefinedStorageApi.INSTANCE.getCreativeModeTabId()
+        );
+        final ResourceKey<CreativeModeTab> coloredCreativeModeTab = ResourceKey.create(
+            Registries.CREATIVE_MODE_TAB,
+            RefinedStorageApi.INSTANCE.getColoredCreativeModeTabId()
+        );
+
+        if (e.getTabKey().equals(creativeModeTab)) {
+            CreativeModeTabItems.appendBlocks(e::accept);
+        } else if (e.getTabKey().equals(coloredCreativeModeTab)) {
+            CreativeModeTabItems.appendColoredVariants(e::accept);
+        }
+    }
+
+    private record ForgeRegistryCallback<T>(DeferredRegister<T> registry) implements RegistryCallback<T> {
+        @Override
+        public <R extends T> Supplier<R> register(final ResourceLocation id, final Supplier<R> value) {
+            return registry.register(id.getPath(), value);
+        }
+    }
+}

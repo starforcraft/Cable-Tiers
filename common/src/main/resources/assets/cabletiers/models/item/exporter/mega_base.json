@@ -1,0 +1,6 @@
+{
+  "parent": "cabletiers:item/exporter/elite_base",
+  "textures": {
+    "border": "cabletiers:block/cable/mega_part_border"
+  }
+}

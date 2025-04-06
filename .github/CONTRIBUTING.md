@@ -18,6 +18,13 @@
 
 * Opening curly braces `{` at the end of the same line as the statement/condition.
 
+* We use [Checkstyle](https://checkstyle.sourceforge.io/) in our build workflow to validate coding style.
+It is recommended to import the [config/checkstyle/checkstyle.xml](../config/checkstyle/checkstyle.xml)
+or [config/intellij-code-style.xml](../config/intellij-code-style.xml) file into your
+IDE, so that formatting rules are respected.
+Moreover, the [CheckStyle-IDEA plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea) can be used to check
+if there are no style violations.
+
 ## General guidelines
 
 * Don't force a programming style. Use object-oriented, functional, data oriented, etc., where it's suitable.

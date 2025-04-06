@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[2,)"
+issueTrackerURL = "https://github.com/starforcraft/Cable-Tiers/issues"
+license = "MIT"
+[[mods]]
+modId = "cabletiers"
+version = "${version}"
+displayName = "Cable Tiers"
+displayURL = "https://www.curseforge.com/minecraft/mc-mods/cable-tiers"
+logoFile="logo.png"
+authors = "Ultramega"
+description = "Cable Tiers is an addon for Refined Storage which adds better Importer, Exporter, Constructor, Destructor, Disk Manipulator, Interface."
+
+[[mixins]]
+config="cabletiers.mixins.json"
+
+[[dependencies.cabletiers]]
+modId="minecraft"
+type="required"
+versionRange="[1.21,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.cabletiers]]
+modId = "refinedstorage"
+type = "required"
+versionRange = "2.0.0-beta.2"
+side = "BOTH"

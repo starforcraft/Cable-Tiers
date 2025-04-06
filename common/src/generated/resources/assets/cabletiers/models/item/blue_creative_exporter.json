@@ -1,0 +1,6 @@
+{
+  "parent": "cabletiers:item/exporter/creative_base",
+  "textures": {
+    "cable": "refinedstorage:block/cable/blue"
+  }
+}

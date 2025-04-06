@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_creative_constructors": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#cabletiers:creative_constructors"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cabletiers:coloring/gray_creative_constructor"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_creative_constructors"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cabletiers:coloring/gray_creative_constructor"
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "cabletiers:item/constructor/elite_base",
+  "textures": {
+    "border": "cabletiers:block/cable/ultra_constructor_destructor"
+  }
+}

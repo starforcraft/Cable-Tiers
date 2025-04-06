@@ -14,6 +14,8 @@ Ultra: 27 more filter slots, 5x faster, stack upgrade integrated
 
 Mega: 45 more filter slots, 6.5x faster, stack upgrade integrated
 
+Creative: 45 more filter slots, 15000x faster, stack and speed upgrade integrated
+
 ## Contributions
 If you would like to contribute to the mod feel free to submit a PR. 
 

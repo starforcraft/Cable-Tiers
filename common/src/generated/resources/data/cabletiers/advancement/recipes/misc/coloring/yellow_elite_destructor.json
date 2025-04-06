@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_elite_destructors": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#cabletiers:elite_destructors"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cabletiers:coloring/yellow_elite_destructor"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_elite_destructors"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cabletiers:coloring/yellow_elite_destructor"
+    ]
+  }
+}
