@@ -1,7 +1,7 @@
 <div align="center">
   <img width="200" alt="Cable Tiers logo" src="https://raw.githubusercontent.com/starforcraft/Cable-Tiers/main/.github/logo.png" />
   <h1 style="margin-top: 0">Cable Tiers</h1>
-  <p>Cable Tiers is a Minecraft mod which adds better Importer, Exporter, Constructor, Destructor, Disk Manipulator, Interface, Requester from <a href="https://legacy.curseforge.com/minecraft/mc-mods/refined-storage">Refined Storage</a> and <a href="https://www.curseforge.com/minecraft/mc-mods/rs-requestify">RSRequestify</a>.</p>
+  <p>Cable Tiers is a Minecraft mod which adds better Importer, Exporter, Constructor, Destructor, Disk Interface from <a href="https://legacy.curseforge.com/minecraft/mc-mods/refined-storage">Refined Storage</a> and <a href="https://www.curseforge.com/minecraft/mc-mods/rs-requestify">RSRequestify</a>.</p>
 
 [![Downloads on CurseForge](http://cf.way2muchnoise.eu/full_454382_downloads.svg)](http://minecraft.curseforge.com/projects/cable-tiers) [![Discord](https://img.shields.io/discord/818034132067024937)](https://discord.gg/WpUmcmUayN) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 </div>
