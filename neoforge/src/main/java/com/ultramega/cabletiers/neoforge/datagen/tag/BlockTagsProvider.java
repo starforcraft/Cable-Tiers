@@ -1,6 +1,7 @@
 package com.ultramega.cabletiers.neoforge.datagen.tag;
 
 import com.ultramega.cabletiers.common.CableTiers;
+import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.registry.Blocks;
 
 import com.refinedmods.refinedstorage.common.content.BlockColorMap;
@@ -13,7 +14,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -33,18 +33,23 @@ public class BlockTagsProvider extends TagsProvider<Block> {
     @Override
     protected void addTags(final HolderLookup.Provider provider) {
         for (final CableTiers tier : CableTiers.values()) {
-            markAsMineable(Blocks.INSTANCE.getTieredImporters(tier));
-            markAsMineable(Blocks.INSTANCE.getTieredExporters(tier));
-            markAsMineable(Blocks.INSTANCE.getTieredDestructors(tier));
-            markAsMineable(Blocks.INSTANCE.getTieredConstructors(tier));
-            markAsMineable(Blocks.INSTANCE.getTieredDiskInterfaces(tier));
+            addAllToTag(tier.getBlockTag(CableType.IMPORTER), Blocks.INSTANCE.getTieredImporters(tier));
+            addAllToTag(tier.getBlockTag(CableType.EXPORTER), Blocks.INSTANCE.getTieredExporters(tier));
+            addAllToTag(tier.getBlockTag(CableType.DESTRUCTOR), Blocks.INSTANCE.getTieredDestructors(tier));
+            addAllToTag(tier.getBlockTag(CableType.CONSTRUCTOR), Blocks.INSTANCE.getTieredConstructors(tier));
+            addAllToTag(tier.getBlockTag(CableType.DISK_INTERFACE), Blocks.INSTANCE.getTieredDiskInterfaces(tier));
+        }
+
+        for (final CableType type : CableType.values()) {
+            for (final CableTiers tier : CableTiers.values()) {
+                tag(MINEABLE).addTag(tier.getBlockTag(type));
+            }
         }
     }
 
-    private void markAsMineable(final BlockColorMap<?, ?> map) {
-        tag(MINEABLE).addAll(map.values().stream().map(b -> ResourceKey.create(
-            Registries.BLOCK,
-            BuiltInRegistries.BLOCK.getKey(b)
-        )).toList());
+    private <T extends Block> void addAllToTag(final TagKey<Block> t, final BlockColorMap<?, ?> blocks) {
+        for (final Block block : blocks.toArray()) {
+            tag(t).add(BuiltInRegistries.BLOCK.getResourceKey(block).orElseThrow()).replace(false);
+        }
     }
 }

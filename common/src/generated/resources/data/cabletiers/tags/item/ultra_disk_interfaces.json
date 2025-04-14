@@ -1,0 +1,20 @@
+{
+  "values": [
+    "cabletiers:white_ultra_disk_interface",
+    "cabletiers:orange_ultra_disk_interface",
+    "cabletiers:magenta_ultra_disk_interface",
+    "cabletiers:light_blue_ultra_disk_interface",
+    "cabletiers:yellow_ultra_disk_interface",
+    "cabletiers:lime_ultra_disk_interface",
+    "cabletiers:pink_ultra_disk_interface",
+    "cabletiers:ultra_disk_interface",
+    "cabletiers:light_gray_ultra_disk_interface",
+    "cabletiers:cyan_ultra_disk_interface",
+    "cabletiers:purple_ultra_disk_interface",
+    "cabletiers:blue_ultra_disk_interface",
+    "cabletiers:brown_ultra_disk_interface",
+    "cabletiers:green_ultra_disk_interface",
+    "cabletiers:red_ultra_disk_interface",
+    "cabletiers:black_ultra_disk_interface"
+  ]
+}

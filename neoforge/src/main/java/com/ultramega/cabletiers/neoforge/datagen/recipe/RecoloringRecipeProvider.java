@@ -29,19 +29,19 @@ public class RecoloringRecipeProvider extends RecipeProvider {
     protected void buildRecipes(final RecipeOutput output) {
         for (final CableTiers tier : CableTiers.values()) {
             Blocks.INSTANCE.getTieredImporters(tier).forEach((color, id, block) ->
-                recipe(tier.getTag(CableType.IMPORTER), block.get().asItem(), color)
+                recipe(tier.getItemTag(CableType.IMPORTER), block.get().asItem(), color)
                     .save(output, recipeId(color, tier.toString().toLowerCase() + "_importer")));
             Blocks.INSTANCE.getTieredExporters(tier).forEach((color, id, block) ->
-                recipe(tier.getTag(CableType.EXPORTER), block.get().asItem(), color)
+                recipe(tier.getItemTag(CableType.EXPORTER), block.get().asItem(), color)
                     .save(output, recipeId(color, tier.toString().toLowerCase() + "_exporter")));
             Blocks.INSTANCE.getTieredDestructors(tier).forEach((color, id, block) ->
-                recipe(tier.getTag(CableType.DESTRUCTOR), block.get().asItem(), color)
+                recipe(tier.getItemTag(CableType.DESTRUCTOR), block.get().asItem(), color)
                     .save(output, recipeId(color, tier.toString().toLowerCase() + "_destructor")));
             Blocks.INSTANCE.getTieredConstructors(tier).forEach((color, id, block) ->
-                recipe(tier.getTag(CableType.CONSTRUCTOR), block.get().asItem(), color)
+                recipe(tier.getItemTag(CableType.CONSTRUCTOR), block.get().asItem(), color)
                     .save(output, recipeId(color, tier.toString().toLowerCase() + "_constructor")));
             Blocks.INSTANCE.getTieredDiskInterfaces(tier).forEach((color, id, block) ->
-                recipe(tier.getTag(CableType.CONSTRUCTOR), block.get().asItem(), color)
+                recipe(tier.getItemTag(CableType.DISK_INTERFACE), block.get().asItem(), color)
                     .save(output, recipeId(color, tier.toString().toLowerCase() + "_disk_interface")));
         }
     }

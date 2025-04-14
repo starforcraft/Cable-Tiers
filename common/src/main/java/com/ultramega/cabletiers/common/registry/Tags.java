@@ -6,33 +6,45 @@ import com.ultramega.cabletiers.common.CableType;
 import java.util.EnumMap;
 import java.util.Map;
 
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersIdentifier;
 
 public final class Tags {
-    private static final Map<CableTiers, Map<CableType, TagKey<Item>>> CONTENT_MAP = new EnumMap<>(CableTiers.class);
+    private static final Map<CableTiers, Map<CableType, TagKey<Item>>> CONTENT_MAP_ITEMS = new EnumMap<>(CableTiers.class);
+    private static final Map<CableTiers, Map<CableType, TagKey<Block>>> CONTENT_MAP_BLOCKS = new EnumMap<>(CableTiers.class);
 
     private Tags() {
     }
 
-    public static TagKey<Item> getTag(final CableTiers tier, final CableType type) {
-        return CONTENT_MAP.getOrDefault(tier, Map.of()).get(type);
+    public static TagKey<Item> getItemTag(final CableTiers tier, final CableType type) {
+        return CONTENT_MAP_ITEMS.getOrDefault(tier, Map.of()).get(type);
     }
 
-    private static TagKey<Item> createTag(final String id) {
-        return TagKey.create(Registries.ITEM, createCableTiersIdentifier(id));
+    public static TagKey<Block> getBlockTag(final CableTiers tier, final CableType type) {
+        return CONTENT_MAP_BLOCKS.getOrDefault(tier, Map.of()).get(type);
+    }
+
+    private static <T> TagKey<T> createTag(final ResourceKey<? extends Registry<T>> registry, final String id) {
+        return TagKey.create(registry, createCableTiersIdentifier(id));
     }
 
     static {
         for (final CableTiers tier : CableTiers.values()) {
-            final Map<CableType, TagKey<Item>> map = new EnumMap<>(CableType.class);
+            final Map<CableType, TagKey<Item>> itemsMap = new EnumMap<>(CableType.class);
+            final Map<CableType, TagKey<Block>> blocksMap = new EnumMap<>(CableType.class);
             for (final CableType type : CableType.values()) {
-                map.put(type, createTag(tier.name().toLowerCase() + "_" + type.name().toLowerCase() + "s"));
+                final String id = tier.name().toLowerCase() + "_" + type.name().toLowerCase() + "s";
+                itemsMap.put(type, createTag(Registries.ITEM, id));
+                blocksMap.put(type, createTag(Registries.BLOCK, id));
             }
-            CONTENT_MAP.put(tier, map);
+            CONTENT_MAP_ITEMS.put(tier, itemsMap);
+            CONTENT_MAP_BLOCKS.put(tier, blocksMap);
         }
     }
 }

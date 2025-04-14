@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_mega_constructors": {
+    "has_mega_disk_interfaces": {
       "conditions": {
         "items": [
           {
-            "items": "#cabletiers:mega_constructors"
+            "items": "#cabletiers:mega_disk_interfaces"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_mega_constructors"
+      "has_mega_disk_interfaces"
     ]
   ],
   "rewards": {

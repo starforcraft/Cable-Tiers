@@ -30,23 +30,23 @@ public class ItemTagsProviderImpl extends ItemTagsProvider {
     @Override
     protected void addTags(final HolderLookup.Provider provider) {
         for (final CableTiers tier : CableTiers.values()) {
-            addAllToTag(tier.getTag(CableType.IMPORTER),
+            addAllToTag(tier.getItemTag(CableType.IMPORTER),
                 Blocks.INSTANCE.getTieredImporters(tier).values().stream()
                     .map(block -> (Supplier<Item>) block::asItem)
                     .toList());
-            addAllToTag(tier.getTag(CableType.EXPORTER),
+            addAllToTag(tier.getItemTag(CableType.EXPORTER),
                 Blocks.INSTANCE.getTieredExporters(tier).values().stream()
                     .map(block -> (Supplier<Item>) block::asItem)
                     .toList());
-            addAllToTag(tier.getTag(CableType.DESTRUCTOR),
+            addAllToTag(tier.getItemTag(CableType.DESTRUCTOR),
                 Blocks.INSTANCE.getTieredDestructors(tier).values().stream()
                     .map(block -> (Supplier<Item>) block::asItem)
                     .toList());
-            addAllToTag(tier.getTag(CableType.CONSTRUCTOR),
+            addAllToTag(tier.getItemTag(CableType.CONSTRUCTOR),
                 Blocks.INSTANCE.getTieredConstructors(tier).values().stream()
                     .map(block -> (Supplier<Item>) block::asItem)
                     .toList());
-            addAllToTag(tier.getTag(CableType.CONSTRUCTOR),
+            addAllToTag(tier.getItemTag(CableType.DISK_INTERFACE),
                 Blocks.INSTANCE.getTieredDiskInterfaces(tier).values().stream()
                     .map(block -> (Supplier<Item>) block::asItem)
                     .toList());

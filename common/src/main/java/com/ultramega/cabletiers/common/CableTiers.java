@@ -11,6 +11,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 
 public enum CableTiers {
     ELITE(18, 73),
@@ -35,8 +36,12 @@ public enum CableTiers {
         return ContentNames.getContentName(this, type);
     }
 
-    public TagKey<Item> getTag(final CableType type) {
-        return Tags.getTag(this, type);
+    public TagKey<Item> getItemTag(final CableType type) {
+        return Tags.getItemTag(this, type);
+    }
+
+    public TagKey<Block> getBlockTag(final CableType type) {
+        return Tags.getBlockTag(this, type);
     }
 
     public int getSpeed(final CableType type) {

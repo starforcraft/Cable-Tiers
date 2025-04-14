@@ -64,7 +64,7 @@ public class AbstractTieredDestructorBlockEntity extends AbstractTieredCableLike
             if (level instanceof ServerLevel serverLevel) {
                 initialize(serverLevel);
             }
-        }, Math.max(1, 20 - tier.getSpeed(CableType.CONSTRUCTOR))) {
+        }, Math.max(1, 20 - tier.getSpeed(CableType.DESTRUCTOR))) {
             @Override
             public int getAmount(final UpgradeItem upgradeItem) {
                 if (tier == CableTiers.CREATIVE && upgradeItem == Items.INSTANCE.getSpeedUpgrade()) {
