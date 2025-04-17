@@ -1,6 +1,6 @@
 package com.ultramega.cabletiers.common.advancedfilter;
 
-import com.ultramega.cabletiers.common.packet.SetAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.c2s.SetAdvancedFilterPacket;
 
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;

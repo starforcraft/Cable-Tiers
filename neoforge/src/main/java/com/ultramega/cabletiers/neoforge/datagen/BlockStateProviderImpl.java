@@ -5,6 +5,7 @@ import com.ultramega.cabletiers.common.registry.Blocks;
 
 import com.refinedmods.refinedstorage.common.constructordestructor.AbstractConstructorDestructorBlock;
 import com.refinedmods.refinedstorage.common.content.BlockColorMap;
+import com.refinedmods.refinedstorage.common.support.AbstractActiveColoredDirectionalBlock;
 import com.refinedmods.refinedstorage.common.support.direction.DefaultDirectionType;
 
 import net.minecraft.core.Direction;
@@ -39,6 +40,7 @@ public class BlockStateProviderImpl extends BlockStateProvider {
             registerConstructorDestructor(Blocks.INSTANCE.getTieredDestructors(tier), tier.toString().toLowerCase() + "_destructor");
             registerConstructorDestructor(Blocks.INSTANCE.getTieredConstructors(tier), tier.toString().toLowerCase() + "_constructor");
             registerDiskInterfaces(tier, tier.toString().toLowerCase() + "_disk_interface");
+            registerAutocrafters(tier, tier.toString().toLowerCase() + "_autocrafter");
         }
     }
 
@@ -93,6 +95,25 @@ public class BlockStateProviderImpl extends BlockStateProvider {
         });
     }
 
+    private void registerAutocrafters(final CableTiers tier, final String name) {
+        final ModelFile inactive = modelFile(createCableTiersIdentifier(BLOCK_PREFIX + "/" + name + "/inactive"));
+        Blocks.INSTANCE.getTieredAutocrafters(tier).forEach((color, id, block) -> {
+            final ModelFile active = modelFile(createCableTiersIdentifier(BLOCK_PREFIX + "/" + name + "/" + color.getName()));
+            final var builder = getVariantBuilder(block.get());
+            builder.forAllStates(blockState -> {
+                final ConfiguredModel.Builder<?> model = ConfiguredModel.builder();
+                if (Boolean.TRUE.equals(blockState.getValue(AbstractActiveColoredDirectionalBlock.ACTIVE))) {
+                    model.modelFile(active);
+                } else {
+                    model.modelFile(inactive);
+                }
+                final Direction direction = blockState.getValue(DefaultDirectionType.FACE_CLICKED.getProperty());
+                addAutocrafterRotation(model, direction);
+                return model.build();
+            });
+        });
+    }
+
     private static void addDirectionalRotation(final Direction direction,
                                                final ConfiguredModel.Builder<MultiPartBlockStateBuilder.PartBuilder> part) {
         switch (direction) {
@@ -105,6 +126,15 @@ public class BlockStateProviderImpl extends BlockStateProvider {
                 // do nothing
             }
         }
+    }
+
+    private void addAutocrafterRotation(final ConfiguredModel.Builder<?> model, final Direction direction) {
+        if (direction.getAxis().isHorizontal()) {
+            model.rotationX(90);
+        } else if (direction == Direction.DOWN) {
+            model.rotationX(180);
+        }
+        model.rotationY(direction.getAxis().isVertical() ? 0 : (((int) direction.toYRot()) + 180) % 360);
     }
 
     private ModelFile getCableModel(final DyeColor color) {

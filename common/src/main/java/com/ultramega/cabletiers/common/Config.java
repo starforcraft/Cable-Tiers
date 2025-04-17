@@ -11,6 +11,8 @@ public interface Config {
 
     SimpleTieredStackEntry getTieredDiskInterfaces();
 
+    SimpleTieredEntry getTieredAutocrafters();
+
     interface SimpleTieredStackEntry extends SimpleTieredEntry {
         boolean hasStackUpgradeIntegrated(CableTiers tier);
     }

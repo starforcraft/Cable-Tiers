@@ -28,6 +28,9 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
     @ConfigEntry.Gui.CollapsibleObject
     private SimpleTieredStackEntryImpl tieredDiskInterfaces = new SimpleTieredStackEntryImpl(CableType.DISK_INTERFACE);
 
+    @ConfigEntry.Gui.CollapsibleObject
+    private SimpleTieredEntryImpl tieredAutocrafters = new SimpleTieredEntryImpl(CableType.AUTOCRAFTER);
+
     public static ConfigImpl get() {
         return AutoConfig.getConfigHolder(ConfigImpl.class).getConfig();
     }
@@ -55,6 +58,11 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
     @Override
     public SimpleTieredStackEntry getTieredDiskInterfaces() {
         return tieredDiskInterfaces;
+    }
+
+    @Override
+    public SimpleTieredEntry getTieredAutocrafters() {
+        return tieredAutocrafters;
     }
 
     private static class SimpleTieredStackEntryImpl implements SimpleTieredStackEntry {

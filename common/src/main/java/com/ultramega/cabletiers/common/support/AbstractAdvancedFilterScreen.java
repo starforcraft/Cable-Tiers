@@ -62,6 +62,10 @@ public class AbstractAdvancedFilterScreen<T extends AbstractTieredFilterContaine
 
     @Override
     protected ResourceLocation getTexture() {
+        return getTexture(tier);
+    }
+
+    public static ResourceLocation getTexture(final CableTiers tier) {
         return switch (tier) {
             case ELITE -> ELITE_TEXTURE;
             case ULTRA -> ULTRA_TEXTURE;

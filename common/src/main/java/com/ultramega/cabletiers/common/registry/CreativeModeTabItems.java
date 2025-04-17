@@ -19,6 +19,7 @@ public final class CreativeModeTabItems {
             appendDefaultBlockColor(consumer, Blocks.INSTANCE.getTieredDestructors(tier));
             appendDefaultBlockColor(consumer, Blocks.INSTANCE.getTieredConstructors(tier));
             appendDefaultBlockColor(consumer, Blocks.INSTANCE.getTieredDiskInterfaces(tier));
+            appendDefaultBlockColor(consumer, Blocks.INSTANCE.getTieredAutocrafters(tier));
         }
     }
 
@@ -33,6 +34,7 @@ public final class CreativeModeTabItems {
             appendColoredBlocks(consumer, Blocks.INSTANCE.getTieredDestructors(tier));
             appendColoredBlocks(consumer, Blocks.INSTANCE.getTieredConstructors(tier));
             appendColoredBlocks(consumer, Blocks.INSTANCE.getTieredDiskInterfaces(tier));
+            appendColoredBlocks(consumer, Blocks.INSTANCE.getTieredAutocrafters(tier));
         }
     }
 

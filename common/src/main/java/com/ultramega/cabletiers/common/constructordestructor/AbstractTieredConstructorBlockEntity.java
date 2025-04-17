@@ -5,7 +5,7 @@ import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.TieredUpgradeDestinations;
 import com.ultramega.cabletiers.common.advancedfilter.AdvancedResourceContainerImpl;
 import com.ultramega.cabletiers.common.advancedfilter.TagFilterWithFuzzyMode;
-import com.ultramega.cabletiers.common.exporters.TieredExportingIndicators;
+import com.ultramega.cabletiers.common.exporter.TieredExportingIndicators;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.support.AbstractTieredCableLikeBlockEntity;
 

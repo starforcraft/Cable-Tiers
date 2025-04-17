@@ -1,0 +1,56 @@
+{
+  "variants": {
+    "active=false,direction=down": {
+      "model": "cabletiers:block/elite_autocrafter/inactive",
+      "x": 180
+    },
+    "active=false,direction=east": {
+      "model": "cabletiers:block/elite_autocrafter/inactive",
+      "x": 90,
+      "y": 90
+    },
+    "active=false,direction=north": {
+      "model": "cabletiers:block/elite_autocrafter/inactive",
+      "x": 90
+    },
+    "active=false,direction=south": {
+      "model": "cabletiers:block/elite_autocrafter/inactive",
+      "x": 90,
+      "y": 180
+    },
+    "active=false,direction=up": {
+      "model": "cabletiers:block/elite_autocrafter/inactive"
+    },
+    "active=false,direction=west": {
+      "model": "cabletiers:block/elite_autocrafter/inactive",
+      "x": 90,
+      "y": 270
+    },
+    "active=true,direction=down": {
+      "model": "cabletiers:block/elite_autocrafter/blue",
+      "x": 180
+    },
+    "active=true,direction=east": {
+      "model": "cabletiers:block/elite_autocrafter/blue",
+      "x": 90,
+      "y": 90
+    },
+    "active=true,direction=north": {
+      "model": "cabletiers:block/elite_autocrafter/blue",
+      "x": 90
+    },
+    "active=true,direction=south": {
+      "model": "cabletiers:block/elite_autocrafter/blue",
+      "x": 90,
+      "y": 180
+    },
+    "active=true,direction=up": {
+      "model": "cabletiers:block/elite_autocrafter/blue"
+    },
+    "active=true,direction=west": {
+      "model": "cabletiers:block/elite_autocrafter/blue",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

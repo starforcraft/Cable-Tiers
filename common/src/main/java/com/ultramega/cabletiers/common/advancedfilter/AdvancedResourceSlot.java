@@ -1,6 +1,6 @@
 package com.ultramega.cabletiers.common.advancedfilter;
 
-import com.ultramega.cabletiers.common.packet.OpenAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.s2c.OpenAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.support.AbstractTieredFilterContainerMenu;
 
 import com.refinedmods.refinedstorage.common.Platform;
@@ -11,7 +11,6 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlotT
 
 import java.util.Optional;
 
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -36,7 +35,7 @@ public class AdvancedResourceSlot extends ResourceSlot {
 
     @Override
     public void change(final ItemStack stack, final boolean tryAlternatives) {
-        if (stack.isEmpty() && menu instanceof AbstractTieredFilterContainerMenu<?> containerMenu && !Screen.hasShiftDown()) {
+        if (stack.isEmpty() && menu instanceof AbstractTieredFilterContainerMenu<?> containerMenu && !player.isShiftKeyDown()) {
             if (player instanceof ServerPlayer serverPlayer) {
                 final PlatformResourceKey filterResource = resourceContainer.getResource(getContainerSlot());
 

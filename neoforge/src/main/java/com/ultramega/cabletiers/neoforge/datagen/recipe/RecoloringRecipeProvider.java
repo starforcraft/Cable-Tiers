@@ -43,6 +43,9 @@ public class RecoloringRecipeProvider extends RecipeProvider {
             Blocks.INSTANCE.getTieredDiskInterfaces(tier).forEach((color, id, block) ->
                 recipe(tier.getItemTag(CableType.DISK_INTERFACE), block.get().asItem(), color)
                     .save(output, recipeId(color, tier.toString().toLowerCase() + "_disk_interface")));
+            Blocks.INSTANCE.getTieredAutocrafters(tier).forEach((color, id, block) ->
+                recipe(tier.getItemTag(CableType.AUTOCRAFTER), block.get().asItem(), color)
+                    .save(output, recipeId(color, tier.toString().toLowerCase() + "_autocrafter")));
         }
     }
 

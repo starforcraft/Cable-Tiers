@@ -4,8 +4,8 @@ import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.constructordestructor.TieredConstructorBlock;
 import com.ultramega.cabletiers.common.constructordestructor.TieredDestructorBlock;
-import com.ultramega.cabletiers.common.exporters.TieredExporterBlock;
-import com.ultramega.cabletiers.common.importers.TieredImporterBlock;
+import com.ultramega.cabletiers.common.exporter.TieredExporterBlock;
+import com.ultramega.cabletiers.common.importer.TieredImporterBlock;
 import com.ultramega.cabletiers.common.registry.Blocks;
 import com.ultramega.cabletiers.common.utils.ContentIds;
 
@@ -36,6 +36,7 @@ public class ItemModelProviderImpl extends ItemModelProvider {
             registerTieredDestructors(tier);
             registerTieredConstructors(tier);
             registerTieredDiskInterfaces(tier);
+            registerTieredAutocrafters(tier);
         }
     }
 
@@ -74,6 +75,14 @@ public class ItemModelProviderImpl extends ItemModelProvider {
                 tier
             ) {
             }).end());
+    }
+
+    private void registerTieredAutocrafters(final CableTiers tier) {
+        final var blocks = Blocks.INSTANCE.getTieredAutocrafters(tier);
+        blocks.forEach((color, id, block) -> withExistingParent(
+            id.getPath(),
+            createCableTiersIdentifier("block/" + tier.toString().toLowerCase() + "_autocrafter/" + color.getName())
+        ));
     }
 
     private void addCableTexture(final DyeColor color,

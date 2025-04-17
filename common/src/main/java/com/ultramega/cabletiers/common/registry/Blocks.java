@@ -2,14 +2,15 @@ package com.ultramega.cabletiers.common.registry;
 
 import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.CableType;
+import com.ultramega.cabletiers.common.autocrafting.autocrafter.TieredAutocrafterBlock;
 import com.ultramega.cabletiers.common.constructordestructor.AbstractTieredConstructorBlockEntity;
 import com.ultramega.cabletiers.common.constructordestructor.AbstractTieredDestructorBlockEntity;
 import com.ultramega.cabletiers.common.constructordestructor.TieredConstructorBlock;
 import com.ultramega.cabletiers.common.constructordestructor.TieredDestructorBlock;
-import com.ultramega.cabletiers.common.exporters.AbstractTieredExporterBlockEntity;
-import com.ultramega.cabletiers.common.exporters.TieredExporterBlock;
-import com.ultramega.cabletiers.common.importers.AbstractTieredImporterBlockEntity;
-import com.ultramega.cabletiers.common.importers.TieredImporterBlock;
+import com.ultramega.cabletiers.common.exporter.AbstractTieredExporterBlockEntity;
+import com.ultramega.cabletiers.common.exporter.TieredExporterBlock;
+import com.ultramega.cabletiers.common.importer.AbstractTieredImporterBlockEntity;
+import com.ultramega.cabletiers.common.importer.TieredImporterBlock;
 import com.ultramega.cabletiers.common.storage.diskinterface.AbstractTieredDiskInterfaceBlockEntity;
 import com.ultramega.cabletiers.common.storage.diskinterface.TieredDiskInterfaceBlock;
 import com.ultramega.cabletiers.common.utils.BlockEntityProvider;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.refinedmods.refinedstorage.common.content.Blocks.CABLE_LIKE_COLOR;
+import static com.refinedmods.refinedstorage.common.content.Blocks.COLOR;
 import static java.util.Objects.requireNonNull;
 
 public final class Blocks {
@@ -31,6 +33,7 @@ public final class Blocks {
     private final Map<CableTiers, BlockColorMap<TieredDestructorBlock, BaseBlockItem>> tieredDestructors = new HashMap<>();
     private final Map<CableTiers, BlockColorMap<TieredConstructorBlock, BaseBlockItem>> tieredConstructors = new HashMap<>();
     private final Map<CableTiers, BlockColorMap<TieredDiskInterfaceBlock, BaseBlockItem>> tieredDiskInterface = new HashMap<>();
+    private final Map<CableTiers, BlockColorMap<TieredAutocrafterBlock, BaseBlockItem>> tieredAutocrafters = new HashMap<>();
 
     private Blocks() {
     }
@@ -110,7 +113,7 @@ public final class Blocks {
                 (pos, state) -> new TieredDiskInterfaceBlock(pos, state, tier, provider),
                 tier.getContentId(CableType.DISK_INTERFACE),
                 tier.getContentName(CableType.DISK_INTERFACE),
-                CABLE_LIKE_COLOR
+                COLOR
             ));
         }
         return tieredDiskInterface;
@@ -118,5 +121,21 @@ public final class Blocks {
 
     public BlockColorMap<TieredDiskInterfaceBlock, BaseBlockItem> getTieredDiskInterfaces(final CableTiers tier) {
         return requireNonNull(tieredDiskInterface.get(tier));
+    }
+
+    public Map<CableTiers, BlockColorMap<TieredAutocrafterBlock, BaseBlockItem>> setTieredAutocrafters() {
+        for (final CableTiers tier : CableTiers.values()) {
+            tieredAutocrafters.put(tier, new BlockColorMap<>(
+                (pos, state) -> new TieredAutocrafterBlock(pos, state, tier),
+                tier.getContentId(CableType.AUTOCRAFTER),
+                tier.getContentName(CableType.AUTOCRAFTER),
+                COLOR
+            ));
+        }
+        return tieredAutocrafters;
+    }
+
+    public BlockColorMap<TieredAutocrafterBlock, BaseBlockItem> getTieredAutocrafters(final CableTiers tier) {
+        return requireNonNull(tieredAutocrafters.get(tier));
     }
 }

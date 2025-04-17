@@ -17,6 +17,7 @@ public class ConfigImpl implements Config {
     private final SimpleTieredEntry tieredDestructors;
     private final SimpleTieredStackEntry tieredConstructors;
     private final SimpleTieredStackEntry tieredDiskInterfaces;
+    private final SimpleTieredEntry tieredAutocrafters;
 
     public ConfigImpl() {
         tieredImporters = new SimpleTieredStackEntryImpl("tieredImporters", CableType.IMPORTER);
@@ -24,6 +25,7 @@ public class ConfigImpl implements Config {
         tieredDestructors = new SimpleTieredEntryImpl("tieredDestructors", CableType.DESTRUCTOR, true);
         tieredConstructors = new SimpleTieredStackEntryImpl("tieredConstructors", CableType.CONSTRUCTOR);
         tieredDiskInterfaces = new SimpleTieredStackEntryImpl("tieredDiskInterfaces", CableType.DISK_INTERFACE);
+        tieredAutocrafters = new SimpleTieredEntryImpl("tieredAutocrafters", CableType.AUTOCRAFTER, true);
         spec = builder.build();
     }
 
@@ -54,6 +56,11 @@ public class ConfigImpl implements Config {
     @Override
     public SimpleTieredStackEntry getTieredDiskInterfaces() {
         return tieredDiskInterfaces;
+    }
+
+    @Override
+    public SimpleTieredEntry getTieredAutocrafters() {
+        return tieredAutocrafters;
     }
 
     private static String translationKey(final String value) {
@@ -116,16 +123,16 @@ public class ConfigImpl implements Config {
 
             eliteSpeed = builder
                 .translation(translationKey(name + ".eliteSpeed"))
-                .defineInRange("eliteSpeed", DefaultConfig.getSpeedFor(CableTiers.ELITE, type), 0, Integer.MAX_VALUE);
+                .defineInRange("eliteSpeed", DefaultConfig.getSpeedFor(CableTiers.ELITE, type), 1, Integer.MAX_VALUE);
             ultraSpeed = builder
                 .translation(translationKey(name + ".ultraSpeed"))
-                .defineInRange("ultraSpeed", DefaultConfig.getSpeedFor(CableTiers.ULTRA, type), 0, Integer.MAX_VALUE);
+                .defineInRange("ultraSpeed", DefaultConfig.getSpeedFor(CableTiers.ULTRA, type), 1, Integer.MAX_VALUE);
             megaSpeed = builder
                 .translation(translationKey(name + ".megaSpeed"))
-                .defineInRange("megaSpeed", DefaultConfig.getSpeedFor(CableTiers.MEGA, type), 0, Integer.MAX_VALUE);
+                .defineInRange("megaSpeed", DefaultConfig.getSpeedFor(CableTiers.MEGA, type), 1, Integer.MAX_VALUE);
             creativeSpeed = builder
                 .translation(translationKey(name + ".creativeSpeed"))
-                .defineInRange("creativeSpeed", DefaultConfig.getSpeedFor(CableTiers.CREATIVE, type), 0, Integer.MAX_VALUE);
+                .defineInRange("creativeSpeed", DefaultConfig.getSpeedFor(CableTiers.CREATIVE, type), 1, Integer.MAX_VALUE);
 
             if (pop) {
                 builder.pop();

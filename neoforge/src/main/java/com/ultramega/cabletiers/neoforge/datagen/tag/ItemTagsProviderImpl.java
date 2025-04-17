@@ -50,6 +50,10 @@ public class ItemTagsProviderImpl extends ItemTagsProvider {
                 Blocks.INSTANCE.getTieredDiskInterfaces(tier).values().stream()
                     .map(block -> (Supplier<Item>) block::asItem)
                     .toList());
+            addAllToTag(tier.getItemTag(CableType.AUTOCRAFTER),
+                Blocks.INSTANCE.getTieredAutocrafters(tier).values().stream()
+                    .map(block -> (Supplier<Item>) block::asItem)
+                    .toList());
         }
     }
 

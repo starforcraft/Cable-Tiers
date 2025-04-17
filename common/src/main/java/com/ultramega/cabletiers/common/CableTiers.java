@@ -51,6 +51,7 @@ public enum CableTiers {
             case DESTRUCTOR -> Platform.getConfig().getTieredDestructors().getSpeed(this);
             case CONSTRUCTOR -> Platform.getConfig().getTieredConstructors().getSpeed(this);
             case DISK_INTERFACE -> Platform.getConfig().getTieredDiskInterfaces().getSpeed(this);
+            case AUTOCRAFTER -> Platform.getConfig().getTieredAutocrafters().getSpeed(this);
         };
     }
 
@@ -71,6 +72,7 @@ public enum CableTiers {
             case DESTRUCTOR -> Platform.getConfig().getTieredDestructors().getEnergyUsage(this);
             case CONSTRUCTOR -> Platform.getConfig().getTieredConstructors().getEnergyUsage(this);
             case DISK_INTERFACE -> Platform.getConfig().getTieredDiskInterfaces().getEnergyUsage(this);
+            case AUTOCRAFTER -> Platform.getConfig().getTieredAutocrafters().getEnergyUsage(this);
         };
     }
 

@@ -2,8 +2,9 @@ package com.ultramega.cabletiers.fabric;
 
 import com.ultramega.cabletiers.common.AbstractClientModInitializer;
 import com.ultramega.cabletiers.common.CableTiers;
-import com.ultramega.cabletiers.common.packet.OpenAdvancedFilterPacket;
-import com.ultramega.cabletiers.common.packet.UpdateAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.s2c.OpenAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterNameUpdatePacket;
+import com.ultramega.cabletiers.common.packet.s2c.UpdateAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.registry.Blocks;
 import com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil;
@@ -12,6 +13,7 @@ import com.ultramega.cabletiers.fabric.storage.diskinterface.TieredDiskInterface
 
 import com.refinedmods.refinedstorage.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage.common.support.packet.PacketHandler;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocrafterLockedUpdatePacket;
 import com.refinedmods.refinedstorage.fabric.support.render.QuadRotators;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -39,6 +41,8 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         registerPacketHandlers();
         registerBlockEntityRenderers();
         registerCustomModels();
+        //TODO: registerEmissiveModels for Autocrafter and constructor/destructor
+        // Blocks.INSTANCE.getAutocrafter().forEach((color, id, block) -> registerEmissiveAutocrafterModels(color, id));
         registerScreens(new com.refinedmods.refinedstorage.common.AbstractClientModInitializer.ScreenRegistration() {
             @Override
             public <M extends AbstractContainerMenu, U extends Screen & MenuAccess<M>> void register(
@@ -56,6 +60,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             setCutout(Blocks.INSTANCE.getTieredExporters(tier));
             setCutout(Blocks.INSTANCE.getTieredDestructors(tier));
             setCutout(Blocks.INSTANCE.getTieredDiskInterfaces(tier));
+            setCutout(Blocks.INSTANCE.getTieredAutocrafters(tier));
         }
     }
 
@@ -68,14 +73,10 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
     }
 
     private void registerPacketHandlers() {
-        ClientPlayNetworking.registerGlobalReceiver(
-            OpenAdvancedFilterPacket.PACKET_TYPE,
-            wrapHandler(OpenAdvancedFilterPacket::handle)
-        );
-        ClientPlayNetworking.registerGlobalReceiver(
-            UpdateAdvancedFilterPacket.PACKET_TYPE,
-            wrapHandler(UpdateAdvancedFilterPacket::handle)
-        );
+        ClientPlayNetworking.registerGlobalReceiver(OpenAdvancedFilterPacket.PACKET_TYPE, wrapHandler(OpenAdvancedFilterPacket::handle));
+        ClientPlayNetworking.registerGlobalReceiver(UpdateAdvancedFilterPacket.PACKET_TYPE, wrapHandler(UpdateAdvancedFilterPacket::handle));
+        ClientPlayNetworking.registerGlobalReceiver(AutocrafterLockedUpdatePacket.PACKET_TYPE, wrapHandler(AutocrafterLockedUpdatePacket::handle));
+        ClientPlayNetworking.registerGlobalReceiver(TieredAutocrafterNameUpdatePacket.PACKET_TYPE, wrapHandler(TieredAutocrafterNameUpdatePacket::handle));
     }
 
     private void registerBlockEntityRenderers() {

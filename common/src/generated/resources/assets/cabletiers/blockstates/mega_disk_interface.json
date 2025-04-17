@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "cabletiers:block/mega_disk_interface/gray"
+      "model": "cabletiers:block/mega_disk_interface/light_blue"
     }
   }
 }

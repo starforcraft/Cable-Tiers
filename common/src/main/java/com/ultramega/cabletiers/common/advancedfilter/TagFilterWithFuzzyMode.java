@@ -1,6 +1,6 @@
 package com.ultramega.cabletiers.common.advancedfilter;
 
-import com.ultramega.cabletiers.common.packet.UpdateAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.s2c.UpdateAdvancedFilterPacket;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;

@@ -20,19 +20,22 @@ public final class DefaultConfig {
         USAGE_MAP.get(CableTiers.ELITE).put(CableType.EXPORTER, 4L);
         USAGE_MAP.get(CableTiers.ELITE).put(CableType.DESTRUCTOR, 5L);
         USAGE_MAP.get(CableTiers.ELITE).put(CableType.CONSTRUCTOR, 5L);
-        USAGE_MAP.get(CableTiers.ELITE).put(CableType.DISK_INTERFACE, 6L);
+        USAGE_MAP.get(CableTiers.ELITE).put(CableType.DISK_INTERFACE, 7L);
+        USAGE_MAP.get(CableTiers.ELITE).put(CableType.AUTOCRAFTER, 5L);
 
         USAGE_MAP.get(CableTiers.ULTRA).put(CableType.IMPORTER, 8L);
         USAGE_MAP.get(CableTiers.ULTRA).put(CableType.EXPORTER, 8L);
         USAGE_MAP.get(CableTiers.ULTRA).put(CableType.DESTRUCTOR, 9L);
         USAGE_MAP.get(CableTiers.ULTRA).put(CableType.CONSTRUCTOR, 9L);
-        USAGE_MAP.get(CableTiers.ULTRA).put(CableType.DISK_INTERFACE, 10L);
+        USAGE_MAP.get(CableTiers.ULTRA).put(CableType.DISK_INTERFACE, 11L);
+        USAGE_MAP.get(CableTiers.ULTRA).put(CableType.AUTOCRAFTER, 9L);
 
         USAGE_MAP.get(CableTiers.MEGA).put(CableType.IMPORTER, 16L);
         USAGE_MAP.get(CableTiers.MEGA).put(CableType.EXPORTER, 16L);
         USAGE_MAP.get(CableTiers.MEGA).put(CableType.DESTRUCTOR, 17L);
         USAGE_MAP.get(CableTiers.MEGA).put(CableType.CONSTRUCTOR, 17L);
-        USAGE_MAP.get(CableTiers.MEGA).put(CableType.DISK_INTERFACE, 18L);
+        USAGE_MAP.get(CableTiers.MEGA).put(CableType.DISK_INTERFACE, 19L);
+        USAGE_MAP.get(CableTiers.MEGA).put(CableType.AUTOCRAFTER, 17L);
 
         // speed values
         SPEED_MAP.get(CableTiers.ELITE).put(CableType.IMPORTER, 2);
@@ -40,24 +43,28 @@ public final class DefaultConfig {
         SPEED_MAP.get(CableTiers.ELITE).put(CableType.DESTRUCTOR, 2);
         SPEED_MAP.get(CableTiers.ELITE).put(CableType.CONSTRUCTOR, 2);
         SPEED_MAP.get(CableTiers.ELITE).put(CableType.DISK_INTERFACE, 2000);
+        SPEED_MAP.get(CableTiers.ELITE).put(CableType.AUTOCRAFTER, 2);
 
         SPEED_MAP.get(CableTiers.ULTRA).put(CableType.IMPORTER, 5);
         SPEED_MAP.get(CableTiers.ULTRA).put(CableType.EXPORTER, 5);
         SPEED_MAP.get(CableTiers.ULTRA).put(CableType.DESTRUCTOR, 5);
         SPEED_MAP.get(CableTiers.ULTRA).put(CableType.CONSTRUCTOR, 5);
         SPEED_MAP.get(CableTiers.ULTRA).put(CableType.DISK_INTERFACE, 5000);
+        SPEED_MAP.get(CableTiers.ULTRA).put(CableType.AUTOCRAFTER, 5);
 
         SPEED_MAP.get(CableTiers.MEGA).put(CableType.IMPORTER, 8);
         SPEED_MAP.get(CableTiers.MEGA).put(CableType.EXPORTER, 8);
         SPEED_MAP.get(CableTiers.MEGA).put(CableType.DESTRUCTOR, 8);
         SPEED_MAP.get(CableTiers.MEGA).put(CableType.CONSTRUCTOR, 8);
         SPEED_MAP.get(CableTiers.MEGA).put(CableType.DISK_INTERFACE, 8000);
+        SPEED_MAP.get(CableTiers.MEGA).put(CableType.AUTOCRAFTER, 8);
 
         SPEED_MAP.get(CableTiers.CREATIVE).put(CableType.IMPORTER, 15000);
         SPEED_MAP.get(CableTiers.CREATIVE).put(CableType.EXPORTER, 15000);
         SPEED_MAP.get(CableTiers.CREATIVE).put(CableType.DESTRUCTOR, 15000);
         SPEED_MAP.get(CableTiers.CREATIVE).put(CableType.CONSTRUCTOR, 15000);
         SPEED_MAP.get(CableTiers.CREATIVE).put(CableType.DISK_INTERFACE, 750000);
+        SPEED_MAP.get(CableTiers.CREATIVE).put(CableType.AUTOCRAFTER, 100);
 
         // stack upgrade values
         STACK_UPGRADE_MAP.get(CableTiers.ELITE).put(CableType.IMPORTER, false);

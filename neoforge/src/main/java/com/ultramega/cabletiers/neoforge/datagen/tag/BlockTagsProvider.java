@@ -38,6 +38,7 @@ public class BlockTagsProvider extends TagsProvider<Block> {
             addAllToTag(tier.getBlockTag(CableType.DESTRUCTOR), Blocks.INSTANCE.getTieredDestructors(tier));
             addAllToTag(tier.getBlockTag(CableType.CONSTRUCTOR), Blocks.INSTANCE.getTieredConstructors(tier));
             addAllToTag(tier.getBlockTag(CableType.DISK_INTERFACE), Blocks.INSTANCE.getTieredDiskInterfaces(tier));
+            addAllToTag(tier.getBlockTag(CableType.AUTOCRAFTER), Blocks.INSTANCE.getTieredAutocrafters(tier));
         }
 
         for (final CableType type : CableType.values()) {

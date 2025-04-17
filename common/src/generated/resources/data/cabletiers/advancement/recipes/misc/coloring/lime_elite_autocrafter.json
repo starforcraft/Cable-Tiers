@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_elite_autocrafters": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#cabletiers:elite_autocrafters"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cabletiers:coloring/lime_elite_autocrafter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_elite_autocrafters"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cabletiers:coloring/lime_elite_autocrafter"
+    ]
+  }
+}

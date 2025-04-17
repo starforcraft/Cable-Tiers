@@ -3,9 +3,11 @@ package com.ultramega.cabletiers.fabric;
 import com.ultramega.cabletiers.common.AbstractModInitializer;
 import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.Platform;
-import com.ultramega.cabletiers.common.packet.OpenAdvancedFilterPacket;
-import com.ultramega.cabletiers.common.packet.SetAdvancedFilterPacket;
-import com.ultramega.cabletiers.common.packet.UpdateAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.c2s.SetAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.c2s.TieredAutocrafterNameChangePacket;
+import com.ultramega.cabletiers.common.packet.s2c.OpenAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterNameUpdatePacket;
+import com.ultramega.cabletiers.common.packet.s2c.UpdateAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.registry.CreativeModeTabItems;
 import com.ultramega.cabletiers.common.storage.diskinterface.AbstractTieredDiskInterfaceBlockEntity;
@@ -14,8 +16,8 @@ import com.ultramega.cabletiers.common.utils.BlockEntityProviders;
 import com.ultramega.cabletiers.common.utils.BlockEntityTypeFactory;
 import com.ultramega.cabletiers.fabric.constructordestructor.FabricTieredConstructorBlockEntity;
 import com.ultramega.cabletiers.fabric.constructordestructor.FabricTieredDestructorBlockEntity;
-import com.ultramega.cabletiers.fabric.exporters.FabricTieredExporterBlockEntity;
-import com.ultramega.cabletiers.fabric.importers.FabricTieredImporterBlockEntity;
+import com.ultramega.cabletiers.fabric.exporter.FabricTieredExporterBlockEntity;
+import com.ultramega.cabletiers.fabric.importer.FabricTieredImporterBlockEntity;
 import com.ultramega.cabletiers.fabric.storage.diskinterface.FabricTieredDiskInterfaceBlockEntity;
 
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
@@ -23,6 +25,7 @@ import com.refinedmods.refinedstorage.common.api.support.network.AbstractNetwork
 import com.refinedmods.refinedstorage.common.content.DirectRegistryCallback;
 import com.refinedmods.refinedstorage.common.content.ExtendedMenuTypeFactory;
 import com.refinedmods.refinedstorage.common.support.packet.PacketHandler;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocrafterLockedUpdatePacket;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStorageFabricApi;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStoragePlugin;
 
@@ -109,6 +112,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
             registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredDestructors(tier));
             registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredConstructors(tier));
             registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredDiskInterfaces(tier));
+            registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredAutocrafters(tier));
 
             ItemStorage.SIDED.registerForBlockEntity((blockEntity, context) -> {
                 final InventoryStorage storage = InventoryStorage.of(blockEntity.getDiskInventory(), context);
@@ -155,20 +159,18 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
     private void registerServerToClientPackets() {
         PayloadTypeRegistry.playS2C().register(OpenAdvancedFilterPacket.PACKET_TYPE, OpenAdvancedFilterPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(UpdateAdvancedFilterPacket.PACKET_TYPE, UpdateAdvancedFilterPacket.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(AutocrafterLockedUpdatePacket.PACKET_TYPE, AutocrafterLockedUpdatePacket.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(TieredAutocrafterNameUpdatePacket.PACKET_TYPE, TieredAutocrafterNameUpdatePacket.STREAM_CODEC);
     }
 
     private void registerClientToServerPackets() {
-        PayloadTypeRegistry.playC2S().register(
-            SetAdvancedFilterPacket.PACKET_TYPE,
-            SetAdvancedFilterPacket.STREAM_CODEC
-        );
+        PayloadTypeRegistry.playC2S().register(SetAdvancedFilterPacket.PACKET_TYPE, SetAdvancedFilterPacket.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(TieredAutocrafterNameChangePacket.PACKET_TYPE, TieredAutocrafterNameChangePacket.STREAM_CODEC);
     }
 
     private void registerPacketHandlers() {
-        ServerPlayNetworking.registerGlobalReceiver(
-            SetAdvancedFilterPacket.PACKET_TYPE,
-            wrapHandler(SetAdvancedFilterPacket::handle)
-        );
+        ServerPlayNetworking.registerGlobalReceiver(SetAdvancedFilterPacket.PACKET_TYPE, wrapHandler(SetAdvancedFilterPacket::handle));
+        ServerPlayNetworking.registerGlobalReceiver(TieredAutocrafterNameChangePacket.PACKET_TYPE, wrapHandler(TieredAutocrafterNameChangePacket::handle));
     }
 
     private static <T extends CustomPacketPayload> ServerPlayNetworking.PlayPayloadHandler<T> wrapHandler(final PacketHandler<T> handler) {

@@ -3,9 +3,12 @@ package com.ultramega.cabletiers.neoforge;
 import com.ultramega.cabletiers.common.AbstractModInitializer;
 import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.Platform;
-import com.ultramega.cabletiers.common.packet.OpenAdvancedFilterPacket;
-import com.ultramega.cabletiers.common.packet.SetAdvancedFilterPacket;
-import com.ultramega.cabletiers.common.packet.UpdateAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.c2s.SetAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.c2s.TieredAutocrafterNameChangePacket;
+import com.ultramega.cabletiers.common.packet.s2c.OpenAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterLockedUpdatePacket;
+import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterNameUpdatePacket;
+import com.ultramega.cabletiers.common.packet.s2c.UpdateAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.registry.CreativeModeTabItems;
 import com.ultramega.cabletiers.common.storage.diskinterface.AbstractTieredDiskInterfaceBlockEntity;
@@ -14,8 +17,8 @@ import com.ultramega.cabletiers.common.utils.BlockEntityProviders;
 import com.ultramega.cabletiers.common.utils.BlockEntityTypeFactory;
 import com.ultramega.cabletiers.neoforge.constructordestructor.ForgeTieredConstructorBlockEntity;
 import com.ultramega.cabletiers.neoforge.constructordestructor.ForgeTieredDestructorBlockEntity;
-import com.ultramega.cabletiers.neoforge.exporters.ForgeTieredExporterBlockEntity;
-import com.ultramega.cabletiers.neoforge.importers.ForgeTieredImporterBlockEntity;
+import com.ultramega.cabletiers.neoforge.exporter.ForgeTieredExporterBlockEntity;
+import com.ultramega.cabletiers.neoforge.importer.ForgeTieredImporterBlockEntity;
 import com.ultramega.cabletiers.neoforge.storage.diskinterface.ForgeTieredDiskInterfaceBlockEntity;
 
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
@@ -160,6 +163,7 @@ public class ModInitializer extends AbstractModInitializer {
             registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredDestructors(tier));
             registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredConstructors(tier));
             registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredDiskInterfaces(tier));
+            registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredAutocrafters(tier));
 
             event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
@@ -211,6 +215,16 @@ public class ModInitializer extends AbstractModInitializer {
             UpdateAdvancedFilterPacket.STREAM_CODEC,
             wrapHandler(UpdateAdvancedFilterPacket::handle)
         );
+        registrar.playToClient(
+            TieredAutocrafterLockedUpdatePacket.PACKET_TYPE,
+            TieredAutocrafterLockedUpdatePacket.STREAM_CODEC,
+            wrapHandler(TieredAutocrafterLockedUpdatePacket::handle)
+        );
+        registrar.playToClient(
+            TieredAutocrafterNameUpdatePacket.PACKET_TYPE,
+            TieredAutocrafterNameUpdatePacket.STREAM_CODEC,
+            wrapHandler(TieredAutocrafterNameUpdatePacket::handle)
+        );
     }
 
     private static void registerClientToServerPackets(final PayloadRegistrar registrar) {
@@ -218,6 +232,11 @@ public class ModInitializer extends AbstractModInitializer {
             SetAdvancedFilterPacket.PACKET_TYPE,
             SetAdvancedFilterPacket.STREAM_CODEC,
             wrapHandler(SetAdvancedFilterPacket::handle)
+        );
+        registrar.playToServer(
+            TieredAutocrafterNameChangePacket.PACKET_TYPE,
+            TieredAutocrafterNameChangePacket.STREAM_CODEC,
+            wrapHandler(TieredAutocrafterNameChangePacket::handle)
         );
     }
 

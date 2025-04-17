@@ -5,5 +5,6 @@ public enum CableType {
     EXPORTER,
     DESTRUCTOR,
     CONSTRUCTOR,
-    DISK_INTERFACE
+    DISK_INTERFACE,
+    AUTOCRAFTER
 }

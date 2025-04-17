@@ -1,0 +1,22 @@
+{
+  "parent": "cabletiers:block/tiered_autocrafter",
+  "textures": {
+    "cutout_east_color": "cabletiers:block/autocrafter/cutouts/side_color/lime",
+    "cutout_east_tier": "cabletiers:block/autocrafter/cutouts/side_tier/mega",
+    "cutout_north_color": "cabletiers:block/autocrafter/cutouts/side_color/lime",
+    "cutout_north_tier": "cabletiers:block/autocrafter/cutouts/side_tier/mega",
+    "cutout_south_color": "cabletiers:block/autocrafter/cutouts/side_color/lime",
+    "cutout_south_tier": "cabletiers:block/autocrafter/cutouts/side_tier/mega",
+    "cutout_up_color": "cabletiers:block/autocrafter/cutouts/top_color/lime",
+    "cutout_up_tier": "cabletiers:block/autocrafter/cutouts/top_tier/mega",
+    "cutout_west_color": "cabletiers:block/autocrafter/cutouts/side_color/lime",
+    "cutout_west_tier": "cabletiers:block/autocrafter/cutouts/side_tier/mega",
+    "down": "cabletiers:block/autocrafter/bottom",
+    "east": "cabletiers:block/autocrafter/side",
+    "north": "cabletiers:block/autocrafter/side",
+    "particle": "cabletiers:block/autocrafter/side",
+    "south": "cabletiers:block/autocrafter/side",
+    "up": "cabletiers:block/autocrafter/top",
+    "west": "cabletiers:block/autocrafter/side"
+  }
+}

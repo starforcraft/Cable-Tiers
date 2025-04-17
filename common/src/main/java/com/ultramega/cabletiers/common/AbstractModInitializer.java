@@ -1,9 +1,11 @@
 package com.ultramega.cabletiers.common;
 
+import com.ultramega.cabletiers.common.autocrafting.autocrafter.TieredAutocrafterBlockEntity;
+import com.ultramega.cabletiers.common.autocrafting.autocrafter.TieredAutocrafterContainerMenu;
 import com.ultramega.cabletiers.common.constructordestructor.TieredConstructorContainerMenu;
 import com.ultramega.cabletiers.common.constructordestructor.TieredDestructorContainerMenu;
-import com.ultramega.cabletiers.common.exporters.TieredExporterContainerMenu;
-import com.ultramega.cabletiers.common.importers.TieredImporterContainerMenu;
+import com.ultramega.cabletiers.common.exporter.TieredExporterContainerMenu;
+import com.ultramega.cabletiers.common.importer.TieredImporterContainerMenu;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.registry.Blocks;
 import com.ultramega.cabletiers.common.registry.Items;
@@ -13,6 +15,7 @@ import com.ultramega.cabletiers.common.utils.BlockEntityProviders;
 import com.ultramega.cabletiers.common.utils.BlockEntityTypeFactory;
 
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
+import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterData;
 import com.refinedmods.refinedstorage.common.constructordestructor.ConstructorData;
 import com.refinedmods.refinedstorage.common.content.ExtendedMenuTypeFactory;
 import com.refinedmods.refinedstorage.common.content.RegistryCallback;
@@ -41,7 +44,10 @@ public class AbstractModInitializer {
             .forEach(constructor -> constructor.registerBlocks(callback));
         Blocks.INSTANCE.setTieredDiskInterfaces(blockEntityProviders.tieredDiskInterface())
             .values()
-            .forEach(constructor -> constructor.registerBlocks(callback));
+            .forEach(diskInterface -> diskInterface.registerBlocks(callback));
+        Blocks.INSTANCE.setTieredAutocrafters()
+            .values()
+            .forEach(autocrafter -> autocrafter.registerBlocks(callback));
     }
 
     protected void registerItems(final RegistryCallback<Item> callback) {
@@ -51,6 +57,7 @@ public class AbstractModInitializer {
             Blocks.INSTANCE.getTieredDestructors(tier).registerItems(callback, Items.INSTANCE::addTieredDestructor);
             Blocks.INSTANCE.getTieredConstructors(tier).registerItems(callback, Items.INSTANCE::addTieredConstructor);
             Blocks.INSTANCE.getTieredDiskInterfaces(tier).registerItems(callback, Items.INSTANCE::addTieredDiskInterface);
+            Blocks.INSTANCE.getTieredAutocrafters(tier).registerItems(callback, Items.INSTANCE::addTieredAutocrafters);
         }
     }
 
@@ -58,25 +65,29 @@ public class AbstractModInitializer {
                                                final BlockEntityTypeFactory typeFactory,
                                                final BlockEntityProviders providers) {
         for (final CableTiers tier : CableTiers.values()) {
-            BlockEntities.INSTANCE.addTieredImporters(tier, callback.register(
+            BlockEntities.INSTANCE.addTieredImporter(tier, callback.register(
                 tier.getContentId(CableType.IMPORTER),
                 () -> typeFactory.create(tier, providers.tieredImporter(), Blocks.INSTANCE.getTieredImporters(tier).toArray())
             ));
-            BlockEntities.INSTANCE.addTieredExporters(tier, callback.register(
+            BlockEntities.INSTANCE.addTieredExporter(tier, callback.register(
                 tier.getContentId(CableType.EXPORTER),
                 () -> typeFactory.create(tier, providers.tieredExporter(), Blocks.INSTANCE.getTieredExporters(tier).toArray())
             ));
-            BlockEntities.INSTANCE.addTieredDestructors(tier, callback.register(
+            BlockEntities.INSTANCE.addTieredDestructor(tier, callback.register(
                 tier.getContentId(CableType.DESTRUCTOR),
                 () -> typeFactory.create(tier, providers.tieredDestructor(), Blocks.INSTANCE.getTieredDestructors(tier).toArray())
             ));
-            BlockEntities.INSTANCE.addTieredConstructors(tier, callback.register(
+            BlockEntities.INSTANCE.addTieredConstructor(tier, callback.register(
                 tier.getContentId(CableType.CONSTRUCTOR),
                 () -> typeFactory.create(tier, providers.tieredConstructor(), Blocks.INSTANCE.getTieredConstructors(tier).toArray())
             ));
             BlockEntities.INSTANCE.addTieredDiskInterface(tier, callback.register(
                 tier.getContentId(CableType.DISK_INTERFACE),
                 () -> typeFactory.create(tier, providers.tieredDiskInterface(), Blocks.INSTANCE.getTieredDiskInterfaces(tier).toArray())
+            ));
+            BlockEntities.INSTANCE.addTieredAutocrafter(tier, callback.register(
+                tier.getContentId(CableType.AUTOCRAFTER),
+                () -> typeFactory.create(tier, TieredAutocrafterBlockEntity::new, Blocks.INSTANCE.getTieredAutocrafters(tier).toArray())
             ));
         }
     }
@@ -108,6 +119,11 @@ public class AbstractModInitializer {
                 tier.getContentId(CableType.DISK_INTERFACE),
                 () -> extendedMenuTypeFactory.create((syncId, inventory, containerData) ->
                     new TieredDiskInterfaceContainerMenu(syncId, inventory, containerData, tier), ResourceContainerData.STREAM_CODEC)
+            ));
+            Menus.INSTANCE.setTieredAutocrafters(tier, callback.register(
+                tier.getContentId(CableType.AUTOCRAFTER),
+                () -> extendedMenuTypeFactory.create((syncId, inventory, containerData) ->
+                    new TieredAutocrafterContainerMenu(syncId, inventory, containerData, tier), AutocrafterData.STREAM_CODEC)
             ));
         }
     }

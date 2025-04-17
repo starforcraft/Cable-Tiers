@@ -1,10 +1,11 @@
 package com.ultramega.cabletiers.common.registry;
 
 import com.ultramega.cabletiers.common.CableTiers;
+import com.ultramega.cabletiers.common.autocrafting.autocrafter.TieredAutocrafterBlockEntity;
 import com.ultramega.cabletiers.common.constructordestructor.AbstractTieredConstructorBlockEntity;
 import com.ultramega.cabletiers.common.constructordestructor.AbstractTieredDestructorBlockEntity;
-import com.ultramega.cabletiers.common.exporters.AbstractTieredExporterBlockEntity;
-import com.ultramega.cabletiers.common.importers.AbstractTieredImporterBlockEntity;
+import com.ultramega.cabletiers.common.exporter.AbstractTieredExporterBlockEntity;
+import com.ultramega.cabletiers.common.importer.AbstractTieredImporterBlockEntity;
 import com.ultramega.cabletiers.common.storage.diskinterface.AbstractTieredDiskInterfaceBlockEntity;
 
 import java.util.HashMap;
@@ -23,9 +24,10 @@ public final class BlockEntities {
     private final Map<CableTiers, Supplier<BlockEntityType<AbstractTieredDestructorBlockEntity>>> tieredDestructors = new HashMap<>();
     private final Map<CableTiers, Supplier<BlockEntityType<AbstractTieredConstructorBlockEntity>>> tieredConstructors = new HashMap<>();
     private final Map<CableTiers, Supplier<BlockEntityType<AbstractTieredDiskInterfaceBlockEntity>>> tieredDiskInterface = new HashMap<>();
+    private final Map<CableTiers, Supplier<BlockEntityType<TieredAutocrafterBlockEntity>>> tieredAutocrafter = new HashMap<>();
 
-    public void addTieredImporters(final CableTiers tier,
-                                   final Supplier<BlockEntityType<AbstractTieredImporterBlockEntity>> supplier) {
+    public void addTieredImporter(final CableTiers tier,
+                                  final Supplier<BlockEntityType<AbstractTieredImporterBlockEntity>> supplier) {
         this.tieredImporters.put(tier, supplier);
     }
 
@@ -33,8 +35,8 @@ public final class BlockEntities {
         return requireNonNull(tieredImporters.get(tier)).get();
     }
 
-    public void addTieredExporters(final CableTiers tier,
-                                   final Supplier<BlockEntityType<AbstractTieredExporterBlockEntity>> supplier) {
+    public void addTieredExporter(final CableTiers tier,
+                                  final Supplier<BlockEntityType<AbstractTieredExporterBlockEntity>> supplier) {
         this.tieredExporters.put(tier, supplier);
     }
 
@@ -42,8 +44,8 @@ public final class BlockEntities {
         return requireNonNull(tieredExporters.get(tier)).get();
     }
 
-    public void addTieredDestructors(final CableTiers tier,
-                                   final Supplier<BlockEntityType<AbstractTieredDestructorBlockEntity>> supplier) {
+    public void addTieredDestructor(final CableTiers tier,
+                                    final Supplier<BlockEntityType<AbstractTieredDestructorBlockEntity>> supplier) {
         this.tieredDestructors.put(tier, supplier);
     }
 
@@ -51,7 +53,7 @@ public final class BlockEntities {
         return requireNonNull(tieredDestructors.get(tier)).get();
     }
 
-    public void addTieredConstructors(final CableTiers tier,
+    public void addTieredConstructor(final CableTiers tier,
                                      final Supplier<BlockEntityType<AbstractTieredConstructorBlockEntity>> supplier) {
         this.tieredConstructors.put(tier, supplier);
     }
@@ -61,11 +63,20 @@ public final class BlockEntities {
     }
 
     public void addTieredDiskInterface(final CableTiers tier,
-                                      final Supplier<BlockEntityType<AbstractTieredDiskInterfaceBlockEntity>> supplier) {
+                                       final Supplier<BlockEntityType<AbstractTieredDiskInterfaceBlockEntity>> supplier) {
         this.tieredDiskInterface.put(tier, supplier);
     }
 
     public BlockEntityType<AbstractTieredDiskInterfaceBlockEntity> getTieredDiskInterfaces(final CableTiers tier) {
         return requireNonNull(tieredDiskInterface.get(tier)).get();
+    }
+
+    public void addTieredAutocrafter(final CableTiers tier,
+                                     final Supplier<BlockEntityType<TieredAutocrafterBlockEntity>> supplier) {
+        this.tieredAutocrafter.put(tier, supplier);
+    }
+
+    public BlockEntityType<TieredAutocrafterBlockEntity> getTieredAutocrafters(final CableTiers tier) {
+        return requireNonNull(tieredAutocrafter.get(tier)).get();
     }
 }

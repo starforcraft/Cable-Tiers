@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_mega_autocrafters": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#cabletiers:mega_autocrafters"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cabletiers:coloring/brown_mega_autocrafter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_mega_autocrafters"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cabletiers:coloring/brown_mega_autocrafter"
+    ]
+  }
+}

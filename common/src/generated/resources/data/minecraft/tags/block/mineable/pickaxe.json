@@ -19,6 +19,10 @@
     "#cabletiers:elite_disk_interfaces",
     "#cabletiers:ultra_disk_interfaces",
     "#cabletiers:mega_disk_interfaces",
-    "#cabletiers:creative_disk_interfaces"
+    "#cabletiers:creative_disk_interfaces",
+    "#cabletiers:elite_autocrafters",
+    "#cabletiers:ultra_autocrafters",
+    "#cabletiers:mega_autocrafters",
+    "#cabletiers:creative_autocrafters"
   ]
 }
