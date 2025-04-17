@@ -6,6 +6,7 @@ import com.ultramega.cabletiers.common.Platform;
 import com.ultramega.cabletiers.common.packet.c2s.SetAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.packet.c2s.TieredAutocrafterNameChangePacket;
 import com.ultramega.cabletiers.common.packet.s2c.OpenAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterLockedUpdatePacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterNameUpdatePacket;
 import com.ultramega.cabletiers.common.packet.s2c.UpdateAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
@@ -25,7 +26,6 @@ import com.refinedmods.refinedstorage.common.api.support.network.AbstractNetwork
 import com.refinedmods.refinedstorage.common.content.DirectRegistryCallback;
 import com.refinedmods.refinedstorage.common.content.ExtendedMenuTypeFactory;
 import com.refinedmods.refinedstorage.common.support.packet.PacketHandler;
-import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocrafterLockedUpdatePacket;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStorageFabricApi;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStoragePlugin;
 
@@ -159,7 +159,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
     private void registerServerToClientPackets() {
         PayloadTypeRegistry.playS2C().register(OpenAdvancedFilterPacket.PACKET_TYPE, OpenAdvancedFilterPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(UpdateAdvancedFilterPacket.PACKET_TYPE, UpdateAdvancedFilterPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(AutocrafterLockedUpdatePacket.PACKET_TYPE, AutocrafterLockedUpdatePacket.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(TieredAutocrafterLockedUpdatePacket.PACKET_TYPE, TieredAutocrafterLockedUpdatePacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(TieredAutocrafterNameUpdatePacket.PACKET_TYPE, TieredAutocrafterNameUpdatePacket.STREAM_CODEC);
     }
 

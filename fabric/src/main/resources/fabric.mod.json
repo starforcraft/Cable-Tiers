@@ -11,6 +11,7 @@
     "sources": "https://github.com/starforcraft/Cable-Tiers",
     "issues": "https://github.com/starforcraft/Cable-Tiers/issues"
   },
+  "accessWidener": "cabletiers.accesswidener",
   "icon": "logo.png",
   "license": "MIT",
   "environment": "*",
@@ -28,9 +29,6 @@
       "com.ultramega.cabletiers.fabric.ModMenuApiImpl"
     ]
   },
-  "mixins": [
-    "cabletiers.mixins.json"
-  ],
   "custom": {
     "modmenu": {
       "links": {
@@ -39,6 +37,10 @@
       "parent": "refinedstorage"
     }
   },
+  "mixins": [
+    "cabletiers.fabric.mixins.json",
+    "cabletiers.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.14.6",
     "fabric-api": "*",

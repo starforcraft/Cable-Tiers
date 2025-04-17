@@ -3,6 +3,7 @@ package com.ultramega.cabletiers.fabric;
 import com.ultramega.cabletiers.common.AbstractClientModInitializer;
 import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.packet.s2c.OpenAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterLockedUpdatePacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterNameUpdatePacket;
 import com.ultramega.cabletiers.common.packet.s2c.UpdateAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
@@ -10,10 +11,10 @@ import com.ultramega.cabletiers.common.registry.Blocks;
 import com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil;
 import com.ultramega.cabletiers.fabric.storage.diskinterface.TieredDiskInterfaceBlockEntityRendererImpl;
 import com.ultramega.cabletiers.fabric.storage.diskinterface.TieredDiskInterfaceUnbakedModel;
+import com.ultramega.cabletiers.fabric.support.render.EmissiveModelRegistry;
 
 import com.refinedmods.refinedstorage.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage.common.support.packet.PacketHandler;
-import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocrafterLockedUpdatePacket;
 import com.refinedmods.refinedstorage.fabric.support.render.QuadRotators;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -26,10 +27,14 @@ import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
+
+import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
+import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersIdentifier;
 
 public class ClientModInitializerImpl extends AbstractClientModInitializer implements ClientModInitializer {
     private static final String BLOCK_PREFIX = "block";
@@ -38,11 +43,10 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
     @Override
     public void onInitializeClient() {
         setRenderLayers();
+        registerEmissiveModels();
         registerPacketHandlers();
         registerBlockEntityRenderers();
         registerCustomModels();
-        //TODO: registerEmissiveModels for Autocrafter and constructor/destructor
-        // Blocks.INSTANCE.getAutocrafter().forEach((color, id, block) -> registerEmissiveAutocrafterModels(color, id));
         registerScreens(new com.refinedmods.refinedstorage.common.AbstractClientModInitializer.ScreenRegistration() {
             @Override
             public <M extends AbstractContainerMenu, U extends Screen & MenuAccess<M>> void register(
@@ -58,6 +62,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         for (final CableTiers tier : CableTiers.values()) {
             setCutout(Blocks.INSTANCE.getTieredImporters(tier));
             setCutout(Blocks.INSTANCE.getTieredExporters(tier));
+            setCutout(Blocks.INSTANCE.getTieredConstructors(tier));
             setCutout(Blocks.INSTANCE.getTieredDestructors(tier));
             setCutout(Blocks.INSTANCE.getTieredDiskInterfaces(tier));
             setCutout(Blocks.INSTANCE.getTieredAutocrafters(tier));
@@ -72,10 +77,51 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout());
     }
 
+    private void registerEmissiveModels() {
+        for (final CableTiers tier : CableTiers.values()) {
+            registerConstructorDestructorEmissiveModels(tier, Blocks.INSTANCE.getTieredConstructors(tier), "constructor");
+            registerConstructorDestructorEmissiveModels(tier, Blocks.INSTANCE.getTieredDestructors(tier), "destructor");
+            Blocks.INSTANCE.getTieredAutocrafters(tier).forEach((color, id, block) ->
+                registerEmissiveAutocrafterModels(tier, color, id));
+        }
+    }
+
+    private void registerConstructorDestructorEmissiveModels(final CableTiers tier,
+                                                             final BlockColorMap<?, ?> blockMap,
+                                                             final String blockDirectory) {
+        blockMap.forEach((color, id, block) -> {
+            final ResourceLocation blockModelLocation = createCableTiersIdentifier(
+                BLOCK_PREFIX + "/" + tier.toString().toLowerCase() + "_" + blockDirectory + "/active"
+            );
+            final ResourceLocation spriteLocation = createIdentifier(
+                BLOCK_PREFIX + "/" + blockDirectory + "/cutouts/active"
+            );
+            EmissiveModelRegistry.INSTANCE.register(blockModelLocation, spriteLocation);
+            EmissiveModelRegistry.INSTANCE.register(createCableTiersIdentifier(ITEM_PREFIX + "/" + id.getPath()), spriteLocation);
+        });
+    }
+
+    private void registerEmissiveAutocrafterModels(final CableTiers tier, final DyeColor color, final ResourceLocation id) {
+        EmissiveModelRegistry.INSTANCE.register(
+            createCableTiersIdentifier(BLOCK_PREFIX + "/" + tier.toString().toLowerCase() + "_autocrafter/" + color.getName()),
+            createCableTiersIdentifier(BLOCK_PREFIX + "/autocrafter/cutouts/side_color/" + color.getName()),
+            createCableTiersIdentifier(BLOCK_PREFIX + "/autocrafter/cutouts/side_tier/" + color.getName()),
+            createCableTiersIdentifier(BLOCK_PREFIX + "/autocrafter/cutouts/top_color/" + color.getName()),
+            createCableTiersIdentifier(BLOCK_PREFIX + "/autocrafter/cutouts/top_tier/" + color.getName())
+        );
+        EmissiveModelRegistry.INSTANCE.register(
+            createCableTiersIdentifier(ITEM_PREFIX + "/" + id.getPath()),
+            createCableTiersIdentifier(BLOCK_PREFIX + "/autocrafter/cutouts/side_color/" + color.getName()),
+            createCableTiersIdentifier(BLOCK_PREFIX + "/autocrafter/cutouts/side_tier/" + color.getName()),
+            createCableTiersIdentifier(BLOCK_PREFIX + "/autocrafter/cutouts/top_color/" + color.getName()),
+            createCableTiersIdentifier(BLOCK_PREFIX + "/autocrafter/cutouts/top_tier/" + color.getName())
+        );
+    }
+
     private void registerPacketHandlers() {
         ClientPlayNetworking.registerGlobalReceiver(OpenAdvancedFilterPacket.PACKET_TYPE, wrapHandler(OpenAdvancedFilterPacket::handle));
         ClientPlayNetworking.registerGlobalReceiver(UpdateAdvancedFilterPacket.PACKET_TYPE, wrapHandler(UpdateAdvancedFilterPacket::handle));
-        ClientPlayNetworking.registerGlobalReceiver(AutocrafterLockedUpdatePacket.PACKET_TYPE, wrapHandler(AutocrafterLockedUpdatePacket::handle));
+        ClientPlayNetworking.registerGlobalReceiver(TieredAutocrafterLockedUpdatePacket.PACKET_TYPE, wrapHandler(TieredAutocrafterLockedUpdatePacket::handle));
         ClientPlayNetworking.registerGlobalReceiver(TieredAutocrafterNameUpdatePacket.PACKET_TYPE, wrapHandler(TieredAutocrafterNameUpdatePacket::handle));
     }
 
