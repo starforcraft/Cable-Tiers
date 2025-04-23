@@ -3,9 +3,10 @@ package com.ultramega.cabletiers.neoforge;
 import com.ultramega.cabletiers.common.AbstractModInitializer;
 import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.Platform;
+import com.ultramega.cabletiers.common.packet.c2s.ChangeAdvancedResourceSlot;
 import com.ultramega.cabletiers.common.packet.c2s.SetAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.packet.c2s.TieredAutocrafterNameChangePacket;
-import com.ultramega.cabletiers.common.packet.s2c.OpenAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.s2c.ShouldOpenAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterLockedUpdatePacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterNameUpdatePacket;
 import com.ultramega.cabletiers.common.packet.s2c.UpdateAdvancedFilterPacket;
@@ -206,9 +207,9 @@ public class ModInitializer extends AbstractModInitializer {
 
     private static void registerServerToClientPackets(final PayloadRegistrar registrar) {
         registrar.playToClient(
-            OpenAdvancedFilterPacket.PACKET_TYPE,
-            OpenAdvancedFilterPacket.STREAM_CODEC,
-            wrapHandler(OpenAdvancedFilterPacket::handle)
+            ShouldOpenAdvancedFilterPacket.PACKET_TYPE,
+            ShouldOpenAdvancedFilterPacket.STREAM_CODEC,
+            wrapHandler(ShouldOpenAdvancedFilterPacket::handle)
         );
         registrar.playToClient(
             UpdateAdvancedFilterPacket.PACKET_TYPE,
@@ -228,6 +229,11 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private static void registerClientToServerPackets(final PayloadRegistrar registrar) {
+        registrar.playToServer(
+            ChangeAdvancedResourceSlot.PACKET_TYPE,
+            ChangeAdvancedResourceSlot.STREAM_CODEC,
+            wrapHandler(ChangeAdvancedResourceSlot::handle)
+        );
         registrar.playToServer(
             SetAdvancedFilterPacket.PACKET_TYPE,
             SetAdvancedFilterPacket.STREAM_CODEC,

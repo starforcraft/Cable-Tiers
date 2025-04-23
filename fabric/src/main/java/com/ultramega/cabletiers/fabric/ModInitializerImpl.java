@@ -3,9 +3,10 @@ package com.ultramega.cabletiers.fabric;
 import com.ultramega.cabletiers.common.AbstractModInitializer;
 import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.Platform;
+import com.ultramega.cabletiers.common.packet.c2s.ChangeAdvancedResourceSlot;
 import com.ultramega.cabletiers.common.packet.c2s.SetAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.packet.c2s.TieredAutocrafterNameChangePacket;
-import com.ultramega.cabletiers.common.packet.s2c.OpenAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.s2c.ShouldOpenAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterLockedUpdatePacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterNameUpdatePacket;
 import com.ultramega.cabletiers.common.packet.s2c.UpdateAdvancedFilterPacket;
@@ -157,18 +158,20 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
     }
 
     private void registerServerToClientPackets() {
-        PayloadTypeRegistry.playS2C().register(OpenAdvancedFilterPacket.PACKET_TYPE, OpenAdvancedFilterPacket.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(ShouldOpenAdvancedFilterPacket.PACKET_TYPE, ShouldOpenAdvancedFilterPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(UpdateAdvancedFilterPacket.PACKET_TYPE, UpdateAdvancedFilterPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(TieredAutocrafterLockedUpdatePacket.PACKET_TYPE, TieredAutocrafterLockedUpdatePacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(TieredAutocrafterNameUpdatePacket.PACKET_TYPE, TieredAutocrafterNameUpdatePacket.STREAM_CODEC);
     }
 
     private void registerClientToServerPackets() {
+        PayloadTypeRegistry.playC2S().register(ChangeAdvancedResourceSlot.PACKET_TYPE, ChangeAdvancedResourceSlot.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(SetAdvancedFilterPacket.PACKET_TYPE, SetAdvancedFilterPacket.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(TieredAutocrafterNameChangePacket.PACKET_TYPE, TieredAutocrafterNameChangePacket.STREAM_CODEC);
     }
 
     private void registerPacketHandlers() {
+        ServerPlayNetworking.registerGlobalReceiver(ChangeAdvancedResourceSlot.PACKET_TYPE, wrapHandler(ChangeAdvancedResourceSlot::handle));
         ServerPlayNetworking.registerGlobalReceiver(SetAdvancedFilterPacket.PACKET_TYPE, wrapHandler(SetAdvancedFilterPacket::handle));
         ServerPlayNetworking.registerGlobalReceiver(TieredAutocrafterNameChangePacket.PACKET_TYPE, wrapHandler(TieredAutocrafterNameChangePacket::handle));
     }

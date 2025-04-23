@@ -2,7 +2,7 @@ package com.ultramega.cabletiers.fabric;
 
 import com.ultramega.cabletiers.common.AbstractClientModInitializer;
 import com.ultramega.cabletiers.common.CableTiers;
-import com.ultramega.cabletiers.common.packet.s2c.OpenAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.s2c.ShouldOpenAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterLockedUpdatePacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterNameUpdatePacket;
 import com.ultramega.cabletiers.common.packet.s2c.UpdateAdvancedFilterPacket;
@@ -119,7 +119,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
     }
 
     private void registerPacketHandlers() {
-        ClientPlayNetworking.registerGlobalReceiver(OpenAdvancedFilterPacket.PACKET_TYPE, wrapHandler(OpenAdvancedFilterPacket::handle));
+        ClientPlayNetworking.registerGlobalReceiver(ShouldOpenAdvancedFilterPacket.PACKET_TYPE, wrapHandler(ShouldOpenAdvancedFilterPacket::handle));
         ClientPlayNetworking.registerGlobalReceiver(UpdateAdvancedFilterPacket.PACKET_TYPE, wrapHandler(UpdateAdvancedFilterPacket::handle));
         ClientPlayNetworking.registerGlobalReceiver(TieredAutocrafterLockedUpdatePacket.PACKET_TYPE, wrapHandler(TieredAutocrafterLockedUpdatePacket::handle));
         ClientPlayNetworking.registerGlobalReceiver(TieredAutocrafterNameUpdatePacket.PACKET_TYPE, wrapHandler(TieredAutocrafterNameUpdatePacket::handle));

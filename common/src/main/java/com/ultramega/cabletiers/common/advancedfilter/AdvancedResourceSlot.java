@@ -1,6 +1,6 @@
 package com.ultramega.cabletiers.common.advancedfilter;
 
-import com.ultramega.cabletiers.common.packet.s2c.OpenAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.s2c.ShouldOpenAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.support.AbstractTieredFilterContainerMenu;
 
 import com.refinedmods.refinedstorage.common.Platform;
@@ -35,17 +35,22 @@ public class AdvancedResourceSlot extends ResourceSlot {
 
     @Override
     public void change(final ItemStack stack, final boolean tryAlternatives) {
-        if (stack.isEmpty() && menu instanceof AbstractTieredFilterContainerMenu<?> containerMenu && !player.isShiftKeyDown()) {
+        if (stack.isEmpty() && menu instanceof AbstractTieredFilterContainerMenu<?> containerMenu) {
             if (player instanceof ServerPlayer serverPlayer) {
                 final PlatformResourceKey filterResource = resourceContainer.getResource(getContainerSlot());
 
-                Platform.INSTANCE.sendPacketToClient(serverPlayer, new OpenAdvancedFilterPacket(
+                Platform.INSTANCE.sendPacketToClient(serverPlayer, new ShouldOpenAdvancedFilterPacket(
                     index,
                     Optional.ofNullable(containerMenu.getTagFilter(index)),
-                    Optional.ofNullable(filterResource)));
+                    Optional.ofNullable(filterResource),
+                    tryAlternatives));
             }
         } else {
-            super.change(stack, tryAlternatives);
+            this.trulyChange(stack, tryAlternatives);
         }
+    }
+
+    public void trulyChange(final ItemStack stack, final boolean tryAlternatives) {
+        super.change(stack, tryAlternatives);
     }
 }
