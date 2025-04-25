@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
+import static com.ultramega.cabletiers.common.storage.diskinterface.TieredDiskInterfaceContainerMenu.getYIncrease;
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersIdentifier;
 
 public class TieredDiskInterfaceScreen extends AbstractAdvancedFilterScreen<TieredDiskInterfaceContainerMenu> {
@@ -85,9 +86,5 @@ public class TieredDiskInterfaceScreen extends AbstractAdvancedFilterScreen<Tier
     @Override
     protected boolean hasUpgrades() {
         return tier != CableTiers.CREATIVE;
-    }
-
-    public static int getYIncrease(final CableTiers tier) {
-        return ((tier.getFilterSlotsCount() / 9 - 1) * 18);
     }
 }

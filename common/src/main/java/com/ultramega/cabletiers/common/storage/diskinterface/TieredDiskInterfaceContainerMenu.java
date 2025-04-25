@@ -24,7 +24,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
-import static com.ultramega.cabletiers.common.storage.diskinterface.TieredDiskInterfaceScreen.getYIncrease;
 
 public class TieredDiskInterfaceContainerMenu extends AbstractTieredFilterContainerMenu<AbstractTieredDiskInterfaceBlockEntity> {
     private static final MutableComponent FILTER_HELP = createTranslation("gui", "disk_interface.filter_help");
@@ -121,5 +120,9 @@ public class TieredDiskInterfaceContainerMenu extends AbstractTieredFilterContai
         final int x = i < 3 ? DISK_SLOT_X1 : DISK_SLOT_X2;
         final int y = DISK_SLOT_Y + ((i % 3) * 18) + getYIncrease(tier);
         return ValidatedSlot.forStorageContainer(diskInventory, i, x, y);
+    }
+
+    public static int getYIncrease(final CableTiers tier) {
+        return ((tier.getFilterSlotsCount() / 9 - 1) * 18);
     }
 }
