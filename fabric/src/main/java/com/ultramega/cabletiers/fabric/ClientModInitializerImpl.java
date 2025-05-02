@@ -137,38 +137,37 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
     private void registerCustomModels() {
         final QuadRotators quadRotators = new QuadRotators();
         ModelLoadingPlugin.register(pluginContext -> {
-            for (final CableTiers tier : CableTiers.values()) {
-                registerCustomDiskInterfaceModels(pluginContext, quadRotators, tier);
-            }
+            registerCustomTieredDiskInterfaceModels(pluginContext, quadRotators);
         });
     }
 
-    private void registerCustomDiskInterfaceModels(final ModelLoadingPlugin.Context pluginContext,
-                                                   final QuadRotators quadRotators,
-                                                   final CableTiers tier) {
-        pluginContext.resolveModel().register(context -> {
-            if (context.id().getNamespace().equals(CableTiersIdentifierUtil.MOD_ID)
-                && context.id().getPath().startsWith(ITEM_PREFIX + "/")
-                && context.id().getPath().endsWith("disk_interface")) {
-                final boolean isDefault = !context.id().getPath().endsWith("_disk_interface");
-                final DyeColor color = isDefault
-                    ? Blocks.INSTANCE.getTieredDiskInterfaces(tier).getDefault().getColor()
-                    : DyeColor.byName(context.id().getPath().replace("_disk_interface", "")
-                    .replace(ITEM_PREFIX + "/", ""), Blocks.INSTANCE.getTieredDiskInterfaces(tier).getDefault().getColor());
-                return new TieredDiskInterfaceUnbakedModel(quadRotators, color);
-            }
-            if (context.id().getNamespace().equals(CableTiersIdentifierUtil.MOD_ID)
-                && context.id().getPath().startsWith(BLOCK_PREFIX + "/disk_interface/")
-                && !context.id().getPath().startsWith(BLOCK_PREFIX + "/disk_interface/base_")
-                && !context.id().getPath().equals(BLOCK_PREFIX + "/disk_interface/inactive")) {
-                final DyeColor color = DyeColor.byName(
-                    context.id().getPath().replace(BLOCK_PREFIX + "/disk_interface/", ""),
-                    Blocks.INSTANCE.getTieredDiskInterfaces(tier).getDefault().getColor()
-                );
-                return new TieredDiskInterfaceUnbakedModel(quadRotators, color);
-            }
-            return null;
-        });
+    private void registerCustomTieredDiskInterfaceModels(final ModelLoadingPlugin.Context pluginContext,
+                                                         final QuadRotators quadRotators) {
+        for (final CableTiers tier : CableTiers.values()) {
+            pluginContext.resolveModel().register(context -> {
+                if (context.id().getNamespace().equals(CableTiersIdentifierUtil.MOD_ID)
+                    && context.id().getPath().startsWith(ITEM_PREFIX + "/")
+                    && context.id().getPath().endsWith(tier.toString().toLowerCase() + "_disk_interface")) {
+                    final boolean isDefault = !context.id().getPath().endsWith("_" + tier.toString().toLowerCase() + "_disk_interface");
+                    final DyeColor color = isDefault
+                        ? Blocks.INSTANCE.getTieredDiskInterfaces(tier).getDefault().getColor()
+                        : DyeColor.byName(context.id().getPath().replace("_" + tier.toString().toLowerCase() + "_disk_interface", "")
+                        .replace(ITEM_PREFIX + "/", ""), Blocks.INSTANCE.getTieredDiskInterfaces(tier).getDefault().getColor());
+                    return new TieredDiskInterfaceUnbakedModel(quadRotators, color, tier);
+                }
+                if (context.id().getNamespace().equals(CableTiersIdentifierUtil.MOD_ID)
+                    && context.id().getPath().startsWith(BLOCK_PREFIX + "/" + tier.toString().toLowerCase() + "_disk_interface/")
+                    && !context.id().getPath().startsWith(BLOCK_PREFIX + "/" + tier.toString().toLowerCase() + "_disk_interface/base_")
+                    && !context.id().getPath().equals(BLOCK_PREFIX + "/" + tier.toString().toLowerCase() + "_disk_interface/inactive")) {
+                    final DyeColor color = DyeColor.byName(
+                        context.id().getPath().replace(BLOCK_PREFIX + "/" + tier.toString().toLowerCase() + "_disk_interface/", ""),
+                        Blocks.INSTANCE.getTieredDiskInterfaces(tier).getDefault().getColor()
+                    );
+                    return new TieredDiskInterfaceUnbakedModel(quadRotators, color, tier);
+                }
+                return null;
+            });
+        }
     }
 
     private static <T extends CustomPacketPayload> ClientPlayNetworking.PlayPayloadHandler<T> wrapHandler(final PacketHandler<T> handler) {
