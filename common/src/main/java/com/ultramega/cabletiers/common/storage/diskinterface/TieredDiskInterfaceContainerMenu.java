@@ -18,7 +18,10 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ValidatedSlot
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 
+import java.util.function.Predicate;
+
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -31,6 +34,8 @@ public class TieredDiskInterfaceContainerMenu extends AbstractTieredFilterContai
     private static final int DISK_SLOT_X1 = 44;
     private static final int DISK_SLOT_X2 = 116;
     private static final int DISK_SLOT_Y = 57;
+
+    private final Predicate<Player> stillValid;
 
     TieredDiskInterfaceContainerMenu(final int syncId,
                                      final Player player,
@@ -50,6 +55,7 @@ public class TieredDiskInterfaceContainerMenu extends AbstractTieredFilterContai
             tier);
         addSlots(player, diskInventory);
         this.playerInventoryY = 129;
+        this.stillValid = p -> Container.stillValidBlockEntity(blockEntity, p);
     }
 
     public TieredDiskInterfaceContainerMenu(final int syncId,
@@ -71,6 +77,7 @@ public class TieredDiskInterfaceContainerMenu extends AbstractTieredFilterContai
                 StorageContainerItem.stackValidator()
             )
         );
+        this.stillValid = p -> true;
     }
 
     private void addSlots(final Player player,
@@ -124,5 +131,10 @@ public class TieredDiskInterfaceContainerMenu extends AbstractTieredFilterContai
 
     public static int getYIncrease(final CableTiers tier) {
         return ((tier.getFilterSlotsCount() / 9 - 1) * 18);
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 }

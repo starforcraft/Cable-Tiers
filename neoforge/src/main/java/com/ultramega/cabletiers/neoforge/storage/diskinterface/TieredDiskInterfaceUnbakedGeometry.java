@@ -27,8 +27,8 @@ import static java.util.Objects.requireNonNull;
 public class TieredDiskInterfaceUnbakedGeometry implements IUnbakedGeometry<TieredDiskInterfaceUnbakedGeometry> {
     private static final ResourceLocation LED_INACTIVE_MODEL = createIdentifier("block/disk/led_inactive");
 
-    private final ResourceLocation inactiveModel;
     private final ResourceLocation baseModel;
+    private final ResourceLocation inactiveModel;
 
     TieredDiskInterfaceUnbakedGeometry(final DyeColor color, final CableTiers tier) {
         this.baseModel = createCableTiersIdentifier("block/" + tier.toString().toLowerCase() + "_disk_interface/base_" + color.getName());

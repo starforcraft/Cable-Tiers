@@ -13,7 +13,10 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ServerPropert
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 
+import java.util.function.Predicate;
+
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
@@ -21,6 +24,23 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTr
 
 public class TieredImporterContainerMenu extends AbstractTieredFilterContainerMenu<AbstractTieredImporterBlockEntity> {
     private static final MutableComponent FILTER_HELP = createTranslation("gui", "importer.filter_help");
+
+    private final Predicate<Player> stillValid;
+
+    public TieredImporterContainerMenu(final int syncId,
+                                       final Inventory playerInventory,
+                                       final ResourceContainerData resourceContainerData,
+                                       final CableTiers tier) {
+        super(Menus.INSTANCE.getTieredImporters(tier),
+            syncId,
+            playerInventory.player,
+            resourceContainerData,
+            AbstractTieredImporterBlockEntity.getUpgradeDestination(tier),
+            tier.getPlayerInventoryY(),
+            FILTER_HELP,
+            tier);
+        this.stillValid = p -> true;
+    }
 
     TieredImporterContainerMenu(final int syncId,
                                 final Player player,
@@ -37,20 +57,7 @@ public class TieredImporterContainerMenu extends AbstractTieredFilterContainerMe
             tier.getPlayerInventoryY(),
             FILTER_HELP,
             tier);
-    }
-
-    public TieredImporterContainerMenu(final int syncId,
-                                       final Inventory playerInventory,
-                                       final ResourceContainerData resourceContainerData,
-                                       final CableTiers tier) {
-        super(Menus.INSTANCE.getTieredImporters(tier),
-            syncId,
-            playerInventory.player,
-            resourceContainerData,
-            AbstractTieredImporterBlockEntity.getUpgradeDestination(tier),
-            tier.getPlayerInventoryY(),
-            FILTER_HELP,
-            tier);
+        this.stillValid = p -> Container.stillValidBlockEntity(blockEntity, p);
     }
 
     @Override
@@ -77,5 +84,10 @@ public class TieredImporterContainerMenu extends AbstractTieredFilterContainerMe
             blockEntity::getRedstoneMode,
             blockEntity::setRedstoneMode
         ));
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 }

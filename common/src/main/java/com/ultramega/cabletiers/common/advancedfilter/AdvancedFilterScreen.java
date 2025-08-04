@@ -8,10 +8,9 @@ import com.refinedmods.refinedstorage.common.api.support.resource.ResourceTag;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseScreen;
 import com.refinedmods.refinedstorage.common.support.ResourceSlotRendering;
 import com.refinedmods.refinedstorage.common.support.Sprites;
-import com.refinedmods.refinedstorage.common.support.amount.IconButton;
 import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
 import com.refinedmods.refinedstorage.common.support.widget.CheckboxWidget;
-import com.refinedmods.refinedstorage.common.support.widget.HoveredImageButton;
+import com.refinedmods.refinedstorage.common.support.widget.CustomButton;
 import com.refinedmods.refinedstorage.common.support.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage.common.support.widget.SearchIconWidget;
 
@@ -187,7 +186,7 @@ public class AdvancedFilterScreen extends AbstractBaseScreen<AdvancedFilterConta
             advancedTagCheckbox.setTooltip(Tooltip.create(id));
         }
         advancedTagCheckboxes.add(addWidget(advancedTagCheckbox));
-        final HoveredImageButton expandButton = new HoveredImageButton(
+        final CustomButton expandButton = new CustomButton(
             x + INSET_WIDTH - 16 - 1,
             y + 1,
             16,
@@ -437,7 +436,7 @@ public class AdvancedFilterScreen extends AbstractBaseScreen<AdvancedFilterConta
 
     private void addConfirmButton(final int x, final int y) {
         final int width = font.width(DONE) + ACTION_BUTTON_SPACING + ICON_SIZE;
-        final IconButton button = new IconButton(
+        final ActionButton button = new ActionButton(
             leftPos + x,
             topPos + y,
             width,

@@ -16,8 +16,11 @@ import com.refinedmods.refinedstorage.common.support.exportingindicator.Exportin
 import com.refinedmods.refinedstorage.common.support.exportingindicator.ExportingIndicatorListener;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 
+import java.util.function.Predicate;
+
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
@@ -28,6 +31,23 @@ public class TieredConstructorContainerMenu extends AbstractTieredFilterContaine
     private static final MutableComponent FILTER_HELP = createTranslation("gui", "constructor.filter_help");
 
     private final TieredExportingIndicators indicators;
+    private final Predicate<Player> stillValid;
+
+    public TieredConstructorContainerMenu(final int syncId,
+                                          final Inventory playerInventory,
+                                          final ConstructorData data,
+                                          final CableTiers tier) {
+        super(Menus.INSTANCE.getTieredConstructors(tier),
+            syncId,
+            playerInventory.player,
+            data.resourceContainerData(),
+            AbstractTieredConstructorBlockEntity.getUpgradeDestination(tier),
+            tier.getPlayerInventoryY(),
+            FILTER_HELP,
+            tier);
+        this.indicators = new TieredExportingIndicators(data.exportingIndicators());
+        this.stillValid = p -> true;
+    }
 
     TieredConstructorContainerMenu(final int syncId,
                                    final Player player,
@@ -46,21 +66,7 @@ public class TieredConstructorContainerMenu extends AbstractTieredFilterContaine
             FILTER_HELP,
             tier);
         this.indicators = indicators;
-    }
-
-    public TieredConstructorContainerMenu(final int syncId,
-                                          final Inventory playerInventory,
-                                          final ConstructorData data,
-                                          final CableTiers tier) {
-        super(Menus.INSTANCE.getTieredConstructors(tier),
-            syncId,
-            playerInventory.player,
-            data.resourceContainerData(),
-            AbstractTieredConstructorBlockEntity.getUpgradeDestination(tier),
-            tier.getPlayerInventoryY(),
-            FILTER_HELP,
-            tier);
-        this.indicators = new TieredExportingIndicators(data.exportingIndicators());
+        this.stillValid = p -> Container.stillValidBlockEntity(blockEntity, p);
     }
 
     ExportingIndicator getIndicator(final int idx) {
@@ -114,5 +120,10 @@ public class TieredConstructorContainerMenu extends AbstractTieredFilterContaine
     @Override
     public void indicatorChanged(final int index, final ExportingIndicator indicator) {
         indicators.set(index, indicator);
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 }

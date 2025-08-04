@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -131,6 +132,14 @@ public class TieredAutocrafterContainerMenu extends AbstractBaseContainerMenu {
             locked = newLocked;
             Platform.INSTANCE.sendPacketToClient((ServerPlayer) player, new TieredAutocrafterLockedUpdatePacket(locked));
         }
+    }
+
+    @Override
+    public boolean stillValid(final Player p) {
+        if (autocrafter == null) {
+            return true;
+        }
+        return Container.stillValidBlockEntity(autocrafter, p);
     }
 
     private void detectNameChange() {

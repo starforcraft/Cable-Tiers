@@ -18,6 +18,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 
 import static com.ultramega.cabletiers.common.advancedfilter.AdvancedFilterScreen.ADVANCED_TAG_HEIGHT;
 import static com.ultramega.cabletiers.common.advancedfilter.AdvancedFilterScreen.RESOURCES_PER_ROW;
@@ -89,5 +90,10 @@ public class AdvancedFilterContainerMenu extends AbstractResourceContainerMenu {
 
     public ResourceSlot getFilterSlot() {
         return filterSlot;
+    }
+
+    @Override
+    public boolean stillValid(final Player p) {
+        return true;
     }
 }

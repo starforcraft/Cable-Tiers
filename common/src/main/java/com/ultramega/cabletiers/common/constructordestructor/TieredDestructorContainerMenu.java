@@ -13,7 +13,10 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ServerPropert
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 
+import java.util.function.Predicate;
+
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
@@ -21,6 +24,23 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTr
 
 public class TieredDestructorContainerMenu extends AbstractTieredFilterContainerMenu<AbstractTieredDestructorBlockEntity> {
     private static final MutableComponent FILTER_HELP = createTranslation("gui", "destructor.filter_help");
+
+    private final Predicate<Player> stillValid;
+
+    public TieredDestructorContainerMenu(final int syncId,
+                                         final Inventory playerInventory,
+                                         final ResourceContainerData resourceContainerData,
+                                         final CableTiers tier) {
+        super(Menus.INSTANCE.getTieredDestructors(tier),
+            syncId,
+            playerInventory.player,
+            resourceContainerData,
+            AbstractTieredDestructorBlockEntity.getUpgradeDestination(tier),
+            tier.getPlayerInventoryY(),
+            FILTER_HELP,
+            tier);
+        this.stillValid = p -> true;
+    }
 
     TieredDestructorContainerMenu(final int syncId,
                                   final Player player,
@@ -37,45 +57,37 @@ public class TieredDestructorContainerMenu extends AbstractTieredFilterContainer
             tier.getPlayerInventoryY(),
             FILTER_HELP,
             tier);
-    }
-
-    public TieredDestructorContainerMenu(final int syncId,
-                                         final Inventory playerInventory,
-                                         final ResourceContainerData resourceContainerData,
-                                         final CableTiers tier) {
-        super(Menus.INSTANCE.getTieredDestructors(tier),
-            syncId,
-            playerInventory.player,
-            resourceContainerData,
-            AbstractTieredDestructorBlockEntity.getUpgradeDestination(tier),
-            tier.getPlayerInventoryY(),
-            FILTER_HELP,
-            tier);
+        this.stillValid = p -> Container.stillValidBlockEntity(blockEntity, p);
     }
 
     @Override
     protected void registerClientProperties() {
-        registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
-        registerProperty(new ClientProperty<>(PropertyTypes.FILTER_MODE, FilterMode.BLOCK));
-        registerProperty(new ClientProperty<>(ConstructorDestructorPropertyTypes.PICKUP_ITEMS, false));
+        this.registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
+        this.registerProperty(new ClientProperty<>(PropertyTypes.FILTER_MODE, FilterMode.BLOCK));
+        this.registerProperty(new ClientProperty<>(ConstructorDestructorPropertyTypes.PICKUP_ITEMS, false));
     }
 
     @Override
     protected void registerServerProperties(final AbstractTieredDestructorBlockEntity blockEntity) {
-        registerProperty(new ServerProperty<>(
+        this.registerProperty(new ServerProperty<>(
             PropertyTypes.REDSTONE_MODE,
             blockEntity::getRedstoneMode,
             blockEntity::setRedstoneMode
         ));
-        registerProperty(new ServerProperty<>(
+        this.registerProperty(new ServerProperty<>(
             PropertyTypes.FILTER_MODE,
             blockEntity::getFilterMode,
             blockEntity::setFilterMode
         ));
-        registerProperty(new ServerProperty<>(
+        this.registerProperty(new ServerProperty<>(
             ConstructorDestructorPropertyTypes.PICKUP_ITEMS,
             blockEntity::isPickupItems,
             blockEntity::setPickupItems
         ));
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return this.stillValid.test(player);
     }
 }
