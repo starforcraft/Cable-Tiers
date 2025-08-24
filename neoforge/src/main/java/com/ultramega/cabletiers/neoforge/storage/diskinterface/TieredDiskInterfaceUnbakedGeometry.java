@@ -31,8 +31,8 @@ public class TieredDiskInterfaceUnbakedGeometry implements IUnbakedGeometry<Tier
     private final ResourceLocation inactiveModel;
 
     TieredDiskInterfaceUnbakedGeometry(final DyeColor color, final CableTiers tier) {
-        this.baseModel = createCableTiersIdentifier("block/" + tier.toString().toLowerCase() + "_disk_interface/base_" + color.getName());
-        this.inactiveModel = createCableTiersIdentifier("block/" + tier.toString().toLowerCase() + "_disk_interface/inactive");
+        this.baseModel = createCableTiersIdentifier("block/" + tier.getLowercaseName() + "_disk_interface/base_" + color.getName());
+        this.inactiveModel = createCableTiersIdentifier("block/" + tier.getLowercaseName() + "_disk_interface/inactive");
     }
 
     @Override

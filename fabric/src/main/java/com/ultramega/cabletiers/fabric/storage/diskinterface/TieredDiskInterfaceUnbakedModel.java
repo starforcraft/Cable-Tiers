@@ -37,9 +37,9 @@ public class TieredDiskInterfaceUnbakedModel implements UnbakedModel {
 
     public TieredDiskInterfaceUnbakedModel(final QuadRotators quadRotators, final DyeColor color, final CableTiers tier) {
         this.quadRotators = quadRotators;
-        this.baseModel = createCableTiersIdentifier("block/" + tier.toString().toLowerCase() + "_disk_interface/base_" + color.getName());
+        this.baseModel = createCableTiersIdentifier("block/" + tier.getLowercaseName() + "_disk_interface/base_" + color.getName());
         this.emissiveSprite = createIdentifier("block/disk_interface/cutouts/" + color.getName());
-        this.inactiveModel = createCableTiersIdentifier("block/" + tier.toString().toLowerCase() + "_disk_interface/inactive");
+        this.inactiveModel = createCableTiersIdentifier("block/" + tier.getLowercaseName() + "_disk_interface/inactive");
     }
 
     @Override

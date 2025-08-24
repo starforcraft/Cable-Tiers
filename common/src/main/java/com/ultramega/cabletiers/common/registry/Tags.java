@@ -4,6 +4,7 @@ import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.CableType;
 
 import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 
 import net.minecraft.core.Registry;
@@ -39,7 +40,7 @@ public final class Tags {
             final Map<CableType, TagKey<Item>> itemsMap = new EnumMap<>(CableType.class);
             final Map<CableType, TagKey<Block>> blocksMap = new EnumMap<>(CableType.class);
             for (final CableType type : CableType.values()) {
-                final String id = tier.name().toLowerCase() + "_" + type.name().toLowerCase() + "s";
+                final String id = tier.name().toLowerCase(Locale.ROOT) + "_" + type.name().toLowerCase(Locale.ROOT) + "s";
                 itemsMap.put(type, createTag(Registries.ITEM, id));
                 blocksMap.put(type, createTag(Registries.BLOCK, id));
             }

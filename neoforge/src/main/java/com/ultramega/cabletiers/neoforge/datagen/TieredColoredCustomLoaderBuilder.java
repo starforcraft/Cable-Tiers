@@ -27,7 +27,7 @@ class TieredColoredCustomLoaderBuilder<T extends ModelBuilder<T>> extends Custom
     public JsonObject toJson(final JsonObject json) {
         final JsonObject value = super.toJson(json);
         value.addProperty("color", color.getName());
-        value.addProperty("tier", tier.toString().toLowerCase());
+        value.addProperty("tier", tier.getLowercaseName());
         return value;
     }
 }

@@ -30,22 +30,22 @@ public class RecoloringRecipeProvider extends RecipeProvider {
         for (final CableTiers tier : CableTiers.values()) {
             Blocks.INSTANCE.getTieredImporters(tier).forEach((color, id, block) ->
                 recipe(tier.getItemTag(CableType.IMPORTER), block.get().asItem(), color)
-                    .save(output, recipeId(color, tier.toString().toLowerCase() + "_importer")));
+                    .save(output, recipeId(color, tier.getLowercaseName() + "_importer")));
             Blocks.INSTANCE.getTieredExporters(tier).forEach((color, id, block) ->
                 recipe(tier.getItemTag(CableType.EXPORTER), block.get().asItem(), color)
-                    .save(output, recipeId(color, tier.toString().toLowerCase() + "_exporter")));
+                    .save(output, recipeId(color, tier.getLowercaseName() + "_exporter")));
             Blocks.INSTANCE.getTieredDestructors(tier).forEach((color, id, block) ->
                 recipe(tier.getItemTag(CableType.DESTRUCTOR), block.get().asItem(), color)
-                    .save(output, recipeId(color, tier.toString().toLowerCase() + "_destructor")));
+                    .save(output, recipeId(color, tier.getLowercaseName() + "_destructor")));
             Blocks.INSTANCE.getTieredConstructors(tier).forEach((color, id, block) ->
                 recipe(tier.getItemTag(CableType.CONSTRUCTOR), block.get().asItem(), color)
-                    .save(output, recipeId(color, tier.toString().toLowerCase() + "_constructor")));
+                    .save(output, recipeId(color, tier.getLowercaseName() + "_constructor")));
             Blocks.INSTANCE.getTieredDiskInterfaces(tier).forEach((color, id, block) ->
                 recipe(tier.getItemTag(CableType.DISK_INTERFACE), block.get().asItem(), color)
-                    .save(output, recipeId(color, tier.toString().toLowerCase() + "_disk_interface")));
+                    .save(output, recipeId(color, tier.getLowercaseName() + "_disk_interface")));
             Blocks.INSTANCE.getTieredAutocrafters(tier).forEach((color, id, block) ->
                 recipe(tier.getItemTag(CableType.AUTOCRAFTER), block.get().asItem(), color)
-                    .save(output, recipeId(color, tier.toString().toLowerCase() + "_autocrafter")));
+                    .save(output, recipeId(color, tier.getLowercaseName() + "_autocrafter")));
         }
     }
 

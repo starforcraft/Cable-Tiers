@@ -58,7 +58,7 @@ public class BlockModelProviderImpl extends BlockModelProvider {
     private void registerTieredDiskInterfaces(final CableTiers tier) {
         registerRightLeftBackFrontTopModel(Blocks.INSTANCE.getTieredDiskInterfaces(tier), "disk_interface", "base_", tier);
         Blocks.INSTANCE.getTieredDiskInterfaces(tier)
-            .forEach((color, id, block) -> getBuilder(BLOCK_PREFIX + "/" + tier.toString().toLowerCase() + "_disk_interface/" + color.getName())
+            .forEach((color, id, block) -> getBuilder(BLOCK_PREFIX + "/" + tier.getLowercaseName() + "_disk_interface/" + color.getName())
                 .customLoader((blockModelBuilder, existingFileHelper) -> new TieredColoredCustomLoaderBuilder<>(
                     ContentIds.getContentId(tier, CableType.DISK_INTERFACE),
                     blockModelBuilder,
@@ -75,10 +75,10 @@ public class BlockModelProviderImpl extends BlockModelProvider {
         final ResourceLocation bottom = createCableTiersIdentifier("block/autocrafter/bottom");
         Blocks.INSTANCE.getTieredAutocrafters(tier).forEach((color, id, autocrafter) -> {
             final ResourceLocation cutoutSideColor = createCableTiersIdentifier("block/autocrafter/cutouts/side_color/" + color.getName());
-            final ResourceLocation cutoutSideTier = createCableTiersIdentifier("block/autocrafter/cutouts/side_tier/" + tier.toString().toLowerCase());
+            final ResourceLocation cutoutSideTier = createCableTiersIdentifier("block/autocrafter/cutouts/side_tier/" + tier.getLowercaseName());
             final ResourceLocation cutoutTopColor = createCableTiersIdentifier("block/autocrafter/cutouts/top_color/" + color.getName());
-            final ResourceLocation cutoutTopTier = createCableTiersIdentifier("block/autocrafter/cutouts/top_tier/" + tier.toString().toLowerCase());
-            withExistingParent("block/" + tier.toString().toLowerCase() + "_autocrafter/" + color.getName(), TIERED_AUTOCRAFTER)
+            final ResourceLocation cutoutTopTier = createCableTiersIdentifier("block/autocrafter/cutouts/top_tier/" + tier.getLowercaseName());
+            withExistingParent("block/" + tier.getLowercaseName() + "_autocrafter/" + color.getName(), TIERED_AUTOCRAFTER)
                 .texture(PARTICLE_TEXTURE, side)
                 .texture(NORTH, side)
                 .texture(EAST, side)
@@ -98,10 +98,10 @@ public class BlockModelProviderImpl extends BlockModelProvider {
                 .texture(CUTOUT_UP_TIER, cutoutTopTier);
         });
         final ResourceLocation cutoutSideColor = createCableTiersIdentifier("block/autocrafter/cutouts/side_color/inactive");
-        final ResourceLocation cutoutSideTier = createCableTiersIdentifier("block/autocrafter/cutouts/side_tier/" + tier.toString().toLowerCase());
+        final ResourceLocation cutoutSideTier = createCableTiersIdentifier("block/autocrafter/cutouts/side_tier/" + tier.getLowercaseName());
         final ResourceLocation cutoutTopColor = createCableTiersIdentifier("block/autocrafter/cutouts/top_color/inactive");
-        final ResourceLocation cutoutTopTier = createCableTiersIdentifier("block/autocrafter/cutouts/top_tier/" + tier.toString().toLowerCase());
-        withExistingParent("block/" + tier.toString().toLowerCase() + "_autocrafter/inactive", TIERED_AUTOCRAFTER)
+        final ResourceLocation cutoutTopTier = createCableTiersIdentifier("block/autocrafter/cutouts/top_tier/" + tier.getLowercaseName());
+        withExistingParent("block/" + tier.getLowercaseName() + "_autocrafter/inactive", TIERED_AUTOCRAFTER)
             .texture(PARTICLE_TEXTURE, side)
             .texture(NORTH, side)
             .texture(EAST, side)
@@ -140,11 +140,11 @@ public class BlockModelProviderImpl extends BlockModelProvider {
                                                     final boolean inactive,
                                                     final CableTiers tier) {
         final ResourceLocation side = createCableTiersIdentifier(BLOCK_PREFIX + "/" + name + "/side");
-        final ResourceLocation front = createCableTiersIdentifier(BLOCK_PREFIX + "/" + name + "/" + tier.toString().toLowerCase() + "_front"
+        final ResourceLocation front = createCableTiersIdentifier(BLOCK_PREFIX + "/" + name + "/" + tier.getLowercaseName() + "_front"
             + (inactive ? "_inactive" : ""));
         final ResourceLocation top = createCableTiersIdentifier(BLOCK_PREFIX + "/" + name + "/top");
         final ResourceLocation bottom = createCableTiersIdentifier(BLOCK_PREFIX + "/" + name + "/bottom");
-        withExistingParent(BLOCK_PREFIX + "/" + tier.toString().toLowerCase() + "_" + name + "/" + variantName, baseModel)
+        withExistingParent(BLOCK_PREFIX + "/" + tier.getLowercaseName() + "_" + name + "/" + variantName, baseModel)
             .texture(PARTICLE_TEXTURE, side)
             .texture(NORTH, front)
             .texture(EAST, side)

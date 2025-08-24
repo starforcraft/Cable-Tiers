@@ -4,6 +4,7 @@ import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.CableType;
 
 import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 
 import net.minecraft.resources.ResourceLocation;
@@ -24,7 +25,7 @@ public final class ContentIds {
         for (final CableTiers tier : CableTiers.values()) {
             final Map<CableType, ResourceLocation> map = new EnumMap<>(CableType.class);
             for (final CableType type : CableType.values()) {
-                map.put(type, createCableTiersIdentifier(tier.name().toLowerCase() + "_" + type.name().toLowerCase()));
+                map.put(type, createCableTiersIdentifier(tier.name().toLowerCase(Locale.ROOT) + "_" + type.name().toLowerCase(Locale.ROOT)));
             }
             CONTENT_MAP.put(tier, map);
         }

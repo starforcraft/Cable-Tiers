@@ -41,25 +41,25 @@ public class ItemModelProviderImpl extends ItemModelProvider {
     }
 
     private void registerTieredImporters(final CableTiers tier) {
-        final ResourceLocation base = createCableTiersIdentifier("item/importer/" + tier.toString().toLowerCase() + "_base");
+        final ResourceLocation base = createCableTiersIdentifier("item/importer/" + tier.getLowercaseName() + "_base");
         final ColorMap<TieredImporterBlock> blocks = Blocks.INSTANCE.getTieredImporters(tier);
         blocks.forEach((color, id, block) -> addCableTexture(color, id, base));
     }
 
     private void registerTieredExporters(final CableTiers tier) {
-        final ResourceLocation base = createCableTiersIdentifier("item/exporter/" + tier.toString().toLowerCase() + "_base");
+        final ResourceLocation base = createCableTiersIdentifier("item/exporter/" + tier.getLowercaseName() + "_base");
         final ColorMap<TieredExporterBlock> blocks = Blocks.INSTANCE.getTieredExporters(tier);
         blocks.forEach((color, id, block) -> addCableTexture(color, id, base));
     }
 
     private void registerTieredDestructors(final CableTiers tier) {
-        final ResourceLocation base = createCableTiersIdentifier("item/destructor/" + tier.toString().toLowerCase() + "_base");
+        final ResourceLocation base = createCableTiersIdentifier("item/destructor/" + tier.getLowercaseName() + "_base");
         final ColorMap<TieredDestructorBlock> blocks = Blocks.INSTANCE.getTieredDestructors(tier);
         blocks.forEach((color, id, block) -> addCableTexture(color, id, base));
     }
 
     private void registerTieredConstructors(final CableTiers tier) {
-        final ResourceLocation base = createCableTiersIdentifier("item/constructor/" + tier.toString().toLowerCase() + "_base");
+        final ResourceLocation base = createCableTiersIdentifier("item/constructor/" + tier.getLowercaseName() + "_base");
         final ColorMap<TieredConstructorBlock> blocks = Blocks.INSTANCE.getTieredConstructors(tier);
         blocks.forEach((color, id, block) -> addCableTexture(color, id, base));
     }
@@ -81,7 +81,7 @@ public class ItemModelProviderImpl extends ItemModelProvider {
         final var blocks = Blocks.INSTANCE.getTieredAutocrafters(tier);
         blocks.forEach((color, id, block) -> withExistingParent(
             id.getPath(),
-            createCableTiersIdentifier("block/" + tier.toString().toLowerCase() + "_autocrafter/" + color.getName())
+            createCableTiersIdentifier("block/" + tier.getLowercaseName() + "_autocrafter/" + color.getName())
         ));
     }
 

@@ -5,6 +5,7 @@ import com.ultramega.cabletiers.common.utils.ContentIds;
 import com.ultramega.cabletiers.common.utils.ContentNames;
 
 import java.util.Arrays;
+import java.util.Locale;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.MutableComponent;
@@ -82,6 +83,10 @@ public enum CableTiers {
 
     public int getPlayerInventoryY() {
         return playerInventoryY;
+    }
+
+    public String getLowercaseName() {
+        return this.toString().toLowerCase(Locale.ROOT);
     }
 
     @Nullable

@@ -35,12 +35,12 @@ public class BlockStateProviderImpl extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         for (final CableTiers tier : CableTiers.values()) {
-            registerCableLike(Blocks.INSTANCE.getTieredImporters(tier), tier.toString().toLowerCase() + "_importer");
-            registerCableLike(Blocks.INSTANCE.getTieredExporters(tier), tier.toString().toLowerCase() + "_exporter");
-            registerConstructorDestructor(Blocks.INSTANCE.getTieredDestructors(tier), tier.toString().toLowerCase() + "_destructor");
-            registerConstructorDestructor(Blocks.INSTANCE.getTieredConstructors(tier), tier.toString().toLowerCase() + "_constructor");
-            registerDiskInterfaces(tier, tier.toString().toLowerCase() + "_disk_interface");
-            registerAutocrafters(tier, tier.toString().toLowerCase() + "_autocrafter");
+            registerCableLike(Blocks.INSTANCE.getTieredImporters(tier), tier.getLowercaseName() + "_importer");
+            registerCableLike(Blocks.INSTANCE.getTieredExporters(tier), tier.getLowercaseName() + "_exporter");
+            registerConstructorDestructor(Blocks.INSTANCE.getTieredDestructors(tier), tier.getLowercaseName() + "_destructor");
+            registerConstructorDestructor(Blocks.INSTANCE.getTieredConstructors(tier), tier.getLowercaseName() + "_constructor");
+            registerDiskInterfaces(tier, tier.getLowercaseName() + "_disk_interface");
+            registerAutocrafters(tier, tier.getLowercaseName() + "_autocrafter");
         }
     }
 
