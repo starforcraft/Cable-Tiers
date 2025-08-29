@@ -20,8 +20,9 @@ import com.refinedmods.refinedstorage.api.network.autocrafting.PatternProvider;
 import com.refinedmods.refinedstorage.api.network.autocrafting.PatternProviderExternalPatternSink;
 import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.ExternalPatternSinkKeyProvider;
 import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.PatternProviderListener;
-import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.PatternProviderNetworkNode;
+import com.refinedmods.refinedstorage.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PlatformPatternProviderExternalPatternSink;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
@@ -40,7 +41,12 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage.common.util.ContainerUtil;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -68,8 +74,9 @@ import org.slf4j.LoggerFactory;
 import static com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock.tryExtractDirection;
 import static com.ultramega.cabletiers.common.autocrafting.autocrafter.TaskSnapshotPersistence.decodeSnapshot;
 import static com.ultramega.cabletiers.common.autocrafting.autocrafter.TaskSnapshotPersistence.encodeSnapshot;
+import static com.ultramega.cabletiers.common.importer.AbstractTieredImporterBlockEntity.createStrategy;
 
-public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntity<PatternProviderNetworkNode>
+public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntity<ExtendedPatternProviderNetworkNode>
     implements ExtendedMenuProvider<AutocrafterData>, BlockEntityWithDrops, PatternInventory.Listener, StepBehavior,
     ExternalPatternSinkKeyProvider, PatternProviderExternalPatternSink, PatternProviderListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(TieredAutocrafterBlockEntity.class);
@@ -81,13 +88,16 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
     private static final String TAG_PRIORITY = "pri";
     private static final String TAG_TASKS = "tasks";
     private static final String TAG_VISIBLE_TO_THE_AUTOCRAFTER_MANAGER = "vaum";
+    private static final String TAG_ACT_AS_IMPORTER = "aai";
     private static final String TAG_LOCKED = "locked";
     private static final String TAG_WAS_POWERED = "wp";
 
     private final PatternInventory patternContainer;
     private final UpgradeContainer upgradeContainer;
     private LockMode lockMode = LockMode.NEVER;
+    private final Map<Integer, List<ResourceAmount>> patternOutputs = new HashMap<>();
     private boolean visibleToTheAutocrafterManager = true;
+    private boolean actAsImporter = false;
     private int ticks;
     private int steps;
     private int tickRate;
@@ -105,7 +115,7 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
             BlockEntities.INSTANCE.getTieredAutocrafters(tier),
             pos,
             state,
-            new PatternProviderNetworkNode(com.refinedmods.refinedstorage.common.Platform.INSTANCE.getConfig().getAutocrafter().getEnergyUsage(),
+            new ExtendedPatternProviderNetworkNode(com.refinedmods.refinedstorage.common.Platform.INSTANCE.getConfig().getAutocrafter().getEnergyUsage(),
                 tier.getFilterSlotsCount())
         );
         this.tier = tier;
@@ -137,7 +147,7 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
     }
 
     @Override
-    protected InWorldNetworkNodeContainer createMainContainer(final PatternProviderNetworkNode networkNode) {
+    protected InWorldNetworkNodeContainer createMainContainer(final ExtendedPatternProviderNetworkNode networkNode) {
         return new AutocrafterNetworkNodeContainer(
             this,
             networkNode,
@@ -277,6 +287,7 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         tag.putInt(TAG_LOCK_MODE, LockModeSettings.getLockMode(lockMode));
         tag.putInt(TAG_PRIORITY, mainNetworkNode.getPriority());
         tag.putBoolean(TAG_VISIBLE_TO_THE_AUTOCRAFTER_MANAGER, visibleToTheAutocrafterManager);
+        tag.putBoolean(TAG_ACT_AS_IMPORTER, actAsImporter);
     }
 
     @Override
@@ -319,6 +330,9 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         }
         if (tag.contains(TAG_VISIBLE_TO_THE_AUTOCRAFTER_MANAGER)) {
             visibleToTheAutocrafterManager = tag.getBoolean(TAG_VISIBLE_TO_THE_AUTOCRAFTER_MANAGER);
+        }
+        if (tag.contains(TAG_ACT_AS_IMPORTER)) {
+            actAsImporter = tag.getBoolean(TAG_ACT_AS_IMPORTER);
         }
     }
 
@@ -384,6 +398,15 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         setChanged();
     }
 
+    public boolean isActAsImporter() {
+        return actAsImporter;
+    }
+
+    void setActAsImporter(final boolean actAsImporter) {
+        this.actAsImporter = actAsImporter;
+        setChanged();
+    }
+
     @Override
     public void setLevel(final Level level) {
         super.setLevel(level);
@@ -403,6 +426,10 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         invalidateSinkKey();
         this.sink = RefinedStorageApi.INSTANCE.getPatternProviderExternalPatternSinkFactory()
             .create(level, sourcePosition, incomingDirection);
+        mainNetworkNode.setActAsImporter(this::isActAsImporter);
+        final ImporterTransferStrategy strategy = createStrategy(level, direction, worldPosition, upgradeContainer);
+        LOGGER.debug("Initialized autocrafter at {} with strategy {}", worldPosition, strategy);
+        mainNetworkNode.setTransferStrategy(strategy);
     }
 
     @Override
@@ -413,6 +440,14 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         final Pattern pattern = RefinedStorageApi.INSTANCE.getPattern(patternContainer.getItem(slot), level)
             .orElse(null);
         mainNetworkNode.setPattern(slot, pattern);
+
+        patternOutputs.put(slot, pattern != null ? pattern.layout().outputs() : null);
+        final Set<ResourceKey> filters = patternOutputs.values().stream()
+            .filter(Objects::nonNull)
+            .flatMap(List::stream)
+            .map(ResourceAmount::resource)
+            .collect(Collectors.toSet());
+        mainNetworkNode.setFilters(filters);
     }
 
     @Override

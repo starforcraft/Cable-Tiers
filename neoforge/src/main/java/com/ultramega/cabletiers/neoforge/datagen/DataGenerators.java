@@ -16,7 +16,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.MOD_ID;
 
-@EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MOD_ID)
 public class DataGenerators {
     private DataGenerators() {
     }

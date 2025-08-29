@@ -27,6 +27,8 @@
   "gui.cabletiers.advanced_filter.tag_filter": "Etiket Filtresi",
   "gui.cabletiers.advanced_filter.done": "Tamamlandı",
   "gui.cabletiers.filter_slot.click_to_open_advanced_filter": "Gelişmiş filtreyi açmak için tıklayın",
+  "gui.cabletiers.act_as_importer": "Act as Importer",
+  "gui.cabletiers.act_as_importer.help": "If this is enabled, the autocrafter will try to import the requested resources.",
   "item.cabletiers.tiered_cable.help": "Normal bir filtreden %s kat daha hızlıdır ve toplam %s filtre yuvasına sahiptir.",
   "item.cabletiers.tiered_autocrafter.help": "Is %s faster than a normal one and has a total of %s input slots.",
   "item.cabletiers.tiered_cable.help.stack_upgrade": "Entegre bir İstif Yükseltmesi var.",

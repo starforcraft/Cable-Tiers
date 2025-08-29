@@ -26,10 +26,6 @@ public class TieredImporterNetworkNode extends SimpleNetworkNode {
         super(energyUsage);
     }
 
-    public void setTransferStrategy(final ImporterTransferStrategy transferStrategy) {
-        this.transferStrategy = transferStrategy;
-    }
-
     @Override
     public void doWork() {
         super.doWork();
@@ -37,6 +33,10 @@ public class TieredImporterNetworkNode extends SimpleNetworkNode {
             return;
         }
         transferStrategy.transfer(filter, actor, network);
+    }
+
+    public void setTransferStrategy(final ImporterTransferStrategy transferStrategy) {
+        this.transferStrategy = transferStrategy;
     }
 
     public FilterMode getFilterMode() {

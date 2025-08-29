@@ -132,12 +132,15 @@ public class AbstractTieredImporterBlockEntity extends AbstractTieredCableLikeBl
     @Override
     protected void initialize(final ServerLevel level, final Direction direction) {
         super.initialize(level, direction);
-        final ImporterTransferStrategy strategy = createStrategy(level, direction);
+        final ImporterTransferStrategy strategy = createStrategy(level, direction, worldPosition, upgradeContainer);
         LOGGER.debug("Initialized importer at {} with strategy {}", worldPosition, strategy);
         mainNetworkNode.setTransferStrategy(strategy);
     }
 
-    private ImporterTransferStrategy createStrategy(final ServerLevel serverLevel, final Direction direction) {
+    public static ImporterTransferStrategy createStrategy(final ServerLevel serverLevel,
+                                                          final Direction direction,
+                                                          final BlockPos worldPosition,
+                                                          final UpgradeContainer upgradeContainer) {
         final Direction incomingDirection = direction.getOpposite();
         final BlockPos sourcePosition = worldPosition.relative(direction);
         final List<ImporterTransferStrategyFactory> factories =

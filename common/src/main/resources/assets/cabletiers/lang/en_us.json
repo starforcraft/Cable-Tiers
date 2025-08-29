@@ -27,6 +27,8 @@
   "gui.cabletiers.advanced_filter.tag_filter": "Tag Filter",
   "gui.cabletiers.advanced_filter.done": "Done",
   "gui.cabletiers.filter_slot.click_to_open_advanced_filter": "Click to open advanced filter",
+  "gui.cabletiers.act_as_importer": "Act as Importer",
+  "gui.cabletiers.act_as_importer.help": "If this is enabled, the autocrafter will try to import the requested resources.",
   "item.cabletiers.tiered_cable.help": "Is %s faster than a normal one and has a total of %s filter slots.",
   "item.cabletiers.tiered_autocrafter.help": "Is %s faster than a normal one and has a total of %s input slots.",
   "item.cabletiers.tiered_cable.help.stack_upgrade": "Has a Stack Upgrade integrated.",

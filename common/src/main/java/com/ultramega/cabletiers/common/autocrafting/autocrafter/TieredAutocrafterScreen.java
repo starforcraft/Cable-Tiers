@@ -4,6 +4,7 @@ import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.support.AbstractAdvancedFilterScreen;
 
 import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.autocrafting.PatternOutputRenderingScreen;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternSlot;
 import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterContainerMenu;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseScreen;
@@ -23,6 +24,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
@@ -31,7 +33,7 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTr
 import static java.util.Objects.requireNonNull;
 
 public class TieredAutocrafterScreen extends AbstractBaseScreen<TieredAutocrafterContainerMenu>
-    implements AutocrafterContainerMenu.Listener {
+    implements AutocrafterContainerMenu.Listener, PatternOutputRenderingScreen {
     private static final Component EMPTY_PATTERN_SLOT = createTranslationAsHeading(
         "gui", "autocrafter.empty_pattern_slot"
     );
@@ -105,6 +107,9 @@ public class TieredAutocrafterScreen extends AbstractBaseScreen<TieredAutocrafte
         ));
         addSideButton(new VisibleToTheAutocrafterManagerSideButtonWidget(
             getMenu().getProperty(AutocrafterPropertyTypes.VISIBLE_TO_THE_AUTOCRAFTER_MANAGER)
+        ));
+        addSideButton(new AutocrafterImportSideButtonWidget(
+            getMenu().getProperty(AutocrafterPropertyTypes.ACT_AS_IMPORTER)
         ));
 
         nameField = new SearchFieldWidget(
@@ -287,5 +292,10 @@ public class TieredAutocrafterScreen extends AbstractBaseScreen<TieredAutocrafte
             return;
         }
         lockModeSideButtonWidget.setWarning(null);
+    }
+
+    @Override
+    public boolean canDisplayOutput(final ItemStack stack) {
+        return getMenu().containsPattern(stack);
     }
 }
