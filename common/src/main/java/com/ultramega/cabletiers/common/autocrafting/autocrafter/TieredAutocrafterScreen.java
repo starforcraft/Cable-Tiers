@@ -108,8 +108,8 @@ public class TieredAutocrafterScreen extends AbstractBaseScreen<TieredAutocrafte
         addSideButton(new VisibleToTheAutocrafterManagerSideButtonWidget(
             getMenu().getProperty(AutocrafterPropertyTypes.VISIBLE_TO_THE_AUTOCRAFTER_MANAGER)
         ));
-        addSideButton(new AutocrafterImportSideButtonWidget(
-            getMenu().getProperty(AutocrafterPropertyTypes.ACT_AS_IMPORTER)
+        addSideButton(new AutocrafterImportModeSideButtonWidget(
+            getMenu().getProperty(AutocrafterPropertyTypes.IMPORT_MODE)
         ));
 
         nameField = new SearchFieldWidget(

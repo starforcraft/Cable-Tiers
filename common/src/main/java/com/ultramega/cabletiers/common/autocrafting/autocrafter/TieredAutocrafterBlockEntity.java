@@ -22,7 +22,6 @@ import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.Exte
 import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.PatternProviderListener;
 import com.refinedmods.refinedstorage.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PlatformPatternProviderExternalPatternSink;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
@@ -41,12 +40,7 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage.common.util.ContainerUtil;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -88,16 +82,15 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
     private static final String TAG_PRIORITY = "pri";
     private static final String TAG_TASKS = "tasks";
     private static final String TAG_VISIBLE_TO_THE_AUTOCRAFTER_MANAGER = "vaum";
-    private static final String TAG_ACT_AS_IMPORTER = "aai";
+    private static final String TAG_IMPORT_MODE = "im";
     private static final String TAG_LOCKED = "locked";
     private static final String TAG_WAS_POWERED = "wp";
 
     private final PatternInventory patternContainer;
     private final UpgradeContainer upgradeContainer;
     private LockMode lockMode = LockMode.NEVER;
-    private final Map<Integer, List<ResourceAmount>> patternOutputs = new HashMap<>();
+    private ImportMode importMode = ImportMode.DONT_IMPORT;
     private boolean visibleToTheAutocrafterManager = true;
-    private boolean actAsImporter = false;
     private int ticks;
     private int steps;
     private int tickRate;
@@ -287,7 +280,7 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         tag.putInt(TAG_LOCK_MODE, LockModeSettings.getLockMode(lockMode));
         tag.putInt(TAG_PRIORITY, mainNetworkNode.getPriority());
         tag.putBoolean(TAG_VISIBLE_TO_THE_AUTOCRAFTER_MANAGER, visibleToTheAutocrafterManager);
-        tag.putBoolean(TAG_ACT_AS_IMPORTER, actAsImporter);
+        tag.putInt(TAG_IMPORT_MODE, ImportModeSettings.getImportMode(importMode));
     }
 
     @Override
@@ -331,8 +324,8 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         if (tag.contains(TAG_VISIBLE_TO_THE_AUTOCRAFTER_MANAGER)) {
             visibleToTheAutocrafterManager = tag.getBoolean(TAG_VISIBLE_TO_THE_AUTOCRAFTER_MANAGER);
         }
-        if (tag.contains(TAG_ACT_AS_IMPORTER)) {
-            actAsImporter = tag.getBoolean(TAG_ACT_AS_IMPORTER);
+        if (tag.contains(TAG_IMPORT_MODE)) {
+            importMode = ImportModeSettings.getImportMode(tag.getInt(TAG_IMPORT_MODE));
         }
     }
 
@@ -398,12 +391,12 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         setChanged();
     }
 
-    public boolean isActAsImporter() {
-        return actAsImporter;
+    ImportMode getImportMode() {
+        return importMode;
     }
 
-    void setActAsImporter(final boolean actAsImporter) {
-        this.actAsImporter = actAsImporter;
+    void setImportMode(final ImportMode importMode) {
+        this.importMode = importMode;
         setChanged();
     }
 
@@ -426,7 +419,7 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         invalidateSinkKey();
         this.sink = RefinedStorageApi.INSTANCE.getPatternProviderExternalPatternSinkFactory()
             .create(level, sourcePosition, incomingDirection);
-        mainNetworkNode.setActAsImporter(this::isActAsImporter);
+        mainNetworkNode.setImportMode(this::getImportMode);
         final ImporterTransferStrategy strategy = createStrategy(level, direction, worldPosition, upgradeContainer);
         LOGGER.debug("Initialized autocrafter at {} with strategy {}", worldPosition, strategy);
         mainNetworkNode.setTransferStrategy(strategy);
@@ -440,14 +433,7 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         final Pattern pattern = RefinedStorageApi.INSTANCE.getPattern(patternContainer.getItem(slot), level)
             .orElse(null);
         mainNetworkNode.setPattern(slot, pattern);
-
-        patternOutputs.put(slot, pattern != null ? pattern.layout().outputs() : null);
-        final Set<ResourceKey> filters = patternOutputs.values().stream()
-            .filter(Objects::nonNull)
-            .flatMap(List::stream)
-            .map(ResourceAmount::resource)
-            .collect(Collectors.toSet());
-        mainNetworkNode.setFilters(filters);
+        mainNetworkNode.updatePatternOutputFilter(slot, pattern);
     }
 
     @Override
@@ -653,5 +639,9 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         if (lockMode == LockMode.LOCK_UNTIL_ALL_OUTPUTS_ARE_RECEIVED && locked) {
             setLocked(false);
         }
+    }
+
+    public void completedOrCancelledTask(final Task task) {
+        mainNetworkNode.removeRequestedResourceFilter(task);
     }
 }

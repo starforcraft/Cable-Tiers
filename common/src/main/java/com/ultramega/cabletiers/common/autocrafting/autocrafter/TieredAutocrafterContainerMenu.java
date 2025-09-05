@@ -58,7 +58,7 @@ public class TieredAutocrafterContainerMenu extends AbstractBaseContainerMenu {
         registerProperty(new ClientProperty<>(AutocrafterPropertyTypes.LOCK_MODE, LockMode.NEVER));
         registerProperty(new ClientProperty<>(AutocrafterPropertyTypes.PRIORITY, 0));
         registerProperty(new ClientProperty<>(AutocrafterPropertyTypes.VISIBLE_TO_THE_AUTOCRAFTER_MANAGER, true));
-        registerProperty(new ClientProperty<>(AutocrafterPropertyTypes.ACT_AS_IMPORTER, false));
+        registerProperty(new ClientProperty<>(AutocrafterPropertyTypes.IMPORT_MODE, ImportMode.DONT_IMPORT));
         addSlots(
             new PatternInventory(tier.getFilterSlotsCount(), playerInventory.player::level),
             new UpgradeContainer(UpgradeDestinations.AUTOCRAFTER)
@@ -97,9 +97,9 @@ public class TieredAutocrafterContainerMenu extends AbstractBaseContainerMenu {
             autocrafter::setVisibleToTheAutocrafterManager
         ));
         registerProperty(new ServerProperty<>(
-            AutocrafterPropertyTypes.ACT_AS_IMPORTER,
-            autocrafter::isActAsImporter,
-            autocrafter::setActAsImporter
+            AutocrafterPropertyTypes.IMPORT_MODE,
+            autocrafter::getImportMode,
+            autocrafter::setImportMode
         ));
         addSlots(autocrafter.getPatternContainer(), autocrafter.getUpgradeContainer());
     }

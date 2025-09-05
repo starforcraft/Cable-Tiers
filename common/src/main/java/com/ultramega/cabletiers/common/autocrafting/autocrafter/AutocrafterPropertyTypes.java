@@ -23,8 +23,10 @@ final class AutocrafterPropertyTypes {
         createIdentifier("visible_to_the_autocrafter_manager")
     );
 
-    static final PropertyType<Boolean> ACT_AS_IMPORTER = PropertyTypes.createBooleanProperty(
-        createIdentifier("act_as_importer")
+    static final PropertyType<ImportMode> IMPORT_MODE = new PropertyType<>(
+        createIdentifier("import_mode"),
+        ImportModeSettings::getImportMode,
+        ImportModeSettings::getImportMode
     );
 
     private AutocrafterPropertyTypes() {
