@@ -1,7 +1,7 @@
 package com.ultramega.cabletiers.common.packet.s2c;
 
 import com.ultramega.cabletiers.common.AbstractClientModInitializer;
-import com.ultramega.cabletiers.common.packet.c2s.ChangeAdvancedResourceSlot;
+import com.ultramega.cabletiers.common.packet.c2s.ChangeAdvancedResourceSlotPacket;
 import com.ultramega.cabletiers.common.utils.ModCodecs;
 
 import com.refinedmods.refinedstorage.common.Platform;
@@ -36,7 +36,7 @@ public record ShouldOpenAdvancedFilterPacket(int slotIndex,
     public static void handle(final ShouldOpenAdvancedFilterPacket packet, final PacketContext ctx) {
         if (Screen.hasShiftDown()) {
             // Remove the filter instead
-            Platform.INSTANCE.sendPacketToServer(new ChangeAdvancedResourceSlot(packet.tryAlternatives(), packet.slotIndex()));
+            Platform.INSTANCE.sendPacketToServer(new ChangeAdvancedResourceSlotPacket(packet.tryAlternatives(), packet.slotIndex()));
         } else {
             AbstractClientModInitializer.openAdvancedFilterScreen(
                 packet.slotIndex(),

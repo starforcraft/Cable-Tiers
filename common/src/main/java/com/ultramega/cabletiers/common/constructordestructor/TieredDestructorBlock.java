@@ -4,7 +4,7 @@ import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.registry.Blocks;
-import com.ultramega.cabletiers.common.utils.BlockEntityProvider;
+import com.ultramega.cabletiers.common.utils.BlockEntityTierProvider;
 
 import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
 import com.refinedmods.refinedstorage.common.constructordestructor.AbstractConstructorDestructorBlock;
@@ -35,12 +35,12 @@ public class TieredDestructorBlock extends AbstractConstructorDestructorBlock<Ti
     private static final Component HELP_2 = createCableTiersTranslation("item", "tiered_cable.help");
 
     private final CableTiers tier;
-    private final BlockEntityProvider<AbstractTieredDestructorBlockEntity> blockEntityProvider;
+    private final BlockEntityTierProvider<AbstractTieredDestructorBlockEntity> blockEntityProvider;
 
     public TieredDestructorBlock(final DyeColor color,
                                  final MutableComponent name,
                                  final CableTiers tier,
-                                 final BlockEntityProvider<AbstractTieredDestructorBlockEntity> blockEntityProvider) {
+                                 final BlockEntityTierProvider<AbstractTieredDestructorBlockEntity> blockEntityProvider) {
         super(color, name, new NetworkNodeBlockEntityTicker<>(
             () -> BlockEntities.INSTANCE.getTieredDestructors(tier),
             ACTIVE

@@ -13,15 +13,15 @@ import net.minecraft.world.item.ItemStack;
 
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersIdentifier;
 
-public record ChangeAdvancedResourceSlot(boolean tryAlternatives, int index) implements CustomPacketPayload {
-    public static final Type<ChangeAdvancedResourceSlot> PACKET_TYPE = new Type<>(createCableTiersIdentifier("change_advanced_resource_slot"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, ChangeAdvancedResourceSlot> STREAM_CODEC = StreamCodec.composite(
-        ByteBufCodecs.BOOL, ChangeAdvancedResourceSlot::tryAlternatives,
-        ByteBufCodecs.INT, ChangeAdvancedResourceSlot::index,
-        ChangeAdvancedResourceSlot::new
+public record ChangeAdvancedResourceSlotPacket(boolean tryAlternatives, int index) implements CustomPacketPayload {
+    public static final Type<ChangeAdvancedResourceSlotPacket> PACKET_TYPE = new Type<>(createCableTiersIdentifier("change_advanced_resource_slot"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, ChangeAdvancedResourceSlotPacket> STREAM_CODEC = StreamCodec.composite(
+        ByteBufCodecs.BOOL, ChangeAdvancedResourceSlotPacket::tryAlternatives,
+        ByteBufCodecs.INT, ChangeAdvancedResourceSlotPacket::index,
+        ChangeAdvancedResourceSlotPacket::new
     );
 
-    public static void handle(final ChangeAdvancedResourceSlot packet, final PacketContext ctx) {
+    public static void handle(final ChangeAdvancedResourceSlotPacket packet, final PacketContext ctx) {
         if (ctx.getPlayer().containerMenu instanceof AbstractTieredFilterContainerMenu<?> containerMenu) {
             if (containerMenu.getSlot(packet.index()) instanceof AdvancedResourceSlot slot) {
                 slot.trulyChange(ItemStack.EMPTY, packet.tryAlternatives());

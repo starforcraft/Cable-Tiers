@@ -3,9 +3,13 @@ package com.ultramega.cabletiers.fabric;
 import com.ultramega.cabletiers.common.AbstractModInitializer;
 import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.Platform;
-import com.ultramega.cabletiers.common.packet.c2s.ChangeAdvancedResourceSlot;
+import com.ultramega.cabletiers.common.packet.c2s.ChangeAdvancedResourceSlotPacket;
+import com.ultramega.cabletiers.common.packet.c2s.RequestSidedResourcesPacket;
 import com.ultramega.cabletiers.common.packet.c2s.SetAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.c2s.SetSidedResourcesOnPatternGridBlockPacket;
 import com.ultramega.cabletiers.common.packet.c2s.TieredAutocrafterNameChangePacket;
+import com.ultramega.cabletiers.common.packet.s2c.RemoveSidedResourcesOnPatternGridMenuPacket;
+import com.ultramega.cabletiers.common.packet.s2c.SetSidedResourcesOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.ShouldOpenAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterLockedUpdatePacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterNameUpdatePacket;
@@ -13,9 +17,9 @@ import com.ultramega.cabletiers.common.packet.s2c.UpdateAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.registry.CreativeModeTabItems;
 import com.ultramega.cabletiers.common.storage.diskinterface.AbstractTieredDiskInterfaceBlockEntity;
-import com.ultramega.cabletiers.common.utils.BlockEntityProvider;
 import com.ultramega.cabletiers.common.utils.BlockEntityProviders;
-import com.ultramega.cabletiers.common.utils.BlockEntityTypeFactory;
+import com.ultramega.cabletiers.common.utils.BlockEntityTierProvider;
+import com.ultramega.cabletiers.common.utils.BlockEntityTierTypeFactory;
 import com.ultramega.cabletiers.fabric.constructordestructor.FabricTieredConstructorBlockEntity;
 import com.ultramega.cabletiers.fabric.constructordestructor.FabricTieredDestructorBlockEntity;
 import com.ultramega.cabletiers.fabric.exporter.FabricTieredExporterBlockEntity;
@@ -24,6 +28,8 @@ import com.ultramega.cabletiers.fabric.storage.diskinterface.FabricTieredDiskInt
 
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.network.AbstractNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage.common.content.BlockEntityProvider;
+import com.refinedmods.refinedstorage.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage.common.content.DirectRegistryCallback;
 import com.refinedmods.refinedstorage.common.content.ExtendedMenuTypeFactory;
 import com.refinedmods.refinedstorage.common.support.packet.PacketHandler;
@@ -86,13 +92,21 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
         registerUpgradeMappings();
         registerBlockEntities(
             new DirectRegistryCallback<>(BuiltInRegistries.BLOCK_ENTITY_TYPE),
-            new BlockEntityTypeFactory() {
+            new BlockEntityTierTypeFactory() {
                 @SuppressWarnings("DataFlowIssue") // data type can be null
                 @Override
                 public <T extends BlockEntity> BlockEntityType<T> create(final CableTiers tier,
-                                                                         final BlockEntityProvider<T> factory,
+                                                                         final BlockEntityTierProvider<T> factory,
                                                                          final Block... allowedBlocks) {
                     return new BlockEntityType<>((pos, state) -> factory.create(tier, pos, state), new HashSet<>(Arrays.asList(allowedBlocks)), null);
+                }
+            },
+            new BlockEntityTypeFactory() {
+                @SuppressWarnings("DataFlowIssue") // data type can be null
+                @Override
+                public <T extends BlockEntity> BlockEntityType<T> create(final BlockEntityProvider<T> factory,
+                                                                         final Block... allowedBlocks) {
+                    return new BlockEntityType<>(factory::create, new HashSet<>(Arrays.asList(allowedBlocks)), null);
                 }
             },
             BLOCK_ENTITY_PROVIDERS
@@ -104,6 +118,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
                 return new ExtendedScreenHandlerType<>(supplier::create, streamCodec);
             }
         });
+        registerDataComponents(new DirectRegistryCallback<>(BuiltInRegistries.DATA_COMPONENT_TYPE));
     }
 
     private void registerCapabilities() {
@@ -162,18 +177,25 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
         PayloadTypeRegistry.playS2C().register(UpdateAdvancedFilterPacket.PACKET_TYPE, UpdateAdvancedFilterPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(TieredAutocrafterLockedUpdatePacket.PACKET_TYPE, TieredAutocrafterLockedUpdatePacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(TieredAutocrafterNameUpdatePacket.PACKET_TYPE, TieredAutocrafterNameUpdatePacket.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(SetSidedResourcesOnPatternGridMenuPacket.PACKET_TYPE, SetSidedResourcesOnPatternGridMenuPacket.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(RemoveSidedResourcesOnPatternGridMenuPacket.PACKET_TYPE, RemoveSidedResourcesOnPatternGridMenuPacket.STREAM_CODEC);
     }
 
     private void registerClientToServerPackets() {
-        PayloadTypeRegistry.playC2S().register(ChangeAdvancedResourceSlot.PACKET_TYPE, ChangeAdvancedResourceSlot.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(ChangeAdvancedResourceSlotPacket.PACKET_TYPE, ChangeAdvancedResourceSlotPacket.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(SetAdvancedFilterPacket.PACKET_TYPE, SetAdvancedFilterPacket.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(TieredAutocrafterNameChangePacket.PACKET_TYPE, TieredAutocrafterNameChangePacket.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(RequestSidedResourcesPacket.PACKET_TYPE, RequestSidedResourcesPacket.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(SetSidedResourcesOnPatternGridBlockPacket.PACKET_TYPE, SetSidedResourcesOnPatternGridBlockPacket.STREAM_CODEC);
     }
 
     private void registerPacketHandlers() {
-        ServerPlayNetworking.registerGlobalReceiver(ChangeAdvancedResourceSlot.PACKET_TYPE, wrapHandler(ChangeAdvancedResourceSlot::handle));
+        ServerPlayNetworking.registerGlobalReceiver(ChangeAdvancedResourceSlotPacket.PACKET_TYPE, wrapHandler(ChangeAdvancedResourceSlotPacket::handle));
         ServerPlayNetworking.registerGlobalReceiver(SetAdvancedFilterPacket.PACKET_TYPE, wrapHandler(SetAdvancedFilterPacket::handle));
         ServerPlayNetworking.registerGlobalReceiver(TieredAutocrafterNameChangePacket.PACKET_TYPE, wrapHandler(TieredAutocrafterNameChangePacket::handle));
+        ServerPlayNetworking.registerGlobalReceiver(RequestSidedResourcesPacket.PACKET_TYPE, wrapHandler(RequestSidedResourcesPacket::handle));
+        ServerPlayNetworking.registerGlobalReceiver(SetSidedResourcesOnPatternGridBlockPacket.PACKET_TYPE,
+            wrapHandler(SetSidedResourcesOnPatternGridBlockPacket::handle));
     }
 
     private static <T extends CustomPacketPayload> ServerPlayNetworking.PlayPayloadHandler<T> wrapHandler(final PacketHandler<T> handler) {

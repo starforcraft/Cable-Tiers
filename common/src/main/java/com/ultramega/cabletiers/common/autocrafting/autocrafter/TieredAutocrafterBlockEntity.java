@@ -3,7 +3,10 @@ package com.ultramega.cabletiers.common.autocrafting.autocrafter;
 import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.Platform;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputPatternState;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedResourceAmount;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
+import com.ultramega.cabletiers.common.registry.DataComponents;
 import com.ultramega.cabletiers.common.utils.ContentNames;
 
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
@@ -26,6 +29,7 @@ import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PlatformPatternProviderExternalPatternSink;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternInventory;
+import com.refinedmods.refinedstorage.common.autocrafting.ProcessingPatternState;
 import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterBlockEntity;
 import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterData;
 import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.InWorldExternalPatternSinkKey;
@@ -39,8 +43,14 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage.common.util.ContainerUtil;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiConsumer;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -94,8 +104,7 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
     private int ticks;
     private int steps;
     private int tickRate;
-    @Nullable
-    private PlatformPatternProviderExternalPatternSink sink;
+    private final PlatformPatternProviderExternalPatternSink[] sinks = new PlatformPatternProviderExternalPatternSink[Direction.values().length];
     @Nullable
     private ExternalPatternSinkKey sinkKey;
     private boolean wasPowered;
@@ -414,11 +423,13 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
     @Override
     protected void initialize(final ServerLevel level, final Direction direction) {
         super.initialize(level, direction);
-        final Direction incomingDirection = direction.getOpposite();
-        final BlockPos sourcePosition = worldPosition.relative(direction);
         invalidateSinkKey();
-        this.sink = RefinedStorageApi.INSTANCE.getPatternProviderExternalPatternSinkFactory()
-            .create(level, sourcePosition, incomingDirection);
+        for (int i = 0; i < Direction.values().length; i++) {
+            final Direction incomingDirection = Direction.values()[i];
+            final BlockPos sourcePosition = worldPosition.relative(direction);
+            this.sinks[i] = RefinedStorageApi.INSTANCE.getPatternProviderExternalPatternSinkFactory()
+                .create(level, sourcePosition, incomingDirection);
+        }
         mainNetworkNode.setImportMode(this::getImportMode);
         final ImporterTransferStrategy strategy = createStrategy(level, direction, worldPosition, upgradeContainer);
         LOGGER.debug("Initialized autocrafter at {} with strategy {}", worldPosition, strategy);
@@ -470,7 +481,9 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         return switch (lockMode) {
             case NEVER -> false;
             case LOCK_UNTIL_REDSTONE_PULSE_RECEIVED -> isLockedInPulseMode();
-            case LOCK_UNTIL_CONNECTED_MACHINE_IS_EMPTY -> sink != null && !sink.isEmpty();
+            case LOCK_UNTIL_CONNECTED_MACHINE_IS_EMPTY -> !Arrays.stream(sinks)
+                .filter(Objects::nonNull)
+                .allMatch(PlatformPatternProviderExternalPatternSink::isEmpty);
             case LOCK_UNTIL_ALL_OUTPUTS_ARE_RECEIVED -> locked;
             case LOCK_UNTIL_HIGH_REDSTONE_SIGNAL -> !level.hasNeighborSignal(worldPosition);
             case LOCK_UNTIL_LOW_REDSTONE_SIGNAL -> level.hasNeighborSignal(worldPosition);
@@ -602,15 +615,131 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         if (root != this) {
             return root.accept(resources, action);
         }
-        if (sink == null) {
+        if (Arrays.stream(sinks).allMatch(Objects::isNull)) {
             return ExternalPatternSink.Result.SKIPPED;
         }
         if (locked) {
             return ExternalPatternSink.Result.LOCKED;
         }
-        final ExternalPatternSink.Result result = sink.accept(resources, action);
-        updateLockedAfterAccept(action, result);
+
+        final Direction baseDirection = tryExtractDirection(getBlockState());
+
+        return findResult(sinks, patternContainer, baseDirection, resources, action, this::updateLockedAfterAccept);
+    }
+
+    public static ExternalPatternSink.Result findResult(final PlatformPatternProviderExternalPatternSink[] sinks,
+                                                        final FilteredContainer patternContainer,
+                                                        @Nullable final Direction baseDirection,
+                                                        final Collection<ResourceAmount> resources,
+                                                        final Action action,
+                                                        final BiConsumer<Action, ExternalPatternSink.Result> afterAccept) {
+        @Nullable
+        final SidedInputPatternState sidedInputState = findSidedInputPatternState(patternContainer);
+        final Direction fallbackDirection = (baseDirection != null) ? baseDirection.getOpposite() : null;
+
+        if (sidedInputState != null) {
+            final List<ExternalPatternSink.Result> results = new ArrayList<>();
+
+            for (final Optional<SidedResourceAmount> optionalResource : sidedInputState.sidedResources()) {
+                if (optionalResource.isEmpty()) {
+                    continue;
+                }
+
+                final SidedResourceAmount sidedResource = optionalResource.get();
+                final ResourceAmount resource = sidedResource.resource();
+
+                final Direction targetDirection = sidedResource.inputDirection().orElse(fallbackDirection);
+                if (targetDirection == null) {
+                    continue;
+                }
+
+                final ExternalPatternSink.Result result = sinks[targetDirection.ordinal()].accept(Set.of(resource), action);
+                afterAccept.accept(action, result);
+                results.add(result);
+            }
+
+            if (!results.isEmpty()) {
+                // Unfortunately this will result in the Crafting Monitor showing wrong information if any resource is REJECTED or SKIPPED
+                return getMostImportantResult(results);
+            }
+        }
+
+        if (baseDirection == null) {
+            return ExternalPatternSink.Result.REJECTED;
+        }
+        final ExternalPatternSink.Result result = sinks[baseDirection.getOpposite().ordinal()].accept(resources, action);
+        afterAccept.accept(action, result);
         return result;
+    }
+
+    @Nullable
+    public static SidedInputPatternState findSidedInputPatternState(final FilteredContainer patternContainer) {
+        for (int i = 0; i < patternContainer.getContainerSize(); i++) {
+            final ItemStack pattern = patternContainer.getItem(i);
+            final ProcessingPatternState processingState =
+                pattern.get(com.refinedmods.refinedstorage.common.content.DataComponents.INSTANCE.getProcessingPatternState());
+            final SidedInputPatternState sidedInputState =
+                pattern.get(DataComponents.INSTANCE.getSidedInputPatternState());
+
+            if (processingState == null || sidedInputState == null) {
+                continue;
+            }
+
+            final List<Optional<SidedResourceAmount>> sidedResources = sidedInputState.sidedResources();
+            final List<Optional<ProcessingPatternState.ProcessingIngredient>> ingredients = processingState.ingredients();
+
+            boolean indicesMatch = true;
+
+            // Any present sided resource beyond the ingredients list means mismatch
+            if (sidedResources.size() > ingredients.size()) {
+                for (int idx = ingredients.size(); idx < sidedResources.size(); idx++) {
+                    if (sidedResources.get(idx).isPresent()) {
+                        indicesMatch = false;
+                        break;
+                    }
+                }
+            }
+
+            // Compare all elements in the lists
+            for (int idx = 0; indicesMatch && idx < Math.min(sidedResources.size(), ingredients.size()); idx++) {
+                final Optional<SidedResourceAmount> sidedResourceOptional = sidedResources.get(idx);
+                if (sidedResourceOptional.isEmpty()) {
+                    continue;
+                }
+
+                final Optional<ProcessingPatternState.ProcessingIngredient> ingredientOptional = ingredients.get(idx);
+                if (ingredientOptional.isEmpty()) {
+                    indicesMatch = false; // sided resource requires something however ingredient is empty
+                    break;
+                }
+
+                final ResourceAmount sidedResource = sidedResourceOptional.get().resource();
+                final ResourceAmount ingResource = ingredientOptional.get().input();
+
+                if (!ingResource.equals(sidedResource)) {
+                    indicesMatch = false;
+                    break;
+                }
+            }
+
+            if (indicesMatch) {
+                return sidedInputState;
+            }
+        }
+
+        return null;
+    }
+
+    public static ExternalPatternSink.Result getMostImportantResult(final List<ExternalPatternSink.Result> results) {
+        // Priority: ACCEPTED
+        for (final ExternalPatternSink.Result result : results) {
+            if (result == ExternalPatternSink.Result.ACCEPTED) {
+                return result;
+            }
+        }
+
+        // Fallback: first element
+        return results.getFirst();
     }
 
     private void updateLockedAfterAccept(final Action action, final ExternalPatternSink.Result result) {

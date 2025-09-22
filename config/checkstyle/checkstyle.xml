@@ -20,9 +20,6 @@
         <property name="max" value="170"/>
         <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
     </module>
-    <module name="FileLength">
-        <property name="max" value="700"/>
-    </module>
     <module name="NewlineAtEndOfFile"/>
     <module name="JavadocPackage"/>
     <module name="TreeWalker">
@@ -58,7 +55,6 @@
         <module name="EmptyStatement"/>
         <module name="EqualsAvoidNull"/>
         <module name="EqualsHashCode"/>
-        <module name="IllegalCatch"/>
         <module name="IllegalInstantiation"/>
         <module name="IllegalThrows"/>
         <module name="IllegalToken"/>
@@ -91,9 +87,6 @@
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>
         <module name="BooleanExpressionComplexity"/>
-        <module name="CyclomaticComplexity">
-            <property name="switchBlockAsSingleDecisionPoint" value="true"/>
-        </module>
         <module name="NoCodeInFile"/>
         <module name="UncommentedMain"/>
         <module name="RedundantModifier"/>

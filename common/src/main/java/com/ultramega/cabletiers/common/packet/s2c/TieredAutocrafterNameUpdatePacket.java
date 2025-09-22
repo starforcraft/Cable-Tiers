@@ -13,14 +13,11 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersIdentifier;
 
 public record TieredAutocrafterNameUpdatePacket(Component name) implements CustomPacketPayload {
-    public static final Type<TieredAutocrafterNameUpdatePacket> PACKET_TYPE = new Type<>(
-        createCableTiersIdentifier("autocrafter_name_update")
+    public static final Type<TieredAutocrafterNameUpdatePacket> PACKET_TYPE = new Type<>(createCableTiersIdentifier("autocrafter_name_update"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, TieredAutocrafterNameUpdatePacket> STREAM_CODEC = StreamCodec.composite(
+        ComponentSerialization.STREAM_CODEC, TieredAutocrafterNameUpdatePacket::name,
+        TieredAutocrafterNameUpdatePacket::new
     );
-    public static final StreamCodec<RegistryFriendlyByteBuf, TieredAutocrafterNameUpdatePacket> STREAM_CODEC =
-        StreamCodec.composite(
-            ComponentSerialization.STREAM_CODEC, TieredAutocrafterNameUpdatePacket::name,
-            TieredAutocrafterNameUpdatePacket::new
-        );
 
     public static void handle(final TieredAutocrafterNameUpdatePacket packet, final PacketContext ctx) {
         if (ctx.getPlayer().containerMenu instanceof TieredAutocrafterContainerMenu containerMenu) {

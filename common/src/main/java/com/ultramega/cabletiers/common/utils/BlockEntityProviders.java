@@ -7,9 +7,9 @@ import com.ultramega.cabletiers.common.importer.AbstractTieredImporterBlockEntit
 import com.ultramega.cabletiers.common.storage.diskinterface.AbstractTieredDiskInterfaceBlockEntity;
 
 public record BlockEntityProviders(
-    BlockEntityProvider<AbstractTieredImporterBlockEntity> tieredImporter,
-    BlockEntityProvider<AbstractTieredExporterBlockEntity> tieredExporter,
-    BlockEntityProvider<AbstractTieredDestructorBlockEntity> tieredDestructor,
-    BlockEntityProvider<AbstractTieredConstructorBlockEntity> tieredConstructor,
-    BlockEntityProvider<AbstractTieredDiskInterfaceBlockEntity> tieredDiskInterface) {
+    BlockEntityTierProvider<AbstractTieredImporterBlockEntity> tieredImporter,
+    BlockEntityTierProvider<AbstractTieredExporterBlockEntity> tieredExporter,
+    BlockEntityTierProvider<AbstractTieredDestructorBlockEntity> tieredDestructor,
+    BlockEntityTierProvider<AbstractTieredConstructorBlockEntity> tieredConstructor,
+    BlockEntityTierProvider<AbstractTieredDiskInterfaceBlockEntity> tieredDiskInterface) {
 }

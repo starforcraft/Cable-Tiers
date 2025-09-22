@@ -4,7 +4,7 @@ import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.registry.Blocks;
-import com.ultramega.cabletiers.common.utils.BlockEntityProvider;
+import com.ultramega.cabletiers.common.utils.BlockEntityTierProvider;
 
 import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
 import com.refinedmods.refinedstorage.common.content.BlockColorMap;
@@ -50,12 +50,12 @@ public class TieredExporterBlock extends AbstractDirectionalCableBlock implement
     private final DyeColor color;
     private final MutableComponent name;
     private final CableTiers tier;
-    private final BlockEntityProvider<AbstractTieredExporterBlockEntity> blockEntityProvider;
+    private final BlockEntityTierProvider<AbstractTieredExporterBlockEntity> blockEntityProvider;
 
     public TieredExporterBlock(final DyeColor color,
                                final MutableComponent name,
                                final CableTiers tier,
-                               final BlockEntityProvider<AbstractTieredExporterBlockEntity> blockEntityProvider) {
+                               final BlockEntityTierProvider<AbstractTieredExporterBlockEntity> blockEntityProvider) {
         super(SHAPE_CACHE);
         this.color = color;
         this.name = name;

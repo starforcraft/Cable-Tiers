@@ -6,7 +6,7 @@ import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.registry.Blocks;
 import com.ultramega.cabletiers.common.storage.AdvancedStorageTransferNetworkNode;
 import com.ultramega.cabletiers.common.storage.TieredDiskContainerBlockEntityTicker;
-import com.ultramega.cabletiers.common.utils.BlockEntityProvider;
+import com.ultramega.cabletiers.common.utils.BlockEntityTierProvider;
 
 import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
 import com.refinedmods.refinedstorage.common.content.BlockColorMap;
@@ -46,12 +46,12 @@ public class TieredDiskInterfaceBlock extends AbstractActiveColoredDirectionalBl
     private final TieredDiskContainerBlockEntityTicker<AdvancedStorageTransferNetworkNode, AbstractTieredDiskInterfaceBlockEntity> ticker;
 
     private final CableTiers tier;
-    private final BlockEntityProvider<AbstractTieredDiskInterfaceBlockEntity> blockEntityProvider;
+    private final BlockEntityTierProvider<AbstractTieredDiskInterfaceBlockEntity> blockEntityProvider;
 
     public TieredDiskInterfaceBlock(final DyeColor color,
                                     final MutableComponent name,
                                     final CableTiers tier,
-                                    final BlockEntityProvider<AbstractTieredDiskInterfaceBlockEntity> blockEntityProvider) {
+                                    final BlockEntityTierProvider<AbstractTieredDiskInterfaceBlockEntity> blockEntityProvider) {
         super(BlockConstants.PROPERTIES, color, name);
         this.tier = tier;
         this.blockEntityProvider = blockEntityProvider;

@@ -3,9 +3,13 @@ package com.ultramega.cabletiers.neoforge;
 import com.ultramega.cabletiers.common.AbstractModInitializer;
 import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.Platform;
-import com.ultramega.cabletiers.common.packet.c2s.ChangeAdvancedResourceSlot;
+import com.ultramega.cabletiers.common.packet.c2s.ChangeAdvancedResourceSlotPacket;
+import com.ultramega.cabletiers.common.packet.c2s.RequestSidedResourcesPacket;
 import com.ultramega.cabletiers.common.packet.c2s.SetAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.packet.c2s.SetSidedResourcesOnPatternGridBlockPacket;
 import com.ultramega.cabletiers.common.packet.c2s.TieredAutocrafterNameChangePacket;
+import com.ultramega.cabletiers.common.packet.s2c.RemoveSidedResourcesOnPatternGridMenuPacket;
+import com.ultramega.cabletiers.common.packet.s2c.SetSidedResourcesOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.ShouldOpenAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterLockedUpdatePacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterNameUpdatePacket;
@@ -13,9 +17,9 @@ import com.ultramega.cabletiers.common.packet.s2c.UpdateAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.registry.CreativeModeTabItems;
 import com.ultramega.cabletiers.common.storage.diskinterface.AbstractTieredDiskInterfaceBlockEntity;
-import com.ultramega.cabletiers.common.utils.BlockEntityProvider;
 import com.ultramega.cabletiers.common.utils.BlockEntityProviders;
-import com.ultramega.cabletiers.common.utils.BlockEntityTypeFactory;
+import com.ultramega.cabletiers.common.utils.BlockEntityTierProvider;
+import com.ultramega.cabletiers.common.utils.BlockEntityTierTypeFactory;
 import com.ultramega.cabletiers.neoforge.constructordestructor.ForgeTieredConstructorBlockEntity;
 import com.ultramega.cabletiers.neoforge.constructordestructor.ForgeTieredDestructorBlockEntity;
 import com.ultramega.cabletiers.neoforge.exporter.ForgeTieredExporterBlockEntity;
@@ -24,6 +28,8 @@ import com.ultramega.cabletiers.neoforge.storage.diskinterface.ForgeTieredDiskIn
 
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.network.AbstractNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage.common.content.BlockEntityProvider;
+import com.refinedmods.refinedstorage.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage.common.content.ExtendedMenuTypeFactory;
 import com.refinedmods.refinedstorage.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage.common.support.packet.PacketHandler;
@@ -34,6 +40,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.function.Supplier;
 
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -84,6 +91,7 @@ public class ModInitializer extends AbstractModInitializer {
     private final DeferredRegister<Block> blockRegistry = DeferredRegister.create(BuiltInRegistries.BLOCK, MOD_ID);
     private final DeferredRegister<BlockEntityType<?>> blockEntityTypeRegistry = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, MOD_ID);
     private final DeferredRegister<MenuType<?>> menuTypeRegistry = DeferredRegister.create(BuiltInRegistries.MENU, MOD_ID);
+    private final DeferredRegister<DataComponentType<?>> dataComponentTypeRegistry = DeferredRegister.create(BuiltInRegistries.DATA_COMPONENT_TYPE, MOD_ID);
 
     public ModInitializer(final IEventBus eventBus, final ModContainer modContainer) {
         final ConfigImpl config = new ConfigImpl();
@@ -108,6 +116,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerItems(eventBus);
         registerBlockEntities(eventBus);
         registerMenus(eventBus);
+        registerDataComponents(eventBus);
     }
 
     private void registerBlocks(final IEventBus eventBus) {
@@ -125,13 +134,21 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerBlockEntities(final IEventBus eventBus) {
         registerBlockEntities(
             new ForgeRegistryCallback<>(blockEntityTypeRegistry),
-            new BlockEntityTypeFactory() {
+            new BlockEntityTierTypeFactory() {
                 @SuppressWarnings("DataFlowIssue") // data type can be null
                 @Override
                 public <T extends BlockEntity> BlockEntityType<T> create(final CableTiers tier,
-                                                                         final BlockEntityProvider<T> factory,
+                                                                         final BlockEntityTierProvider<T> factory,
                                                                          final Block... allowedBlocks) {
                     return new BlockEntityType<>((pos, state) -> factory.create(tier, pos, state), new HashSet<>(Arrays.asList(allowedBlocks)), null);
+                }
+            },
+            new BlockEntityTypeFactory() {
+                @SuppressWarnings("DataFlowIssue") // data type can be null
+                @Override
+                public <T extends BlockEntity> BlockEntityType<T> create(final BlockEntityProvider<T> factory,
+                                                                         final Block... allowedBlocks) {
+                    return new BlockEntityType<>(factory::create, new HashSet<>(Arrays.asList(allowedBlocks)), null);
                 }
             },
             BLOCK_ENTITY_PROVIDERS
@@ -151,6 +168,12 @@ public class ModInitializer extends AbstractModInitializer {
             }
         });
         menuTypeRegistry.register(eventBus);
+    }
+
+    private void registerDataComponents(final IEventBus eventBus) {
+        final RegistryCallback<DataComponentType<?>> callback = new ForgeRegistryCallback<>(dataComponentTypeRegistry);
+        registerDataComponents(callback);
+        dataComponentTypeRegistry.register(eventBus);
     }
 
     private void onCommonSetup(final FMLCommonSetupEvent e) {
@@ -226,13 +249,23 @@ public class ModInitializer extends AbstractModInitializer {
             TieredAutocrafterNameUpdatePacket.STREAM_CODEC,
             wrapHandler(TieredAutocrafterNameUpdatePacket::handle)
         );
+        registrar.playToClient(
+            SetSidedResourcesOnPatternGridMenuPacket.PACKET_TYPE,
+            SetSidedResourcesOnPatternGridMenuPacket.STREAM_CODEC,
+            wrapHandler(SetSidedResourcesOnPatternGridMenuPacket::handle)
+        );
+        registrar.playToClient(
+            RemoveSidedResourcesOnPatternGridMenuPacket.PACKET_TYPE,
+            RemoveSidedResourcesOnPatternGridMenuPacket.STREAM_CODEC,
+            wrapHandler(RemoveSidedResourcesOnPatternGridMenuPacket::handle)
+        );
     }
 
     private static void registerClientToServerPackets(final PayloadRegistrar registrar) {
         registrar.playToServer(
-            ChangeAdvancedResourceSlot.PACKET_TYPE,
-            ChangeAdvancedResourceSlot.STREAM_CODEC,
-            wrapHandler(ChangeAdvancedResourceSlot::handle)
+            ChangeAdvancedResourceSlotPacket.PACKET_TYPE,
+            ChangeAdvancedResourceSlotPacket.STREAM_CODEC,
+            wrapHandler(ChangeAdvancedResourceSlotPacket::handle)
         );
         registrar.playToServer(
             SetAdvancedFilterPacket.PACKET_TYPE,
@@ -243,6 +276,16 @@ public class ModInitializer extends AbstractModInitializer {
             TieredAutocrafterNameChangePacket.PACKET_TYPE,
             TieredAutocrafterNameChangePacket.STREAM_CODEC,
             wrapHandler(TieredAutocrafterNameChangePacket::handle)
+        );
+        registrar.playToServer(
+            RequestSidedResourcesPacket.PACKET_TYPE,
+            RequestSidedResourcesPacket.STREAM_CODEC,
+            wrapHandler(RequestSidedResourcesPacket::handle)
+        );
+        registrar.playToServer(
+            SetSidedResourcesOnPatternGridBlockPacket.PACKET_TYPE,
+            SetSidedResourcesOnPatternGridBlockPacket.STREAM_CODEC,
+            wrapHandler(SetSidedResourcesOnPatternGridBlockPacket::handle)
         );
     }
 

@@ -14,11 +14,11 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(value = UpgradeDestinationClientTooltipComponent.class)
 public abstract class MixinUpgradeDestinationClientTooltipComponent {
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private Set<UpgradeMapping> mappings;
 
-    @Shadow
+    @Shadow(remap = false)
     protected abstract void renderMapping(Font font, int x, int y, GuiGraphics graphics, UpgradeMapping mapping);
 
     /**

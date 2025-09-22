@@ -12,6 +12,7 @@ import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.cre
 public class ConfigImpl implements Config {
     private final ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
     private final ModConfigSpec spec;
+
     private final SimpleTieredStackEntry tieredImporters;
     private final SimpleTieredStackEntry tieredExporters;
     private final SimpleTieredEntry tieredDestructors;

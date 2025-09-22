@@ -13,7 +13,7 @@ import com.ultramega.cabletiers.common.importer.AbstractTieredImporterBlockEntit
 import com.ultramega.cabletiers.common.importer.TieredImporterBlock;
 import com.ultramega.cabletiers.common.storage.diskinterface.AbstractTieredDiskInterfaceBlockEntity;
 import com.ultramega.cabletiers.common.storage.diskinterface.TieredDiskInterfaceBlock;
-import com.ultramega.cabletiers.common.utils.BlockEntityProvider;
+import com.ultramega.cabletiers.common.utils.BlockEntityTierProvider;
 
 import com.refinedmods.refinedstorage.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage.common.support.BaseBlockItem;
@@ -39,7 +39,7 @@ public final class Blocks {
     }
 
     public Map<CableTiers, BlockColorMap<TieredImporterBlock, BaseBlockItem>> setTieredImporters(
-        final BlockEntityProvider<AbstractTieredImporterBlockEntity> provider) {
+        final BlockEntityTierProvider<AbstractTieredImporterBlockEntity> provider) {
         for (final CableTiers tier : CableTiers.values()) {
             tieredImporters.put(tier, new BlockColorMap<>(
                 (pos, state) -> new TieredImporterBlock(pos, state, tier, provider),
@@ -56,7 +56,7 @@ public final class Blocks {
     }
 
     public Map<CableTiers, BlockColorMap<TieredExporterBlock, BaseBlockItem>> setTieredExporters(
-        final BlockEntityProvider<AbstractTieredExporterBlockEntity> provider) {
+        final BlockEntityTierProvider<AbstractTieredExporterBlockEntity> provider) {
         for (final CableTiers tier : CableTiers.values()) {
             tieredExporters.put(tier, new BlockColorMap<>(
                 (pos, state) -> new TieredExporterBlock(pos, state, tier, provider),
@@ -73,7 +73,7 @@ public final class Blocks {
     }
 
     public Map<CableTiers, BlockColorMap<TieredDestructorBlock, BaseBlockItem>> setTieredDestructors(
-        final BlockEntityProvider<AbstractTieredDestructorBlockEntity> provider) {
+        final BlockEntityTierProvider<AbstractTieredDestructorBlockEntity> provider) {
         for (final CableTiers tier : CableTiers.values()) {
             tieredDestructors.put(tier, new BlockColorMap<>(
                 (pos, state) -> new TieredDestructorBlock(pos, state, tier, provider),
@@ -90,7 +90,7 @@ public final class Blocks {
     }
 
     public Map<CableTiers, BlockColorMap<TieredConstructorBlock, BaseBlockItem>> setTieredConstructors(
-        final BlockEntityProvider<AbstractTieredConstructorBlockEntity> provider) {
+        final BlockEntityTierProvider<AbstractTieredConstructorBlockEntity> provider) {
         for (final CableTiers tier : CableTiers.values()) {
             tieredConstructors.put(tier, new BlockColorMap<>(
                 (pos, state) -> new TieredConstructorBlock(pos, state, tier, provider),
@@ -107,7 +107,7 @@ public final class Blocks {
     }
 
     public Map<CableTiers, BlockColorMap<TieredDiskInterfaceBlock, BaseBlockItem>> setTieredDiskInterfaces(
-        final BlockEntityProvider<AbstractTieredDiskInterfaceBlockEntity> provider) {
+        final BlockEntityTierProvider<AbstractTieredDiskInterfaceBlockEntity> provider) {
         for (final CableTiers tier : CableTiers.values()) {
             tieredDiskInterface.put(tier, new BlockColorMap<>(
                 (pos, state) -> new TieredDiskInterfaceBlock(pos, state, tier, provider),

@@ -2,6 +2,8 @@ package com.ultramega.cabletiers.fabric;
 
 import com.ultramega.cabletiers.common.AbstractClientModInitializer;
 import com.ultramega.cabletiers.common.CableTiers;
+import com.ultramega.cabletiers.common.packet.s2c.RemoveSidedResourcesOnPatternGridMenuPacket;
+import com.ultramega.cabletiers.common.packet.s2c.SetSidedResourcesOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.ShouldOpenAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterLockedUpdatePacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterNameUpdatePacket;
@@ -123,6 +125,9 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         ClientPlayNetworking.registerGlobalReceiver(UpdateAdvancedFilterPacket.PACKET_TYPE, wrapHandler(UpdateAdvancedFilterPacket::handle));
         ClientPlayNetworking.registerGlobalReceiver(TieredAutocrafterLockedUpdatePacket.PACKET_TYPE, wrapHandler(TieredAutocrafterLockedUpdatePacket::handle));
         ClientPlayNetworking.registerGlobalReceiver(TieredAutocrafterNameUpdatePacket.PACKET_TYPE, wrapHandler(TieredAutocrafterNameUpdatePacket::handle));
+        ClientPlayNetworking.registerGlobalReceiver(SetSidedResourcesOnPatternGridMenuPacket.PACKET_TYPE, wrapHandler(SetSidedResourcesOnPatternGridMenuPacket::handle));
+        ClientPlayNetworking.registerGlobalReceiver(RemoveSidedResourcesOnPatternGridMenuPacket.PACKET_TYPE,
+            wrapHandler(RemoveSidedResourcesOnPatternGridMenuPacket::handle));
     }
 
     private void registerBlockEntityRenderers() {

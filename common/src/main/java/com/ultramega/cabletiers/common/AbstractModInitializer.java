@@ -2,30 +2,36 @@ package com.ultramega.cabletiers.common;
 
 import com.ultramega.cabletiers.common.autocrafting.autocrafter.TieredAutocrafterBlockEntity;
 import com.ultramega.cabletiers.common.autocrafting.autocrafter.TieredAutocrafterContainerMenu;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputPatternState;
 import com.ultramega.cabletiers.common.constructordestructor.TieredConstructorContainerMenu;
 import com.ultramega.cabletiers.common.constructordestructor.TieredDestructorContainerMenu;
 import com.ultramega.cabletiers.common.exporter.TieredExporterContainerMenu;
 import com.ultramega.cabletiers.common.importer.TieredImporterContainerMenu;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.registry.Blocks;
+import com.ultramega.cabletiers.common.registry.DataComponents;
 import com.ultramega.cabletiers.common.registry.Items;
 import com.ultramega.cabletiers.common.registry.Menus;
 import com.ultramega.cabletiers.common.storage.diskinterface.TieredDiskInterfaceContainerMenu;
 import com.ultramega.cabletiers.common.utils.BlockEntityProviders;
-import com.ultramega.cabletiers.common.utils.BlockEntityTypeFactory;
+import com.ultramega.cabletiers.common.utils.BlockEntityTierTypeFactory;
 
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterData;
 import com.refinedmods.refinedstorage.common.constructordestructor.ConstructorData;
+import com.refinedmods.refinedstorage.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage.common.content.ExtendedMenuTypeFactory;
 import com.refinedmods.refinedstorage.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage.common.exporter.ExporterData;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
 
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+
+import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersIdentifier;
 
 public class AbstractModInitializer {
     protected void registerBlocks(final RegistryCallback<Block> callback,
@@ -62,32 +68,33 @@ public class AbstractModInitializer {
     }
 
     protected final void registerBlockEntities(final RegistryCallback<BlockEntityType<?>> callback,
+                                               final BlockEntityTierTypeFactory tierTypeFactory,
                                                final BlockEntityTypeFactory typeFactory,
                                                final BlockEntityProviders providers) {
         for (final CableTiers tier : CableTiers.values()) {
             BlockEntities.INSTANCE.addTieredImporter(tier, callback.register(
                 tier.getContentId(CableType.IMPORTER),
-                () -> typeFactory.create(tier, providers.tieredImporter(), Blocks.INSTANCE.getTieredImporters(tier).toArray())
+                () -> tierTypeFactory.create(tier, providers.tieredImporter(), Blocks.INSTANCE.getTieredImporters(tier).toArray())
             ));
             BlockEntities.INSTANCE.addTieredExporter(tier, callback.register(
                 tier.getContentId(CableType.EXPORTER),
-                () -> typeFactory.create(tier, providers.tieredExporter(), Blocks.INSTANCE.getTieredExporters(tier).toArray())
+                () -> tierTypeFactory.create(tier, providers.tieredExporter(), Blocks.INSTANCE.getTieredExporters(tier).toArray())
             ));
             BlockEntities.INSTANCE.addTieredDestructor(tier, callback.register(
                 tier.getContentId(CableType.DESTRUCTOR),
-                () -> typeFactory.create(tier, providers.tieredDestructor(), Blocks.INSTANCE.getTieredDestructors(tier).toArray())
+                () -> tierTypeFactory.create(tier, providers.tieredDestructor(), Blocks.INSTANCE.getTieredDestructors(tier).toArray())
             ));
             BlockEntities.INSTANCE.addTieredConstructor(tier, callback.register(
                 tier.getContentId(CableType.CONSTRUCTOR),
-                () -> typeFactory.create(tier, providers.tieredConstructor(), Blocks.INSTANCE.getTieredConstructors(tier).toArray())
+                () -> tierTypeFactory.create(tier, providers.tieredConstructor(), Blocks.INSTANCE.getTieredConstructors(tier).toArray())
             ));
             BlockEntities.INSTANCE.addTieredDiskInterface(tier, callback.register(
                 tier.getContentId(CableType.DISK_INTERFACE),
-                () -> typeFactory.create(tier, providers.tieredDiskInterface(), Blocks.INSTANCE.getTieredDiskInterfaces(tier).toArray())
+                () -> tierTypeFactory.create(tier, providers.tieredDiskInterface(), Blocks.INSTANCE.getTieredDiskInterfaces(tier).toArray())
             ));
             BlockEntities.INSTANCE.addTieredAutocrafter(tier, callback.register(
                 tier.getContentId(CableType.AUTOCRAFTER),
-                () -> typeFactory.create(tier, TieredAutocrafterBlockEntity::new, Blocks.INSTANCE.getTieredAutocrafters(tier).toArray())
+                () -> tierTypeFactory.create(tier, TieredAutocrafterBlockEntity::new, Blocks.INSTANCE.getTieredAutocrafters(tier).toArray())
             ));
         }
     }
@@ -126,6 +133,15 @@ public class AbstractModInitializer {
                     new TieredAutocrafterContainerMenu(syncId, inventory, containerData, tier), AutocrafterData.STREAM_CODEC)
             ));
         }
+    }
+
+    protected final void registerDataComponents(final RegistryCallback<DataComponentType<?>> callback) {
+        DataComponents.INSTANCE.setSidedInputPatternState(
+            callback.register(createCableTiersIdentifier("sided_input_pattern_state"),
+                () -> DataComponentType.<SidedInputPatternState>builder()
+                    .persistent(SidedInputPatternState.CODEC)
+                    .networkSynchronized(SidedInputPatternState.STREAM_CODEC)
+                    .build()));
     }
 
     protected final void registerUpgradeMappings() {

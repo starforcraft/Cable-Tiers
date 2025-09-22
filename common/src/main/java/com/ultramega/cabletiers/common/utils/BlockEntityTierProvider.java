@@ -7,6 +7,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 @FunctionalInterface
-public interface BlockEntityProvider<T extends BlockEntity> {
+public interface BlockEntityTierProvider<T extends BlockEntity> {
     T create(CableTiers tier, BlockPos pos, BlockState state);
 }

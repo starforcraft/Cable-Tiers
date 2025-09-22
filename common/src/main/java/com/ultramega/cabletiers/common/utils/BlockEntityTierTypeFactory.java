@@ -7,6 +7,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 @FunctionalInterface
-public interface BlockEntityTypeFactory {
-    <T extends BlockEntity> BlockEntityType<T> create(CableTiers tier, BlockEntityProvider<T> factory, Block... allowedBlocks);
+public interface BlockEntityTierTypeFactory {
+    <T extends BlockEntity> BlockEntityType<T> create(CableTiers tier, BlockEntityTierProvider<T> factory, Block... allowedBlocks);
 }

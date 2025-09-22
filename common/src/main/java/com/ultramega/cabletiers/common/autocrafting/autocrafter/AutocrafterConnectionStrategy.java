@@ -28,8 +28,7 @@ class AutocrafterConnectionStrategy extends ColoredConnectionStrategy {
         }
         for (final Direction direction : Direction.values()) {
             if (direction == myDirection) {
-                sink.tryConnectInSameDimension(origin.relative(direction), direction.getOpposite(),
-                    TieredAutocrafterBlock.class);
+                sink.tryConnectInSameDimension(origin.relative(direction), direction.getOpposite(), TieredAutocrafterBlock.class);
             } else {
                 sink.tryConnectInSameDimension(origin.relative(direction), direction.getOpposite());
             }
@@ -43,8 +42,7 @@ class AutocrafterConnectionStrategy extends ColoredConnectionStrategy {
         }
         final Direction myDirection = tryExtractDirection(blockStateProvider.get());
         if (myDirection != null) {
-            return myDirection != incomingDirection
-                || connectingState.getBlock() instanceof TieredAutocrafterBlock;
+            return myDirection != incomingDirection || connectingState.getBlock() instanceof TieredAutocrafterBlock;
         }
         return true;
     }
