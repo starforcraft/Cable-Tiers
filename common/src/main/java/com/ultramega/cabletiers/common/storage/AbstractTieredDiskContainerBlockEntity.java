@@ -251,10 +251,7 @@ public abstract class AbstractTieredDiskContainerBlockEntity<T extends AbstractS
     }
 
     protected void onClientDriveStateUpdated() {
-        if (level == null) {
-            return;
-        }
-        Platform.INSTANCE.requestModelDataUpdateOnClient(level, worldPosition, true);
+        Platform.INSTANCE.requestModelDataUpdateOnClient(this, true);
     }
 
     @Override
