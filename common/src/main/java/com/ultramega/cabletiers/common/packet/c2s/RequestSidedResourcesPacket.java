@@ -20,7 +20,7 @@ public record RequestSidedResourcesPacket() implements CustomPacketPayload {
 
     public static void handle(final RequestSidedResourcesPacket packet, final PacketContext ctx) {
         if (ctx.getPlayer() instanceof ServerPlayer serverPlayer
-            && ((MixinPatternGridContainerMenuInvoker) serverPlayer.containerMenu).getPatternGrid() instanceof SidedInput sidedInput) {
+            && ((MixinPatternGridContainerMenuInvoker) serverPlayer.containerMenu).cabletiers$getPatternGrid() instanceof SidedInput sidedInput) {
             Platform.INSTANCE.sendPacketToClient(serverPlayer, new SetSidedResourcesOnPatternGridMenuPacket(sidedInput.cabletiers$getSidedResources()));
         }
     }

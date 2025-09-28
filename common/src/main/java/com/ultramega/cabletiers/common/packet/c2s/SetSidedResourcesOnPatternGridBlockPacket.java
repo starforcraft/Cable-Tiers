@@ -30,12 +30,12 @@ public record SetSidedResourcesOnPatternGridBlockPacket(List<Optional<SidedResou
 
     public static void handle(final SetSidedResourcesOnPatternGridBlockPacket packet, final PacketContext ctx) {
         if (ctx.getPlayer().containerMenu instanceof PatternGridContainerMenu gridContainerMenu) {
-            final PatternGridBlockEntity gridBlockEntity = ((MixinPatternGridContainerMenuInvoker) gridContainerMenu).getPatternGrid();
+            final PatternGridBlockEntity gridBlockEntity = ((MixinPatternGridContainerMenuInvoker) gridContainerMenu).cabletiers$getPatternGrid();
             if (gridBlockEntity == null) {
                 return;
             }
 
-            final BlockPos pos = ((MixinPatternGridContainerMenuInvoker) gridContainerMenu).getPatternGrid().getBlockPos();
+            final BlockPos pos = gridBlockEntity.getBlockPos();
             if (ctx.getPlayer().level().getBlockEntity(pos) instanceof SidedInput sidedInputGridBlock) {
                 sidedInputGridBlock.cabletiers$setSidedResources(packet.sidedResources());
             }
