@@ -20,6 +20,7 @@ import com.ultramega.cabletiers.common.storage.diskinterface.AbstractTieredDiskI
 import com.ultramega.cabletiers.common.utils.BlockEntityProviders;
 import com.ultramega.cabletiers.common.utils.BlockEntityTierProvider;
 import com.ultramega.cabletiers.common.utils.BlockEntityTierTypeFactory;
+import com.ultramega.cabletiers.common.utils.TagsCache;
 import com.ultramega.cabletiers.neoforge.constructordestructor.ForgeTieredConstructorBlockEntity;
 import com.ultramega.cabletiers.neoforge.constructordestructor.ForgeTieredDestructorBlockEntity;
 import com.ultramega.cabletiers.neoforge.exporter.ForgeTieredExporterBlockEntity;
@@ -66,8 +67,10 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -109,6 +112,7 @@ public class ModInitializer extends AbstractModInitializer {
         eventBus.addListener(this::registerCapabilities);
         eventBus.addListener(this::registerPackets);
         eventBus.addListener(this::registerCreativeModeTabListener);
+        NeoForge.EVENT_BUS.addListener(this::onTagsUpdated);
     }
 
     private void registerContent(final IEventBus eventBus) {
@@ -308,6 +312,10 @@ public class ModInitializer extends AbstractModInitializer {
         } else if (e.getTabKey().equals(coloredCreativeModeTab)) {
             CreativeModeTabItems.appendColoredVariants(e::accept);
         }
+    }
+
+    private void onTagsUpdated(final TagsUpdatedEvent event) {
+        TagsCache.invalidateAll();
     }
 
     private record ForgeRegistryCallback<T>(DeferredRegister<T> registry) implements RegistryCallback<T> {

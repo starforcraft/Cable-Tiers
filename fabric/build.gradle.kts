@@ -30,17 +30,14 @@ refinedarchitect {
     modId = "cabletiers"
     version = modVersion
     fabric()
-    publishing {
-        maven = true
-    }
 }
 
 base {
     archivesName.set("cabletiers-fabric")
 }
 
-val refinedstorageVersion: String by project
 val minecraftVersion: String by project
+val refinedstorageVersion: String by project
 
 val commonJava by configurations.existing
 val commonResources by configurations.existing

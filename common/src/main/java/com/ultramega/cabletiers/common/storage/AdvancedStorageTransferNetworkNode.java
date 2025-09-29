@@ -79,8 +79,21 @@ public class AdvancedStorageTransferNetworkNode extends AbstractStorageContainer
         if (!isActive() || network == null) {
             return;
         }
-        final StorageNetworkComponent networkStorage = network.getComponent(StorageNetworkComponent.class);
+
+        int firstNonNullIndex = -1;
         for (int i = 0; i < storages.length / 2; ++i) {
+            if (storages[i] != null) {
+                firstNonNullIndex = i;
+                break;
+            }
+        }
+
+        if (firstNonNullIndex < 0) {
+            return;
+        }
+
+        final StorageNetworkComponent networkStorage = network.getComponent(StorageNetworkComponent.class);
+        for (int i = firstNonNullIndex; i < storages.length / 2; ++i) {
             final StateTrackedStorage storage = storages[i];
             if (storage == null) {
                 continue;

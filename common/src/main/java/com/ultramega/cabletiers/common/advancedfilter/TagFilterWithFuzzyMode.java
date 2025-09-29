@@ -1,6 +1,7 @@
 package com.ultramega.cabletiers.common.advancedfilter;
 
 import com.ultramega.cabletiers.common.packet.s2c.UpdateAdvancedFilterPacket;
+import com.ultramega.cabletiers.common.utils.TagsCache;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
@@ -72,7 +73,7 @@ public final class TagFilterWithFuzzyMode {
         }
 
         if (resourceAmount.resource() instanceof PlatformResourceKey platformResourceKey) {
-            for (final ResourceTag tag : platformResourceKey.getTags()) {
+            for (final ResourceTag tag : TagsCache.get(platformResourceKey)) {
                 if (!tag.key().equals(filterTagKey)) {
                     continue;
                 }

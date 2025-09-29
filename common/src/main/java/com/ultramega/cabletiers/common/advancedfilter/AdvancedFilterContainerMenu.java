@@ -1,5 +1,7 @@
 package com.ultramega.cabletiers.common.advancedfilter;
 
+import com.ultramega.cabletiers.common.utils.TagsCache;
+
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
@@ -32,7 +34,7 @@ public class AdvancedFilterContainerMenu extends AbstractResourceContainerMenu {
         super(null, 0);
 
         this.advancedTags = selectedResource != null
-            ? selectedResource.getTags().stream()
+            ? TagsCache.get(selectedResource).stream()
             .sorted(Comparator.comparing((ResourceTag tag) -> tag.key().location().getNamespace())
                 .thenComparing(tag -> tag.key().location().getPath()))
             .map(AdvancedTag::new).toList()

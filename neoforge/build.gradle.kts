@@ -25,9 +25,6 @@ refinedarchitect {
     version = modVersion
     neoForge()
     dataGeneration(project(":common"))
-    publishing {
-        maven = true
-    }
 
     project.afterEvaluate {
         project.extensions.getByType<NeoForge>().runs.named("data") {
@@ -42,8 +39,8 @@ base {
     archivesName.set("cabletiers-neoforge")
 }
 
-val refinedstorageVersion: String by project
 val minecraftVersion: String by project
+val refinedstorageVersion: String by project
 
 val commonJava by configurations.existing
 val commonResources by configurations.existing

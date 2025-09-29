@@ -30,8 +30,8 @@ base {
     archivesName.set("cabletiers-common")
 }
 
-val refinedstorageVersion: String by project
 val minecraftVersion: String by project
+val refinedstorageVersion: String by project
 
 dependencies {
     api("com.refinedmods.refinedstorage:refinedstorage-common:${refinedstorageVersion}")

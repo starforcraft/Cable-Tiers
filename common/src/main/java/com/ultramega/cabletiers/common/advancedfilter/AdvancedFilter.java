@@ -1,5 +1,7 @@
 package com.ultramega.cabletiers.common.advancedfilter;
 
+import com.ultramega.cabletiers.common.utils.TagsCache;
+
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.filter.Filter;
 import com.refinedmods.refinedstorage.api.resource.filter.FilterMode;
@@ -43,7 +45,7 @@ public class AdvancedFilter extends Filter {
         if (normalized instanceof PlatformResourceKey platformResourceKey) {
             boolean foundTag = false;
 
-            final List<ResourceTag> tags = platformResourceKey.getTags();
+            final List<ResourceTag> tags = TagsCache.get(platformResourceKey);
             for (final ResourceTag tag : tags) {
                 if (tagFilters.contains(tag.key())) {
                     foundTag = true;
