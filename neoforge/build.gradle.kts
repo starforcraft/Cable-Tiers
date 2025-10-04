@@ -12,10 +12,6 @@ repositories {
             password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
     }
-    maven {
-        name = "JEI"
-        url = uri("https://maven.blamejared.com/")
-    }
 }
 
 val modVersion: String by project

@@ -5,7 +5,9 @@ import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedResourceAmou
 import com.ultramega.cabletiers.common.registry.DataComponents;
 import com.ultramega.cabletiers.common.utils.SidedInput;
 
+import com.refinedmods.refinedstorage.common.autocrafting.PatternState;
 import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridBlockEntity;
+import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternType;
 import com.refinedmods.refinedstorage.common.grid.AbstractGridBlockEntity;
 
 import java.util.ArrayList;
@@ -60,6 +62,25 @@ public abstract class MixinPatternGridBlockEntity extends AbstractGridBlockEntit
         if (tag.contains(TAG_SIDED_RESOURCES)) {
             this.cabletiers$sidedResources = SidedResourceAmount.OPTIONAL_LIST_CODEC.parse(NbtOps.INSTANCE, tag.getCompound(TAG_SIDED_RESOURCES)).result().orElseThrow();
         }
+    }
+
+    @Inject(method = "copyPattern", at = @At("HEAD"))
+    private void copyPattern(final ItemStack stack, final CallbackInfo ci) {
+        final PatternState patternState = stack.get(com.refinedmods.refinedstorage.common.content.DataComponents.INSTANCE.getPatternState());
+        if (patternState == null) {
+            return;
+        }
+
+        if (patternState.type() != PatternType.PROCESSING) {
+            return;
+        }
+
+        final SidedInputPatternState sidedInputState = stack.get(DataComponents.INSTANCE.getSidedInputPatternState());
+        if (sidedInputState == null) {
+            return;
+        }
+
+        this.cabletiers$sidedResources = sidedInputState.sidedResources();
     }
 
     @Unique

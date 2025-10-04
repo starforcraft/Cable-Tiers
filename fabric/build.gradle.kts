@@ -18,10 +18,6 @@ repositories {
         name = "Cloth Config"
         url = uri("https://maven.shedaniel.me/")
     }
-    maven {
-        name = "JEI"
-        url = uri("https://maven.blamejared.com/")
-    }
 }
 
 val modVersion: String by project

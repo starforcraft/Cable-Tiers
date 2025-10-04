@@ -10,7 +10,8 @@
     "MixinPatternGridContainerMenu",
     "MixinPatternGridContainerMenuInvoker",
     "MixinPatternItem",
-    "MixinPatternTooltipCacheInvoker"
+    "MixinPatternTooltipCacheInvoker",
+    "MixinValidatedSlot"
   ],
   "client": [
     "MixinPatternGridScreen",
