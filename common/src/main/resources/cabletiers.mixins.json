@@ -11,7 +11,8 @@
     "MixinPatternGridContainerMenuInvoker",
     "MixinPatternItem",
     "MixinPatternTooltipCacheInvoker",
-    "MixinValidatedSlot"
+    "MixinPatternGridBlockEntityInvoker",
+    "MixinInnerValidatedSlot"
   ],
   "client": [
     "MixinPatternGridScreen",

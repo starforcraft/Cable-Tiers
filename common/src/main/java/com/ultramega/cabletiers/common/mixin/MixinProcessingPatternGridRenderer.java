@@ -18,8 +18,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputScreen.isProcessingInputSlot;
 import static com.ultramega.cabletiers.common.utils.ClientUtils.renderDirectionText;
+import static com.ultramega.cabletiers.common.utils.SidedInputUtil.isProcessingInputSlot;
 
 @Mixin(targets = "com.refinedmods.refinedstorage.common.autocrafting.patterngrid.ProcessingPatternGridRenderer")
 public class MixinProcessingPatternGridRenderer {

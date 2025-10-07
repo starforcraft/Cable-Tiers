@@ -33,9 +33,9 @@ import net.minecraft.world.item.ItemStack;
 import org.lwjgl.opengl.GL11;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
-import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersIdentifier;
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersTranslation;
+import static com.ultramega.cabletiers.common.utils.SidedInputUtil.isProcessingInputSlot;
 import static net.minecraft.client.gui.screens.inventory.AbstractContainerScreen.renderSlotHighlight;
 
 public class SidedInputScreen extends Screen {
@@ -52,11 +52,6 @@ public class SidedInputScreen extends Screen {
     private static final MutableComponent SOUTH = createCableTiersTranslation("gui", "omni_side_pattern_grid.south");
     private static final MutableComponent WEST = createCableTiersTranslation("gui", "omni_side_pattern_grid.west");
     private static final MutableComponent EAST = createCableTiersTranslation("gui", "omni_side_pattern_grid.east");
-
-    private static final MutableComponent INPUT_HELP = createTranslation(
-        "gui",
-        "pattern_grid.processing.input_slots_help"
-    );
 
     private static final int DIRECTION_SIZE = 14;
     private static final int INDIVIDUAL_SLOT_SIZE = 18;
@@ -106,11 +101,6 @@ public class SidedInputScreen extends Screen {
 
         this.imageWidth = 140;
         this.imageHeight = 99;
-    }
-
-    public static boolean isProcessingInputSlot(final ResourceSlot slot) {
-        // Unfortunately, this ugly workaround has to be used because ProcessingMatrixInputResourceContainer is private
-        return slot.getHelpText().equals(INPUT_HELP);
     }
 
     @Override

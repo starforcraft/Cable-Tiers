@@ -3,8 +3,8 @@ package com.ultramega.cabletiers.common.mixin;
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedResourceAmount;
 import com.ultramega.cabletiers.common.packet.c2s.SetSidedResourcesOnPatternGridBlockPacket;
 import com.ultramega.cabletiers.common.packet.s2c.RemoveSidedResourcesOnPatternGridMenuPacket;
+import com.ultramega.cabletiers.common.utils.PlayerInventoryGetter;
 import com.ultramega.cabletiers.common.utils.SidedInput;
-import com.ultramega.cabletiers.common.utils.ValidSlot;
 
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridContainerMenu;
@@ -15,32 +15,20 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputScreen.isProcessingInputSlot;
+import static com.ultramega.cabletiers.common.utils.SidedInputUtil.isProcessingInputSlot;
 
 @Mixin(PatternGridContainerMenu.class)
-public abstract class MixinPatternGridContainerMenu extends AbstractGridContainerMenu implements SidedInput {
-    @Shadow
-    @Nullable
-    private Slot patternOutputSlot;
-    @Shadow
-    @Final
-    private Container patternOutput;
-
+public abstract class MixinPatternGridContainerMenu extends AbstractGridContainerMenu implements SidedInput, PlayerInventoryGetter {
     @Unique
     private List<Optional<SidedResourceAmount>> cabletiers$sidedResources = new ArrayList<>();
 
@@ -56,13 +44,6 @@ public abstract class MixinPatternGridContainerMenu extends AbstractGridContaine
         this.cabletiers$sidedResources.replaceAll(ignored -> Optional.empty());
 
         Platform.INSTANCE.sendPacketToServer(new SetSidedResourcesOnPatternGridBlockPacket(cabletiers$sidedResources));
-    }
-
-    @Inject(method = "addPatternSlots", at = @At("TAIL"), remap = false)
-    private void addPatternSlots(final int playerInventoryY, final CallbackInfo ci) {
-        if (patternOutputSlot instanceof ValidSlot validSlot) {
-            validSlot.cabletiers$setPatternGridContainerMenu(patternOutput);
-        }
     }
 
     @Unique
@@ -105,5 +86,10 @@ public abstract class MixinPatternGridContainerMenu extends AbstractGridContaine
                 index++;
             }
         }
+    }
+
+    @Override
+    public Inventory cabletiers$getPlayerInventory() {
+        return playerInventory;
     }
 }
