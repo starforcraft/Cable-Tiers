@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage.api.network.impl.node.storagetransfer.Stor
 import com.refinedmods.refinedstorage.common.storage.FilterModeSideButtonWidget;
 import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes;
 import com.refinedmods.refinedstorage.common.support.widget.FuzzyModeSideButtonWidget;
-import com.refinedmods.refinedstorage.common.support.widget.RedstoneModeSideButtonWidget;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -40,7 +39,6 @@ public class TieredDiskInterfaceScreen extends AbstractAdvancedFilterScreen<Tier
     @Override
     protected void init() {
         super.init();
-        addSideButton(new RedstoneModeSideButtonWidget(getMenu().getProperty(PropertyTypes.REDSTONE_MODE)));
         addSideButton(new TransferModeSideButtonWidget(
             getMenu().getProperty(DiskInterfacePropertyTypes.TRANSFER_MODE)
         ));
