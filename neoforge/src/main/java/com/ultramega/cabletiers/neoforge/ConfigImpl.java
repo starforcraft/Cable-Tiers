@@ -25,7 +25,7 @@ public class ConfigImpl implements Config {
         tieredExporters = new SimpleTieredStackEntryImpl("tieredExporters", CableType.EXPORTER);
         tieredDestructors = new SimpleTieredEntryImpl("tieredDestructors", CableType.DESTRUCTOR, true);
         tieredConstructors = new SimpleTieredStackEntryImpl("tieredConstructors", CableType.CONSTRUCTOR);
-        tieredDiskInterfaces = new SimpleTieredStackEntryImpl("tieredDiskInterfaces", CableType.DISK_INTERFACE);
+        tieredDiskInterfaces = new SimpleTieredStackEntryImpl("tieredDiskInterface", CableType.DISK_INTERFACE); // Removed "s" to force configs to be regenerated
         tieredAutocrafters = new SimpleTieredEntryImpl("tieredAutocrafters", CableType.AUTOCRAFTER, true);
         spec = builder.build();
     }

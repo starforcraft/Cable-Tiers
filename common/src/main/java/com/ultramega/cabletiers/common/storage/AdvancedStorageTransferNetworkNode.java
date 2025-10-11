@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
 import javax.annotation.Nullable;
@@ -33,6 +34,8 @@ public class AdvancedStorageTransferNetworkNode extends AbstractStorageContainer
     private StorageTransferMode mode = StorageTransferMode.INSERT_INTO_NETWORK;
     @Nullable
     private ToLongFunction<Storage> transferQuotaProvider;
+    @Nullable
+    private Supplier<Boolean> stackUpgradeProvider;
     @Nullable
     private StorageTransferListener listener;
 
@@ -50,6 +53,10 @@ public class AdvancedStorageTransferNetworkNode extends AbstractStorageContainer
 
     public void setTransferQuotaProvider(final ToLongFunction<Storage> transferQuotaProvider) {
         this.transferQuotaProvider = transferQuotaProvider;
+    }
+
+    public void setStackUpgradeProvider(final Supplier<Boolean> stackUpgradeProvider) {
+        this.stackUpgradeProvider = stackUpgradeProvider;
     }
 
     public void setListener(@Nullable final StorageTransferListener listener) {
@@ -137,14 +144,20 @@ public class AdvancedStorageTransferNetworkNode extends AbstractStorageContainer
     }
 
     private boolean transfer(final Storage source, final Storage destination, final long transferQuota) {
+        if (stackUpgradeProvider == null) {
+            return false;
+        }
+
         long remainder = transferQuota;
-        final Collection<ResourceAmount> sourceContents = new LinkedHashSet<>(source.getAll());
-        for (final ResourceAmount resourceAmount : sourceContents) {
+        for (final ResourceAmount resourceAmount : source.getAll()) {
             final ResourceKey resource = resourceAmount.resource();
             if (!filter.isAllowed(resource)) {
                 continue;
             }
-            final long amount = Math.min(remainder, resourceAmount.amount());
+            final long amount = stackUpgradeProvider.get() ? resourceAmount.amount() : Math.min(remainder, resourceAmount.amount());
+            if (stackUpgradeProvider.get()) {
+                remainder = amount;
+            }
             final long transferred = TransferHelper.transfer(resource, amount, actor, source, destination, source);
             remainder -= transferred;
             if (remainder == 0) {

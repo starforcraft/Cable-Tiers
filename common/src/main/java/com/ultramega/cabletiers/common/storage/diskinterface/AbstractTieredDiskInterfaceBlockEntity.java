@@ -76,11 +76,11 @@ public abstract class AbstractTieredDiskInterfaceBlockEntity extends AbstractTie
         this.mainNetworkNode.setListener(this);
         this.mainNetworkNode.setTransferQuotaProvider(storage -> {
             if (storage instanceof SerializableStorage serializableStorage) {
-                return serializableStorage.getType().getDiskInterfaceTransferQuota(upgradeContainer.has(Items.INSTANCE.getStackUpgrade()))
-                    * tier.getSpeed(CableType.DISK_INTERFACE);
+                return serializableStorage.getType().getDiskInterfaceTransferQuota(upgradeContainer.has(Items.INSTANCE.getStackUpgrade()));
             }
-            return tier.getSpeed(CableType.DISK_INTERFACE);
+            return 1;
         });
+        this.mainNetworkNode.setStackUpgradeProvider(() -> upgradeContainer.has(Items.INSTANCE.getStackUpgrade()));
     }
 
     public static UpgradeDestination getUpgradeDestination(final CableTiers tier) {
