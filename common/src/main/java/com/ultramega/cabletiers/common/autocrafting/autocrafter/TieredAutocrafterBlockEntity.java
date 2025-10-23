@@ -29,7 +29,6 @@ import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PlatformPatternProviderExternalPatternSink;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternInventory;
-import com.refinedmods.refinedstorage.common.autocrafting.ProcessingPatternState;
 import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterBlockEntity;
 import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterData;
 import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.InWorldExternalPatternSinkKey;
@@ -634,11 +633,12 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
                                                         final Action action,
                                                         final BiConsumer<Action, ExternalPatternSink.Result> afterAccept) {
         @Nullable
-        final SidedInputPatternState sidedInputState = findSidedInputPatternState(patternContainer);
+        final SidedInputPatternState sidedInputState = findSidedInputPatternState(patternContainer, resources.stream().toList());
         final Direction fallbackDirection = (baseDirection != null) ? baseDirection.getOpposite() : null;
 
         if (sidedInputState != null) {
             final List<ExternalPatternSink.Result> results = new ArrayList<>();
+            final List<ResourceAmount> insertedResources = new ArrayList<>();
 
             for (final Optional<SidedResourceAmount> optionalResource : sidedInputState.sidedResources()) {
                 if (optionalResource.isEmpty()) {
@@ -647,7 +647,6 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
 
                 final SidedResourceAmount sidedResource = optionalResource.get();
                 final ResourceAmount resource = sidedResource.resource();
-
                 final Direction targetDirection = sidedResource.inputDirection().orElse(fallbackDirection);
                 if (targetDirection == null) {
                     continue;
@@ -656,6 +655,18 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
                 final ExternalPatternSink.Result result = sinks[targetDirection.ordinal()].accept(Set.of(resource), action);
                 afterAccept.accept(action, result);
                 results.add(result);
+                insertedResources.add(resource);
+            }
+
+            if (baseDirection != null) {
+                for (final ResourceAmount resource : resources) {
+                    if (insertedResources.contains(resource)) {
+                        continue;
+                    }
+                    final ExternalPatternSink.Result result = sinks[baseDirection.getOpposite().ordinal()].accept(Set.of(resource), action);
+                    afterAccept.accept(action, result);
+                    results.add(result);
+                }
             }
 
             if (!results.isEmpty()) {
@@ -673,56 +684,41 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
     }
 
     @Nullable
-    public static SidedInputPatternState findSidedInputPatternState(final FilteredContainer patternContainer) {
+    public static SidedInputPatternState findSidedInputPatternState(final FilteredContainer patternContainer, final List<ResourceAmount> resources) {
         for (int i = 0; i < patternContainer.getContainerSize(); i++) {
             final ItemStack pattern = patternContainer.getItem(i);
-            final ProcessingPatternState processingState =
-                pattern.get(com.refinedmods.refinedstorage.common.content.DataComponents.INSTANCE.getProcessingPatternState());
             final SidedInputPatternState sidedInputState =
                 pattern.get(DataComponents.INSTANCE.getSidedInputPatternState());
 
-            if (processingState == null || sidedInputState == null) {
+            if (sidedInputState == null) {
                 continue;
             }
 
-            final List<Optional<SidedResourceAmount>> sidedResources = sidedInputState.sidedResources();
-            final List<Optional<ProcessingPatternState.ProcessingIngredient>> ingredients = processingState.ingredients();
+            final List<SidedResourceAmount> sidedResources = sidedInputState.sidedResources().stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
 
-            boolean indicesMatch = true;
-
-            // Any present sided resource beyond the ingredients list means mismatch
-            if (sidedResources.size() > ingredients.size()) {
-                for (int idx = ingredients.size(); idx < sidedResources.size(); idx++) {
-                    if (sidedResources.get(idx).isPresent()) {
-                        indicesMatch = false;
-                        break;
-                    }
-                }
+            if (sidedResources.size() > resources.size()) {
+                continue;
             }
 
-            // Compare all elements in the lists
-            for (int idx = 0; indicesMatch && idx < Math.min(sidedResources.size(), ingredients.size()); idx++) {
-                final Optional<SidedResourceAmount> sidedResourceOptional = sidedResources.get(idx);
-                if (sidedResourceOptional.isEmpty()) {
-                    continue;
-                }
+            boolean resourcesMatch = true;
 
-                final Optional<ProcessingPatternState.ProcessingIngredient> ingredientOptional = ingredients.get(idx);
-                if (ingredientOptional.isEmpty()) {
-                    indicesMatch = false; // sided resource requires something however ingredient is empty
-                    break;
-                }
+            // Compare all resources
+            for (int idx = 0; idx < sidedResources.size(); idx++) {
+                final SidedResourceAmount sidedResourceAmount = sidedResources.get(idx);
 
-                final ResourceAmount sidedResource = sidedResourceOptional.get().resource();
-                final ResourceAmount ingResource = ingredientOptional.get().input();
+                final ResourceAmount sidedResource = sidedResourceAmount.resource();
+                final ResourceAmount ingResource = resources.get(idx);
 
                 if (!ingResource.equals(sidedResource)) {
-                    indicesMatch = false;
+                    resourcesMatch = false;
                     break;
                 }
             }
 
-            if (indicesMatch) {
+            if (resourcesMatch) {
                 return sidedInputState;
             }
         }
