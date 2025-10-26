@@ -1,6 +1,6 @@
 plugins {
-    id("refinedarchitect.root")
-    id("refinedarchitect.base")
+    id("com.refinedmods.refinedarchitect.root")
+    id("com.refinedmods.refinedarchitect.base")
     id("me.modmuss50.mod-publish-plugin") version "1.0.0"
 }
 
@@ -19,7 +19,6 @@ publishMods {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
         projectId = "454382"
         minecraftVersions.add(minecraftVersion)
-        changelogType = "html"
     }
 
     val mrOptions = modrinthOptions {

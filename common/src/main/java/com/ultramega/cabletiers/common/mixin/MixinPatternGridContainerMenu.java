@@ -2,11 +2,13 @@ package com.ultramega.cabletiers.common.mixin;
 
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedResourceAmount;
 import com.ultramega.cabletiers.common.packet.c2s.SetSidedResourcesOnPatternGridBlockPacket;
-import com.ultramega.cabletiers.common.packet.s2c.RemoveSidedResourcesOnPatternGridMenuPacket;
+import com.ultramega.cabletiers.common.packet.s2c.ReplaceSidedResourceOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.utils.PlayerInventoryGetter;
 import com.ultramega.cabletiers.common.utils.SidedInput;
 
+import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridContainerMenu;
 import com.refinedmods.refinedstorage.common.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage.common.grid.GridData;
@@ -15,6 +17,8 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
@@ -41,8 +45,17 @@ public abstract class MixinPatternGridContainerMenu extends AbstractGridContaine
 
     @Inject(method = "sendClear", at = @At("HEAD"), remap = false)
     private void sendClear(final CallbackInfo ci) {
-        this.cabletiers$sidedResources.replaceAll(ignored -> Optional.empty());
+        this.cabletiers$clearSidedResources();
+    }
 
+    @Inject(method = "transferProcessingRecipe", at = @At("HEAD"), remap = false)
+    private void transferProcessingRecipe(final CallbackInfo ci) {
+        this.cabletiers$clearSidedResources();
+    }
+
+    @Unique
+    private void cabletiers$clearSidedResources() {
+        this.cabletiers$sidedResources.replaceAll(ignored -> Optional.empty());
         Platform.INSTANCE.sendPacketToServer(new SetSidedResourcesOnPatternGridBlockPacket(cabletiers$sidedResources));
     }
 
@@ -54,8 +67,11 @@ public abstract class MixinPatternGridContainerMenu extends AbstractGridContaine
 
     @Unique
     @Override
-    public void cabletiers$removeSidedResources(final int index) {
-        this.cabletiers$sidedResources.set(index, Optional.empty());
+    public void cabletiers$replaceSidedResource(@Nullable final ResourceAmount resource, final int index) {
+        this.cabletiers$sidedResources.get(index).ifPresent(ignored -> this.cabletiers$sidedResources.set(index,
+            resource == null
+                ? Optional.empty() 
+                : Optional.of(new SidedResourceAmount(resource, Optional.empty()))));
 
         Platform.INSTANCE.sendPacketToServer(new SetSidedResourcesOnPatternGridBlockPacket(cabletiers$sidedResources));
     }
@@ -71,7 +87,7 @@ public abstract class MixinPatternGridContainerMenu extends AbstractGridContaine
     public void handleResourceSlotChange(final int slotIndex, final boolean tryAlternatives) {
         super.handleResourceSlotChange(slotIndex, tryAlternatives);
 
-        if (!getCarried().isEmpty() || !(player instanceof ServerPlayer serverPlayer)) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
             return;
         }
 
@@ -80,7 +96,8 @@ public abstract class MixinPatternGridContainerMenu extends AbstractGridContaine
         for (final ResourceSlot slot : getResourceSlots()) {
             if (isProcessingInputSlot(slot)) {
                 if (slot.index == slotIndex) {
-                    Platform.INSTANCE.sendPacketToClient(serverPlayer, new RemoveSidedResourcesOnPatternGridMenuPacket(index));
+                    final ResourceAmount resourceAmount = slot.getResource() != null ? new ResourceAmount(slot.getResource(), slot.getAmount()) : null;
+                    Platform.INSTANCE.sendPacketToClient(serverPlayer, new ReplaceSidedResourceOnPatternGridMenuPacket(Optional.ofNullable(resourceAmount), index));
                     break;
                 }
                 index++;

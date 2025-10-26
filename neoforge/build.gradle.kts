@@ -1,15 +1,15 @@
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension as NeoForge
 
 plugins {
-    id("refinedarchitect.neoforge")
+    id("com.refinedmods.refinedarchitect.neoforge")
 }
 
 repositories {
     maven {
-        url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage2")
-        credentials {
-            username = "anything"
-            password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
+        name = "Refined Storage"
+        url = uri("https://maven.creeperhost.net")
+        content {
+            includeGroup("com.refinedmods.refinedstorage")
         }
     }
 }

@@ -8,7 +8,7 @@ import com.ultramega.cabletiers.common.packet.c2s.RequestSidedResourcesPacket;
 import com.ultramega.cabletiers.common.packet.c2s.SetAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.packet.c2s.SetSidedResourcesOnPatternGridBlockPacket;
 import com.ultramega.cabletiers.common.packet.c2s.TieredAutocrafterNameChangePacket;
-import com.ultramega.cabletiers.common.packet.s2c.RemoveSidedResourcesOnPatternGridMenuPacket;
+import com.ultramega.cabletiers.common.packet.s2c.ReplaceSidedResourceOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.SetSidedResourcesOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.ShouldOpenAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterLockedUpdatePacket;
@@ -259,9 +259,9 @@ public class ModInitializer extends AbstractModInitializer {
             wrapHandler(SetSidedResourcesOnPatternGridMenuPacket::handle)
         );
         registrar.playToClient(
-            RemoveSidedResourcesOnPatternGridMenuPacket.PACKET_TYPE,
-            RemoveSidedResourcesOnPatternGridMenuPacket.STREAM_CODEC,
-            wrapHandler(RemoveSidedResourcesOnPatternGridMenuPacket::handle)
+            ReplaceSidedResourceOnPatternGridMenuPacket.PACKET_TYPE,
+            ReplaceSidedResourceOnPatternGridMenuPacket.STREAM_CODEC,
+            wrapHandler(ReplaceSidedResourceOnPatternGridMenuPacket::handle)
         );
     }
 
