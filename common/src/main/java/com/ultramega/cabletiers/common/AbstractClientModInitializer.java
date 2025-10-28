@@ -29,13 +29,13 @@ public abstract class AbstractClientModInitializer {
         for (final CableTiers tier : CableTiers.values()) {
             registration.<TieredImporterContainerMenu, TieredImporterScreen>register(Menus.INSTANCE.getTieredImporters(tier),
                 (containerMenu, inventory, title) ->
-                new TieredImporterScreen(containerMenu, inventory, title, tier));
+                    new TieredImporterScreen(containerMenu, inventory, title, tier));
             registration.<TieredExporterContainerMenu, TieredExporterScreen>register(Menus.INSTANCE.getTieredExporters(tier),
                 (containerMenu, inventory, title) ->
-                new TieredExporterScreen(containerMenu, inventory, title, tier));
+                    new TieredExporterScreen(containerMenu, inventory, title, tier));
             registration.<TieredDestructorContainerMenu, TieredDestructorScreen>register(Menus.INSTANCE.getTieredDestructors(tier),
                 (containerMenu, inventory, title) ->
-                new TieredDestructorScreen(containerMenu, inventory, title, tier));
+                    new TieredDestructorScreen(containerMenu, inventory, title, tier));
             registration.<TieredConstructorContainerMenu, TieredConstructorScreen>register(Menus.INSTANCE.getTieredConstructors(tier),
                 (containerMenu, inventory, title) ->
                     new TieredConstructorScreen(containerMenu, inventory, title, tier));

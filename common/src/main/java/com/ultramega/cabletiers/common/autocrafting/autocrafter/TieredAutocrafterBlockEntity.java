@@ -10,7 +10,7 @@ import com.ultramega.cabletiers.common.registry.DataComponents;
 import com.ultramega.cabletiers.common.utils.ContentNames;
 
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
-import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink.Result;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
 import com.refinedmods.refinedstorage.api.autocrafting.task.StepBehavior;
 import com.refinedmods.refinedstorage.api.autocrafting.task.Task;
@@ -609,16 +609,16 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
     }
 
     @Override
-    public ExternalPatternSink.Result accept(final Collection<ResourceAmount> resources, final Action action) {
+    public Result accept(final Collection<ResourceAmount> resources, final Action action) {
         final TieredAutocrafterBlockEntity root = getChainingRoot();
         if (root != this) {
             return root.accept(resources, action);
         }
         if (Arrays.stream(sinks).allMatch(Objects::isNull)) {
-            return ExternalPatternSink.Result.SKIPPED;
+            return Result.SKIPPED;
         }
         if (locked) {
-            return ExternalPatternSink.Result.LOCKED;
+            return Result.LOCKED;
         }
 
         final Direction baseDirection = tryExtractDirection(getBlockState());
@@ -626,18 +626,18 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         return findResult(sinks, patternContainer, baseDirection, resources, action, this::updateLockedAfterAccept);
     }
 
-    public static ExternalPatternSink.Result findResult(final PlatformPatternProviderExternalPatternSink[] sinks,
+    public static Result findResult(final PlatformPatternProviderExternalPatternSink[] sinks,
                                                         final FilteredContainer patternContainer,
                                                         @Nullable final Direction baseDirection,
                                                         final Collection<ResourceAmount> resources,
                                                         final Action action,
-                                                        final BiConsumer<Action, ExternalPatternSink.Result> afterAccept) {
+                                                        final BiConsumer<Action, Result> afterAccept) {
         @Nullable
         final SidedInputPatternState sidedInputState = findSidedInputPatternState(patternContainer, resources.stream().toList());
         final Direction fallbackDirection = (baseDirection != null) ? baseDirection.getOpposite() : null;
 
         if (sidedInputState != null) {
-            final List<ExternalPatternSink.Result> results = new ArrayList<>();
+            final List<Result> results = new ArrayList<>();
             final List<ResourceAmount> insertedResources = new ArrayList<>();
 
             for (final Optional<SidedResourceAmount> optionalResource : sidedInputState.sidedResources()) {
@@ -652,7 +652,7 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
                     continue;
                 }
 
-                final ExternalPatternSink.Result result = sinks[targetDirection.ordinal()].accept(Set.of(resource), action);
+                final Result result = sinks[targetDirection.ordinal()].accept(Set.of(resource), action);
                 afterAccept.accept(action, result);
                 results.add(result);
                 insertedResources.add(resource);
@@ -663,22 +663,21 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
                     if (insertedResources.contains(resource)) {
                         continue;
                     }
-                    final ExternalPatternSink.Result result = sinks[baseDirection.getOpposite().ordinal()].accept(Set.of(resource), action);
+                    final Result result = sinks[baseDirection.getOpposite().ordinal()].accept(Set.of(resource), action);
                     afterAccept.accept(action, result);
                     results.add(result);
                 }
             }
 
             if (!results.isEmpty()) {
-                // Unfortunately this will result in the Crafting Monitor showing wrong information if any resource is REJECTED or SKIPPED
                 return getMostImportantResult(results);
             }
         }
 
         if (baseDirection == null) {
-            return ExternalPatternSink.Result.REJECTED;
+            return Result.REJECTED;
         }
-        final ExternalPatternSink.Result result = sinks[baseDirection.getOpposite().ordinal()].accept(resources, action);
+        final Result result = sinks[baseDirection.getOpposite().ordinal()].accept(resources, action);
         afterAccept.accept(action, result);
         return result;
     }
@@ -726,10 +725,11 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         return null;
     }
 
-    public static ExternalPatternSink.Result getMostImportantResult(final List<ExternalPatternSink.Result> results) {
-        // Priority: ACCEPTED
-        for (final ExternalPatternSink.Result result : results) {
-            if (result == ExternalPatternSink.Result.ACCEPTED) {
+    public static Result getMostImportantResult(final List<Result> results) {
+        final List<Result> priority = List.of(Result.REJECTED, Result.SKIPPED, Result.LOCKED);
+
+        for (final Result result : priority) {
+            if (results.contains(result)) {
                 return result;
             }
         }
@@ -738,15 +738,15 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         return results.getFirst();
     }
 
-    private void updateLockedAfterAccept(final Action action, final ExternalPatternSink.Result result) {
+    private void updateLockedAfterAccept(final Action action, final Result result) {
         // If we are using speed upgrades, we will try multiple insertions (steps) in 1 tick.
         // That is too late, however, if we only update the locked state every tick.
-        if (result == ExternalPatternSink.Result.ACCEPTED
+        if (result == Result.ACCEPTED
             && action == Action.EXECUTE
             && lockMode == LockMode.LOCK_UNTIL_CONNECTED_MACHINE_IS_EMPTY) {
             updateLocked();
         }
-        if (result == ExternalPatternSink.Result.ACCEPTED
+        if (result == Result.ACCEPTED
             && action == Action.EXECUTE
             && (lockMode == LockMode.LOCK_UNTIL_REDSTONE_PULSE_RECEIVED
             || lockMode == LockMode.LOCK_UNTIL_ALL_OUTPUTS_ARE_RECEIVED)) {

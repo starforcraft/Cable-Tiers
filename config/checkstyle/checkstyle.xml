@@ -90,7 +90,6 @@
         <module name="UncommentedMain"/>
         <module name="RedundantModifier"/>
         <module name="ConstantName"/>
-        <module name="IllegalIdentifierName"/>
         <module name="AnonInnerLength"/>
         <module name="MethodCount"/>
         <module name="MethodLength"/>

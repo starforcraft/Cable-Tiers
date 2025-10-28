@@ -33,6 +33,7 @@ public abstract class MixinPatternGridBlockEntity extends AbstractGridBlockEntit
     @Unique
     private static final String TAG_SIDED_RESOURCES = "sided_resources";
 
+    // This is only for server side
     @Unique
     private List<Optional<SidedResourceAmount>> cabletiers$sidedResources = new ArrayList<>();
 

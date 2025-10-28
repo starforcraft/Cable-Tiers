@@ -8,7 +8,6 @@ import com.ultramega.cabletiers.common.utils.SidedInput;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.Platform;
-import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridContainerMenu;
 import com.refinedmods.refinedstorage.common.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage.common.grid.GridData;
@@ -17,7 +16,6 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.server.level.ServerPlayer;
@@ -33,6 +31,7 @@ import static com.ultramega.cabletiers.common.utils.SidedInputUtil.isProcessingI
 
 @Mixin(PatternGridContainerMenu.class)
 public abstract class MixinPatternGridContainerMenu extends AbstractGridContainerMenu implements SidedInput, PlayerInventoryGetter {
+    // This is only for client side
     @Unique
     private List<Optional<SidedResourceAmount>> cabletiers$sidedResources = new ArrayList<>();
 
@@ -68,10 +67,14 @@ public abstract class MixinPatternGridContainerMenu extends AbstractGridContaine
     @Unique
     @Override
     public void cabletiers$replaceSidedResource(@Nullable final ResourceAmount resource, final int index) {
-        this.cabletiers$sidedResources.get(index).ifPresent(ignored -> this.cabletiers$sidedResources.set(index,
-            resource == null
-                ? Optional.empty() 
-                : Optional.of(new SidedResourceAmount(resource, Optional.empty()))));
+        if (this.cabletiers$sidedResources.size() > index) {
+            final Optional<SidedResourceAmount> resourceAmount = this.cabletiers$sidedResources.get(index);
+            resourceAmount.ifPresent(ignored -> this.cabletiers$sidedResources.set(index,
+                resource == null
+                    ? Optional.empty()
+                    : Optional.of(new SidedResourceAmount(resource, resourceAmount.get().resource().resource().equals(resource.resource())
+                    ? resourceAmount.get().inputDirection() : Optional.empty()))));
+        }
 
         Platform.INSTANCE.sendPacketToServer(new SetSidedResourcesOnPatternGridBlockPacket(cabletiers$sidedResources));
     }
@@ -82,11 +85,20 @@ public abstract class MixinPatternGridContainerMenu extends AbstractGridContaine
         return cabletiers$sidedResources;
     }
 
-    @Unique
     @Override
     public void handleResourceSlotChange(final int slotIndex, final boolean tryAlternatives) {
         super.handleResourceSlotChange(slotIndex, tryAlternatives);
+        this.cabletiers$handleResourceSlotUpdate(slotIndex);
+    }
 
+    @Override
+    public void handleResourceSlotAmountChange(final int slotIndex, final long amount) {
+        super.handleResourceSlotAmountChange(slotIndex, amount);
+        this.cabletiers$handleResourceSlotUpdate(slotIndex);
+    }
+
+    @Unique
+    public void cabletiers$handleResourceSlotUpdate(final int slotIndex) {
         if (!(player instanceof ServerPlayer serverPlayer)) {
             return;
         }

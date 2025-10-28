@@ -16,8 +16,6 @@ import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.TransferHelper;
 import com.refinedmods.refinedstorage.api.storage.limited.LimitedStorage;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
