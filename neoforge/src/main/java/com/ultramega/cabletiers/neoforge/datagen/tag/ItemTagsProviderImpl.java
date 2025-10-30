@@ -5,6 +5,7 @@ import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.registry.Blocks;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
@@ -54,6 +55,8 @@ public class ItemTagsProviderImpl extends ItemTagsProvider {
                 Blocks.INSTANCE.getTieredAutocrafters(tier).values().stream()
                     .map(block -> (Supplier<Item>) block::asItem)
                     .toList());
+            addAllToTag(tier.getItemTag(CableType.INTERFACE),
+                List.of(() -> Blocks.INSTANCE.getTieredInterfaces(tier).get().asItem()));
         }
     }
 

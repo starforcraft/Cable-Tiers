@@ -1,5 +1,7 @@
 package com.ultramega.cabletiers.common.autocrafting.autocrafter;
 
+import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.LockMode;
+
 /**
  * Exact copy of {@link com.refinedmods.refinedstorage.common.autocrafting.autocrafter.LockModeSettings}
  */

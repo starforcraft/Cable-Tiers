@@ -1,5 +1,8 @@
 package com.ultramega.cabletiers.common.autocrafting.autocrafter;
 
+import com.ultramega.cabletiers.common.mixin.InvokerLockMode;
+
+import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.LockMode;
 import com.refinedmods.refinedstorage.common.support.containermenu.ClientProperty;
 import com.refinedmods.refinedstorage.common.support.widget.AbstractSideButtonWidget;
 
@@ -63,7 +66,7 @@ class LockModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     private static OnPress createPressAction(final ClientProperty<LockMode> property) {
-        return btn -> property.setValue(property.getValue().toggle());
+        return btn -> property.setValue(((InvokerLockMode) (Object) property.getValue()).toggle());
     }
 
     @Override

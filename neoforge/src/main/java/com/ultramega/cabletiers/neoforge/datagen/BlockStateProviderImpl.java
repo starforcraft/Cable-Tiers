@@ -1,6 +1,7 @@
 package com.ultramega.cabletiers.neoforge.datagen;
 
 import com.ultramega.cabletiers.common.CableTiers;
+import com.ultramega.cabletiers.common.iface.TieredInterfaceBlock;
 import com.ultramega.cabletiers.common.registry.Blocks;
 
 import com.refinedmods.refinedstorage.common.constructordestructor.AbstractConstructorDestructorBlock;
@@ -41,6 +42,7 @@ public class BlockStateProviderImpl extends BlockStateProvider {
             registerConstructorDestructor(Blocks.INSTANCE.getTieredConstructors(tier), tier.getLowercaseName() + "_constructor");
             registerDiskInterfaces(tier, tier.getLowercaseName() + "_disk_interface");
             registerAutocrafters(tier, tier.getLowercaseName() + "_autocrafter");
+            registerInterfaces(tier, tier.getLowercaseName() + "_interface");
         }
     }
 
@@ -111,6 +113,22 @@ public class BlockStateProviderImpl extends BlockStateProvider {
                 addAutocrafterRotation(model, direction);
                 return model.build();
             });
+        });
+    }
+
+    private void registerInterfaces(final CableTiers tier, final String name) {
+        final ModelFile active = modelFile(createCableTiersIdentifier(BLOCK_PREFIX + "/" + name + "/active"));
+        final ModelFile inactive = modelFile(createCableTiersIdentifier(BLOCK_PREFIX + "/" + name + "/inactive"));
+        final var block = Blocks.INSTANCE.getTieredInterfaces(tier);
+        final var builder = getVariantBuilder(block.get());
+        builder.forAllStates(blockState -> {
+            final ConfiguredModel.Builder<?> model = ConfiguredModel.builder();
+            if (Boolean.TRUE.equals(blockState.getValue(TieredInterfaceBlock.ACTIVE))) {
+                model.modelFile(active);
+            } else {
+                model.modelFile(inactive);
+            }
+            return model.build();
         });
     }
 

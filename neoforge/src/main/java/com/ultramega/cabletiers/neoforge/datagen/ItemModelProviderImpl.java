@@ -37,6 +37,7 @@ public class ItemModelProviderImpl extends ItemModelProvider {
             registerTieredConstructors(tier);
             registerTieredDiskInterfaces(tier);
             registerTieredAutocrafters(tier);
+            registerTieredInterfaces(tier);
         }
     }
 
@@ -83,6 +84,13 @@ public class ItemModelProviderImpl extends ItemModelProvider {
             id.getPath(),
             createCableTiersIdentifier("block/" + tier.getLowercaseName() + "_autocrafter/" + color.getName())
         ));
+    }
+
+    private void registerTieredInterfaces(final CableTiers tier) {
+        withExistingParent(
+            tier.getLowercaseName() + "_interface",
+            createCableTiersIdentifier("block/" + tier.getLowercaseName() + "_interface/active")
+        );
     }
 
     private void addCableTexture(final DyeColor color,

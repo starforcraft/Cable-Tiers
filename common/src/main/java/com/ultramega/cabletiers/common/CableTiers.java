@@ -15,17 +15,20 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 public enum CableTiers {
-    ELITE(18, 73),
-    ULTRA(36, 109),
-    MEGA(54, 145),
-    CREATIVE(54, 145);
+    ELITE(18, 18, 73),
+    ULTRA(36, 27, 109),
+    MEGA(54, 27, 145),
+    CREATIVE(54, 27, 145);
 
     private final int filterSlotsCount;
+    private final int interfaceSlotsCount;
     private final int playerInventoryY;
 
     CableTiers(final int filterSlotsCount,
+               final int interfaceSlotsCount,
                final int playerInventoryY) {
         this.filterSlotsCount = filterSlotsCount;
+        this.interfaceSlotsCount = interfaceSlotsCount;
         this.playerInventoryY = playerInventoryY;
     }
 
@@ -53,6 +56,7 @@ public enum CableTiers {
             case CONSTRUCTOR -> Platform.getConfig().getTieredConstructors().getSpeed(this);
             case DISK_INTERFACE -> Platform.getConfig().getTieredDiskInterfaces().getSpeed(this);
             case AUTOCRAFTER -> Platform.getConfig().getTieredAutocrafters().getSpeed(this);
+            case INTERFACE -> Platform.getConfig().getTieredInterfaces().getSpeed(this);
         };
     }
 
@@ -74,11 +78,24 @@ public enum CableTiers {
             case CONSTRUCTOR -> Platform.getConfig().getTieredConstructors().getEnergyUsage(this);
             case DISK_INTERFACE -> Platform.getConfig().getTieredDiskInterfaces().getEnergyUsage(this);
             case AUTOCRAFTER -> Platform.getConfig().getTieredAutocrafters().getEnergyUsage(this);
+            case INTERFACE -> Platform.getConfig().getTieredInterfaces().getEnergyUsage(this);
         };
+    }
+
+    public long getTransferQuotaMultiplier(final CableType type) {
+        if (type == CableType.INTERFACE) {
+            return Platform.getConfig().getTieredInterfaces().getTransferQuotaMultiplier(this);
+        }
+
+        return 1L;
     }
 
     public int getFilterSlotsCount() {
         return filterSlotsCount;
+    }
+
+    public int getInterfaceSlotsCount() {
+        return interfaceSlotsCount;
     }
 
     public int getPlayerInventoryY() {

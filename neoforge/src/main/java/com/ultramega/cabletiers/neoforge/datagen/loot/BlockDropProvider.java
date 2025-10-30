@@ -28,6 +28,7 @@ public class BlockDropProvider extends BlockLootSubProvider {
             Blocks.INSTANCE.getTieredConstructors(tier).forEach((color, id, block) -> drop(block.get()));
             Blocks.INSTANCE.getTieredDiskInterfaces(tier).forEach((color, id, block) -> drop(block.get()));
             Blocks.INSTANCE.getTieredAutocrafters(tier).forEach((color, id, block) -> drop(block.get()));
+            drop(Blocks.INSTANCE.getTieredInterfaces(tier).get());
         }
     }
 
@@ -52,6 +53,7 @@ public class BlockDropProvider extends BlockLootSubProvider {
             blocks.addAll(Blocks.INSTANCE.getTieredConstructors(tier).values());
             blocks.addAll(Blocks.INSTANCE.getTieredDiskInterfaces(tier).values());
             blocks.addAll(Blocks.INSTANCE.getTieredAutocrafters(tier).values());
+            blocks.add(Blocks.INSTANCE.getTieredInterfaces(tier).get());
         }
 
         return blocks;

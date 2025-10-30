@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "active=false": {
+      "model": "cabletiers:block/mega_interface/inactive"
+    },
+    "active=true": {
+      "model": "cabletiers:block/mega_interface/active"
+    }
+  }
+}

@@ -6,6 +6,9 @@ import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputPattern
 import com.ultramega.cabletiers.common.constructordestructor.TieredConstructorContainerMenu;
 import com.ultramega.cabletiers.common.constructordestructor.TieredDestructorContainerMenu;
 import com.ultramega.cabletiers.common.exporter.TieredExporterContainerMenu;
+import com.ultramega.cabletiers.common.iface.TieredInterfaceBlock;
+import com.ultramega.cabletiers.common.iface.TieredInterfaceBlockEntity;
+import com.ultramega.cabletiers.common.iface.TieredInterfaceContainerMenu;
 import com.ultramega.cabletiers.common.importer.TieredImporterContainerMenu;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.registry.Blocks;
@@ -15,6 +18,7 @@ import com.ultramega.cabletiers.common.registry.Menus;
 import com.ultramega.cabletiers.common.storage.diskinterface.TieredDiskInterfaceContainerMenu;
 import com.ultramega.cabletiers.common.utils.BlockEntityProviders;
 import com.ultramega.cabletiers.common.utils.BlockEntityTierTypeFactory;
+import com.ultramega.cabletiers.common.utils.ContentIds;
 
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterData;
@@ -23,6 +27,7 @@ import com.refinedmods.refinedstorage.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage.common.content.ExtendedMenuTypeFactory;
 import com.refinedmods.refinedstorage.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage.common.exporter.ExporterData;
+import com.refinedmods.refinedstorage.common.iface.InterfaceData;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
 
 import net.minecraft.core.component.DataComponentType;
@@ -54,6 +59,9 @@ public class AbstractModInitializer {
         Blocks.INSTANCE.setTieredAutocrafters()
             .values()
             .forEach(autocrafter -> autocrafter.registerBlocks(callback));
+        for (final CableTiers tier : CableTiers.values()) {
+            Blocks.INSTANCE.setTieredInterfaces(tier, callback.register(ContentIds.getContentId(tier, CableType.INTERFACE), () -> new TieredInterfaceBlock(tier)));
+        }
     }
 
     protected void registerItems(final RegistryCallback<Item> callback) {
@@ -64,6 +72,7 @@ public class AbstractModInitializer {
             Blocks.INSTANCE.getTieredConstructors(tier).registerItems(callback, Items.INSTANCE::addTieredConstructor);
             Blocks.INSTANCE.getTieredDiskInterfaces(tier).registerItems(callback, Items.INSTANCE::addTieredDiskInterface);
             Blocks.INSTANCE.getTieredAutocrafters(tier).registerItems(callback, Items.INSTANCE::addTieredAutocrafters);
+            callback.register(ContentIds.getContentId(tier, CableType.INTERFACE), () -> Blocks.INSTANCE.getTieredInterfaces(tier).get().createBlockItem());
         }
     }
 
@@ -95,6 +104,10 @@ public class AbstractModInitializer {
             BlockEntities.INSTANCE.addTieredAutocrafter(tier, callback.register(
                 tier.getContentId(CableType.AUTOCRAFTER),
                 () -> tierTypeFactory.create(tier, TieredAutocrafterBlockEntity::new, Blocks.INSTANCE.getTieredAutocrafters(tier).toArray())
+            ));
+            BlockEntities.INSTANCE.addTieredInterface(tier, callback.register(
+                tier.getContentId(CableType.INTERFACE),
+                () -> tierTypeFactory.create(tier, TieredInterfaceBlockEntity::new, Blocks.INSTANCE.getTieredInterfaces(tier).get())
             ));
         }
     }
@@ -131,6 +144,11 @@ public class AbstractModInitializer {
                 tier.getContentId(CableType.AUTOCRAFTER),
                 () -> extendedMenuTypeFactory.create((syncId, inventory, containerData) ->
                     new TieredAutocrafterContainerMenu(syncId, inventory, containerData, tier), AutocrafterData.STREAM_CODEC)
+            ));
+            Menus.INSTANCE.setTieredInterfaces(tier, callback.register(
+                tier.getContentId(CableType.INTERFACE),
+                () -> extendedMenuTypeFactory.create((syncId, inventory, containerData) ->
+                    new TieredInterfaceContainerMenu(syncId, inventory, containerData, tier), InterfaceData.STREAM_CODEC)
             ));
         }
     }

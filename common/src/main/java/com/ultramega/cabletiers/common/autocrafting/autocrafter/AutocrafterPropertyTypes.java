@@ -1,5 +1,6 @@
 package com.ultramega.cabletiers.common.autocrafting.autocrafter;
 
+import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.LockMode;
 import com.refinedmods.refinedstorage.common.support.containermenu.PropertyType;
 import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes;
 

@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(targets = "com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridContainerMenu$3")
-public class MixinInnerValidatedSlot {
+public final class MixinInnerValidatedSlot {
     @Shadow(aliases = "this$0", remap = false)
     @Final
     private PatternGridContainerMenu patternGridContainerMenu;
@@ -32,7 +32,7 @@ public class MixinInnerValidatedSlot {
             Platform.INSTANCE.sendPacketToServer(new RequestSidedResourcesPacket());
         } else {
             if (player instanceof ServerPlayer serverPlayer
-                && ((MixinPatternGridContainerMenuInvoker) patternGridContainerMenu).cabletiers$getPatternGrid() instanceof SidedInput sidedInput) {
+                && ((InvokerPatternGridContainerMenu) patternGridContainerMenu).cabletiers$getPatternGrid() instanceof SidedInput sidedInput) {
                 Platform.INSTANCE.sendPacketToClient(serverPlayer, new SetSidedResourcesOnPatternGridMenuPacket(sidedInput.cabletiers$getSidedResources()));
             }
         }

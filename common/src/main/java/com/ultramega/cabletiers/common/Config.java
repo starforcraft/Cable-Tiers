@@ -13,8 +13,14 @@ public interface Config {
 
     SimpleTieredEntry getTieredAutocrafters();
 
+    SimpleTieredInterfaceEntry getTieredInterfaces();
+
     interface SimpleTieredStackEntry extends SimpleTieredEntry {
         boolean hasStackUpgradeIntegrated(CableTiers tier);
+    }
+
+    interface SimpleTieredInterfaceEntry extends SimpleTieredEntry {
+        long getTransferQuotaMultiplier(CableTiers tier);
     }
 
     interface SimpleTieredEntry {

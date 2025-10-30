@@ -39,6 +39,7 @@ public class BlockTagsProvider extends TagsProvider<Block> {
             addAllToTag(tier.getBlockTag(CableType.CONSTRUCTOR), Blocks.INSTANCE.getTieredConstructors(tier));
             addAllToTag(tier.getBlockTag(CableType.DISK_INTERFACE), Blocks.INSTANCE.getTieredDiskInterfaces(tier));
             addAllToTag(tier.getBlockTag(CableType.AUTOCRAFTER), Blocks.INSTANCE.getTieredAutocrafters(tier));
+            addToTag(tier.getBlockTag(CableType.INTERFACE), Blocks.INSTANCE.getTieredInterfaces(tier).get());
         }
 
         for (final CableType type : CableType.values()) {
@@ -50,7 +51,11 @@ public class BlockTagsProvider extends TagsProvider<Block> {
 
     private <T extends Block> void addAllToTag(final TagKey<Block> t, final BlockColorMap<?, ?> blocks) {
         for (final Block block : blocks.toArray()) {
-            tag(t).add(BuiltInRegistries.BLOCK.getResourceKey(block).orElseThrow()).replace(false);
+            addToTag(t, block);
         }
+    }
+
+    private <T extends Block> void addToTag(final TagKey<Block> t, final Block block) {
+        tag(t).add(BuiltInRegistries.BLOCK.getResourceKey(block).orElseThrow()).replace(false);
     }
 }

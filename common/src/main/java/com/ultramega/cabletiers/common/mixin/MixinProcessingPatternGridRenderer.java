@@ -22,7 +22,7 @@ import static com.ultramega.cabletiers.common.utils.ClientUtils.renderDirectionT
 import static com.ultramega.cabletiers.common.utils.SidedInputUtil.isProcessingInputSlot;
 
 @Mixin(targets = "com.refinedmods.refinedstorage.common.autocrafting.patterngrid.ProcessingPatternGridRenderer")
-public class MixinProcessingPatternGridRenderer {
+public final class MixinProcessingPatternGridRenderer {
     @Shadow(remap = false)
     @Final
     private PatternGridContainerMenu menu;

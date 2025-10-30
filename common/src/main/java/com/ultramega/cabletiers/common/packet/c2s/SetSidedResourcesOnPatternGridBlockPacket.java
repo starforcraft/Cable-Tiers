@@ -1,7 +1,7 @@
 package com.ultramega.cabletiers.common.packet.c2s;
 
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedResourceAmount;
-import com.ultramega.cabletiers.common.mixin.MixinPatternGridContainerMenuInvoker;
+import com.ultramega.cabletiers.common.mixin.InvokerPatternGridContainerMenu;
 import com.ultramega.cabletiers.common.utils.SidedInput;
 
 import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridBlockEntity;
@@ -30,7 +30,7 @@ public record SetSidedResourcesOnPatternGridBlockPacket(List<Optional<SidedResou
 
     public static void handle(final SetSidedResourcesOnPatternGridBlockPacket packet, final PacketContext ctx) {
         if (ctx.getPlayer().containerMenu instanceof PatternGridContainerMenu gridContainerMenu) {
-            final PatternGridBlockEntity gridBlockEntity = ((MixinPatternGridContainerMenuInvoker) gridContainerMenu).cabletiers$getPatternGrid();
+            final PatternGridBlockEntity gridBlockEntity = ((InvokerPatternGridContainerMenu) gridContainerMenu).cabletiers$getPatternGrid();
             if (gridBlockEntity == null) {
                 return;
             }

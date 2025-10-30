@@ -5,6 +5,7 @@ import com.ultramega.cabletiers.common.autocrafting.autocrafter.TieredAutocrafte
 import com.ultramega.cabletiers.common.constructordestructor.TieredConstructorContainerMenu;
 import com.ultramega.cabletiers.common.constructordestructor.TieredDestructorContainerMenu;
 import com.ultramega.cabletiers.common.exporter.TieredExporterContainerMenu;
+import com.ultramega.cabletiers.common.iface.TieredInterfaceContainerMenu;
 import com.ultramega.cabletiers.common.importer.TieredImporterContainerMenu;
 import com.ultramega.cabletiers.common.storage.diskinterface.TieredDiskInterfaceContainerMenu;
 
@@ -25,6 +26,7 @@ public final class Menus {
     private final Map<CableTiers, Supplier<MenuType<TieredConstructorContainerMenu>>> tieredConstructors = new HashMap<>();
     private final Map<CableTiers, Supplier<MenuType<TieredDiskInterfaceContainerMenu>>> tieredDiskInterfaces = new HashMap<>();
     private final Map<CableTiers, Supplier<MenuType<TieredAutocrafterContainerMenu>>> tieredAutocrafters = new HashMap<>();
+    private final Map<CableTiers, Supplier<MenuType<TieredInterfaceContainerMenu>>> tieredInterfaces = new HashMap<>();
 
     public void setTieredImporters(final CableTiers tier,
                                    final Supplier<MenuType<TieredImporterContainerMenu>> supplier) {
@@ -78,5 +80,14 @@ public final class Menus {
 
     public MenuType<TieredAutocrafterContainerMenu> getTieredAutocrafters(final CableTiers tier) {
         return requireNonNull(tieredAutocrafters).get(tier).get();
+    }
+
+    public void setTieredInterfaces(final CableTiers tier,
+                                    final Supplier<MenuType<TieredInterfaceContainerMenu>> supplier) {
+        this.tieredInterfaces.put(tier, supplier);
+    }
+
+    public MenuType<TieredInterfaceContainerMenu> getTieredInterfaces(final CableTiers tier) {
+        return requireNonNull(tieredInterfaces).get(tier).get();
     }
 }

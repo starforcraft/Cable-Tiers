@@ -107,7 +107,8 @@ public abstract class AbstractTieredFilterContainerMenu<T extends TagFiltering> 
 
     private Slot createFilterSlot(final ResourceContainer resourceContainer, final int i) {
         final int x = FILTER_SLOT_X + (18 * (i % 9));
-        return new AdvancedResourceSlot(this, player, resourceContainer, i, filterHelp, x, FILTER_SLOT_Y + 18 * (i / 9), ResourceSlotType.FILTER);
+        final int y = FILTER_SLOT_Y + (18 * (i / 9));
+        return new AdvancedResourceSlot(this, player, resourceContainer, i, filterHelp, x, y, ResourceSlotType.FILTER);
     }
 
     @Override

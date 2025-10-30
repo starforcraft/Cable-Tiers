@@ -1,5 +1,6 @@
 package com.ultramega.cabletiers.common.advancedfilter;
 
+import com.ultramega.cabletiers.common.mixin.InvokerActionButton;
 import com.ultramega.cabletiers.common.packet.c2s.SetAdvancedFilterPacket;
 
 import com.refinedmods.refinedstorage.common.Platform;
@@ -8,6 +9,7 @@ import com.refinedmods.refinedstorage.common.api.support.resource.ResourceTag;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseScreen;
 import com.refinedmods.refinedstorage.common.support.ResourceSlotRendering;
 import com.refinedmods.refinedstorage.common.support.Sprites;
+import com.refinedmods.refinedstorage.common.support.amount.ActionButton;
 import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
 import com.refinedmods.refinedstorage.common.support.widget.CheckboxWidget;
 import com.refinedmods.refinedstorage.common.support.widget.CustomButton;
@@ -436,7 +438,7 @@ public class AdvancedFilterScreen extends AbstractBaseScreen<AdvancedFilterConta
 
     private void addConfirmButton(final int x, final int y) {
         final int width = font.width(DONE) + ACTION_BUTTON_SPACING + ICON_SIZE;
-        final ActionButton button = new ActionButton(
+        final ActionButton button = InvokerActionButton.init(
             leftPos + x,
             topPos + y,
             width,

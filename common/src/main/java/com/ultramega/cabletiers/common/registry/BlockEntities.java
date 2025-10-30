@@ -5,6 +5,7 @@ import com.ultramega.cabletiers.common.autocrafting.autocrafter.TieredAutocrafte
 import com.ultramega.cabletiers.common.constructordestructor.AbstractTieredConstructorBlockEntity;
 import com.ultramega.cabletiers.common.constructordestructor.AbstractTieredDestructorBlockEntity;
 import com.ultramega.cabletiers.common.exporter.AbstractTieredExporterBlockEntity;
+import com.ultramega.cabletiers.common.iface.TieredInterfaceBlockEntity;
 import com.ultramega.cabletiers.common.importer.AbstractTieredImporterBlockEntity;
 import com.ultramega.cabletiers.common.storage.diskinterface.AbstractTieredDiskInterfaceBlockEntity;
 
@@ -25,6 +26,7 @@ public final class BlockEntities {
     private final Map<CableTiers, Supplier<BlockEntityType<AbstractTieredConstructorBlockEntity>>> tieredConstructors = new HashMap<>();
     private final Map<CableTiers, Supplier<BlockEntityType<AbstractTieredDiskInterfaceBlockEntity>>> tieredDiskInterface = new HashMap<>();
     private final Map<CableTiers, Supplier<BlockEntityType<TieredAutocrafterBlockEntity>>> tieredAutocrafter = new HashMap<>();
+    private final Map<CableTiers, Supplier<BlockEntityType<TieredInterfaceBlockEntity>>> tieredInterface = new HashMap<>();
 
     public void addTieredImporter(final CableTiers tier,
                                   final Supplier<BlockEntityType<AbstractTieredImporterBlockEntity>> supplier) {
@@ -78,5 +80,14 @@ public final class BlockEntities {
 
     public BlockEntityType<TieredAutocrafterBlockEntity> getTieredAutocrafters(final CableTiers tier) {
         return requireNonNull(tieredAutocrafter.get(tier)).get();
+    }
+
+    public void addTieredInterface(final CableTiers tier,
+                                   final Supplier<BlockEntityType<TieredInterfaceBlockEntity>> supplier) {
+        this.tieredInterface.put(tier, supplier);
+    }
+
+    public BlockEntityType<TieredInterfaceBlockEntity> getTieredInterfaces(final CableTiers tier) {
+        return requireNonNull(tieredInterface.get(tier)).get();
     }
 }

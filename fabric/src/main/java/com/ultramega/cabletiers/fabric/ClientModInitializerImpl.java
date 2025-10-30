@@ -13,10 +13,10 @@ import com.ultramega.cabletiers.common.registry.Blocks;
 import com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil;
 import com.ultramega.cabletiers.fabric.storage.diskinterface.TieredDiskInterfaceBlockEntityRendererImpl;
 import com.ultramega.cabletiers.fabric.storage.diskinterface.TieredDiskInterfaceUnbakedModel;
-import com.ultramega.cabletiers.fabric.support.render.EmissiveModelRegistry;
 
 import com.refinedmods.refinedstorage.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage.common.support.packet.PacketHandler;
+import com.refinedmods.refinedstorage.fabric.support.render.EmissiveModelRegistry;
 import com.refinedmods.refinedstorage.fabric.support.render.QuadRotators;
 
 import net.fabricmc.api.ClientModInitializer;

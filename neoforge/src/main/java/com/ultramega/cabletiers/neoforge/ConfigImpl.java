@@ -19,6 +19,7 @@ public class ConfigImpl implements Config {
     private final SimpleTieredStackEntry tieredConstructors;
     private final SimpleTieredStackEntry tieredDiskInterfaces;
     private final SimpleTieredEntry tieredAutocrafters;
+    private final SimpleTieredInterfaceEntry tieredInterfaces;
 
     public ConfigImpl() {
         tieredImporters = new SimpleTieredStackEntryImpl("tieredImporters", CableType.IMPORTER);
@@ -27,6 +28,7 @@ public class ConfigImpl implements Config {
         tieredConstructors = new SimpleTieredStackEntryImpl("tieredConstructors", CableType.CONSTRUCTOR);
         tieredDiskInterfaces = new SimpleTieredStackEntryImpl("tieredDiskInterface", CableType.DISK_INTERFACE); // Removed "s" to force configs to be regenerated
         tieredAutocrafters = new SimpleTieredEntryImpl("tieredAutocrafters", CableType.AUTOCRAFTER, true);
+        tieredInterfaces = new SimpleTieredInterfaceEntryImpl("tieredInterfaces", CableType.INTERFACE);
         spec = builder.build();
     }
 
@@ -64,6 +66,11 @@ public class ConfigImpl implements Config {
         return tieredAutocrafters;
     }
 
+    @Override
+    public SimpleTieredInterfaceEntry getTieredInterfaces() {
+        return tieredInterfaces;
+    }
+
     private static String translationKey(final String value) {
         return createCableTiersTranslationKey("text.autoconfig", "option." + value);
     }
@@ -96,6 +103,42 @@ public class ConfigImpl implements Config {
                 case ULTRA -> ultraStackUpgradeIntegrated.get();
                 case MEGA -> megaStackUpgradeIntegrated.get();
                 case CREATIVE -> true;
+            };
+        }
+    }
+
+    private class SimpleTieredInterfaceEntryImpl extends SimpleTieredEntryImpl implements SimpleTieredInterfaceEntry {
+        private final ModConfigSpec.LongValue eliteTransferQuotaMultiplier;
+        private final ModConfigSpec.LongValue ultraTransferQuotaMultiplier;
+        private final ModConfigSpec.LongValue megaTransferQuotaMultiplier;
+        private final ModConfigSpec.LongValue creativeTransferQuotaMultiplier;
+
+        SimpleTieredInterfaceEntryImpl(final String name, final CableType type) {
+            super(name, type, false);
+
+            eliteTransferQuotaMultiplier = builder
+                .translation(translationKey(name + ".eliteTransferQuotaMultiplier"))
+                .defineInRange("eliteTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplier(CableTiers.ELITE, type), 1, Long.MAX_VALUE);
+            ultraTransferQuotaMultiplier = builder
+                .translation(translationKey(name + ".ultraTransferQuotaMultiplier"))
+                .defineInRange("ultraTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplier(CableTiers.ULTRA, type), 1, Long.MAX_VALUE);
+            megaTransferQuotaMultiplier = builder
+                .translation(translationKey(name + ".megaTransferQuotaMultiplier"))
+                .defineInRange("megaTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplier(CableTiers.MEGA, type), 1, Long.MAX_VALUE);
+            creativeTransferQuotaMultiplier = builder
+                .translation(translationKey(name + ".creativeTransferQuotaMultiplier"))
+                .defineInRange("creativeTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplier(CableTiers.CREATIVE, type), 1, Long.MAX_VALUE);
+
+            builder.pop();
+        }
+
+        @Override
+        public long getTransferQuotaMultiplier(final CableTiers tier) {
+            return switch (tier) {
+                case ELITE -> eliteTransferQuotaMultiplier.get();
+                case ULTRA -> ultraTransferQuotaMultiplier.get();
+                case MEGA -> megaTransferQuotaMultiplier.get();
+                case CREATIVE -> creativeTransferQuotaMultiplier.get();
             };
         }
     }

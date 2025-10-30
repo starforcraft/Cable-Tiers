@@ -16,6 +16,7 @@ public final class Items {
     private final List<Supplier<BaseBlockItem>> allTieredConstructors = new ArrayList<>();
     private final List<Supplier<BaseBlockItem>> allTieredDiskInterfaces = new ArrayList<>();
     private final List<Supplier<BaseBlockItem>> allTieredAutocrafters = new ArrayList<>();
+    private final List<Supplier<BaseBlockItem>> allTieredInterfaces = new ArrayList<>();
 
     private Items() {
     }
@@ -66,5 +67,13 @@ public final class Items {
 
     public List<Supplier<BaseBlockItem>> getTieredAutocrafters() {
         return Collections.unmodifiableList(allTieredAutocrafters);
+    }
+
+    public void addTieredInterfaces(final Supplier<BaseBlockItem> supplier) {
+        allTieredInterfaces.add(supplier);
+    }
+
+    public List<Supplier<BaseBlockItem>> getTieredInterfaces() {
+        return Collections.unmodifiableList(allTieredInterfaces);
     }
 }

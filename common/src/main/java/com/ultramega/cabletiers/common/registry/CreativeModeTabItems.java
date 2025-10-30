@@ -20,6 +20,7 @@ public final class CreativeModeTabItems {
             appendDefaultBlockColor(consumer, Blocks.INSTANCE.getTieredConstructors(tier));
             appendDefaultBlockColor(consumer, Blocks.INSTANCE.getTieredDiskInterfaces(tier));
             appendDefaultBlockColor(consumer, Blocks.INSTANCE.getTieredAutocrafters(tier));
+            consumer.accept(new ItemStack(Blocks.INSTANCE.getTieredInterfaces(tier).get()));
         }
     }
 

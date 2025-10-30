@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PatternItem.class)
-public class MixinPatternItem {
+public final class MixinPatternItem {
     @Unique
     private static final Map<UUID, Boolean> SENT_SIDED_RESOURCES_DATA = new HashMap<>();
 
@@ -46,7 +46,7 @@ public class MixinPatternItem {
         }
 
         if (state.type() == PatternType.PROCESSING) {
-            if (MixinPatternTooltipCacheInvoker.getCache().get(state.id()) instanceof SidedInput sidedInput) {
+            if (InvokerPatternTooltipCache.getCache().get(state.id()) instanceof SidedInput sidedInput) {
                 sidedInput.cabletiers$setSidedResources(sidedInputState.sidedResources());
                 SENT_SIDED_RESOURCES_DATA.put(state.id(), true);
             }

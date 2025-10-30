@@ -70,7 +70,7 @@ public abstract class MixinPatternGridScreen extends AbstractGridScreen<PatternG
             SIDED_INPUT,
             SIDED_INPUT_HELP
         );
-        this.cabletiers$createSidedInputButton.visible = ((MixinPatternGridContainerMenuInvoker) getMenu()).cabletiers$getPatternType() == PatternType.PROCESSING;
+        this.cabletiers$createSidedInputButton.visible = ((InvokerPatternGridContainerMenu) getMenu()).cabletiers$getPatternType() == PatternType.PROCESSING;
         addRenderableWidget(cabletiers$createSidedInputButton);
 
         Platform.INSTANCE.sendPacketToServer(new RequestSidedResourcesPacket());

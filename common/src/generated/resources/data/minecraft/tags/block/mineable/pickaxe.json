@@ -23,6 +23,10 @@
     "#cabletiers:elite_autocrafters",
     "#cabletiers:ultra_autocrafters",
     "#cabletiers:mega_autocrafters",
-    "#cabletiers:creative_autocrafters"
+    "#cabletiers:creative_autocrafters",
+    "#cabletiers:elite_interfaces",
+    "#cabletiers:ultra_interfaces",
+    "#cabletiers:mega_interfaces",
+    "#cabletiers:creative_interfaces"
   ]
 }

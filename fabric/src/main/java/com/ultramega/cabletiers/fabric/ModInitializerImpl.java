@@ -129,6 +129,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
             registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredConstructors(tier));
             registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredDiskInterfaces(tier));
             registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredAutocrafters(tier));
+            registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredInterfaces(tier));
 
             ItemStorage.SIDED.registerForBlockEntity((blockEntity, context) -> {
                 final InventoryStorage storage = InventoryStorage.of(blockEntity.getDiskInventory(), context);

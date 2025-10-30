@@ -192,6 +192,7 @@ public class ModInitializer extends AbstractModInitializer {
             registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredConstructors(tier));
             registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredDiskInterfaces(tier));
             registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredAutocrafters(tier));
+            registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredInterfaces(tier));
 
             event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,

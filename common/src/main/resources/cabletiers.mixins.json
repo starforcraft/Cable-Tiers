@@ -8,11 +8,12 @@
     "MixinAutocrafterBlockEntity",
     "MixinPatternGridBlockEntity",
     "MixinPatternGridContainerMenu",
-    "MixinPatternGridContainerMenuInvoker",
+    "InvokerPatternGridContainerMenu",
     "MixinPatternItem",
-    "MixinPatternTooltipCacheInvoker",
-    "MixinPatternGridBlockEntityInvoker",
-    "MixinInnerValidatedSlot"
+    "InvokerPatternTooltipCache",
+    "MixinInnerValidatedSlot",
+    "InvokerActionButton",
+    "InvokerLockMode"
   ],
   "client": [
     "MixinPatternGridScreen",

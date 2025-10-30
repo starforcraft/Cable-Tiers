@@ -9,6 +9,8 @@ import com.ultramega.cabletiers.common.constructordestructor.TieredDestructorCon
 import com.ultramega.cabletiers.common.constructordestructor.TieredDestructorScreen;
 import com.ultramega.cabletiers.common.exporter.TieredExporterContainerMenu;
 import com.ultramega.cabletiers.common.exporter.TieredExporterScreen;
+import com.ultramega.cabletiers.common.iface.TieredInterfaceContainerMenu;
+import com.ultramega.cabletiers.common.iface.TieredInterfaceScreen;
 import com.ultramega.cabletiers.common.importer.TieredImporterContainerMenu;
 import com.ultramega.cabletiers.common.importer.TieredImporterScreen;
 import com.ultramega.cabletiers.common.registry.Menus;
@@ -45,6 +47,9 @@ public abstract class AbstractClientModInitializer {
             registration.<TieredAutocrafterContainerMenu, TieredAutocrafterScreen>register(Menus.INSTANCE.getTieredAutocrafters(tier),
                 (containerMenu, inventory, title) ->
                     new TieredAutocrafterScreen(containerMenu, inventory, title, tier));
+            registration.<TieredInterfaceContainerMenu, TieredInterfaceScreen>register(Menus.INSTANCE.getTieredInterfaces(tier),
+                (containerMenu, inventory, title) ->
+                    new TieredInterfaceScreen(containerMenu, inventory, title, tier));
         }
     }
 

@@ -1,6 +1,6 @@
 package com.ultramega.cabletiers.common.packet.c2s;
 
-import com.ultramega.cabletiers.common.mixin.MixinPatternGridContainerMenuInvoker;
+import com.ultramega.cabletiers.common.mixin.InvokerPatternGridContainerMenu;
 import com.ultramega.cabletiers.common.packet.s2c.SetSidedResourcesOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.utils.SidedInput;
 
@@ -20,7 +20,7 @@ public record RequestSidedResourcesPacket() implements CustomPacketPayload {
 
     public static void handle(final RequestSidedResourcesPacket packet, final PacketContext ctx) {
         if (ctx.getPlayer() instanceof ServerPlayer serverPlayer
-            && ((MixinPatternGridContainerMenuInvoker) serverPlayer.containerMenu).cabletiers$getPatternGrid() instanceof SidedInput sidedInput) {
+            && ((InvokerPatternGridContainerMenu) serverPlayer.containerMenu).cabletiers$getPatternGrid() instanceof SidedInput sidedInput) {
             Platform.INSTANCE.sendPacketToClient(serverPlayer, new SetSidedResourcesOnPatternGridMenuPacket(sidedInput.cabletiers$getSidedResources()));
         }
     }

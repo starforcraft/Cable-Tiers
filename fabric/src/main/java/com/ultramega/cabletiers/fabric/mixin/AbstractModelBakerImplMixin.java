@@ -1,7 +1,8 @@
 package com.ultramega.cabletiers.fabric.mixin;
 
 import com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil;
-import com.ultramega.cabletiers.fabric.support.render.EmissiveModelRegistry;
+
+import com.refinedmods.refinedstorage.fabric.support.render.EmissiveModelRegistry;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BakedModel;

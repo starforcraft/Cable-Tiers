@@ -1,6 +1,6 @@
 @ParametersAreNonnullByDefault
 @FieldsAndMethodsAreNonnullByDefault
-package com.ultramega.cabletiers.fabric.support.render;
+package com.ultramega.cabletiers.common.iface;
 
 import com.refinedmods.refinedstorage.api.core.FieldsAndMethodsAreNonnullByDefault;
 
