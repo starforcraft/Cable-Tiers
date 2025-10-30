@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.function.ToLongFunction;
 import javax.annotation.Nullable;
 
-public class TieredInterfaceNetworkNode extends AbstractNetworkNode { //TODO: is this really required?
+public class TieredInterfaceNetworkNode extends AbstractNetworkNode {
     private long energyUsage;
     private final Actor actor = new NetworkNodeActor(this);
     @Nullable

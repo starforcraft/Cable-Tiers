@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(LockMode.class)
 public interface InvokerLockMode {
-    @Invoker("toggle")
+    @Invoker(value = "toggle", remap = false)
     LockMode toggle();
 }

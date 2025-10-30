@@ -32,14 +32,18 @@ import com.refinedmods.refinedstorage.common.content.BlockEntityProvider;
 import com.refinedmods.refinedstorage.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage.common.content.DirectRegistryCallback;
 import com.refinedmods.refinedstorage.common.content.ExtendedMenuTypeFactory;
+import com.refinedmods.refinedstorage.common.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage.common.support.packet.PacketHandler;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStorageFabricApi;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStoragePlugin;
+import com.refinedmods.refinedstorage.fabric.support.resource.ResourceContainerFluidStorageAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
@@ -48,6 +52,7 @@ import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -60,6 +65,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.Container;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -140,6 +146,17 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
                 }
                 return new CombinedStorage<>(parts);
             }, BlockEntities.INSTANCE.getTieredDiskInterfaces(tier));
+
+            registerItemStorage(
+                InterfaceBlockEntity.class::isInstance,
+                InterfaceBlockEntity.class::cast,
+                InterfaceBlockEntity::getExportedResourcesAsContainer,
+                BlockEntities.INSTANCE.getTieredInterfaces(tier)
+            );
+            FluidStorage.SIDED.registerForBlockEntity(
+                (blockEntity, context) -> new ResourceContainerFluidStorageAdapter(blockEntity.getExportedResources()),
+                BlockEntities.INSTANCE.getTieredInterfaces(tier)
+            );
         }
     }
 
@@ -148,6 +165,19 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
             (be, dir) -> be.getContainerProvider(),
             type
         );
+    }
+
+    private <T extends BlockEntity> void registerItemStorage(final Predicate<BlockEntity> test,
+                                                             final Function<BlockEntity, T> caster,
+                                                             final Function<T, Container> containerSupplier,
+                                                             final BlockEntityType<?> type) {
+        ItemStorage.SIDED.registerForBlockEntities((blockEntity, context) -> {
+            if (test.test(blockEntity)) {
+                final T casted = caster.apply(blockEntity);
+                return InventoryStorage.of(containerSupplier.apply(casted), context);
+            }
+            return null;
+        }, type);
     }
 
     private void registerCreativeModeTabListener(final RefinedStorageApi refinedStorageApi) {

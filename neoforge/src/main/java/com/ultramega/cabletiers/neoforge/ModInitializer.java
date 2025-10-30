@@ -21,6 +21,9 @@ import com.ultramega.cabletiers.common.utils.BlockEntityProviders;
 import com.ultramega.cabletiers.common.utils.BlockEntityTierProvider;
 import com.ultramega.cabletiers.common.utils.BlockEntityTierTypeFactory;
 import com.ultramega.cabletiers.common.utils.TagsCache;
+import com.ultramega.cabletiers.neoforge.compat.IndustrialForegoingSoulsIntegration;
+import com.ultramega.cabletiers.neoforge.compat.MekanismIntegration;
+import com.ultramega.cabletiers.neoforge.compat.RefinedTypesIntegration;
 import com.ultramega.cabletiers.neoforge.constructordestructor.ForgeTieredConstructorBlockEntity;
 import com.ultramega.cabletiers.neoforge.constructordestructor.ForgeTieredDestructorBlockEntity;
 import com.ultramega.cabletiers.neoforge.exporter.ForgeTieredExporterBlockEntity;
@@ -36,6 +39,7 @@ import com.refinedmods.refinedstorage.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage.common.support.packet.PacketHandler;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.support.inventory.InsertExtractItemHandler;
+import com.refinedmods.refinedstorage.neoforge.support.resource.ResourceContainerFluidHandlerAdapter;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -59,6 +63,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -213,6 +218,26 @@ public class ModInitializer extends AbstractModInitializer {
                     );
                 }
             );
+
+            event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                BlockEntities.INSTANCE.getTieredInterfaces(tier),
+                (be, side) -> new InvWrapper(be.getExportedResourcesAsContainer())
+            );
+            event.registerBlockEntity(
+                Capabilities.FluidHandler.BLOCK,
+                BlockEntities.INSTANCE.getTieredInterfaces(tier),
+                (be, side) -> new ResourceContainerFluidHandlerAdapter(be.getExportedResources())
+            );
+            if (ModList.get().isLoaded("refinedstorage_mekanism_integration")) {
+                MekanismIntegration.registerCapabilities(tier, event);
+            }
+            if (ModList.get().isLoaded("refinedtypes")) {
+                RefinedTypesIntegration.registerCapabilities(tier, event);
+                if (ModList.get().isLoaded("industrialforegoingsouls")) {
+                    IndustrialForegoingSoulsIntegration.registerCapabilities(tier, event);
+                }
+            }
         }
     }
 

@@ -2,7 +2,6 @@ package com.ultramega.cabletiers.common.iface;
 
 import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.CableType;
-import com.ultramega.cabletiers.common.Platform;
 import com.ultramega.cabletiers.common.iface.externalstorage.TieredInterfaceExternalStorageProvider;
 import com.ultramega.cabletiers.common.iface.externalstorage.TieredInterfaceExternalStorageProviderImpl;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
@@ -57,7 +56,7 @@ public class TieredInterfaceBlockEntity extends AbstractBaseNetworkNodeContainer
     private final Container exportedResourcesAsContainer;
     private final TieredInterfaceExternalStorageProvider externalStorageProvider;
 
-    private final CableTiers tier; //TODO: remove once merged with advanced filter
+    private final CableTiers tier;
 
     public TieredInterfaceBlockEntity(final CableTiers tier, final BlockPos pos, final BlockState state) {
         super(

@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(ActionButton.class)
 public interface InvokerActionButton {
-    @Invoker("<init>")
+    @Invoker(value = "<init>", remap = false)
     static ActionButton init(final int x,
                              final int y,
                              final int width,
