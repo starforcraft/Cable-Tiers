@@ -66,7 +66,7 @@ class LockModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     private static OnPress createPressAction(final ClientProperty<LockMode> property) {
-        return btn -> property.setValue(((InvokerLockMode) (Object) property.getValue()).toggle());
+        return btn -> property.setValue(((InvokerLockMode) (Object) property.getValue()).cabletiers$toggle());
     }
 
     @Override

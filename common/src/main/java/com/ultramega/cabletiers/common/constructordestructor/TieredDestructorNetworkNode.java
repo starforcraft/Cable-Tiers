@@ -1,8 +1,8 @@
 package com.ultramega.cabletiers.common.constructordestructor;
 
 import com.ultramega.cabletiers.common.advancedfilter.AdvancedFilter;
+import com.ultramega.cabletiers.common.utils.TieredSimpleNetworkNode;
 
-import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeActor;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.filter.FilterMode;
@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 
-public class TieredDestructorNetworkNode extends SimpleNetworkNode {
+public class TieredDestructorNetworkNode extends TieredSimpleNetworkNode {
     private final AdvancedFilter filter = new AdvancedFilter();
     private final Actor actor = new NetworkNodeActor(this);
 
@@ -57,6 +57,8 @@ public class TieredDestructorNetworkNode extends SimpleNetworkNode {
             return;
         }
         final Player player = playerProvider.get();
-        strategy.apply(filter, actor, this::getNetwork, player);
+        for (int i = 0; i < getTier().getSpeed(getType()); i++) {
+            strategy.apply(filter, actor, this::getNetwork, player);
+        }
     }
 }

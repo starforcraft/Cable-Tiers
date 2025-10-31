@@ -26,7 +26,7 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
     private SimpleTieredStackEntryImpl tieredConstructors = new SimpleTieredStackEntryImpl(CableType.CONSTRUCTOR);
 
     @ConfigEntry.Gui.CollapsibleObject
-    private SimpleTieredStackEntryImpl tieredDiskInterfaces = new SimpleTieredStackEntryImpl(CableType.DISK_INTERFACE);
+    private SimpleTieredStackEntryImpl tieredDiskInterface = new SimpleTieredStackEntryImpl(CableType.DISK_INTERFACE); // Removed "s" to force configs to be regenerated
 
     @ConfigEntry.Gui.CollapsibleObject
     private SimpleTieredEntryImpl tieredAutocrafters = new SimpleTieredEntryImpl(CableType.AUTOCRAFTER);
@@ -60,7 +60,7 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
 
     @Override
     public SimpleTieredStackEntry getTieredDiskInterfaces() {
-        return tieredDiskInterfaces;
+        return tieredDiskInterface;
     }
 
     @Override
@@ -138,11 +138,6 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
         private long ultraEnergyUsage;
         private long megaEnergyUsage;
 
-        private int eliteSpeed;
-        private int ultraSpeed;
-        private int megaSpeed;
-        private int creativeSpeed;
-
         private long eliteTransferQuotaMultiplier;
         private long ultraTransferQuotaMultiplier;
         private long megaTransferQuotaMultiplier;
@@ -152,11 +147,6 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
             this.eliteEnergyUsage = DefaultConfig.getUsageFor(CableTiers.ELITE, type);
             this.ultraEnergyUsage = DefaultConfig.getUsageFor(CableTiers.ULTRA, type);
             this.megaEnergyUsage = DefaultConfig.getUsageFor(CableTiers.MEGA, type);
-
-            this.eliteSpeed = DefaultConfig.getSpeedFor(CableTiers.ELITE, type);
-            this.ultraSpeed = DefaultConfig.getSpeedFor(CableTiers.ULTRA, type);
-            this.megaSpeed = DefaultConfig.getSpeedFor(CableTiers.MEGA, type);
-            this.creativeSpeed = DefaultConfig.getSpeedFor(CableTiers.MEGA, type);
 
             this.eliteTransferQuotaMultiplier = DefaultConfig.getTransferQuotaMultiplier(CableTiers.ELITE, type);
             this.ultraTransferQuotaMultiplier = DefaultConfig.getTransferQuotaMultiplier(CableTiers.ULTRA, type);
@@ -171,16 +161,6 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
                 case ULTRA -> ultraEnergyUsage;
                 case MEGA -> megaEnergyUsage;
                 case CREATIVE -> 0;
-            };
-        }
-
-        @Override
-        public int getSpeed(final CableTiers tier) {
-            return switch (tier) {
-                case ELITE -> eliteSpeed;
-                case ULTRA -> ultraSpeed;
-                case MEGA -> megaSpeed;
-                case CREATIVE -> creativeSpeed;
             };
         }
 

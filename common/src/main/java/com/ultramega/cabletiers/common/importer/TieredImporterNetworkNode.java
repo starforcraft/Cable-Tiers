@@ -1,8 +1,8 @@
 package com.ultramega.cabletiers.common.importer;
 
 import com.ultramega.cabletiers.common.advancedfilter.AdvancedFilter;
+import com.ultramega.cabletiers.common.utils.TieredSimpleNetworkNode;
 
-import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeActor;
 import com.refinedmods.refinedstorage.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.tags.TagKey;
 
-public class TieredImporterNetworkNode extends SimpleNetworkNode {
+public class TieredImporterNetworkNode extends TieredSimpleNetworkNode {
     private final AdvancedFilter filter = new AdvancedFilter();
     private final Actor actor = new NetworkNodeActor(this);
 
@@ -32,7 +32,9 @@ public class TieredImporterNetworkNode extends SimpleNetworkNode {
         if (network == null || !isActive() || transferStrategy == null) {
             return;
         }
-        transferStrategy.transfer(filter, actor, network);
+        for (int i = 0; i < getTier().getSpeed(getType()); i++) {
+            transferStrategy.transfer(filter, actor, network);
+        }
     }
 
     public void setTransferStrategy(final ImporterTransferStrategy transferStrategy) {

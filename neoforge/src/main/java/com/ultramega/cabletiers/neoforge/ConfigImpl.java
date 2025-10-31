@@ -75,7 +75,7 @@ public class ConfigImpl implements Config {
         return createCableTiersTranslationKey("text.autoconfig", "option." + value);
     }
 
-    private class SimpleTieredStackEntryImpl extends SimpleTieredEntryImpl implements SimpleTieredStackEntry {
+    private final class SimpleTieredStackEntryImpl extends SimpleTieredEntryImpl implements SimpleTieredStackEntry {
         private final ModConfigSpec.BooleanValue eliteStackUpgradeIntegrated;
         private final ModConfigSpec.BooleanValue ultraStackUpgradeIntegrated;
         private final ModConfigSpec.BooleanValue megaStackUpgradeIntegrated;
@@ -107,7 +107,7 @@ public class ConfigImpl implements Config {
         }
     }
 
-    private class SimpleTieredInterfaceEntryImpl extends SimpleTieredEntryImpl implements SimpleTieredInterfaceEntry {
+    private final class SimpleTieredInterfaceEntryImpl extends SimpleTieredEnergyEntryImpl implements SimpleTieredInterfaceEntry {
         private final ModConfigSpec.LongValue eliteTransferQuotaMultiplier;
         private final ModConfigSpec.LongValue ultraTransferQuotaMultiplier;
         private final ModConfigSpec.LongValue megaTransferQuotaMultiplier;
@@ -143,27 +143,14 @@ public class ConfigImpl implements Config {
         }
     }
 
-    private class SimpleTieredEntryImpl implements SimpleTieredEntry {
-        private final ModConfigSpec.LongValue eliteEnergyUsage;
-        private final ModConfigSpec.LongValue ultraEnergyUsage;
-        private final ModConfigSpec.LongValue megaEnergyUsage;
-
+    private class SimpleTieredEntryImpl extends SimpleTieredEnergyEntryImpl implements SimpleTieredEntry {
         private final ModConfigSpec.IntValue eliteSpeed;
         private final ModConfigSpec.IntValue ultraSpeed;
         private final ModConfigSpec.IntValue megaSpeed;
         private final ModConfigSpec.IntValue creativeSpeed;
 
         SimpleTieredEntryImpl(final String name, final CableType type, final boolean pop) {
-            builder.translation(translationKey(name)).push(name);
-            eliteEnergyUsage = builder
-                .translation(translationKey(name + ".eliteEnergyUsage"))
-                .defineInRange("eliteEnergyUsage", DefaultConfig.getUsageFor(CableTiers.ELITE, type), 0, Long.MAX_VALUE);
-            ultraEnergyUsage = builder
-                .translation(translationKey(name + ".ultraEnergyUsage"))
-                .defineInRange("ultraEnergyUsage", DefaultConfig.getUsageFor(CableTiers.ULTRA, type), 0, Long.MAX_VALUE);
-            megaEnergyUsage = builder
-                .translation(translationKey(name + ".megaEnergyUsage"))
-                .defineInRange("megaEnergyUsage", DefaultConfig.getUsageFor(CableTiers.MEGA, type), 0, Long.MAX_VALUE);
+            super(name, type, false);
 
             eliteSpeed = builder
                 .translation(translationKey(name + ".eliteSpeed"))
@@ -184,22 +171,46 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public long getEnergyUsage(final CableTiers tier) {
-            return switch (tier) {
-                case ELITE -> eliteEnergyUsage.get();
-                case ULTRA -> ultraEnergyUsage.get();
-                case MEGA -> megaEnergyUsage.get();
-                case CREATIVE -> 0;
-            };
-        }
-
-        @Override
         public int getSpeed(final CableTiers tier) {
             return switch (tier) {
                 case ELITE -> eliteSpeed.get();
                 case ULTRA -> ultraSpeed.get();
                 case MEGA -> megaSpeed.get();
                 case CREATIVE -> creativeSpeed.get();
+            };
+        }
+    }
+
+    private class SimpleTieredEnergyEntryImpl implements SimpleTieredEnergyEntry {
+        private final ModConfigSpec.LongValue eliteEnergyUsage;
+        private final ModConfigSpec.LongValue ultraEnergyUsage;
+        private final ModConfigSpec.LongValue megaEnergyUsage;
+
+        SimpleTieredEnergyEntryImpl(final String name, final CableType type, final boolean pop) {
+            builder.translation(translationKey(name)).push(name);
+
+            eliteEnergyUsage = builder
+                .translation(translationKey(name + ".eliteEnergyUsage"))
+                .defineInRange("eliteEnergyUsage", DefaultConfig.getUsageFor(CableTiers.ELITE, type), 0, Long.MAX_VALUE);
+            ultraEnergyUsage = builder
+                .translation(translationKey(name + ".ultraEnergyUsage"))
+                .defineInRange("ultraEnergyUsage", DefaultConfig.getUsageFor(CableTiers.ULTRA, type), 0, Long.MAX_VALUE);
+            megaEnergyUsage = builder
+                .translation(translationKey(name + ".megaEnergyUsage"))
+                .defineInRange("megaEnergyUsage", DefaultConfig.getUsageFor(CableTiers.MEGA, type), 0, Long.MAX_VALUE);
+
+            if (pop) {
+                builder.pop();
+            }
+        }
+
+        @Override
+        public long getEnergyUsage(final CableTiers tier) {
+            return switch (tier) {
+                case ELITE -> eliteEnergyUsage.get();
+                case ULTRA -> ultraEnergyUsage.get();
+                case MEGA -> megaEnergyUsage.get();
+                case CREATIVE -> 0;
             };
         }
     }

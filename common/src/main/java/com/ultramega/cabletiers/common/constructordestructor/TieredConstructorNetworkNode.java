@@ -1,6 +1,7 @@
 package com.ultramega.cabletiers.common.constructordestructor;
 
-import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNode;
+import com.ultramega.cabletiers.common.utils.TieredSimpleNetworkNode;
+
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeActor;
 import com.refinedmods.refinedstorage.api.network.node.SchedulingMode;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
@@ -17,7 +18,7 @@ import net.minecraft.world.entity.player.Player;
 
 import static com.ultramega.cabletiers.common.advancedfilter.TagFilterWithFuzzyMode.getResourcesFromFilter;
 
-public class TieredConstructorNetworkNode extends SimpleNetworkNode {
+public class TieredConstructorNetworkNode extends TieredSimpleNetworkNode {
     private final Actor actor = new NetworkNodeActor(this);
     private final List<TieredConstructorTask> tasks = new ArrayList<>();
 
@@ -38,7 +39,9 @@ public class TieredConstructorNetworkNode extends SimpleNetworkNode {
         if (network == null || !isActive() || schedulingMode == null) {
             return;
         }
-        schedulingMode.execute(tasks);
+        for (int i = 0; i < getTier().getSpeed(getType()); i++) {
+            schedulingMode.execute(tasks);
+        }
     }
 
     void setStrategy(@Nullable final ConstructorStrategy strategy) {

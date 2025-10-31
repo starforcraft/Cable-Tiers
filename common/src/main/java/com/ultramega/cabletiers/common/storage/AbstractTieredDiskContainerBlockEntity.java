@@ -86,9 +86,7 @@ public abstract class AbstractTieredDiskContainerBlockEntity<T extends AbstractS
 
     @Override
     public void doWork() {
-        for (int i = 0; i < tier.getSpeed(type); i++) {
-            super.doWork();
-        }
+        super.doWork();
 
         if (!inContainerMenu) {
             return;

@@ -4,8 +4,8 @@ import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.advancedfilter.TagFilterWithFuzzyMode;
 import com.ultramega.cabletiers.common.utils.TagFiltering;
+import com.ultramega.cabletiers.common.utils.TieredSimpleNetworkNode;
 
-import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceTag;
 import com.refinedmods.refinedstorage.common.support.AbstractCableLikeBlockEntity;
 import com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock;
@@ -26,7 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class AbstractTieredCableLikeBlockEntity<T extends AbstractNetworkNode> extends AbstractCableLikeBlockEntity<T>
+public abstract class AbstractTieredCableLikeBlockEntity<T extends TieredSimpleNetworkNode> extends AbstractCableLikeBlockEntity<T>
     implements BlockEntityWithDrops, TagFiltering {
     protected static final String TAG_FILTER_MODE = "fim";
     protected static final String TAG_UPGRADES = "upgr";
@@ -50,13 +50,14 @@ public abstract class AbstractTieredCableLikeBlockEntity<T extends AbstractNetwo
         super(blockEntityType, pos, state, networkNode);
         this.tier = tier;
         this.type = type;
+
+        mainNetworkNode.setTier(tier);
+        mainNetworkNode.setType(type);
     }
 
     @Override
     public void doWork() {
-        for (int i = 0; i < tier.getSpeed(type); i++) {
-            super.doWork();
-        }
+        super.doWork();
 
         if (!inContainerMenu) {
             return;

@@ -47,6 +47,7 @@
   "gui.cabletiers.omni_side_pattern_grid.west": "West",
   "gui.cabletiers.omni_side_pattern_grid.east": "East",
   "item.cabletiers.tiered_cable.help": "Is %s faster than a normal one and has a total of %s filter slots.",
+  "item.cabletiers.tiered_disk_interface.help": "Has a total of %s filter slots.",
   "item.cabletiers.tiered_autocrafter.help": "Is %s faster than a normal one and has a total of %s input slots.",
   "item.cabletiers.tiered_interface.help": "Has a transfer quota multiplier of %s and a total of %s input/output slots.",
   "item.cabletiers.tiered_cable.help.stack_upgrade": "Has a Stack Upgrade integrated.",
@@ -179,12 +180,12 @@
   "text.autoconfig.cabletiers.option.tieredInterfaces.ultraEnergyUsage.tooltip": "The energy used by the Ultra Interface.",
   "text.autoconfig.cabletiers.option.tieredInterfaces.megaEnergyUsage": "Mega Energy usage",
   "text.autoconfig.cabletiers.option.tieredInterfaces.megaEnergyUsage.tooltip": "The energy used by the Mega Interface.",
-  "text.autoconfig.cabletiers.option.tieredInterfaces.eliteSpeed": "Elite Speed",
-  "text.autoconfig.cabletiers.option.tieredInterfaces.eliteSpeed.tooltip": "The speed of the Elite Interface.",
-  "text.autoconfig.cabletiers.option.tieredInterfaces.ultraSpeed": "Ultra Speed",
-  "text.autoconfig.cabletiers.option.tieredInterfaces.ultraSpeed.tooltip": "The speed of the Ultra Interface.",
-  "text.autoconfig.cabletiers.option.tieredInterfaces.megaSpeed": "Mega Speed",
-  "text.autoconfig.cabletiers.option.tieredInterfaces.megaSpeed.tooltip": "The speed of the Mega Interface.",
-  "text.autoconfig.cabletiers.option.tieredInterfaces.creativeSpeed": "Creative Speed",
-  "text.autoconfig.cabletiers.option.tieredInterfaces.creativeSpeed.tooltip": "The speed of the Creative Interface."
+  "text.autoconfig.cabletiers.option.tieredInterfaces.eliteTransferQuotaMultiplier": "Elite Transfer Quota Multiplier",
+  "text.autoconfig.cabletiers.option.tieredInterfaces.eliteTransferQuotaMultiplier.tooltip": "The transfer quota multiplier by the Elite Interface.",
+  "text.autoconfig.cabletiers.option.tieredInterfaces.ultraTransferQuotaMultiplier": "Ultra Transfer Quota Multiplier",
+  "text.autoconfig.cabletiers.option.tieredInterfaces.ultraTransferQuotaMultiplier.tooltip": "The transfer quota multiplier by the Ultra Interface.",
+  "text.autoconfig.cabletiers.option.tieredInterfaces.megaTransferQuotaMultiplier": "Mega Transfer Quota Multiplier",
+  "text.autoconfig.cabletiers.option.tieredInterfaces.megaTransferQuotaMultiplier.tooltip": "The transfer quota multiplier by the Mega Interface.",
+  "text.autoconfig.cabletiers.option.tieredInterfaces.creativeTransferQuotaMultiplier": "Creative Transfer Quota Multiplier",
+  "text.autoconfig.cabletiers.option.tieredInterfaces.creativeTransferQuotaMultiplier.tooltip": "The transfer quota multiplier by the Creative Interface."
 }

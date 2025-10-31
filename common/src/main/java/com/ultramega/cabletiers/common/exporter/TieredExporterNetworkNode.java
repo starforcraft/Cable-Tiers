@@ -1,6 +1,7 @@
 package com.ultramega.cabletiers.common.exporter;
 
-import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNode;
+import com.ultramega.cabletiers.common.utils.TieredSimpleNetworkNode;
+
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeActor;
 import com.refinedmods.refinedstorage.api.network.node.SchedulingMode;
 import com.refinedmods.refinedstorage.api.network.node.exporter.ExporterTransferStrategy;
@@ -14,7 +15,7 @@ import javax.annotation.Nullable;
 
 import static com.ultramega.cabletiers.common.advancedfilter.TagFilterWithFuzzyMode.getResourcesFromFilter;
 
-public class TieredExporterNetworkNode extends SimpleNetworkNode {
+public class TieredExporterNetworkNode extends TieredSimpleNetworkNode {
     private final Actor actor = new NetworkNodeActor(this);
     private final List<TieredExporterTask> tasks = new ArrayList<>();
 
@@ -33,7 +34,9 @@ public class TieredExporterNetworkNode extends SimpleNetworkNode {
         if (network == null || !isActive() || schedulingMode == null) {
             return;
         }
-        schedulingMode.execute(tasks);
+        for (int i = 0; i < getTier().getSpeed(getType()); i++) {
+            schedulingMode.execute(tasks);
+        }
     }
 
     public void setTransferStrategy(final ExporterTransferStrategy transferStrategy) {

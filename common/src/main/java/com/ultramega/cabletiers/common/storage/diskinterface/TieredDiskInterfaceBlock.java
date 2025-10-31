@@ -1,7 +1,6 @@
 package com.ultramega.cabletiers.common.storage.diskinterface;
 
 import com.ultramega.cabletiers.common.CableTiers;
-import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.registry.Blocks;
 import com.ultramega.cabletiers.common.storage.AdvancedStorageTransferNetworkNode;
@@ -41,7 +40,7 @@ import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.cre
 public class TieredDiskInterfaceBlock extends AbstractActiveColoredDirectionalBlock<BiDirection, TieredDiskInterfaceBlock, BaseBlockItem>
     implements EntityBlock, BlockItemProvider<BaseBlockItem> {
     private static final Component HELP_1 = createTranslation("item", "disk_interface.help");
-    private static final Component HELP_2 = createCableTiersTranslation("item", "tiered_cable.help");
+    private static final Component HELP_2 = createCableTiersTranslation("item", "tiered_disk_interface.help");
     private static final Component HELP_3 = createCableTiersTranslation("item", "tiered_cable.help.stack_upgrade");
     private final TieredDiskContainerBlockEntityTicker<AdvancedStorageTransferNetworkNode, AbstractTieredDiskInterfaceBlockEntity> ticker;
 
@@ -89,7 +88,7 @@ public class TieredDiskInterfaceBlock extends AbstractActiveColoredDirectionalBl
             public Optional<TooltipComponent> getTooltipImage(final ItemStack stack) {
                 return Optional.of(new HelpTooltipComponent(Component.literal(
                     HELP_1.getString()
-                        + " " + String.format(HELP_2.getString(), tier.getSpeed(CableType.IMPORTER) + "x", tier.getFilterSlotsCount())
+                        + " " + String.format(HELP_2.getString(), tier.getFilterSlotsCount())
                         + (tier != CableTiers.ELITE ? " " + HELP_3.getString() : "")
                 )));
             }

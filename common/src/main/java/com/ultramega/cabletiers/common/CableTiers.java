@@ -54,9 +54,8 @@ public enum CableTiers {
             case EXPORTER -> Platform.getConfig().getTieredExporters().getSpeed(this);
             case DESTRUCTOR -> Platform.getConfig().getTieredDestructors().getSpeed(this);
             case CONSTRUCTOR -> Platform.getConfig().getTieredConstructors().getSpeed(this);
-            case DISK_INTERFACE -> Platform.getConfig().getTieredDiskInterfaces().getSpeed(this);
             case AUTOCRAFTER -> Platform.getConfig().getTieredAutocrafters().getSpeed(this);
-            case INTERFACE -> Platform.getConfig().getTieredInterfaces().getSpeed(this);
+            default -> 0;
         };
     }
 
