@@ -109,11 +109,18 @@ public class TieredImporterBlock extends AbstractDirectionalCableBlock implement
         return new NetworkNodeBlockItem(this, null) {
             @Override
             public Optional<TooltipComponent> getTooltipImage(final ItemStack stack) {
-                return Optional.of(new HelpTooltipComponent(Component.literal(
-                    HELP_1.getString()
-                    + " " + String.format(HELP_2.getString(), tier.getSpeed(CableType.IMPORTER) + "x", tier.getFilterSlotsCount())
-                    + (tier != CableTiers.ELITE ? " " + HELP_3.getString() : "")
-                )));
+                return Optional.of(new HelpTooltipComponent(
+                    Component.empty()
+                        .append(HELP_1)
+                        .append(Component.literal(" "))
+                        .append(Component.translatable(
+                            HELP_2.getString(),
+                            Component.literal(tier.getSpeed(CableType.IMPORTER) + "x"),
+                            Component.literal(String.valueOf(tier.getFilterSlotsCount())),
+                            Component.literal(tier != CableTiers.ELITE ? " " + HELP_3.getString() : "")
+                        ))
+                    )
+                );
             }
         };
     }

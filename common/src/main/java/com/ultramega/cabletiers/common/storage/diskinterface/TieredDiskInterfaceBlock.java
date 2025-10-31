@@ -86,11 +86,17 @@ public class TieredDiskInterfaceBlock extends AbstractActiveColoredDirectionalBl
         return new NetworkNodeBlockItem(this, null) {
             @Override
             public Optional<TooltipComponent> getTooltipImage(final ItemStack stack) {
-                return Optional.of(new HelpTooltipComponent(Component.literal(
-                    HELP_1.getString()
-                        + " " + String.format(HELP_2.getString(), tier.getFilterSlotsCount())
-                        + (tier != CableTiers.ELITE ? " " + HELP_3.getString() : "")
-                )));
+                return Optional.of(new HelpTooltipComponent(
+                    Component.empty()
+                        .append(HELP_1)
+                        .append(Component.literal(" "))
+                        .append(Component.translatable(
+                            HELP_2.getString(),
+                            Component.literal(String.valueOf(tier.getFilterSlotsCount())),
+                            Component.literal(tier != CableTiers.ELITE ? " " + HELP_3.getString() : "")
+                        ))
+                    )
+                );
             }
         };
     }

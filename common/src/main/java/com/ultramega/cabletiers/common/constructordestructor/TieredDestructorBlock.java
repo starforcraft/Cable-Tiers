@@ -65,10 +65,17 @@ public class TieredDestructorBlock extends AbstractConstructorDestructorBlock<Ti
         return new NetworkNodeBlockItem(this, null) {
             @Override
             public Optional<TooltipComponent> getTooltipImage(final ItemStack stack) {
-                return Optional.of(new HelpTooltipComponent(Component.literal(
-                    HELP_1.getString()
-                        + " " + String.format(HELP_2.getString(), tier.getSpeed(CableType.DESTRUCTOR) + "x", tier.getFilterSlotsCount())
-                )));
+                return Optional.of(new HelpTooltipComponent(
+                        Component.empty()
+                            .append(HELP_1)
+                            .append(Component.literal(" "))
+                            .append(Component.translatable(
+                                HELP_2.getString(),
+                                Component.literal(tier.getSpeed(CableType.DESTRUCTOR) + "x"),
+                                Component.literal(String.valueOf(tier.getFilterSlotsCount()))
+                            ))
+                    )
+                );
             }
         };
     }
