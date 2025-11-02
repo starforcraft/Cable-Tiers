@@ -152,7 +152,7 @@ public class AdvancedStorageTransferNetworkNode extends AbstractStorageContainer
             if (!filter.isAllowed(resource)) {
                 continue;
             }
-            final long amount = stackUpgradeProvider.get() ? resourceAmount.amount() / 10 : Math.min(remainder, resourceAmount.amount());
+            final long amount = stackUpgradeProvider.get() ? resourceAmount.amount() : Math.min(remainder, resourceAmount.amount());
             if (stackUpgradeProvider.get()) {
                 remainder = amount;
             }
