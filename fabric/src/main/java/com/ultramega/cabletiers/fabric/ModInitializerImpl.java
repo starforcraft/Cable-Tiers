@@ -3,6 +3,7 @@ package com.ultramega.cabletiers.fabric;
 import com.ultramega.cabletiers.common.AbstractModInitializer;
 import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.Platform;
+import com.ultramega.cabletiers.common.iface.TieredInterfaceBlockEntity;
 import com.ultramega.cabletiers.common.packet.c2s.ChangeAdvancedResourceSlotPacket;
 import com.ultramega.cabletiers.common.packet.c2s.RequestSidedResourcesPacket;
 import com.ultramega.cabletiers.common.packet.c2s.SetAdvancedFilterPacket;
@@ -32,7 +33,6 @@ import com.refinedmods.refinedstorage.common.content.BlockEntityProvider;
 import com.refinedmods.refinedstorage.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage.common.content.DirectRegistryCallback;
 import com.refinedmods.refinedstorage.common.content.ExtendedMenuTypeFactory;
-import com.refinedmods.refinedstorage.common.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage.common.support.packet.PacketHandler;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStorageFabricApi;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStoragePlugin;
@@ -148,9 +148,9 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
             }, BlockEntities.INSTANCE.getTieredDiskInterfaces(tier));
 
             registerItemStorage(
-                InterfaceBlockEntity.class::isInstance,
-                InterfaceBlockEntity.class::cast,
-                InterfaceBlockEntity::getExportedResourcesAsContainer,
+                TieredInterfaceBlockEntity.class::isInstance,
+                TieredInterfaceBlockEntity.class::cast,
+                TieredInterfaceBlockEntity::getExportedResourcesAsContainer,
                 BlockEntities.INSTANCE.getTieredInterfaces(tier)
             );
             FluidStorage.SIDED.registerForBlockEntity(

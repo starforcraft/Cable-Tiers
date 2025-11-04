@@ -56,6 +56,7 @@ val mekanismVersion: String by project
 val refinedTypesVersion: String by project
 val grandPowerVersion: String by project
 val industrialForegoingSoulsVersion: String by project
+val jadeVersion: String by project
 
 val commonJava by configurations.existing
 val commonResources by configurations.existing
@@ -73,5 +74,6 @@ dependencies {
     compileOnly("curse.maven:refined-types-1327983:${refinedTypesVersion}")
     compileOnly("dev.technici4n:GrandPower:${grandPowerVersion}")
     compileOnly("curse.maven:industrial-foregoing-souls-904394:${industrialForegoingSoulsVersion}")
+    implementation("curse.maven:jade-324717:${jadeVersion}")
 }
 

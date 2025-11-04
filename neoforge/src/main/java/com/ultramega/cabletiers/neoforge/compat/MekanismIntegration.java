@@ -2,9 +2,9 @@ package com.ultramega.cabletiers.neoforge.compat;
 
 import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
+import com.ultramega.cabletiers.neoforge.capability.ImprovedResourceContainerChemicalHandlerAdapter;
 
 import com.refinedmods.refinedstorage.mekanism.ChemicalUtil;
-import com.refinedmods.refinedstorage.mekanism.ResourceContainerChemicalHandlerAdapter;
 
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
@@ -16,7 +16,7 @@ public final class MekanismIntegration {
         event.registerBlockEntity(
             ChemicalUtil.BLOCK_CAPABILITY,
             BlockEntities.INSTANCE.getTieredInterfaces(tier),
-            (be, side) -> new ResourceContainerChemicalHandlerAdapter(be.getExportedResources())
+            (be, side) -> new ImprovedResourceContainerChemicalHandlerAdapter(be.getExportedResources())
         );
     }
 }

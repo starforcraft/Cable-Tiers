@@ -13,7 +13,8 @@
     "InvokerPatternTooltipCache",
     "MixinInnerValidatedSlot",
     "InvokerActionButton",
-    "InvokerLockMode"
+    "InvokerLockMode",
+    "InvokerResourceContainerImpl"
   ],
   "client": [
     "MixinPatternGridScreen",

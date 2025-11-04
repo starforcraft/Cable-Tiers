@@ -4,7 +4,9 @@ import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.iface.externalstorage.TieredInterfaceExternalStorageProvider;
 import com.ultramega.cabletiers.common.iface.externalstorage.TieredInterfaceExternalStorageProviderImpl;
+import com.ultramega.cabletiers.common.mixin.InvokerResourceContainerImpl;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
+import com.ultramega.cabletiers.common.utils.AbstractResourceContainerContainerAdapter;
 import com.ultramega.cabletiers.common.utils.ContentNames;
 
 import com.refinedmods.refinedstorage.api.network.impl.node.iface.InterfaceNetworkNode;
@@ -80,7 +82,12 @@ public class TieredInterfaceBlockEntity extends AbstractBaseNetworkNodeContainer
         this.exportedResources = createExportedResourcesContainer(tier, filter);
         this.exportedResources.setListener(this::setChanged);
         this.mainNetworkNode.setExportState(exportedResources);
-        this.exportedResourcesAsContainer = exportedResources.toItemContainer();
+        this.exportedResourcesAsContainer = new AbstractResourceContainerContainerAdapter(exportedResources) {
+            @Override
+            public void setChanged() {
+                ((InvokerResourceContainerImpl) exportedResources).cabletiers$changed();
+            }
+        };
         this.externalStorageProvider = new TieredInterfaceExternalStorageProviderImpl(mainNetworkNode);
     }
 
@@ -193,7 +200,7 @@ public class TieredInterfaceBlockEntity extends AbstractBaseNetworkNodeContainer
 
     public Container getExportedResourcesAsContainer() {
         return exportedResourcesAsContainer;
-    } //TODO: add item/fluid/chemical etc. capability
+    }
 
     @Nullable
     @Override

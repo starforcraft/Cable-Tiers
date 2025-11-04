@@ -21,6 +21,8 @@ import com.ultramega.cabletiers.common.utils.BlockEntityProviders;
 import com.ultramega.cabletiers.common.utils.BlockEntityTierProvider;
 import com.ultramega.cabletiers.common.utils.BlockEntityTierTypeFactory;
 import com.ultramega.cabletiers.common.utils.TagsCache;
+import com.ultramega.cabletiers.neoforge.capability.ImprovedInvWrapper;
+import com.ultramega.cabletiers.neoforge.capability.ImprovedResourceContainerFluidHandlerAdapter;
 import com.ultramega.cabletiers.neoforge.compat.IndustrialForegoingSoulsIntegration;
 import com.ultramega.cabletiers.neoforge.compat.MekanismIntegration;
 import com.ultramega.cabletiers.neoforge.compat.RefinedTypesIntegration;
@@ -39,7 +41,6 @@ import com.refinedmods.refinedstorage.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage.common.support.packet.PacketHandler;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.support.inventory.InsertExtractItemHandler;
-import com.refinedmods.refinedstorage.neoforge.support.resource.ResourceContainerFluidHandlerAdapter;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -222,12 +223,12 @@ public class ModInitializer extends AbstractModInitializer {
             event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
                 BlockEntities.INSTANCE.getTieredInterfaces(tier),
-                (be, side) -> new InvWrapper(be.getExportedResourcesAsContainer())
+                (be, side) -> new ImprovedInvWrapper(be.getExportedResourcesAsContainer())
             );
             event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK,
                 BlockEntities.INSTANCE.getTieredInterfaces(tier),
-                (be, side) -> new ResourceContainerFluidHandlerAdapter(be.getExportedResources())
+                (be, side) -> new ImprovedResourceContainerFluidHandlerAdapter(be.getExportedResources())
             );
             if (ModList.get().isLoaded("refinedstorage_mekanism_integration")) {
                 MekanismIntegration.registerCapabilities(tier, event);
