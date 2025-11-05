@@ -2,6 +2,7 @@ package com.ultramega.cabletiers.fabric;
 
 import com.ultramega.cabletiers.common.AbstractClientModInitializer;
 import com.ultramega.cabletiers.common.CableTiers;
+import com.ultramega.cabletiers.common.packet.s2c.ClearSidedResourceOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.ReplaceSidedResourceOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.SetSidedResourcesOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.ShouldOpenAdvancedFilterPacket;
@@ -128,6 +129,8 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         ClientPlayNetworking.registerGlobalReceiver(SetSidedResourcesOnPatternGridMenuPacket.PACKET_TYPE, wrapHandler(SetSidedResourcesOnPatternGridMenuPacket::handle));
         ClientPlayNetworking.registerGlobalReceiver(ReplaceSidedResourceOnPatternGridMenuPacket.PACKET_TYPE,
             wrapHandler(ReplaceSidedResourceOnPatternGridMenuPacket::handle));
+        ClientPlayNetworking.registerGlobalReceiver(ClearSidedResourceOnPatternGridMenuPacket.PACKET_TYPE,
+            wrapHandler(ClearSidedResourceOnPatternGridMenuPacket::handle));
     }
 
     private void registerBlockEntityRenderers() {

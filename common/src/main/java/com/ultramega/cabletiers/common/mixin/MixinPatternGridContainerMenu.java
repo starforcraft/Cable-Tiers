@@ -2,12 +2,15 @@ package com.ultramega.cabletiers.common.mixin;
 
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedResourceAmount;
 import com.ultramega.cabletiers.common.packet.c2s.SetSidedResourcesOnPatternGridBlockPacket;
+import com.ultramega.cabletiers.common.packet.s2c.ClearSidedResourceOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.ReplaceSidedResourceOnPatternGridMenuPacket;
+import com.ultramega.cabletiers.common.utils.ClearableSidedResource;
 import com.ultramega.cabletiers.common.utils.PlayerInventoryGetter;
 import com.ultramega.cabletiers.common.utils.SidedInput;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridBlockEntity;
 import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridContainerMenu;
 import com.refinedmods.refinedstorage.common.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage.common.grid.GridData;
@@ -22,6 +25,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -30,7 +34,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static com.ultramega.cabletiers.common.utils.SidedInputUtil.isProcessingInputSlot;
 
 @Mixin(PatternGridContainerMenu.class)
-public abstract class MixinPatternGridContainerMenu extends AbstractGridContainerMenu implements SidedInput, PlayerInventoryGetter {
+public abstract class MixinPatternGridContainerMenu extends AbstractGridContainerMenu implements SidedInput, ClearableSidedResource, PlayerInventoryGetter {
+    @Shadow(remap = false)
+    @Nullable
+    private PatternGridBlockEntity patternGrid;
+
     // This is only for client side
     @Unique
     private List<Optional<SidedResourceAmount>> cabletiers$sidedResources = new ArrayList<>();
@@ -49,11 +57,20 @@ public abstract class MixinPatternGridContainerMenu extends AbstractGridContaine
 
     @Inject(method = "transferProcessingRecipe", at = @At("HEAD"), remap = false)
     private void transferProcessingRecipe(final CallbackInfo ci) {
-        this.cabletiers$clearSidedResources();
+        if (patternGrid == null) {
+            // Client
+            this.cabletiers$clearSidedResources();
+            return;
+        }
+        if (player != null && player instanceof ServerPlayer serverPlayer) {
+            // Server
+            Platform.INSTANCE.sendPacketToClient(serverPlayer, new ClearSidedResourceOnPatternGridMenuPacket());
+        }
     }
 
     @Unique
-    private void cabletiers$clearSidedResources() {
+    @Override
+    public void cabletiers$clearSidedResources() {
         this.cabletiers$sidedResources.replaceAll(ignored -> Optional.empty());
         Platform.INSTANCE.sendPacketToServer(new SetSidedResourcesOnPatternGridBlockPacket(cabletiers$sidedResources));
     }

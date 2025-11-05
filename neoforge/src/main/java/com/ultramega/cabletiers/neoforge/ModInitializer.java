@@ -8,6 +8,7 @@ import com.ultramega.cabletiers.common.packet.c2s.RequestSidedResourcesPacket;
 import com.ultramega.cabletiers.common.packet.c2s.SetAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.packet.c2s.SetSidedResourcesOnPatternGridBlockPacket;
 import com.ultramega.cabletiers.common.packet.c2s.TieredAutocrafterNameChangePacket;
+import com.ultramega.cabletiers.common.packet.s2c.ClearSidedResourceOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.ReplaceSidedResourceOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.SetSidedResourcesOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.ShouldOpenAdvancedFilterPacket;
@@ -289,6 +290,11 @@ public class ModInitializer extends AbstractModInitializer {
             ReplaceSidedResourceOnPatternGridMenuPacket.PACKET_TYPE,
             ReplaceSidedResourceOnPatternGridMenuPacket.STREAM_CODEC,
             wrapHandler(ReplaceSidedResourceOnPatternGridMenuPacket::handle)
+        );
+        registrar.playToClient(
+            ClearSidedResourceOnPatternGridMenuPacket.PACKET_TYPE,
+            ClearSidedResourceOnPatternGridMenuPacket.STREAM_CODEC,
+            wrapHandler(ClearSidedResourceOnPatternGridMenuPacket::handle)
         );
     }
 

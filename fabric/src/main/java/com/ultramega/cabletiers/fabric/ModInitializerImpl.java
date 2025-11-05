@@ -9,6 +9,7 @@ import com.ultramega.cabletiers.common.packet.c2s.RequestSidedResourcesPacket;
 import com.ultramega.cabletiers.common.packet.c2s.SetAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.packet.c2s.SetSidedResourcesOnPatternGridBlockPacket;
 import com.ultramega.cabletiers.common.packet.c2s.TieredAutocrafterNameChangePacket;
+import com.ultramega.cabletiers.common.packet.s2c.ClearSidedResourceOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.ReplaceSidedResourceOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.SetSidedResourcesOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.ShouldOpenAdvancedFilterPacket;
@@ -210,6 +211,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
         PayloadTypeRegistry.playS2C().register(TieredAutocrafterNameUpdatePacket.PACKET_TYPE, TieredAutocrafterNameUpdatePacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(SetSidedResourcesOnPatternGridMenuPacket.PACKET_TYPE, SetSidedResourcesOnPatternGridMenuPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(ReplaceSidedResourceOnPatternGridMenuPacket.PACKET_TYPE, ReplaceSidedResourceOnPatternGridMenuPacket.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(ClearSidedResourceOnPatternGridMenuPacket.PACKET_TYPE, ClearSidedResourceOnPatternGridMenuPacket.STREAM_CODEC);
     }
 
     private void registerClientToServerPackets() {
