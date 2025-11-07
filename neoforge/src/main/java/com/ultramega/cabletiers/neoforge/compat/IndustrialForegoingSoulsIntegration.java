@@ -1,6 +1,7 @@
 package com.ultramega.cabletiers.neoforge.compat;
 
 import com.ultramega.cabletiers.common.CableTiers;
+import com.ultramega.cabletiers.common.registry.BlockEntities;
 
 import com.buuz135.industrialforegoingsouls.capabilities.SoulCapabilities;
 import com.ultramega.refinedtypes.storage.soul.ResourceContainerSoulHandlerAdapter;
@@ -13,7 +14,7 @@ public final class IndustrialForegoingSoulsIntegration {
     public static void registerCapabilities(final CableTiers tier, final RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
             SoulCapabilities.BLOCK,
-            com.refinedmods.refinedstorage.common.content.BlockEntities.INSTANCE.getInterface(),
+            BlockEntities.INSTANCE.getTieredInterfaces(tier),
             (be, side) -> new ResourceContainerSoulHandlerAdapter(be.getExportedResources())
         );
     }

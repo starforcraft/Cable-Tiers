@@ -26,6 +26,9 @@ repositories {
             includeGroup("curse.maven")
         }
     }
+    maven {
+        url = uri("https://maven.blamejared.com/")
+    }
 }
 
 val modVersion: String by project
@@ -55,6 +58,7 @@ val refinedstorageMekanismIntegrationVersion: String by project
 val mekanismVersion: String by project
 val refinedTypesVersion: String by project
 val grandPowerVersion: String by project
+val industrialForegoingVersion: String by project
 val industrialForegoingSoulsVersion: String by project
 val jadeVersion: String by project
 
@@ -71,9 +75,11 @@ dependencies {
         isTransitive = false
     }
     compileOnly("mekanism:Mekanism:${mekanismVersion}")
-    compileOnly("curse.maven:refined-types-1327983:${refinedTypesVersion}")
+    implementation("curse.maven:refined-types-1327983:${refinedTypesVersion}")
     compileOnly("dev.technici4n:GrandPower:${grandPowerVersion}")
-    compileOnly("curse.maven:industrial-foregoing-souls-904394:${industrialForegoingSoulsVersion}")
+
+    implementation("com.buuz135:industrialforegoing:1.21-${industrialForegoingVersion}")
+    implementation("curse.maven:industrial-foregoing-souls-904394:${industrialForegoingSoulsVersion}")
     implementation("curse.maven:jade-324717:${jadeVersion}")
 }
 
