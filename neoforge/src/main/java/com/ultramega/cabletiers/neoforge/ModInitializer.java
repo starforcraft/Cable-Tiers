@@ -24,6 +24,7 @@ import com.ultramega.cabletiers.common.utils.BlockEntityTierTypeFactory;
 import com.ultramega.cabletiers.common.utils.TagsCache;
 import com.ultramega.cabletiers.neoforge.capability.ImprovedInvWrapper;
 import com.ultramega.cabletiers.neoforge.capability.ImprovedResourceContainerFluidHandlerAdapter;
+import com.ultramega.cabletiers.neoforge.compat.ArsNouveauIntegration;
 import com.ultramega.cabletiers.neoforge.compat.IndustrialForegoingSoulsIntegration;
 import com.ultramega.cabletiers.neoforge.compat.MekanismIntegration;
 import com.ultramega.cabletiers.neoforge.compat.RefinedTypesIntegration;
@@ -192,6 +193,11 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerCapabilities(final RegisterCapabilitiesEvent event) {
+        final boolean hasRSMekanismIntegration = ModList.get().isLoaded("refinedstorage_mekanism_integration");
+        final boolean hasRefinedTypes = ModList.get().isLoaded("refinedtypes");
+        final boolean hasArsNouveau = ModList.get().isLoaded("ars_nouveau");
+        final boolean hasIFSouls = ModList.get().isLoaded("industrialforegoingsouls");
+
         for (final CableTiers tier : CableTiers.values()) {
             registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredImporters(tier));
             registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredExporters(tier));
@@ -231,12 +237,15 @@ public class ModInitializer extends AbstractModInitializer {
                 BlockEntities.INSTANCE.getTieredInterfaces(tier),
                 (be, side) -> new ImprovedResourceContainerFluidHandlerAdapter(be.getExportedResources())
             );
-            if (ModList.get().isLoaded("refinedstorage_mekanism_integration")) {
+            if (hasRSMekanismIntegration) {
                 MekanismIntegration.registerCapabilities(tier, event);
             }
-            if (ModList.get().isLoaded("refinedtypes")) {
+            if (hasRefinedTypes) {
                 RefinedTypesIntegration.registerCapabilities(tier, event);
-                if (ModList.get().isLoaded("industrialforegoingsouls")) {
+                if (hasArsNouveau) {
+                    ArsNouveauIntegration.registerCapabilities(tier, event);
+                }
+                if (hasIFSouls) {
                     IndustrialForegoingSoulsIntegration.registerCapabilities(tier, event);
                 }
             }

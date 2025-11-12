@@ -29,6 +29,23 @@ repositories {
     maven {
         url = uri("https://maven.blamejared.com/")
     }
+    maven {
+        url = uri("https://maven.theillusivec4.top/")
+        content {
+            includeGroup("top.theillusivec4.curios")
+        }
+    }
+    maven {
+        name = "GeckoLib"
+        url = uri("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
+        content {
+            includeGroup("software.bernie.geckolib")
+        }
+    }
+    maven {
+        name = "TerraBlender"
+        url = uri("https://maven.minecraftforge.net")
+    }
 }
 
 val modVersion: String by project
@@ -58,6 +75,7 @@ val refinedstorageMekanismIntegrationVersion: String by project
 val mekanismVersion: String by project
 val refinedTypesVersion: String by project
 val grandPowerVersion: String by project
+val arsNouveauVersion: String by project
 val industrialForegoingVersion: String by project
 val industrialForegoingSoulsVersion: String by project
 val jadeVersion: String by project
@@ -78,6 +96,7 @@ dependencies {
     implementation("curse.maven:refined-types-1327983:${refinedTypesVersion}")
     compileOnly("dev.technici4n:GrandPower:${grandPowerVersion}")
 
+    implementation("com.hollingsworth.ars_nouveau:ars_nouveau-${minecraftVersion}:${arsNouveauVersion}")
     implementation("com.buuz135:industrialforegoing:1.21-${industrialForegoingVersion}")
     implementation("curse.maven:industrial-foregoing-souls-904394:${industrialForegoingSoulsVersion}")
     implementation("curse.maven:jade-324717:${jadeVersion}")
