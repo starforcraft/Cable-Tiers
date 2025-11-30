@@ -25,6 +25,7 @@ import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.Exte
 import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.PatternProviderListener;
 import com.refinedmods.refinedstorage.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PlatformPatternProviderExternalPatternSink;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
@@ -47,10 +48,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -699,31 +702,44 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
                 .map(Optional::get)
                 .toList();
 
-            if (sidedResources.size() > resources.size()) {
+            if (!resourcesMatchesIgnoringIndex(sidedResources, resources)) {
                 continue;
             }
 
-            boolean resourcesMatch = true;
-
-            // Compare all resources
-            for (int idx = 0; idx < sidedResources.size(); idx++) {
-                final SidedResourceAmount sidedResourceAmount = sidedResources.get(idx);
-
-                final ResourceAmount sidedResource = sidedResourceAmount.resource();
-                final ResourceAmount ingResource = resources.get(idx);
-
-                if (!ingResource.equals(sidedResource)) {
-                    resourcesMatch = false;
-                    break;
-                }
-            }
-
-            if (resourcesMatch) {
-                return sidedInputState;
-            }
+            return sidedInputState;
         }
 
         return null;
+    }
+
+    private static boolean resourcesMatchesIgnoringIndex(final List<SidedResourceAmount> sidedResources,
+                                                         final List<ResourceAmount> resources) {
+        // Sum amounts for identical resources
+        final Map<ResourceKey, Long> sidedMerged = sidedResources.stream()
+            .collect(Collectors.groupingBy(
+                sra -> sra.resource().resource(),
+                Collectors.summingLong(sra -> sra.resource().amount())
+            ));
+
+        final Map<ResourceKey, Long> flatResources = resources.stream()
+            .collect(Collectors.toMap(
+                ResourceAmount::resource,
+                ResourceAmount::amount
+            ));
+
+        // Must contain the same resource keys
+        if (!sidedMerged.keySet().equals(flatResources.keySet())) {
+            return false;
+        }
+
+        // Amounts must match
+        for (final ResourceKey key : sidedMerged.keySet()) {
+            if (!Objects.equals(sidedMerged.get(key), flatResources.get(key))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static Result getMostImportantResult(final List<Result> results) {
