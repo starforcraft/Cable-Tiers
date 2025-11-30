@@ -5,6 +5,7 @@ public class ImportModeSettings {
     private static final int IMPORT_EVERYTHING = 1;
     private static final int IMPORT_PATTERN_OUTPUTS = 2;
     private static final int IMPORT_REQUESTED_RESOURCES = 3;
+    private static final int IMPORT_REQUESTED_RESOURCES_DEEP = 4;
 
     private ImportModeSettings() {
     }
@@ -14,6 +15,7 @@ public class ImportModeSettings {
             case IMPORT_EVERYTHING -> ImportMode.IMPORT_EVERYTHING;
             case IMPORT_PATTERN_OUTPUTS -> ImportMode.IMPORT_PATTERN_OUTPUTS;
             case IMPORT_REQUESTED_RESOURCES -> ImportMode.IMPORT_REQUESTED_RESOURCES;
+            case IMPORT_REQUESTED_RESOURCES_DEEP -> ImportMode.IMPORT_REQUESTED_RESOURCES_DEEP;
             default -> ImportMode.DONT_IMPORT;
         };
     }
@@ -23,6 +25,7 @@ public class ImportModeSettings {
             case IMPORT_EVERYTHING -> IMPORT_EVERYTHING;
             case IMPORT_PATTERN_OUTPUTS -> IMPORT_PATTERN_OUTPUTS;
             case IMPORT_REQUESTED_RESOURCES -> IMPORT_REQUESTED_RESOURCES;
+            case IMPORT_REQUESTED_RESOURCES_DEEP -> IMPORT_REQUESTED_RESOURCES_DEEP;
             default -> DONT_IMPORT;
         };
     }

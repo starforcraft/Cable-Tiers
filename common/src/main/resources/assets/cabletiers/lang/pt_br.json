@@ -36,6 +36,7 @@
   "gui.cabletiers.autocrafter.import_mode.import_everything": "Importar tudo",
   "gui.cabletiers.autocrafter.import_mode.import_pattern_outputs": "Importar saídas do padrão inserido",
   "gui.cabletiers.autocrafter.import_mode.import_requested_resources": "Importar apenas recursos solicitados",
+  "gui.cabletiers.autocrafter.import_mode.import_requested_resources_deep": "Import only requested resources including sub-ingredients",
   "gui.cabletiers.pattern_grid.sided_input": "Mudar lados de entrada (Cable Tiers)",
   "gui.cabletiers.pattern_grid.sided_input.help": "Permite alterar o lado pelo qual os recursos são inseridos no Autofabricador.",
   "gui.cabletiers.omni_side_pattern_grid.resource_slots_help": "Os recursos que serão inseridos no inventário alvo.",

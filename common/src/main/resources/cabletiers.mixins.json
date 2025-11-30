@@ -14,7 +14,9 @@
     "MixinInnerValidatedSlot",
     "InvokerActionButton",
     "InvokerLockMode",
-    "InvokerResourceContainerImpl"
+    "InvokerResourceContainerImpl",
+    "InvokerAbstractTaskPattern",
+    "InvokerTaskImpl"
   ],
   "client": [
     "MixinPatternGridScreen",

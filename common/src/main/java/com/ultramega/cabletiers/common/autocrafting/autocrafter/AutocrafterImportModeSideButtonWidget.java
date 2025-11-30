@@ -20,6 +20,7 @@ public class AutocrafterImportModeSideButtonWidget extends AbstractSideButtonWid
     private static final ResourceLocation IMPORT_EVERYTHING = createCableTiersIdentifier("widget/side_button/import_everything");
     private static final ResourceLocation IMPORT_PATTERN_OUTPUTS = createCableTiersIdentifier("widget/side_button/import_pattern_outputs");
     private static final ResourceLocation IMPORT_REQUESTED_RESOURCES = createCableTiersIdentifier("widget/side_button/import_requested_resources");
+    private static final ResourceLocation IMPORT_REQUESTED_RESOURCES_DEEP = createCableTiersIdentifier("widget/side_button/import_requested_resources_deep");
 
     private static final List<MutableComponent> DONT_IMPORT_TITLE = List.of(createCableTiersTranslation(
         "gui", PREFIX + ".dont_import"
@@ -32,6 +33,9 @@ public class AutocrafterImportModeSideButtonWidget extends AbstractSideButtonWid
     ).withStyle(ChatFormatting.GRAY));
     private static final List<MutableComponent> IMPORT_REQUESTED_RESOURCES_TITLE = List.of(createCableTiersTranslation(
         "gui", PREFIX + ".import_requested_resources"
+    ).withStyle(ChatFormatting.GRAY));
+    private static final List<MutableComponent> IMPORT_REQUESTED_RESOURCES_DEEP_TITLE = List.of(createCableTiersTranslation(
+        "gui", PREFIX + ".import_requested_resources_deep"
     ).withStyle(ChatFormatting.GRAY));
 
     private final ClientProperty<ImportMode> property;
@@ -52,6 +56,7 @@ public class AutocrafterImportModeSideButtonWidget extends AbstractSideButtonWid
             case IMPORT_EVERYTHING -> IMPORT_EVERYTHING;
             case IMPORT_PATTERN_OUTPUTS -> IMPORT_PATTERN_OUTPUTS;
             case IMPORT_REQUESTED_RESOURCES -> IMPORT_REQUESTED_RESOURCES;
+            case IMPORT_REQUESTED_RESOURCES_DEEP -> IMPORT_REQUESTED_RESOURCES_DEEP;
         };
     }
 
@@ -67,6 +72,7 @@ public class AutocrafterImportModeSideButtonWidget extends AbstractSideButtonWid
             case IMPORT_EVERYTHING -> IMPORT_EVERYTHING_TITLE;
             case IMPORT_PATTERN_OUTPUTS -> IMPORT_PATTERN_OUTPUTS_TITLE;
             case IMPORT_REQUESTED_RESOURCES -> IMPORT_REQUESTED_RESOURCES_TITLE;
+            case IMPORT_REQUESTED_RESOURCES_DEEP -> IMPORT_REQUESTED_RESOURCES_DEEP_TITLE;
         };
     }
 }
