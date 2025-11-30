@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(TaskImpl.class)
 public interface InvokerTaskImpl {
-    @Accessor("patterns")
+    @Accessor(value = "patterns", remap = false)
     Map<Pattern, InvokerAbstractTaskPattern> cabletiers$getPatterns();
 
-    @Accessor("completedPatterns")
+    @Accessor(value = "completedPatterns", remap = false)
     List<InvokerAbstractTaskPattern> cabletiers$getCompletedPatterns();
 }

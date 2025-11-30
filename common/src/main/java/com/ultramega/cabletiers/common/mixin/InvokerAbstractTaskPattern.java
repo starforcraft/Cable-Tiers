@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(targets = "com.refinedmods.refinedstorage.api.autocrafting.task.AbstractTaskPattern")
 public interface InvokerAbstractTaskPattern {
-    @Accessor("pattern")
+    @Accessor(value = "pattern", remap = false)
     Pattern cabletiers$getPattern();
 }
