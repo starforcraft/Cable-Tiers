@@ -16,7 +16,8 @@
     "InvokerLockMode",
     "InvokerResourceContainerImpl",
     "InvokerAbstractTaskPattern",
-    "InvokerTaskImpl"
+    "InvokerTaskImpl",
+    "InvokerLockModeSettings"
   ],
   "client": [
     "MixinPatternGridScreen",
