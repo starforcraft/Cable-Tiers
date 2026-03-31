@@ -14,8 +14,8 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createId
 final class AutocrafterPropertyTypes {
     static final PropertyType<LockMode> LOCK_MODE = new PropertyType<>(
         createIdentifier("lock_mode"),
-        InvokerLockModeSettings::cabletiers$getLockMode,
-        InvokerLockModeSettings::cabletiers$getLockMode
+        InvokerLockModeSettings::cabletiers$getLockModeEnum,
+        InvokerLockModeSettings::cabletiers$getLockModeInt
     );
 
     static final PropertyType<Integer> PRIORITY = PropertyTypes.createIntegerProperty(

@@ -8,12 +8,12 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(targets = "com.refinedmods.refinedstorage.common.autocrafting.autocrafter.LockModeSettings")
 public interface InvokerLockModeSettings {
     @Invoker("getLockMode")
-    static LockMode cabletiers$getLockMode(final int lockMode) {
+    static LockMode cabletiers$getLockModeInt(final int lockMode) {
         throw new AssertionError();
     }
 
     @Invoker("getLockMode")
-    static int cabletiers$getLockMode(final LockMode lockMode) {
+    static int cabletiers$getLockModeEnum(final LockMode lockMode) {
         throw new AssertionError();
     }
 }

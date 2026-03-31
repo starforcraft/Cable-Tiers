@@ -5,6 +5,7 @@ import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.Platform;
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputPatternState;
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedResourceAmount;
+import com.ultramega.cabletiers.common.mixin.InvokerLockModeSettings;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.registry.DataComponents;
 import com.ultramega.cabletiers.common.utils.ContentNames;
@@ -289,7 +290,7 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
     @Override
     public void writeConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
         super.writeConfiguration(tag, provider);
-        tag.putInt(TAG_LOCK_MODE, LockModeSettings.getLockMode(lockMode));
+        tag.putInt(TAG_LOCK_MODE, InvokerLockModeSettings.cabletiers$getLockModeEnum(lockMode));
         tag.putInt(TAG_PRIORITY, mainNetworkNode.getPriority());
         tag.putBoolean(TAG_VISIBLE_TO_THE_AUTOCRAFTER_MANAGER, visibleToTheAutocrafterManager);
         tag.putInt(TAG_IMPORT_MODE, ImportModeSettings.getImportMode(importMode));
@@ -328,7 +329,7 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
     public void readConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
         super.readConfiguration(tag, provider);
         if (tag.contains(TAG_LOCK_MODE)) {
-            lockMode = LockModeSettings.getLockMode(tag.getInt(TAG_LOCK_MODE));
+            lockMode = InvokerLockModeSettings.cabletiers$getLockModeInt(tag.getInt(TAG_LOCK_MODE));
         }
         if (tag.contains(TAG_PRIORITY)) {
             mainNetworkNode.setPriority(tag.getInt(TAG_PRIORITY));

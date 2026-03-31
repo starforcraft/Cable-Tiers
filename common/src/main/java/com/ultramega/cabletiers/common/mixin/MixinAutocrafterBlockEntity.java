@@ -47,9 +47,9 @@ public abstract class MixinAutocrafterBlockEntity extends AbstractBaseNetworkNod
     private final PlatformPatternProviderExternalPatternSink[] cabletiers$sinks = new PlatformPatternProviderExternalPatternSink[Direction.values().length];
 
     private MixinAutocrafterBlockEntity(final BlockEntityType type,
-                                          final BlockPos pos,
-                                          final BlockState state,
-                                          final AbstractNetworkNode networkNode) {
+                                        final BlockPos pos,
+                                        final BlockState state,
+                                        final AbstractNetworkNode networkNode) {
         super(type, pos, state, networkNode);
     }
 
