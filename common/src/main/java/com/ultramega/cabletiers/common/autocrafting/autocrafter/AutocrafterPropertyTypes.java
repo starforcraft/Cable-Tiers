@@ -1,7 +1,5 @@
 package com.ultramega.cabletiers.common.autocrafting.autocrafter;
 
-import com.ultramega.cabletiers.common.mixin.InvokerLockModeSettings;
-
 import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.LockMode;
 import com.refinedmods.refinedstorage.common.support.containermenu.PropertyType;
 import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes;
@@ -14,8 +12,8 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createId
 final class AutocrafterPropertyTypes {
     static final PropertyType<LockMode> LOCK_MODE = new PropertyType<>(
         createIdentifier("lock_mode"),
-        InvokerLockModeSettings::cabletiers$getLockModeEnum,
-        InvokerLockModeSettings::cabletiers$getLockModeInt
+        LockModeSettings::getLockMode,
+        LockModeSettings::getLockMode
     );
 
     static final PropertyType<Integer> PRIORITY = PropertyTypes.createIntegerProperty(
