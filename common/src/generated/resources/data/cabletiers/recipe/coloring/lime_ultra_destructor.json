@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:ultra_destructors"
-    },
-    {
-      "tag": "c:dyes/lime"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:lime_ultra_destructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "lime",
+  "ingredient": "#cabletiers:ultra_destructors",
+  "result": "cabletiers:lime_ultra_destructor"
 }

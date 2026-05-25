@@ -10,10 +10,10 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 public class TieredInterfaceProxyExternalStorageProvider implements TieredInterfaceExternalStorageProvider {
     private final Level level;
@@ -25,34 +25,34 @@ public class TieredInterfaceProxyExternalStorageProvider implements TieredInterf
     }
 
     private Optional<TieredInterfaceBlockEntity> tryGetInterface() {
-        if (level.getBlockEntity(pos) instanceof TieredInterfaceBlockEntity blockEntity) {
+        if (this.level.getBlockEntity(this.pos) instanceof TieredInterfaceBlockEntity blockEntity) {
             return Optional.of(blockEntity);
         }
         return Optional.empty();
     }
 
     private Optional<TieredInterfaceExternalStorageProvider> tryGetProvider() {
-        return tryGetInterface().map(TieredInterfaceBlockEntity::getExternalStorageProvider);
+        return this.tryGetInterface().map(TieredInterfaceBlockEntity::getExternalStorageProvider);
     }
 
     @Override
     public long extract(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
-        return tryGetProvider().map(provider -> provider.extract(resource, amount, action, actor)).orElse(0L);
+        return this.tryGetProvider().map(provider -> provider.extract(resource, amount, action, actor)).orElse(0L);
     }
 
     @Override
     public long insert(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
-        return tryGetProvider().map(provider -> provider.insert(resource, amount, action, actor)).orElse(0L);
+        return this.tryGetProvider().map(provider -> provider.insert(resource, amount, action, actor)).orElse(0L);
     }
 
     @Override
     public Iterator<ResourceAmount> iterator() {
-        return tryGetProvider().map(TieredInterfaceExternalStorageProvider::iterator).orElse(Collections.emptyIterator());
+        return this.tryGetProvider().map(TieredInterfaceExternalStorageProvider::iterator).orElse(Collections.emptyIterator());
     }
 
     @Override
     @Nullable
     public TieredInterfaceNetworkNode getInterface() {
-        return tryGetInterface().map(TieredInterfaceBlockEntity::getInterface).orElse(null);
+        return this.tryGetInterface().map(TieredInterfaceBlockEntity::getInterface).orElse(null);
     }
 }

@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:mega_destructors"
-    },
-    {
-      "tag": "c:dyes/red"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:red_mega_destructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "red",
+  "ingredient": "#cabletiers:mega_destructors",
+  "result": "cabletiers:red_mega_destructor"
 }

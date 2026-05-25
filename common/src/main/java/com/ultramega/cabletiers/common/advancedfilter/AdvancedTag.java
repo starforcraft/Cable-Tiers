@@ -5,9 +5,9 @@ import com.refinedmods.refinedstorage.common.api.support.resource.ResourceTag;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.getTagTranslationKey;
 
@@ -30,63 +30,63 @@ public class AdvancedTag {
     }
 
     List<AdvancedTagSlot> getMainSlots() {
-        return mainSlots;
+        return this.mainSlots;
     }
 
     List<AdvancedTagSlot> getOverflowSlots() {
-        return overflowSlots;
+        return this.overflowSlots;
     }
 
     public ResourceTag getTag() {
-        return tag;
+        return this.tag;
     }
 
-    ResourceLocation getId() {
-        return tag.key().location();
+    Identifier getId() {
+        return this.tag.key().location();
     }
 
     String getTranslationKey() {
-        return translationKey;
+        return this.translationKey;
     }
 
     List<PlatformResourceKey> getResources() {
-        return tag.resources();
+        return this.tag.resources();
     }
 
     double getExpandPct() {
-        return expandPct;
+        return this.expandPct;
     }
 
     boolean expandOrCollapse() {
-        if (expandCollapse != null) {
-            expandCollapse = expandCollapse == ExpandCollapse.EXPAND ? ExpandCollapse.COLLAPSE : ExpandCollapse.EXPAND;
-            expandCollapseElapsed = (int) (EXPAND_COLLAPSE_DELAY - expandCollapseElapsed);
-            return expandCollapse == ExpandCollapse.EXPAND;
+        if (this.expandCollapse != null) {
+            this.expandCollapse = this.expandCollapse == ExpandCollapse.EXPAND ? ExpandCollapse.COLLAPSE : ExpandCollapse.EXPAND;
+            this.expandCollapseElapsed = (int) (EXPAND_COLLAPSE_DELAY - this.expandCollapseElapsed);
+            return this.expandCollapse == ExpandCollapse.EXPAND;
         }
-        expandCollapse = expandPct > 0 ? ExpandCollapse.COLLAPSE : ExpandCollapse.EXPAND;
-        return expandCollapse == ExpandCollapse.EXPAND;
+        this.expandCollapse = this.expandPct > 0 ? ExpandCollapse.COLLAPSE : ExpandCollapse.EXPAND;
+        return this.expandCollapse == ExpandCollapse.EXPAND;
     }
 
     void update() {
-        if (expandCollapse == null) {
+        if (this.expandCollapse == null) {
             return;
         }
-        ++expandCollapseElapsed;
-        if (expandCollapse == ExpandCollapse.EXPAND) {
-            expandPct = (double) expandCollapseElapsed / EXPAND_COLLAPSE_DELAY;
-            if (expandPct >= 1) {
-                stopExpandCollapse();
+        ++this.expandCollapseElapsed;
+        if (this.expandCollapse == ExpandCollapse.EXPAND) {
+            this.expandPct = (double) this.expandCollapseElapsed / EXPAND_COLLAPSE_DELAY;
+            if (this.expandPct >= 1) {
+                this.stopExpandCollapse();
             }
         } else {
-            expandPct = 1 - (double) expandCollapseElapsed / EXPAND_COLLAPSE_DELAY;
-            if (expandPct <= 0) {
-                stopExpandCollapse();
+            this.expandPct = 1 - (double) this.expandCollapseElapsed / EXPAND_COLLAPSE_DELAY;
+            if (this.expandPct <= 0) {
+                this.stopExpandCollapse();
             }
         }
     }
 
     boolean isVisible() {
-        return visible;
+        return this.visible;
     }
 
     void setVisible(final boolean visible) {
@@ -94,9 +94,9 @@ public class AdvancedTag {
     }
 
     private void stopExpandCollapse() {
-        expandPct = expandCollapse == ExpandCollapse.EXPAND ? 1 : 0;
-        expandCollapseElapsed = 0;
-        expandCollapse = null;
+        this.expandPct = this.expandCollapse == ExpandCollapse.EXPAND ? 1 : 0;
+        this.expandCollapseElapsed = 0;
+        this.expandCollapse = null;
     }
 
     private enum ExpandCollapse {

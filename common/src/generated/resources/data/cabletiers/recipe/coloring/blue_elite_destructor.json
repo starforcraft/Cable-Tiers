@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:elite_destructors"
-    },
-    {
-      "tag": "c:dyes/blue"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:blue_elite_destructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "blue",
+  "ingredient": "#cabletiers:elite_destructors",
+  "result": "cabletiers:blue_elite_destructor"
 }

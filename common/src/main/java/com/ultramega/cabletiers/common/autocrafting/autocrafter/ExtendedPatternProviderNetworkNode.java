@@ -1,7 +1,7 @@
 package com.ultramega.cabletiers.common.autocrafting.autocrafter;
 
-import com.ultramega.cabletiers.common.mixin.InvokerAbstractTaskPattern;
-import com.ultramega.cabletiers.common.mixin.InvokerTaskImpl;
+import com.ultramega.cabletiers.common.mixin.AbstractTaskPatternAccessor;
+import com.ultramega.cabletiers.common.mixin.TaskImplInvoker;
 
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.task.Task;
@@ -24,12 +24,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class ExtendedPatternProviderNetworkNode extends PatternProviderNetworkNode {
     private final Filter emptyFilter = new Filter();
 
-    private final Map<Integer, List<ResourceAmount>> patternOutputs = new HashMap<>();
+    private final Map<Integer, @Nullable List<ResourceAmount>> patternOutputs = new HashMap<>();
     private final Filter patternOutputFilter = new Filter();
 
     private final List<ResourceKey> requestedResources = new ArrayList<>();
@@ -47,37 +48,37 @@ public class ExtendedPatternProviderNetworkNode extends PatternProviderNetworkNo
     public ExtendedPatternProviderNetworkNode(final long energyUsage, final int patterns) {
         super(energyUsage, patterns);
 
-        patternOutputFilter.setMode(FilterMode.ALLOW);
-        requestedResourceFilter.setMode(FilterMode.ALLOW);
-        requestedResourceFilterDeep.setMode(FilterMode.ALLOW);
+        this.patternOutputFilter.setMode(FilterMode.ALLOW);
+        this.requestedResourceFilter.setMode(FilterMode.ALLOW);
+        this.requestedResourceFilterDeep.setMode(FilterMode.ALLOW);
     }
 
     @Override
     public void doWork() {
         super.doWork();
-        if (network == null || !isActive() || transferStrategy == null) {
+        if (this.network == null || !this.isActive() || this.transferStrategy == null) {
             return;
         }
 
-        final ImportMode mode = importMode != null ? importMode.get() : null;
+        final ImportMode mode = this.importMode != null ? this.importMode.get() : null;
         if (mode == null || mode == ImportMode.DONT_IMPORT) {
             return;
         }
 
         final Filter filter = switch (mode) {
-            case IMPORT_EVERYTHING -> emptyFilter;
-            case IMPORT_PATTERN_OUTPUTS -> patternOutputFilter;
-            case IMPORT_REQUESTED_RESOURCES -> requestedResourceFilter;
-            case IMPORT_REQUESTED_RESOURCES_DEEP -> requestedResourceFilterDeep;
+            case IMPORT_EVERYTHING -> this.emptyFilter;
+            case IMPORT_PATTERN_OUTPUTS -> this.patternOutputFilter;
+            case IMPORT_REQUESTED_RESOURCES -> this.requestedResourceFilter;
+            case IMPORT_REQUESTED_RESOURCES_DEEP -> this.requestedResourceFilterDeep;
             default -> null;
         };
 
         if (filter != null) {
-            if (removeCompletedPatternsFromRequestedResourcesDeep()) {
+            if (this.removeCompletedPatternsFromRequestedResourcesDeep()) {
                 return;
             }
 
-            transferStrategy.transfer(filter, actor, network);
+            this.transferStrategy.transfer(filter, this.actor, this.network);
         }
     }
 
@@ -85,24 +86,24 @@ public class ExtendedPatternProviderNetworkNode extends PatternProviderNetworkNo
     public void addTask(final Task task) {
         super.addTask(task);
 
-        requestedResources.add(task.getResource());
-        requestedResourceFilter.setFilters(new HashSet<>(requestedResources));
+        this.requestedResources.add(task.getResource());
+        this.requestedResourceFilter.setFilters(new HashSet<>(this.requestedResources));
 
-        final Set<ResourceKey> resources = collectAllPatternOutputs(task);
-        requestedResourcesDeep.put(task.getId(), resources);
-        updateDeepFilter();
+        final Set<ResourceKey> resources = this.collectAllPatternOutputs(task);
+        this.requestedResourcesDeep.put(task.getId(), resources);
+        this.updateDeepFilter();
     }
 
     public void removeRequestedResourceFilter(final Task task) {
-        requestedResources.remove(task.getResource());
-        requestedResourceFilter.setFilters(new HashSet<>(requestedResources));
+        this.requestedResources.remove(task.getResource());
+        this.requestedResourceFilter.setFilters(new HashSet<>(this.requestedResources));
 
-        requestedResourcesDeep.remove(task.getId());
-        updateDeepFilter();
+        this.requestedResourcesDeep.remove(task.getId());
+        this.updateDeepFilter();
     }
 
     private Set<ResourceKey> collectAllPatternOutputs(final Task task) {
-        if (task instanceof InvokerTaskImpl taskImpl) {
+        if (task instanceof TaskImplInvoker taskImpl) {
             final Set<ResourceKey> resources = new HashSet<>();
             taskImpl.cabletiers$getPatterns().keySet().forEach(pattern ->
                 pattern.layout().outputs().forEach(resource ->
@@ -115,22 +116,22 @@ public class ExtendedPatternProviderNetworkNode extends PatternProviderNetworkNo
     }
 
     private void updateDeepFilter() {
-        final Set<ResourceKey> mergedResources = requestedResourcesDeep.values().stream()
+        final Set<ResourceKey> mergedResources = this.requestedResourcesDeep.values().stream()
             .flatMap(Set::stream)
             .collect(Collectors.toSet());
-        requestedResourceFilterDeep.setFilters(mergedResources);
+        this.requestedResourceFilterDeep.setFilters(mergedResources);
     }
 
     private boolean removeCompletedPatternsFromRequestedResourcesDeep() {
         boolean changed = false;
 
-        for (final Task task : getTasks()) {
-            if (!(task instanceof InvokerTaskImpl taskImpl)) {
+        for (final Task task : this.getTasks()) {
+            if (!(task instanceof TaskImplInvoker taskImpl)) {
                 continue;
             }
 
             final TaskId taskId = task.getId();
-            final Set<ResourceKey> trackedResources = requestedResourcesDeep.get(taskId);
+            final Set<ResourceKey> trackedResources = this.requestedResourcesDeep.get(taskId);
 
             if (trackedResources == null || trackedResources.isEmpty()) {
                 continue;
@@ -138,7 +139,7 @@ public class ExtendedPatternProviderNetworkNode extends PatternProviderNetworkNo
 
             final Set<ResourceKey> toRemove = new HashSet<>();
 
-            for (final InvokerAbstractTaskPattern taskPattern : taskImpl.cabletiers$getCompletedPatterns()) {
+            for (final AbstractTaskPatternAccessor taskPattern : taskImpl.cabletiers$getCompletedPatterns()) {
                 for (final ResourceAmount output : taskPattern.cabletiers$getPattern().layout().outputs()) {
                     final ResourceKey resource = output.resource();
                     if (trackedResources.contains(resource)) {
@@ -152,13 +153,13 @@ public class ExtendedPatternProviderNetworkNode extends PatternProviderNetworkNo
                 changed = true;
 
                 if (trackedResources.isEmpty()) {
-                    requestedResourcesDeep.remove(taskId);
+                    this.requestedResourcesDeep.remove(taskId);
                 }
             }
         }
 
         if (changed) {
-            updateDeepFilter();
+            this.updateDeepFilter();
         }
 
         return changed;
@@ -169,13 +170,13 @@ public class ExtendedPatternProviderNetworkNode extends PatternProviderNetworkNo
     }
 
     public void updatePatternOutputFilter(final int slot, @Nullable final Pattern pattern) {
-        patternOutputs.put(slot, pattern != null ? pattern.layout().outputs() : null);
-        final Set<ResourceKey> filters = patternOutputs.values().stream()
+        this.patternOutputs.put(slot, pattern != null ? pattern.layout().outputs() : null);
+        final Set<ResourceKey> filters = this.patternOutputs.values().stream()
             .filter(Objects::nonNull)
             .flatMap(List::stream)
             .map(ResourceAmount::resource)
             .collect(Collectors.toSet());
-        patternOutputFilter.setFilters(filters);
+        this.patternOutputFilter.setFilters(filters);
     }
 
     public void setImportMode(final Supplier<ImportMode> importMode) {

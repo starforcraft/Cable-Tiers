@@ -1,6 +1,0 @@
-{
-  "parent": "cabletiers:item/destructor/elite_base",
-  "textures": {
-    "cable": "refinedstorage:block/cable/brown"
-  }
-}

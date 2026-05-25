@@ -40,37 +40,37 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
 
     @Override
     public SimpleTieredStackEntry getTieredImporters() {
-        return tieredImporters;
+        return this.tieredImporters;
     }
 
     @Override
     public SimpleTieredStackEntry getTieredExporters() {
-        return tieredExporters;
+        return this.tieredExporters;
     }
 
     @Override
     public SimpleTieredEntry getTieredDestructors() {
-        return tieredDestructors;
+        return this.tieredDestructors;
     }
 
     @Override
     public SimpleTieredStackEntry getTieredConstructors() {
-        return tieredConstructors;
+        return this.tieredConstructors;
     }
 
     @Override
     public SimpleTieredStackEntry getTieredDiskInterfaces() {
-        return tieredDiskInterface;
+        return this.tieredDiskInterface;
     }
 
     @Override
     public SimpleTieredEntry getTieredAutocrafters() {
-        return tieredAutocrafters;
+        return this.tieredAutocrafters;
     }
 
     @Override
     public SimpleTieredInterfaceEntry getTieredInterfaces() {
-        return tieredInterfaces;
+        return this.tieredInterfaces;
     }
 
     private static class SimpleTieredStackEntryImpl implements SimpleTieredStackEntry {
@@ -105,9 +105,9 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
         @Override
         public long getEnergyUsage(final CableTiers tier) {
             return switch (tier) {
-                case ELITE -> eliteEnergyUsage;
-                case ULTRA -> ultraEnergyUsage;
-                case MEGA -> megaEnergyUsage;
+                case ELITE -> this.eliteEnergyUsage;
+                case ULTRA -> this.ultraEnergyUsage;
+                case MEGA -> this.megaEnergyUsage;
                 case CREATIVE -> 0;
             };
         }
@@ -115,19 +115,19 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
         @Override
         public int getSpeed(final CableTiers tier) {
             return switch (tier) {
-                case ELITE -> eliteSpeed;
-                case ULTRA -> ultraSpeed;
-                case MEGA -> megaSpeed;
-                case CREATIVE -> creativeSpeed;
+                case ELITE -> this.eliteSpeed;
+                case ULTRA -> this.ultraSpeed;
+                case MEGA -> this.megaSpeed;
+                case CREATIVE -> this.creativeSpeed;
             };
         }
 
         @Override
         public boolean hasStackUpgradeIntegrated(final CableTiers tier) {
             return switch (tier) {
-                case ELITE -> eliteStackUpgradeIntegrated;
-                case ULTRA -> ultraStackUpgradeIntegrated;
-                case MEGA -> megaStackUpgradeIntegrated;
+                case ELITE -> this.eliteStackUpgradeIntegrated;
+                case ULTRA -> this.ultraStackUpgradeIntegrated;
+                case MEGA -> this.megaStackUpgradeIntegrated;
                 case CREATIVE -> true;
             };
         }
@@ -157,9 +157,9 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
         @Override
         public long getEnergyUsage(final CableTiers tier) {
             return switch (tier) {
-                case ELITE -> eliteEnergyUsage;
-                case ULTRA -> ultraEnergyUsage;
-                case MEGA -> megaEnergyUsage;
+                case ELITE -> this.eliteEnergyUsage;
+                case ULTRA -> this.ultraEnergyUsage;
+                case MEGA -> this.megaEnergyUsage;
                 case CREATIVE -> 0;
             };
         }
@@ -167,10 +167,10 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
         @Override
         public long getTransferQuotaMultiplier(final CableTiers tier) {
             return switch (tier) {
-                case ELITE -> eliteTransferQuotaMultiplier;
-                case ULTRA -> ultraTransferQuotaMultiplier;
-                case MEGA -> megaTransferQuotaMultiplier;
-                case CREATIVE -> creativeTransferQuotaMultiplier;
+                case ELITE -> this.eliteTransferQuotaMultiplier;
+                case ULTRA -> this.ultraTransferQuotaMultiplier;
+                case MEGA -> this.megaTransferQuotaMultiplier;
+                case CREATIVE -> this.creativeTransferQuotaMultiplier;
             };
         }
     }
@@ -199,9 +199,9 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
         @Override
         public long getEnergyUsage(final CableTiers tier) {
             return switch (tier) {
-                case ELITE -> eliteEnergyUsage;
-                case ULTRA -> ultraEnergyUsage;
-                case MEGA -> megaEnergyUsage;
+                case ELITE -> this.eliteEnergyUsage;
+                case ULTRA -> this.ultraEnergyUsage;
+                case MEGA -> this.megaEnergyUsage;
                 case CREATIVE -> 0;
             };
         }
@@ -209,10 +209,10 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
         @Override
         public int getSpeed(final CableTiers tier) {
             return switch (tier) {
-                case ELITE -> eliteSpeed;
-                case ULTRA -> ultraSpeed;
-                case MEGA -> megaSpeed;
-                case CREATIVE -> creativeSpeed;
+                case ELITE -> this.eliteSpeed;
+                case ULTRA -> this.ultraSpeed;
+                case MEGA -> this.megaSpeed;
+                case CREATIVE -> this.creativeSpeed;
             };
         }
     }

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "refinedstorage:advanced_processor",
+    "I": "minecraft:iron_block",
+    "M": "refinedstorage:destructor"
+  },
+  "pattern": [
+    "IMI",
+    "MAM",
+    "IMI"
+  ],
+  "result": {
+    "id": "cabletiers:elite_destructor"
+  }
+}

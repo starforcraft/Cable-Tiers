@@ -1,6 +1,6 @@
 package com.ultramega.cabletiers.common.autocrafting.autocrafter;
 
-public class ImportModeSettings {
+public final class ImportModeSettings {
     private static final int DONT_IMPORT = 0;
     private static final int IMPORT_EVERYTHING = 1;
     private static final int IMPORT_PATTERN_OUTPUTS = 2;

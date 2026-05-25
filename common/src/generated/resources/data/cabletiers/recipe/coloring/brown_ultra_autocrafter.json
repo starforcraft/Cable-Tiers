@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:ultra_autocrafters"
-    },
-    {
-      "tag": "c:dyes/brown"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:brown_ultra_autocrafter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "brown",
+  "ingredient": "#cabletiers:ultra_autocrafters",
+  "result": "cabletiers:brown_ultra_autocrafter"
 }

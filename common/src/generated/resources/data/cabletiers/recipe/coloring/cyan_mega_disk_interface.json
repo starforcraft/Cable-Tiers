@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:mega_disk_interfaces"
-    },
-    {
-      "tag": "c:dyes/cyan"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:cyan_mega_disk_interface"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "cyan",
+  "ingredient": "#cabletiers:mega_disk_interfaces",
+  "result": "cabletiers:cyan_mega_disk_interface"
 }

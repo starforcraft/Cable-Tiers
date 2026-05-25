@@ -3,7 +3,7 @@ package com.ultramega.cabletiers.common.utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public final class CableTiersIdentifierUtil {
     public static final String MOD_ID = "cabletiers";
@@ -11,8 +11,8 @@ public final class CableTiersIdentifierUtil {
     private CableTiersIdentifierUtil() {
     }
 
-    public static ResourceLocation createCableTiersIdentifier(final String value) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, value);
+    public static Identifier createCableTiersIdentifier(final String value) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, value);
     }
 
     public static MutableComponent createCableTiersTranslation(final String category, final String value) {

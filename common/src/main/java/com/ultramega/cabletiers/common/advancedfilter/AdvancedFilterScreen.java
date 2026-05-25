@@ -1,6 +1,6 @@
 package com.ultramega.cabletiers.common.advancedfilter;
 
-import com.ultramega.cabletiers.common.mixin.InvokerActionButton;
+import com.ultramega.cabletiers.common.mixin.ActionButtonInvoker;
 import com.ultramega.cabletiers.common.packet.c2s.SetAdvancedFilterPacket;
 
 import com.refinedmods.refinedstorage.common.Platform;
@@ -15,28 +15,32 @@ import com.refinedmods.refinedstorage.common.support.widget.CheckboxWidget;
 import com.refinedmods.refinedstorage.common.support.widget.CustomButton;
 import com.refinedmods.refinedstorage.common.support.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage.common.support.widget.SearchIconWidget;
+import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
-import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Inventory;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import static com.refinedmods.refinedstorage.common.support.Sprites.ICON_SIZE;
@@ -44,13 +48,14 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createId
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersIdentifier;
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersTranslation;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class AdvancedFilterScreen extends AbstractBaseScreen<AdvancedFilterContainerMenu> {
     static final int ROW_HEIGHT = 18;
     static final int ADVANCED_TAG_HEIGHT = ROW_HEIGHT * 2;
     static final int RESOURCES_PER_ROW = 9;
 
-    private static final ResourceLocation TEXTURE = createCableTiersIdentifier("textures/gui/advanced_filter.png");
+    private static final Identifier TEXTURE = createCableTiersIdentifier("textures/gui/advanced_filter.png");
     private static final MutableComponent DONE = createCableTiersTranslation("gui", "advanced_filter.done");
     private static final WidgetSprites EXPAND_SPRITES = new WidgetSprites(
         createIdentifier("widget/expand"),
@@ -95,80 +100,78 @@ public class AdvancedFilterScreen extends AbstractBaseScreen<AdvancedFilterConta
                                 @Nullable final TagKey<?> selectedTagKey,
                                 @Nullable final PlatformResourceKey selectedResource,
                                 final Component title) {
-        super(new AdvancedFilterContainerMenu(selectedResource), playerInventory, title);
+        super(new AdvancedFilterContainerMenu(selectedResource), playerInventory, title, 223, 182);
         this.slotIndex = slotIndex;
         this.parent = parent;
         this.selectedTagKey = selectedTagKey;
-        this.imageWidth = 223;
-        this.imageHeight = 182;
     }
 
     @Override
     protected void init() {
         super.init();
-        advancedTagCheckboxes.clear();
-        expandButtons.clear();
+        this.advancedTagCheckboxes.clear();
+        this.expandButtons.clear();
 
-        final int x = getCheckboxStartX();
-        for (int i = 0; i < getMenu().getAdvancedTags().size(); ++i) {
-            addWidgetsForTags(i, x);
+        final int x = this.getCheckboxStartX();
+        for (int i = 0; i < this.getMenu().getAdvancedTags().size(); ++i) {
+            this.addWidgetsForTags(i, x);
         }
 
-        addConfirmButton(160, 155);
+        this.addConfirmButton(160, 155);
 
-        scrollbar = new ScrollbarWidget(
-            leftPos + 203,
-            topPos + 59,
+        this.scrollbar = new ScrollbarWidget(
+            this.leftPos + 203,
+            this.topPos + 59,
             ScrollbarWidget.Type.NORMAL,
             INSET_HEIGHT
         );
-        final int overflowingRows = getMenu().getAdvancedTags().size() - TAGS_DISPLAYED;
-        final int maxOffset = scrollbar.isSmoothScrolling()
+        final int overflowingRows = this.getMenu().getAdvancedTags().size() - TAGS_DISPLAYED;
+        final int maxOffset = this.scrollbar.isSmoothScrolling()
             ? overflowingRows * ADVANCED_TAG_HEIGHT
             : overflowingRows * ROWS_PER_TAG;
-        scrollbar.setMaxOffset(maxOffset);
-        scrollbar.setEnabled(maxOffset > 0);
-        scrollbar.setListener(value -> updateWidgets());
-        addWidget(scrollbar);
+        this.scrollbar.setMaxOffset(maxOffset);
+        this.scrollbar.setEnabled(maxOffset > 0);
+        this.scrollbar.setListener(value -> this.updateWidgets());
+        this.addWidget(this.scrollbar);
 
-        searchField = new EditBox(
-            font,
-            leftPos + 24,
-            topPos + 46,
+        this.searchField = new EditBox(
+            this.font,
+            this.leftPos + 24,
+            this.topPos + 46,
             193 - 6,
-            font.lineHeight,
+            this.font.lineHeight,
             Component.empty()
         );
-        searchField.setBordered(false);
-        searchField.setVisible(true);
-        searchField.setCanLoseFocus(true);
-        searchField.setFocused(false);
-        searchField.setResponder(query -> getMenu().filter(query));
-        addRenderableWidget(searchField);
+        this.searchField.setBordered(false);
+        this.searchField.setVisible(true);
+        this.searchField.setCanLoseFocus(true);
+        this.searchField.setFocused(false);
+        this.searchField.setResponder(query -> this.getMenu().filter(query));
+        this.addRenderableWidget(this.searchField);
 
-        addRenderableWidget(new SearchIconWidget(
-            leftPos + 7,
-            topPos + 44,
+        this.addRenderableWidget(new SearchIconWidget(
+            this.leftPos + 7,
+            this.topPos + 44,
             () -> SEARCH_HELP,
-            searchField
+            this.searchField
         ));
     }
 
     private int getCheckboxStartX() {
-        return leftPos + 8;
+        return this.leftPos + 8;
     }
 
     private int getCheckboxStartY() {
-        return topPos + 59;
+        return this.topPos + 59;
     }
 
     private int getAdvancedTagY(final int idx) {
-        return getCheckboxStartY() + (ADVANCED_TAG_HEIGHT * idx);
+        return this.getCheckboxStartY() + (ADVANCED_TAG_HEIGHT * idx);
     }
 
     private void addWidgetsForTags(final int idx, final int x) {
-        final AdvancedTag advancedTag = getMenu().getAdvancedTags().get(idx);
-        final int y = getAdvancedTagY(idx);
+        final AdvancedTag advancedTag = this.getMenu().getAdvancedTags().get(idx);
+        final int y = this.getAdvancedTagY(idx);
         final boolean hasTranslation = I18n.exists(advancedTag.getTranslationKey());
         final MutableComponent id = Component.literal(advancedTag.getId().toString());
         final CheckboxWidget advancedTagCheckbox = new CheckboxWidget(
@@ -176,18 +179,18 @@ public class AdvancedFilterScreen extends AbstractBaseScreen<AdvancedFilterConta
             y + (ROW_HEIGHT / 2) - (9 / 2),
             164 - 2 - 16 - 1 - 4,
             hasTranslation ? Component.translatable(advancedTag.getTranslationKey()) : id,
-            font,
-            selectedTagKey != null && selectedTagKey.location().equals(advancedTag.getId()),
+            this.font,
+            this.selectedTagKey != null && this.selectedTagKey.location().equals(advancedTag.getId()),
             CheckboxWidget.Size.SMALL
         );
         advancedTagCheckbox.setOnPressed((checkbox, selected) -> {
-            advancedTagCheckboxes.forEach(c -> c.setSelected(false));
+            this.advancedTagCheckboxes.forEach(c -> c.setSelected(false));
             checkbox.setSelected(selected);
         });
         if (hasTranslation) {
             advancedTagCheckbox.setTooltip(Tooltip.create(id));
         }
-        advancedTagCheckboxes.add(addWidget(advancedTagCheckbox));
+        this.advancedTagCheckboxes.add(this.addWidget(advancedTagCheckbox));
         final CustomButton expandButton = new CustomButton(
             x + INSET_WIDTH - 16 - 1,
             y + 1,
@@ -201,41 +204,41 @@ public class AdvancedFilterScreen extends AbstractBaseScreen<AdvancedFilterConta
             EXPAND
         );
         expandButton.active = advancedTag.getResources().size() > RESOURCES_PER_ROW;
-        expandButtons.add(addWidget(expandButton));
+        this.expandButtons.add(this.addWidget(expandButton));
     }
 
     @Override
     protected void containerTick() {
         super.containerTick();
-        getMenu().getAdvancedTags().forEach(AdvancedTag::update);
-        updateWidgets();
+        this.getMenu().getAdvancedTags().forEach(AdvancedTag::update);
+        this.updateWidgets();
     }
 
     @Override
-    protected void renderResourceSlots(final GuiGraphics graphics) {
-        ResourceSlotRendering.render(graphics, getMenu().getFilterSlot(), leftPos, topPos);
+    protected void renderResourceSlots(final GuiGraphicsExtractor graphics) {
+        ResourceSlotRendering.render(graphics, this.getMenu().getFilterSlot());
     }
 
     private void updateWidgets() {
-        final ScrollbarWidget theScrollbar = scrollbar;
+        final ScrollbarWidget theScrollbar = this.scrollbar;
         if (theScrollbar == null) {
             return;
         }
         double totalHeight = 0;
         int totalRows = 0;
         final int scrollbarOffset = (int) theScrollbar.getOffset();
-        int y = getAdvancedTagY(0)
+        int y = this.getAdvancedTagY(0)
             - (theScrollbar.isSmoothScrolling() ? scrollbarOffset : scrollbarOffset * ROW_HEIGHT);
-        for (int i = 0; i < getMenu().getAdvancedTags().size(); ++i) {
-            final AdvancedTag advancedTag = getMenu().getAdvancedTags().get(i);
-            final CheckboxWidget advancedTagCheckbox = advancedTagCheckboxes.get(i);
-            final Button expandButton = expandButtons.get(i);
+        for (int i = 0; i < this.getMenu().getAdvancedTags().size(); ++i) {
+            final AdvancedTag advancedTag = this.getMenu().getAdvancedTags().get(i);
+            final CheckboxWidget advancedTagCheckbox = this.advancedTagCheckboxes.get(i);
+            final Button expandButton = this.expandButtons.get(i);
 
             if (!advancedTag.isVisible()) {
                 advancedTagCheckbox.visible = false;
                 expandButton.visible = false;
-                updateAdvancedTagSlots(advancedTag.getMainSlots(), y, 0, false);
-                updateAdvancedTagSlots(advancedTag.getOverflowSlots(), y, 1, false);
+                this.updateAdvancedTagSlots(advancedTag.getMainSlots(), y, 0, false);
+                this.updateAdvancedTagSlots(advancedTag.getOverflowSlots(), y, 1, false);
                 continue;
             }
 
@@ -245,10 +248,10 @@ public class AdvancedFilterScreen extends AbstractBaseScreen<AdvancedFilterConta
             final int height = ADVANCED_TAG_HEIGHT
                 + (int) (overflowRows * ROW_HEIGHT * advancedTag.getExpandPct());
 
-            updateAdvancedTagCheckbox(advancedTagCheckbox, y);
-            updateExpandButton(expandButton, y);
-            updateAdvancedTagSlots(advancedTag.getMainSlots(), y, 0, true);
-            updateAdvancedTagSlots(advancedTag.getOverflowSlots(), y, 1, advancedTag.getExpandPct() > 0);
+            this.updateAdvancedTagCheckbox(advancedTagCheckbox, y);
+            this.updateExpandButton(expandButton, y);
+            this.updateAdvancedTagSlots(advancedTag.getMainSlots(), y, 0, true);
+            this.updateAdvancedTagSlots(advancedTag.getOverflowSlots(), y, 1, advancedTag.getExpandPct() > 0);
 
             totalHeight += height;
             y += height;
@@ -262,14 +265,14 @@ public class AdvancedFilterScreen extends AbstractBaseScreen<AdvancedFilterConta
 
     private void updateAdvancedTagCheckbox(final CheckboxWidget advancedTagCheckbox, final int y) {
         advancedTagCheckbox.setY(y + (ROW_HEIGHT / 2) - (9 / 2));
-        advancedTagCheckbox.visible = advancedTagCheckbox.getY() >= getCheckboxStartY() - advancedTagCheckbox.getHeight()
-            && advancedTagCheckbox.getY() < getCheckboxStartY() + INSET_HEIGHT;
+        advancedTagCheckbox.visible = advancedTagCheckbox.getY() >= this.getCheckboxStartY() - advancedTagCheckbox.getHeight()
+            && advancedTagCheckbox.getY() < this.getCheckboxStartY() + INSET_HEIGHT;
     }
 
     private void updateExpandButton(final Button expandButton, final int y) {
         expandButton.setY(y + 1);
-        expandButton.visible = expandButton.getY() >= getCheckboxStartY() - expandButton.getHeight()
-            && expandButton.getY() < getCheckboxStartY() + INSET_HEIGHT;
+        expandButton.visible = expandButton.getY() >= this.getCheckboxStartY() - expandButton.getHeight()
+            && expandButton.getY() < this.getCheckboxStartY() + INSET_HEIGHT;
     }
 
     private void updateAdvancedTagSlots(final List<AdvancedTagSlot> slots,
@@ -281,10 +284,10 @@ public class AdvancedFilterScreen extends AbstractBaseScreen<AdvancedFilterConta
             final AdvancedTagSlot resourceSlot = slots.get(i);
             Platform.INSTANCE.setSlotY(
                 resourceSlot,
-                (y + ROW_HEIGHT + (row * 18) + 1) - topPos
+                (y + ROW_HEIGHT + (row * 18) + 1) - this.topPos
             );
-            resourceSlot.setActive((resourceSlot.y + topPos) >= getCheckboxStartY() - 18
-                && (resourceSlot.y + topPos) < getCheckboxStartY() + INSET_HEIGHT
+            resourceSlot.setActive((resourceSlot.y + this.topPos) >= this.getCheckboxStartY() - 18
+                && (resourceSlot.y + this.topPos) < this.getCheckboxStartY() + INSET_HEIGHT
                 && visible);
         }
     }
@@ -297,60 +300,50 @@ public class AdvancedFilterScreen extends AbstractBaseScreen<AdvancedFilterConta
     }
 
     @Override
-    public void render(final GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
-        if (scrollbar != null) {
-            scrollbar.render(graphics, mouseX, mouseY, partialTicks);
+    public void extractContents(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float partialTicks) {
+        super.extractContents(graphics, mouseX, mouseY, partialTicks);
+        if (this.scrollbar != null) {
+            this.scrollbar.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         }
     }
 
     @Override
-    protected void renderBg(final GuiGraphics graphics, final float delta, final int mouseX, final int mouseY) {
-        super.renderBg(graphics, delta, mouseX, mouseY);
-        final int x = getCheckboxStartX();
-        final int y = getCheckboxStartY();
+    public void extractBackground(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
+        final int x = this.getCheckboxStartX();
+        final int y = this.getCheckboxStartY();
         graphics.enableScissor(x, y, x + INSET_WIDTH, y + INSET_HEIGHT);
-        int currentY = y - ((scrollbar != null ? (int) scrollbar.getOffset() : 0)
-            * (scrollbar != null && scrollbar.isSmoothScrolling() ? 1 : ROW_HEIGHT));
-        for (int i = 0; i < getMenu().getAdvancedTags().size(); ++i) {
-            currentY += renderAdvancedTagBackground(graphics, mouseX, mouseY, i, y, x, currentY);
+        int currentY = y - ((this.scrollbar != null ? (int) this.scrollbar.getOffset() : 0)
+            * (this.scrollbar != null && this.scrollbar.isSmoothScrolling() ? 1 : ROW_HEIGHT));
+        for (int i = 0; i < this.getMenu().getAdvancedTags().size(); ++i) {
+            currentY += this.renderAdvancedTagBackground(graphics, mouseX, mouseY, i, y, x, currentY);
         }
-        renderAdvancedTagMainSlots(graphics, mouseX, mouseY);
-        advancedTagCheckboxes.forEach(c -> c.render(graphics, mouseX, mouseY, delta));
-        expandButtons.forEach(c -> c.render(graphics, mouseX, mouseY, delta));
+        this.renderAdvancedTagMainSlots(graphics, mouseX, mouseY);
+        this.advancedTagCheckboxes.forEach(c -> c.extractRenderState(graphics, mouseX, mouseY, partialTicks));
+        this.expandButtons.forEach(c -> c.extractRenderState(graphics, mouseX, mouseY, partialTicks));
         graphics.disableScissor();
     }
 
-    private int renderAdvancedTagBackground(
-        final GuiGraphics graphics,
-        final int mouseX,
-        final int mouseY,
-        final int i,
-        final int startY,
-        final int x,
-        final int y
-    ) {
-        final AdvancedTag advancedTag = getMenu().getAdvancedTags().get(i);
+    private int renderAdvancedTagBackground(final GuiGraphicsExtractor graphics,
+                                            final int mouseX,
+                                            final int mouseY,
+                                            final int i,
+                                            final int startY,
+                                            final int x,
+                                            final int y) {
+        final AdvancedTag advancedTag = this.getMenu().getAdvancedTags().get(i);
         if (!advancedTag.isVisible()) {
             return 0;
         }
-        final int height = ADVANCED_TAG_HEIGHT
-            + (int) (getOverflowRows(advancedTag) * ROW_HEIGHT * advancedTag.getExpandPct());
+        final int height = ADVANCED_TAG_HEIGHT + (int) (getOverflowRows(advancedTag) * ROW_HEIGHT * advancedTag.getExpandPct());
         final boolean backgroundVisible = y >= startY - height && y < startY + INSET_HEIGHT;
         if (i % 2 == 0 && backgroundVisible) {
-            graphics.fill(
-                x,
-                y,
-                x + INSET_WIDTH,
-                y + height,
-                0,
-                0xFFC6C6C6
-            );
+            graphics.fill(x, y, x + INSET_WIDTH, y + height, 0xFFC6C6C6);
         }
         final int mainSlotsY = y + ROW_HEIGHT;
-        renderMainSlotsBackground(graphics, startY, x, mainSlotsY, advancedTag);
+        this.renderMainSlotsBackground(graphics, startY, x, mainSlotsY, advancedTag);
         final int overflowSlotsY = y + (ROW_HEIGHT * 2);
-        return ADVANCED_TAG_HEIGHT + renderOverflowSlotsBackground(
+        return ADVANCED_TAG_HEIGHT + this.renderOverflowSlotsBackground(
             graphics,
             mouseX,
             mouseY,
@@ -361,22 +354,20 @@ public class AdvancedFilterScreen extends AbstractBaseScreen<AdvancedFilterConta
         );
     }
 
-    private void renderMainSlotsBackground(
-        final GuiGraphics graphics,
-        final int startY,
-        final int x,
-        final int y,
-        final AdvancedTag advancedTag
-    ) {
+    private void renderMainSlotsBackground(final GuiGraphicsExtractor graphics,
+                                           final int startY,
+                                           final int x,
+                                           final int y,
+                                           final AdvancedTag advancedTag) {
         if (y >= startY - ROW_HEIGHT && y < startY + INSET_HEIGHT) {
             for (int col = 0; col < Math.min(advancedTag.getResources().size(), RESOURCES_PER_ROW); ++col) {
                 final int slotX = x + 1 + (col * 18);
-                graphics.blitSprite(Sprites.SLOT, slotX, y, 18, 18);
+                graphics.blitSprite(GUI_TEXTURED, Sprites.SLOT, slotX, y, 18, 18);
             }
         }
     }
 
-    private int renderOverflowSlotsBackground(final GuiGraphics graphics,
+    private int renderOverflowSlotsBackground(final GuiGraphicsExtractor graphics,
                                               final int mouseX,
                                               final int mouseY,
                                               final int startY,
@@ -401,115 +392,121 @@ public class AdvancedFilterScreen extends AbstractBaseScreen<AdvancedFilterConta
                     break;
                 }
                 final int slotX = x + 1 + (col * 18);
-                graphics.blitSprite(Sprites.SLOT, slotX, rowY, 18, 18);
+                graphics.blitSprite(GUI_TEXTURED, Sprites.SLOT, slotX, rowY, 18, 18);
             }
         }
-        renderSlots(advancedTag.getOverflowSlots(), graphics, mouseX, mouseY);
+        this.renderSlots(advancedTag.getOverflowSlots(), graphics, mouseX, mouseY);
         graphics.disableScissor();
         return height;
     }
 
-    private void renderAdvancedTagMainSlots(final GuiGraphics graphics,
+    private void renderAdvancedTagMainSlots(final GuiGraphicsExtractor graphics,
                                             final int mouseX,
                                             final int mouseY) {
-        for (final AdvancedTag advancedTag : getMenu().getAdvancedTags()) {
-            renderSlots(advancedTag.getMainSlots(), graphics, mouseX, mouseY);
+        for (final AdvancedTag advancedTag : this.getMenu().getAdvancedTags()) {
+            this.renderSlots(advancedTag.getMainSlots(), graphics, mouseX, mouseY);
         }
     }
 
     private void renderSlots(final List<AdvancedTagSlot> slots,
-                             final GuiGraphics graphics,
+                             final GuiGraphicsExtractor graphics,
                              final int mouseX,
                              final int mouseY) {
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(this.leftPos, this.topPos);
         for (final ResourceSlot resourceSlot : slots) {
-            if (resourceSlot.isActive()) {
-                ResourceSlotRendering.render(graphics, resourceSlot, leftPos, topPos);
-                if (isHovering(resourceSlot.x, resourceSlot.y, 16, 16, mouseX, mouseY)) {
-                    renderSlotHighlight(graphics, leftPos + resourceSlot.x, topPos + resourceSlot.y, 0);
-                }
-            }
+            this.renderSlot(graphics, mouseX, mouseY, resourceSlot);
+        }
+        graphics.pose().popMatrix();
+    }
+
+    private void renderSlot(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                            final ResourceSlot resourceSlot) {
+        if (!resourceSlot.isActive()) {
+            return;
+        }
+        final boolean hovering = this.isHovering(resourceSlot.x, resourceSlot.y, 16, 16, mouseX, mouseY);
+        if (hovering) {
+            ClientPlatformUtil.renderSlotHighlightBack(graphics, resourceSlot.x, resourceSlot.y);
+        }
+        ResourceSlotRendering.render(graphics, resourceSlot);
+        if (hovering) {
+            ClientPlatformUtil.renderSlotHighlightFront(graphics, resourceSlot.x, resourceSlot.y);
         }
     }
 
     @Override
-    protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
-        graphics.drawString(font, title, titleLabelX, titleLabelY, 4210752, false);
+    protected void extractLabels(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY) {
+        graphics.text(this.font, this.title, this.titleLabelX, this.titleLabelY, -12566464, false);
     }
 
     private void addConfirmButton(final int x, final int y) {
-        final int width = font.width(DONE) + ACTION_BUTTON_SPACING + ICON_SIZE;
-        final ActionButton button = InvokerActionButton.init(
-            leftPos + x,
-            topPos + y,
+        final int width = this.font.width(DONE) + ACTION_BUTTON_SPACING + ICON_SIZE;
+        final ActionButton button = ActionButtonInvoker.init(
+            this.leftPos + x,
+            this.topPos + y,
             width,
             ACTION_BUTTON_HEIGHT,
             DONE,
-            btn -> tryConfirmAndCloseToParent()
+            btn -> this.tryConfirmAndCloseToParent()
         );
-        addRenderableWidget(button);
+        this.addRenderableWidget(button);
     }
 
     @Override
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton) {
-        if (scrollbar != null && scrollbar.mouseClicked(mouseX, mouseY, clickedButton)) {
-            return true;
-        }
-
-        return super.mouseClicked(mouseX, mouseY, clickedButton);
+    public boolean mouseClicked(final MouseButtonEvent event, final boolean doubleClick) {
+        return (this.scrollbar != null && this.scrollbar.mouseClicked(event, doubleClick)) || super.mouseClicked(event, doubleClick);
     }
 
     @Override
     public void mouseMoved(final double mouseX, final double mouseY) {
-        if (scrollbar != null) {
-            scrollbar.mouseMoved(mouseX, mouseY);
+        if (this.scrollbar != null) {
+            this.scrollbar.mouseMoved(mouseX, mouseY);
         }
         super.mouseMoved(mouseX, mouseY);
     }
 
     @Override
-    public boolean mouseReleased(final double mouseX, final double mouseY, final int button) {
-        if (scrollbar != null && scrollbar.mouseReleased(mouseX, mouseY, button)) {
-            return true;
-        }
-        return super.mouseReleased(mouseX, mouseY, button);
+    public boolean mouseReleased(final MouseButtonEvent event) {
+        return (this.scrollbar != null && this.scrollbar.mouseReleased(event)) || super.mouseReleased(event);
     }
 
     @Override
-    public boolean mouseScrolled(final double mouseX, final double mouseY, final double scrollX, final double scrollY) {
-        final boolean didScrollbar = isOverTagArea(mouseX, mouseY)
-            && scrollbar != null
-            && scrollbar.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    public boolean mouseScrolled(final double x, final double y, final double scrollX, final double scrollY) {
+        final boolean didScrollbar = this.isOverTagArea(x, y)
+            && this.scrollbar != null
+            && this.scrollbar.mouseScrolled(x, y, scrollX, scrollY);
 
-        return didScrollbar || super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return didScrollbar || super.mouseScrolled(x, y, scrollX, scrollY);
     }
 
     private boolean isOverTagArea(final double mouseX, final double mouseY) {
-        return mouseX >= getCheckboxStartX()
-            && mouseX < getCheckboxStartX() + INSET_WIDTH
-            && mouseY >= getCheckboxStartY()
-            && mouseY < getCheckboxStartY() + INSET_HEIGHT;
+        return mouseX >= this.getCheckboxStartX()
+            && mouseX < this.getCheckboxStartX() + INSET_WIDTH
+            && mouseY >= this.getCheckboxStartY()
+            && mouseY < this.getCheckboxStartY() + INSET_HEIGHT;
     }
 
     @Override
-    public boolean charTyped(final char unknown1, final int unknown2) {
-        return (searchField != null && searchField.charTyped(unknown1, unknown2))
-            || super.charTyped(unknown1, unknown2);
+    public boolean charTyped(final CharacterEvent event) {
+        return (this.searchField != null && this.searchField.charTyped(event))
+            || super.charTyped(event);
     }
 
     private boolean tryConfirmAndCloseToParent() {
-        if (parent != null) {
-            Minecraft.getInstance().setScreen(parent);
+        if (this.parent != null) {
+            Minecraft.getInstance().setScreen(this.parent);
 
             // Send update data to server
-            final OptionalInt selectedIndex = IntStream.range(0, advancedTagCheckboxes.size())
-                .filter(i -> advancedTagCheckboxes.get(i).isSelected())
+            final OptionalInt selectedIndex = IntStream.range(0, this.advancedTagCheckboxes.size())
+                .filter(i -> this.advancedTagCheckboxes.get(i).isSelected())
                 .findFirst();
 
             if (selectedIndex.isPresent()) {
-                final ResourceTag resourceTag = getMenu().getAdvancedTags().get(selectedIndex.getAsInt()).getTag();
-                Platform.INSTANCE.sendPacketToServer(new SetAdvancedFilterPacket(slotIndex, Optional.of(resourceTag)));
+                final ResourceTag resourceTag = this.getMenu().getAdvancedTags().get(selectedIndex.getAsInt()).getTag();
+                Platform.INSTANCE.sendPacketToServer(new SetAdvancedFilterPacket(this.slotIndex, Optional.of(resourceTag)));
             } else {
-                Platform.INSTANCE.sendPacketToServer(new SetAdvancedFilterPacket(slotIndex, Optional.empty()));
+                Platform.INSTANCE.sendPacketToServer(new SetAdvancedFilterPacket(this.slotIndex, Optional.empty()));
             }
 
             return true;
@@ -518,34 +515,34 @@ public class AdvancedFilterScreen extends AbstractBaseScreen<AdvancedFilterConta
     }
 
     @Override
-    public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
-        if (tryClose(key)) {
+    public boolean keyPressed(final KeyEvent event) {
+        if (this.tryClose(event.key())) {
             return true;
         }
-        if (searchField != null
-            && (searchField.keyPressed(key, scanCode, modifiers) || searchField.canConsumeInput())) {
+        if (this.searchField != null
+            && (this.searchField.keyPressed(event) || this.searchField.canConsumeInput())) {
             return true;
         }
 
-        return super.keyPressed(key, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     private boolean tryClose(final int key) {
         if (key == GLFW.GLFW_KEY_ESCAPE) {
-            close();
+            this.close();
             return true;
         }
         return false;
     }
 
     private void close() {
-        if (!tryConfirmAndCloseToParent()) {
-            onClose();
+        if (!this.tryConfirmAndCloseToParent()) {
+            this.onClose();
         }
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 }

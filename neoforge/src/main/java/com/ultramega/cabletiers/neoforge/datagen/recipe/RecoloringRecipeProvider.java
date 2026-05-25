@@ -4,80 +4,70 @@ import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.registry.Blocks;
 
+import com.refinedmods.refinedstorage.common.support.RecoloringRecipe;
+
 import java.util.concurrent.CompletableFuture;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.common.Tags;
+import net.minecraft.world.item.crafting.Recipe;
 
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersIdentifier;
 
 public class RecoloringRecipeProvider extends RecipeProvider {
-    public RecoloringRecipeProvider(final PackOutput output, final CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, registries);
+    public RecoloringRecipeProvider(final HolderLookup.Provider registries, final RecipeOutput output) {
+        super(registries, output);
     }
 
     @Override
-    protected void buildRecipes(final RecipeOutput output) {
+    protected void buildRecipes() {
         for (final CableTiers tier : CableTiers.values()) {
             Blocks.INSTANCE.getTieredImporters(tier).forEach((color, id, block) ->
-                recipe(tier.getItemTag(CableType.IMPORTER), block.get().asItem(), color)
-                    .save(output, recipeId(color, tier.getLowercaseName() + "_importer")));
+                this.output.accept(this.recipeId(color, tier.getLowercaseName() + "_importer"),
+                    RecoloringRecipe.create(tier.getItemTag(CableType.IMPORTER), color, block.get(), this.registries), null));
             Blocks.INSTANCE.getTieredExporters(tier).forEach((color, id, block) ->
-                recipe(tier.getItemTag(CableType.EXPORTER), block.get().asItem(), color)
-                    .save(output, recipeId(color, tier.getLowercaseName() + "_exporter")));
+                this.output.accept(this.recipeId(color, tier.getLowercaseName() + "_exporter"),
+                    RecoloringRecipe.create(tier.getItemTag(CableType.EXPORTER), color, block.get(), this.registries), null));
             Blocks.INSTANCE.getTieredDestructors(tier).forEach((color, id, block) ->
-                recipe(tier.getItemTag(CableType.DESTRUCTOR), block.get().asItem(), color)
-                    .save(output, recipeId(color, tier.getLowercaseName() + "_destructor")));
+                this.output.accept(this.recipeId(color, tier.getLowercaseName() + "_destructor"),
+                    RecoloringRecipe.create(tier.getItemTag(CableType.DESTRUCTOR), color, block.get(), this.registries), null));
             Blocks.INSTANCE.getTieredConstructors(tier).forEach((color, id, block) ->
-                recipe(tier.getItemTag(CableType.CONSTRUCTOR), block.get().asItem(), color)
-                    .save(output, recipeId(color, tier.getLowercaseName() + "_constructor")));
+                this.output.accept(this.recipeId(color, tier.getLowercaseName() + "_constructor"),
+                    RecoloringRecipe.create(tier.getItemTag(CableType.CONSTRUCTOR), color, block.get(), this.registries), null));
             Blocks.INSTANCE.getTieredDiskInterfaces(tier).forEach((color, id, block) ->
-                recipe(tier.getItemTag(CableType.DISK_INTERFACE), block.get().asItem(), color)
-                    .save(output, recipeId(color, tier.getLowercaseName() + "_disk_interface")));
+                this.output.accept(this.recipeId(color, tier.getLowercaseName() + "_disk_interface"),
+                    RecoloringRecipe.create(tier.getItemTag(CableType.DISK_INTERFACE), color, block.get(), this.registries), null));
             Blocks.INSTANCE.getTieredAutocrafters(tier).forEach((color, id, block) ->
-                recipe(tier.getItemTag(CableType.AUTOCRAFTER), block.get().asItem(), color)
-                    .save(output, recipeId(color, tier.getLowercaseName() + "_autocrafter")));
+                this.output.accept(this.recipeId(color, tier.getLowercaseName() + "_autocrafter"),
+                    RecoloringRecipe.create(tier.getItemTag(CableType.AUTOCRAFTER), color, block.get(), this.registries), null));
         }
     }
 
-    private ResourceLocation recipeId(final DyeColor color, final String suffix) {
-        return createCableTiersIdentifier("coloring/" + color.getName() + "_" + suffix);
+    private ResourceKey<Recipe<?>> recipeId(final DyeColor color, final String suffix) {
+        final Identifier recipeId = createCableTiersIdentifier("coloring/" + color.getName() + "_" + suffix);
+        return ResourceKey.create(Registries.RECIPE, recipeId);
     }
 
-    private ShapelessRecipeBuilder recipe(final TagKey<Item> dyeable, final Item result, final DyeColor color) {
-        return ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, result)
-            .requires(dyeable)
-            .requires(getDyeTag(color))
-            .unlockedBy("has_" + dyeable.location().getPath(), has(dyeable));
-    }
+    public static final class Runner extends RecipeProvider.Runner {
+        public Runner(final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> registries) {
+            super(packOutput, registries);
+        }
 
-    private static TagKey<Item> getDyeTag(final DyeColor color) {
-        return switch (color) {
-            case RED -> Tags.Items.DYES_RED;
-            case WHITE -> Tags.Items.DYES_WHITE;
-            case ORANGE -> Tags.Items.DYES_ORANGE;
-            case MAGENTA -> Tags.Items.DYES_MAGENTA;
-            case LIGHT_BLUE -> Tags.Items.DYES_LIGHT_BLUE;
-            case YELLOW -> Tags.Items.DYES_YELLOW;
-            case LIME -> Tags.Items.DYES_LIME;
-            case PINK -> Tags.Items.DYES_PINK;
-            case GRAY -> Tags.Items.DYES_GRAY;
-            case LIGHT_GRAY -> Tags.Items.DYES_LIGHT_GRAY;
-            case CYAN -> Tags.Items.DYES_CYAN;
-            case PURPLE -> Tags.Items.DYES_PURPLE;
-            case BLUE -> Tags.Items.DYES_BLUE;
-            case BROWN -> Tags.Items.DYES_BROWN;
-            case GREEN -> Tags.Items.DYES_GREEN;
-            case BLACK -> Tags.Items.DYES_BLACK;
-        };
+        @Override
+        protected RecipeProvider createRecipeProvider(final HolderLookup.Provider registries,
+                                                      final RecipeOutput output) {
+            return new RecoloringRecipeProvider(registries, output);
+        }
+
+        @Override
+        public String getName() {
+            return "Cable Tiers recoloring recipes";
+        }
     }
 }

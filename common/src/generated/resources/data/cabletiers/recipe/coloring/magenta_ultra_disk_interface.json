@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:ultra_disk_interfaces"
-    },
-    {
-      "tag": "c:dyes/magenta"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:magenta_ultra_disk_interface"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "magenta",
+  "ingredient": "#cabletiers:ultra_disk_interfaces",
+  "result": "cabletiers:magenta_ultra_disk_interface"
 }

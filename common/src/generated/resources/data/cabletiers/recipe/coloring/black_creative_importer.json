@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:creative_importers"
-    },
-    {
-      "tag": "c:dyes/black"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:black_creative_importer"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "black",
+  "ingredient": "#cabletiers:creative_importers",
+  "result": "cabletiers:black_creative_importer"
 }

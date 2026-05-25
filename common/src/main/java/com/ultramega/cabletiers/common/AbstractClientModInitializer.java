@@ -19,10 +19,9 @@ import com.ultramega.cabletiers.common.storage.diskinterface.TieredDiskInterface
 
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.tags.TagKey;
+import org.jspecify.annotations.Nullable;
 
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersTranslation;
 
@@ -56,9 +55,14 @@ public abstract class AbstractClientModInitializer {
     public static void openAdvancedFilterScreen(final int slotIndex,
                                                 @Nullable final TagKey<?> selectedTagKey,
                                                 @Nullable final PlatformResourceKey selectedResource) {
-        Minecraft.getInstance().setScreen(new AdvancedFilterScreen(
-            Minecraft.getInstance().screen,
-            Minecraft.getInstance().player.getInventory(),
+        final Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) {
+            return;
+        }
+
+        mc.setScreen(new AdvancedFilterScreen(
+            mc.screen,
+            mc.player.getInventory(),
             slotIndex,
             selectedTagKey,
             selectedResource,

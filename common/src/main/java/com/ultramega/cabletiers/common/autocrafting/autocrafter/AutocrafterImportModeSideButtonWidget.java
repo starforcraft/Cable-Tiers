@@ -7,7 +7,7 @@ import java.util.List;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersIdentifier;
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersTranslation;
@@ -16,11 +16,11 @@ public class AutocrafterImportModeSideButtonWidget extends AbstractSideButtonWid
     private static final String PREFIX = "autocrafter.import_mode";
 
     private static final MutableComponent TITLE = createCableTiersTranslation("gui", PREFIX);
-    private static final ResourceLocation DONT_IMPORT = createCableTiersIdentifier("widget/side_button/dont_import");
-    private static final ResourceLocation IMPORT_EVERYTHING = createCableTiersIdentifier("widget/side_button/import_everything");
-    private static final ResourceLocation IMPORT_PATTERN_OUTPUTS = createCableTiersIdentifier("widget/side_button/import_pattern_outputs");
-    private static final ResourceLocation IMPORT_REQUESTED_RESOURCES = createCableTiersIdentifier("widget/side_button/import_requested_resources");
-    private static final ResourceLocation IMPORT_REQUESTED_RESOURCES_DEEP = createCableTiersIdentifier("widget/side_button/import_requested_resources_deep");
+    private static final Identifier DONT_IMPORT = createCableTiersIdentifier("widget/side_button/dont_import");
+    private static final Identifier IMPORT_EVERYTHING = createCableTiersIdentifier("widget/side_button/import_everything");
+    private static final Identifier IMPORT_PATTERN_OUTPUTS = createCableTiersIdentifier("widget/side_button/import_pattern_outputs");
+    private static final Identifier IMPORT_REQUESTED_RESOURCES = createCableTiersIdentifier("widget/side_button/import_requested_resources");
+    private static final Identifier IMPORT_REQUESTED_RESOURCES_DEEP = createCableTiersIdentifier("widget/side_button/import_requested_resources_deep");
 
     private static final List<MutableComponent> DONT_IMPORT_TITLE = List.of(createCableTiersTranslation(
         "gui", PREFIX + ".dont_import"
@@ -50,7 +50,7 @@ public class AutocrafterImportModeSideButtonWidget extends AbstractSideButtonWid
     }
 
     @Override
-    protected ResourceLocation getSprite() {
+    protected Identifier getSprite() {
         return switch (property.getValue()) {
             case DONT_IMPORT -> DONT_IMPORT;
             case IMPORT_EVERYTHING -> IMPORT_EVERYTHING;

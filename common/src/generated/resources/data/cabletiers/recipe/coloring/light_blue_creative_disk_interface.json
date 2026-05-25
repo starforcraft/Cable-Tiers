@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:creative_disk_interfaces"
-    },
-    {
-      "tag": "c:dyes/light_blue"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:creative_disk_interface"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "light_blue",
+  "ingredient": "#cabletiers:creative_disk_interfaces",
+  "result": "cabletiers:creative_disk_interface"
 }

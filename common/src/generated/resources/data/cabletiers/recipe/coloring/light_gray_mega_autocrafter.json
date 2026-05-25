@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:mega_autocrafters"
-    },
-    {
-      "tag": "c:dyes/light_gray"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:light_gray_mega_autocrafter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "light_gray",
+  "ingredient": "#cabletiers:mega_autocrafters",
+  "result": "cabletiers:light_gray_mega_autocrafter"
 }

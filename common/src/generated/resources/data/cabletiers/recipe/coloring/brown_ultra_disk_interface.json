@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:ultra_disk_interfaces"
-    },
-    {
-      "tag": "c:dyes/brown"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:brown_ultra_disk_interface"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "brown",
+  "ingredient": "#cabletiers:ultra_disk_interfaces",
+  "result": "cabletiers:brown_ultra_disk_interface"
 }

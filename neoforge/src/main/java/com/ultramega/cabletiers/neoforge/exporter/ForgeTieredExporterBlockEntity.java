@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage.neoforge.support.render.ModelProperties;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelData;
 
 public class ForgeTieredExporterBlockEntity extends AbstractTieredExporterBlockEntity {
     public ForgeTieredExporterBlockEntity(final CableTiers tier, final BlockPos pos, final BlockState state) {
@@ -16,6 +16,6 @@ public class ForgeTieredExporterBlockEntity extends AbstractTieredExporterBlockE
 
     @Override
     public ModelData getModelData() {
-        return ModelData.builder().with(ModelProperties.CABLE_CONNECTIONS, connections).build();
+        return ModelData.builder().with(ModelProperties.CABLE_CONNECTIONS, this.connections).build();
     }
 }

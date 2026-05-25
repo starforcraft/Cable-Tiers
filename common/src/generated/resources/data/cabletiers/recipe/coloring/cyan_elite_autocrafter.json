@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:elite_autocrafters"
-    },
-    {
-      "tag": "c:dyes/cyan"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:cyan_elite_autocrafter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "cyan",
+  "ingredient": "#cabletiers:elite_autocrafters",
+  "result": "cabletiers:cyan_elite_autocrafter"
 }

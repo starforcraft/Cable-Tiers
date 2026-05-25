@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:ultra_constructors"
-    },
-    {
-      "tag": "c:dyes/blue"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:blue_ultra_constructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "blue",
+  "ingredient": "#cabletiers:ultra_constructors",
+  "result": "cabletiers:blue_ultra_constructor"
 }

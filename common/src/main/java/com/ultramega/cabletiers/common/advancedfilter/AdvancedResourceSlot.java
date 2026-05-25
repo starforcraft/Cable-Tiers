@@ -15,13 +15,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 public class AdvancedResourceSlot extends ResourceSlot {
     private final AbstractTieredFilterContainerMenu<?> menu;
+    @Nullable
     private final Player player;
 
     public AdvancedResourceSlot(final AbstractTieredFilterContainerMenu<?> menu,
-                                final Player player,
+                                @Nullable final Player player,
                                 final ResourceContainer resourceContainer,
                                 final int index,
                                 final Component helpText,
@@ -35,13 +37,13 @@ public class AdvancedResourceSlot extends ResourceSlot {
 
     @Override
     public void change(final ItemStack stack, final boolean tryAlternatives) {
-        if (stack.isEmpty() && menu instanceof AbstractTieredFilterContainerMenu<?> containerMenu) {
-            if (player instanceof ServerPlayer serverPlayer) {
-                final PlatformResourceKey filterResource = resourceContainer.getResource(getContainerSlot());
+        if (stack.isEmpty() && this.menu instanceof AbstractTieredFilterContainerMenu<?> containerMenu) {
+            if (this.player instanceof ServerPlayer serverPlayer) {
+                final PlatformResourceKey filterResource = this.resourceContainer.getResource(this.getContainerSlot());
 
                 Platform.INSTANCE.sendPacketToClient(serverPlayer, new ShouldOpenAdvancedFilterPacket(
-                    index,
-                    Optional.ofNullable(containerMenu.getTagFilter(index)),
+                    this.index,
+                    Optional.ofNullable(containerMenu.getTagFilter(this.index)),
                     Optional.ofNullable(filterResource),
                     tryAlternatives));
             }

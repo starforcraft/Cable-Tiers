@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:creative_constructors"
-    },
-    {
-      "tag": "c:dyes/green"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:green_creative_constructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "green",
+  "ingredient": "#cabletiers:creative_constructors",
+  "result": "cabletiers:green_creative_constructor"
 }

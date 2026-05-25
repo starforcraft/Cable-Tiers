@@ -29,12 +29,12 @@ class CompositeExporterTransferStrategy implements ExporterTransferStrategy {
     public Result transfer(final ResourceKey resource, final Actor actor, final Network network) {
         final Class<? extends ResourceKey> resourceClass = resource.getClass();
         if (resourceClass == ItemResource.class) {
-            return fastItemStrategy.transfer(resource, actor, network);
+            return this.fastItemStrategy.transfer(resource, actor, network);
         }
         if (resourceClass == FluidResource.class) {
-            return fastFluidStrategy.transfer(resource, actor, network);
+            return this.fastFluidStrategy.transfer(resource, actor, network);
         }
-        final ExporterTransferStrategy strategy = strategies.get(resourceClass);
+        final ExporterTransferStrategy strategy = this.strategies.get(resourceClass);
         return strategy == null ? Result.DESTINATION_DOES_NOT_ACCEPT : strategy.transfer(resource, actor, network);
     }
 }

@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:mega_importers"
-    },
-    {
-      "tag": "c:dyes/brown"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:brown_mega_importer"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "brown",
+  "ingredient": "#cabletiers:mega_importers",
+  "result": "cabletiers:brown_mega_importer"
 }

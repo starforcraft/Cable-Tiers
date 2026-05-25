@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:elite_constructors"
-    },
-    {
-      "tag": "c:dyes/purple"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:purple_elite_constructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "purple",
+  "ingredient": "#cabletiers:elite_constructors",
+  "result": "cabletiers:purple_elite_constructor"
 }

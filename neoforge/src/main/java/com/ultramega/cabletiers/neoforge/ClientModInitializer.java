@@ -2,11 +2,9 @@ package com.ultramega.cabletiers.neoforge;
 
 import com.ultramega.cabletiers.common.AbstractClientModInitializer;
 import com.ultramega.cabletiers.common.CableTiers;
-import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
-import com.ultramega.cabletiers.common.utils.ContentIds;
-import com.ultramega.cabletiers.neoforge.storage.diskinterface.TieredDiskInterfaceBlockEntityRendererImpl;
-import com.ultramega.cabletiers.neoforge.storage.diskinterface.TieredDiskInterfaceGeometryLoader;
+import com.ultramega.cabletiers.neoforge.storage.diskinterface.TieredDiskInterfaceBlockEntityRenderer;
+import com.ultramega.cabletiers.neoforge.storage.diskinterface.TieredDiskInterfaceUnbakedBlockStateModel;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -15,8 +13,10 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RegisterBlockStateModels;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+
+import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersIdentifier;
 
 public final class ClientModInitializer extends AbstractClientModInitializer {
     private ClientModInitializer() {
@@ -28,10 +28,8 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
     }
 
     @SubscribeEvent
-    public static void onRegisterCustomModels(final ModelEvent.RegisterGeometryLoaders e) {
-        for (final CableTiers tier : CableTiers.values()) {
-            e.register(ContentIds.getContentId(tier, CableType.DISK_INTERFACE), new TieredDiskInterfaceGeometryLoader());
-        }
+    public static void onRegisterBlockStateModels(final RegisterBlockStateModels e) {
+        e.registerModel(createCableTiersIdentifier("tiered_disk_interface"), TieredDiskInterfaceUnbakedBlockStateModel.MODEL_CODEC);
     }
 
     @SubscribeEvent
@@ -51,7 +49,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         for (final CableTiers tier : CableTiers.values()) {
             BlockEntityRenderers.register(
                 BlockEntities.INSTANCE.getTieredDiskInterfaces(tier),
-                ctx -> new TieredDiskInterfaceBlockEntityRendererImpl<>()
+                ctx -> new TieredDiskInterfaceBlockEntityRenderer<>()
             );
         }
     }

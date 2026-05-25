@@ -1,5 +1,5 @@
 {
-  "parent": "cabletiers:block/tiered_autocrafter",
+  "parent": "cabletiers:block/autocrafter",
   "textures": {
     "cutout_east_color": "cabletiers:block/autocrafter/cutouts/side_color/magenta",
     "cutout_east_tier": "cabletiers:block/autocrafter/cutouts/side_tier/creative",

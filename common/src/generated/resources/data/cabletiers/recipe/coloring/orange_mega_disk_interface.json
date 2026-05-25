@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:mega_disk_interfaces"
-    },
-    {
-      "tag": "c:dyes/orange"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:orange_mega_disk_interface"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "orange",
+  "ingredient": "#cabletiers:mega_disk_interfaces",
+  "result": "cabletiers:orange_mega_disk_interface"
 }

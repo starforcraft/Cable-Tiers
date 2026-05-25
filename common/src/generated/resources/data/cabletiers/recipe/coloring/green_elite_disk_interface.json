@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:elite_disk_interfaces"
-    },
-    {
-      "tag": "c:dyes/green"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:green_elite_disk_interface"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "green",
+  "ingredient": "#cabletiers:elite_disk_interfaces",
+  "result": "cabletiers:green_elite_disk_interface"
 }

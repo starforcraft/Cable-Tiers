@@ -34,7 +34,7 @@ public final class Menus {
     }
 
     public MenuType<TieredImporterContainerMenu> getTieredImporters(final CableTiers tier) {
-        return requireNonNull(tieredImporters).get(tier).get();
+        return requireNonNull(this.tieredImporters).get(tier).get();
     }
 
     public void setTieredExporters(final CableTiers tier,
@@ -43,7 +43,7 @@ public final class Menus {
     }
 
     public MenuType<TieredExporterContainerMenu> getTieredExporters(final CableTiers tier) {
-        return requireNonNull(tieredExporters).get(tier).get();
+        return requireNonNull(this.tieredExporters).get(tier).get();
     }
 
     public void setTieredDestructors(final CableTiers tier,
@@ -52,7 +52,7 @@ public final class Menus {
     }
 
     public MenuType<TieredDestructorContainerMenu> getTieredDestructors(final CableTiers tier) {
-        return requireNonNull(tieredDestructors).get(tier).get();
+        return requireNonNull(this.tieredDestructors).get(tier).get();
     }
 
     public void setTieredConstructors(final CableTiers tier,
@@ -61,7 +61,7 @@ public final class Menus {
     }
 
     public MenuType<TieredConstructorContainerMenu> getTieredConstructors(final CableTiers tier) {
-        return requireNonNull(tieredConstructors).get(tier).get();
+        return requireNonNull(this.tieredConstructors).get(tier).get();
     }
 
     public void setTieredDiskInterfaces(final CableTiers tier,
@@ -70,7 +70,7 @@ public final class Menus {
     }
 
     public MenuType<TieredDiskInterfaceContainerMenu> getTieredDiskInterfaces(final CableTiers tier) {
-        return requireNonNull(tieredDiskInterfaces).get(tier).get();
+        return requireNonNull(this.tieredDiskInterfaces).get(tier).get();
     }
 
     public void setTieredAutocrafters(final CableTiers tier,
@@ -79,7 +79,7 @@ public final class Menus {
     }
 
     public MenuType<TieredAutocrafterContainerMenu> getTieredAutocrafters(final CableTiers tier) {
-        return requireNonNull(tieredAutocrafters).get(tier).get();
+        return requireNonNull(this.tieredAutocrafters).get(tier).get();
     }
 
     public void setTieredInterfaces(final CableTiers tier,
@@ -88,6 +88,6 @@ public final class Menus {
     }
 
     public MenuType<TieredInterfaceContainerMenu> getTieredInterfaces(final CableTiers tier) {
-        return requireNonNull(tieredInterfaces).get(tier).get();
+        return requireNonNull(this.tieredInterfaces).get(tier).get();
     }
 }

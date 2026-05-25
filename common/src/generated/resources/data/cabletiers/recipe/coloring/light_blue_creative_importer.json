@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:creative_importers"
-    },
-    {
-      "tag": "c:dyes/light_blue"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:light_blue_creative_importer"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "light_blue",
+  "ingredient": "#cabletiers:creative_importers",
+  "result": "cabletiers:light_blue_creative_importer"
 }

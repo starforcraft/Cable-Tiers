@@ -15,16 +15,17 @@ import com.refinedmods.refinedstorage.common.support.NetworkNodeBlockItem;
 import com.refinedmods.refinedstorage.common.support.network.NetworkNodeBlockEntityTicker;
 
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersTranslation;
@@ -34,35 +35,38 @@ public class TieredConstructorBlock extends AbstractConstructorDestructorBlock<T
     private static final Component HELP_1 = createTranslation("item", "constructor.help");
     private static final Component HELP_2 = createCableTiersTranslation("item", "tiered_cable.help");
 
+    private final Identifier id;
     private final CableTiers tier;
     private final BlockEntityTierProvider<AbstractTieredConstructorBlockEntity> blockEntityProvider;
 
-    public TieredConstructorBlock(final DyeColor color,
+    public TieredConstructorBlock(final Identifier id,
+                                  final DyeColor color,
                                   final MutableComponent name,
                                   final CableTiers tier,
                                   final BlockEntityTierProvider<AbstractTieredConstructorBlockEntity> blockEntityProvider) {
-        super(color, name, new NetworkNodeBlockEntityTicker<>(
+        super(id, color, name, new NetworkNodeBlockEntityTicker<>(
             () -> BlockEntities.INSTANCE.getTieredConstructors(tier),
             ACTIVE
         ));
+        this.id = id;
         this.tier = tier;
         this.blockEntityProvider = blockEntityProvider;
     }
 
     @Override
     public BlockColorMap<TieredConstructorBlock, BaseBlockItem> getBlockColorMap() {
-        return Blocks.INSTANCE.getTieredConstructors(tier);
+        return Blocks.INSTANCE.getTieredConstructors(this.tier);
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
-        return blockEntityProvider.create(tier, pos, state);
+        return this.blockEntityProvider.create(this.tier, pos, state);
     }
 
     @Override
     public BaseBlockItem createBlockItem() {
-        return new NetworkNodeBlockItem(this, null) {
+        return new NetworkNodeBlockItem(this.id, this, null) {
             @Override
             public Optional<TooltipComponent> getTooltipImage(final ItemStack stack) {
                 return Optional.of(new HelpTooltipComponent(
@@ -78,5 +82,10 @@ public class TieredConstructorBlock extends AbstractConstructorDestructorBlock<T
                 );
             }
         };
+    }
+
+    @Override
+    protected boolean shouldChangedStateKeepBlockEntity(final BlockState oldState) {
+        return oldState.getBlock() instanceof TieredConstructorBlock;
     }
 }

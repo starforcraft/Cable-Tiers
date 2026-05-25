@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "refinedstorage:advanced_processor",
+    "D": "minecraft:diamond_block",
+    "M": "cabletiers:elite_interface"
+  },
+  "pattern": [
+    "DMD",
+    "MAM",
+    "DMD"
+  ],
+  "result": {
+    "id": "cabletiers:ultra_interface"
+  }
+}

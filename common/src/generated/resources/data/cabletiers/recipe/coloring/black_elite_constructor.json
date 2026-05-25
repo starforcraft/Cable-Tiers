@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:elite_constructors"
-    },
-    {
-      "tag": "c:dyes/black"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:black_elite_constructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "black",
+  "ingredient": "#cabletiers:elite_constructors",
+  "result": "cabletiers:black_elite_constructor"
 }

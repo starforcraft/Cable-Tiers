@@ -15,7 +15,6 @@ import com.refinedmods.refinedstorage.common.api.constructordestructor.Destructo
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeDestination;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeItem;
 import com.refinedmods.refinedstorage.common.content.Items;
-import com.refinedmods.refinedstorage.common.support.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage.common.support.FilterModeSettings;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
@@ -24,12 +23,9 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
@@ -39,9 +35,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 
 public class AbstractTieredDestructorBlockEntity extends AbstractTieredCableLikeBlockEntity<TieredDestructorNetworkNode>
-    implements NetworkNodeExtendedMenuProvider<ResourceContainerData>, BlockEntityWithDrops {
+    implements NetworkNodeExtendedMenuProvider<ResourceContainerData> {
     private static final String TAG_PICKUP_ITEMS = "pi";
 
     private boolean pickupItems;
@@ -59,12 +58,11 @@ public class AbstractTieredDestructorBlockEntity extends AbstractTieredCableLike
             this::setFilters
         );
         this.upgradeContainer = new UpgradeContainer(getUpgradeDestination(tier), (c, upgradeEnergyUsage) -> {
-            mainNetworkNode.setEnergyUsage(tier.getEnergyUsage(CableType.DESTRUCTOR) + upgradeEnergyUsage);
-            setChanged();
-            if (level instanceof ServerLevel serverLevel) {
-                initialize(serverLevel);
+            this.mainNetworkNode.setEnergyUsage(tier.getEnergyUsage(CableType.DESTRUCTOR) + upgradeEnergyUsage);
+            if (this.level instanceof ServerLevel serverLevel) {
+                this.initialize(serverLevel);
             }
-        }, Math.max(1, 20 - tier.getSpeed(CableType.DESTRUCTOR))) {
+        }, this::setChanged, Math.max(1, 20 - tier.getSpeed(CableType.DESTRUCTOR))) {
             @Override
             public int getAmount(final UpgradeItem upgradeItem) {
                 if (tier == CableTiers.CREATIVE && upgradeItem == Items.INSTANCE.getSpeedUpgrade()) {
@@ -73,7 +71,7 @@ public class AbstractTieredDestructorBlockEntity extends AbstractTieredCableLike
                 return super.getAmount(upgradeItem);
             }
         };
-        this.ticker = upgradeContainer.getTicker();
+        this.ticker = this.upgradeContainer.getTicker();
     }
 
     public static UpgradeDestination getUpgradeDestination(final CableTiers tier) {
@@ -83,69 +81,65 @@ public class AbstractTieredDestructorBlockEntity extends AbstractTieredCableLike
     }
 
     public boolean isPickupItems() {
-        return pickupItems;
+        return this.pickupItems;
     }
 
     public void setPickupItems(final boolean pickupItems) {
         this.pickupItems = pickupItems;
-        setChanged();
-        if (level instanceof ServerLevel serverLevel) {
-            initialize(serverLevel);
+        this.setChanged();
+        if (this.level instanceof ServerLevel serverLevel) {
+            this.initialize(serverLevel);
         }
     }
 
     void setFilters(final Set<ResourceKey> filters, final Set<TagKey<?>> tagFilters) {
-        mainNetworkNode.setFilters(filters, tagFilters);
+        this.mainNetworkNode.setFilters(filters, tagFilters);
     }
 
     public FilterMode getFilterMode() {
-        return mainNetworkNode.getFilterMode();
+        return this.mainNetworkNode.getFilterMode();
     }
 
     public void setFilterMode(final FilterMode mode) {
-        mainNetworkNode.setFilterMode(mode);
-        setChanged();
+        this.mainNetworkNode.setFilterMode(mode);
+        this.setChanged();
     }
 
     @Override
-    public void writeConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.writeConfiguration(tag, provider);
-        tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(mainNetworkNode.getFilterMode()));
-        tag.putBoolean(TAG_PICKUP_ITEMS, pickupItems);
+    public void writeConfiguration(final ValueOutput output) {
+        super.writeConfiguration(output);
+        output.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(this.mainNetworkNode.getFilterMode()));
+        output.putBoolean(TAG_PICKUP_ITEMS, this.pickupItems);
     }
 
     @Override
-    public void readConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.readConfiguration(tag, provider);
-        if (tag.contains(TAG_FILTER_MODE)) {
-            mainNetworkNode.setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
-        }
-        if (tag.contains(TAG_PICKUP_ITEMS)) {
-            pickupItems = tag.getBoolean(TAG_PICKUP_ITEMS);
-        }
+    public void readConfiguration(final ValueInput input) {
+        super.readConfiguration(input);
+        input.getInt(TAG_FILTER_MODE).map(FilterModeSettings::getFilterMode).ifPresent(this.mainNetworkNode::setFilterMode);
+        this.pickupItems = input.getBooleanOr(TAG_PICKUP_ITEMS, false);
     }
 
     @Override
     protected void initialize(final ServerLevel level, final Direction direction) {
         super.initialize(level, direction);
-        mainNetworkNode.setPlayerProvider(() -> getFakePlayer(level));
-        mainNetworkNode.setStrategy(createStrategy(level, direction));
+        this.mainNetworkNode.setPlayerProvider(() -> this.getFakePlayer(level));
+        this.mainNetworkNode.setStrategy(this.createStrategy(level, direction));
     }
 
     private CompositeDestructorStrategy createStrategy(final ServerLevel level,
                                                        final Direction direction) {
-        final BlockPos pos = getBlockPos().relative(direction);
+        final BlockPos pos = this.getBlockPos().relative(direction);
         final Direction incomingDirection = direction.getOpposite();
         final List<DestructorStrategy> strategies = RefinedStorageApi.INSTANCE.getDestructorStrategyFactories()
             .stream()
-            .flatMap(factory -> factory.create(level, pos, incomingDirection, upgradeContainer, pickupItems).stream())
+            .flatMap(factory -> factory.create(level, pos, incomingDirection, this.upgradeContainer, this.pickupItems).stream())
             .toList();
         return new CompositeDestructorStrategy(strategies);
     }
 
     @Override
     public ResourceContainerData getMenuData() {
-        return ResourceContainerData.of(filter.getFilterContainer());
+        return ResourceContainerData.of(this.filter.getFilterContainer());
     }
 
     @Override
@@ -155,7 +149,7 @@ public class AbstractTieredDestructorBlockEntity extends AbstractTieredCableLike
 
     @Override
     public Component getName() {
-        return overrideName(tier.getContentName(CableType.DESTRUCTOR));
+        return this.overrideName(this.tier.getContentName(CableType.DESTRUCTOR));
     }
 
     @Nullable
@@ -163,6 +157,6 @@ public class AbstractTieredDestructorBlockEntity extends AbstractTieredCableLike
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
         this.setInContainerMenu(true);
 
-        return new TieredDestructorContainerMenu(syncId, player, this, filter.getFilterContainer(), upgradeContainer, tier);
+        return new TieredDestructorContainerMenu(syncId, player, this, this.filter.getFilterContainer(), this.upgradeContainer, this.tier);
     }
 }

@@ -25,7 +25,7 @@ class CompositeConstructorStrategy implements ConstructorStrategy {
                         final Actor actor,
                         final Player player,
                         final Network network) {
-        for (final ConstructorStrategy strategy : strategies) {
+        for (final ConstructorStrategy strategy : this.strategies) {
             final Result result = strategy.apply(resource, actor, player, network);
             if (result != Result.SKIPPED) {
                 return result;

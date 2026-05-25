@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:ultra_exporters"
-    },
-    {
-      "tag": "c:dyes/yellow"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:yellow_ultra_exporter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "yellow",
+  "ingredient": "#cabletiers:ultra_exporters",
+  "result": "cabletiers:yellow_ultra_exporter"
 }

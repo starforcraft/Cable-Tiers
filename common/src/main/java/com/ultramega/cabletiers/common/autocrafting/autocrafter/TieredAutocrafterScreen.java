@@ -3,7 +3,6 @@ package com.ultramega.cabletiers.common.autocrafting.autocrafter;
 import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.support.AbstractAdvancedFilterScreen;
 
-import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PatternOutputRenderingScreen;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternSlot;
 import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterContainerMenu;
@@ -15,28 +14,33 @@ import com.refinedmods.refinedstorage.common.support.widget.TextMarquee;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslationAsHeading;
 import static java.util.Objects.requireNonNull;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class TieredAutocrafterScreen extends AbstractBaseScreen<TieredAutocrafterContainerMenu>
     implements AutocrafterContainerMenu.Listener, PatternOutputRenderingScreen {
-    private static final Component EMPTY_PATTERN_SLOT = createTranslationAsHeading(
-        "gui", "autocrafter.empty_pattern_slot"
-    );
+    private static final List<ClientTooltipComponent> EMPTY_PATTERN_SLOT = List.of(ClientTooltipComponent.create(
+        createTranslationAsHeading("gui", "autocrafter.empty_pattern_slot").getVisualOrderText()
+    ));
 
     private static final Component CHAINED = createTranslation("gui", "autocrafter.chained");
     private static final Component CHAINED_HELP = createTranslation("gui", "autocrafter.chained.help");
@@ -46,7 +50,7 @@ public class TieredAutocrafterScreen extends AbstractBaseScreen<TieredAutocrafte
     private static final Component EDIT = createTranslation("gui", "autocrafter.edit_name");
     private static final Component CURRENTLY_LOCKED = createTranslation("gui", "autocrafter.currently_locked");
 
-    private static final ResourceLocation NAME_BACKGROUND = createIdentifier("widget/autocrafter_name");
+    private static final Identifier NAME_BACKGROUND = createIdentifier("widget/autocrafter_name");
     private static final List<String> CRAFTER_NAME_HISTORY = new ArrayList<>();
 
     private final Inventory playerInventory;
@@ -65,95 +69,92 @@ public class TieredAutocrafterScreen extends AbstractBaseScreen<TieredAutocrafte
                                    final Inventory playerInventory,
                                    final Component title,
                                    final CableTiers tier) {
-        super(menu, playerInventory, new TextMarquee(title, getTitleMaxWidth(menu)));
+        // TODO: refractor
+        super(menu, playerInventory, new TextMarquee(title, getTitleMaxWidth(menu)), tier != CableTiers.CREATIVE ? 210 : 176, switch (tier) {
+            case ELITE -> 155;
+            case ULTRA -> 191;
+            case MEGA, CREATIVE -> 227;
+        });
         this.playerInventory = playerInventory;
         this.tier = tier;
 
         switch (tier) {
             case ELITE:
                 this.inventoryLabelY = 42 + 18;
-                this.imageHeight = 155;
                 break;
             case ULTRA:
                 this.inventoryLabelY = 42 + 18 * 3;
-                this.imageHeight = 191;
                 break;
             case MEGA, CREATIVE:
                 this.inventoryLabelY = 42 + 18 * 5;
-                this.imageHeight = 227;
                 break;
         }
-        this.imageWidth = hasUpgrades() ? 210 : 176;
     }
 
     @Override
-    protected void renderBg(final GuiGraphics graphics, final float delta, final int mouseX, final int mouseY) {
-        super.renderBg(graphics, delta, mouseX, mouseY);
-        if (editName) {
-            graphics.blitSprite(NAME_BACKGROUND, leftPos + 7, topPos + 5, 162, 12);
+    public void extractBackground(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
+        if (this.editName) {
+            graphics.blitSprite(GUI_TEXTURED, NAME_BACKGROUND, this.leftPos + 7, this.topPos + 5, 162, 12);
         }
     }
 
     @Override
     protected void init() {
         super.init();
-        getMenu().setListener(this);
+        this.getMenu().setListener(this);
 
-        tryAddLockModeSideButton();
-        addSideButton(new AutocrafterPrioritySideButtonWidget(
-            getMenu().getProperty(AutocrafterPropertyTypes.PRIORITY),
-            playerInventory,
+        this.tryAddLockModeSideButton();
+        this.addSideButton(new AutocrafterPrioritySideButtonWidget(
+            this.getMenu().getProperty(AutocrafterPropertyTypes.PRIORITY),
+            this.playerInventory,
             this
         ));
-        addSideButton(new VisibleToTheAutocrafterManagerSideButtonWidget(
-            getMenu().getProperty(AutocrafterPropertyTypes.VISIBLE_TO_THE_AUTOCRAFTER_MANAGER)
+        this.addSideButton(new VisibleToTheAutocrafterManagerSideButtonWidget(
+            this.getMenu().getProperty(AutocrafterPropertyTypes.VISIBLE_TO_THE_AUTOCRAFTER_MANAGER)
         ));
-        addSideButton(new AutocrafterImportModeSideButtonWidget(
-            getMenu().getProperty(AutocrafterPropertyTypes.IMPORT_MODE)
+        this.addSideButton(new AutocrafterImportModeSideButtonWidget(
+            this.getMenu().getProperty(AutocrafterPropertyTypes.IMPORT_MODE)
         ));
 
-        nameField = new SearchFieldWidget(
-            font,
-            leftPos + 8 + 1,
-            topPos + 6 + 1,
+        this.nameField = new SearchFieldWidget(
+            this.font,
+            this.leftPos + 8 + 1,
+            this.topPos + 6 + 1,
             159 - 6,
             new History(CRAFTER_NAME_HISTORY)
         );
-        nameField.setValue(title.getString());
-        nameField.setBordered(false);
-        nameField.setCanLoseFocus(false);
-        addWidget(nameField);
+        this.nameField.setValue(this.title.getString());
+        this.nameField.setBordered(false);
+        this.nameField.setCanLoseFocus(false);
+        this.addWidget(this.nameField);
 
-        editButton = addRenderableWidget(Button.builder(EDIT, button -> setEditName(true))
-            .pos(getEditButtonX(), topPos + titleLabelY - 3)
+        this.editButton = this.addRenderableWidget(Button.builder(EDIT, button -> this.setEditName(true))
+            .pos(this.getEditButtonX(), this.topPos + this.titleLabelY - 3)
             .size(getEditButtonWidth(), 14)
             .build());
-        editButton.active = getMenu().canChangeName();
+        this.editButton.active = this.getMenu().canChangeName();
 
-        setEditName(false);
+        this.setEditName(false);
     }
 
     @Override
-    public void render(final GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
-        if (nameField != null && editName) {
-            nameField.render(graphics, mouseX, mouseY, partialTicks);
+    public void extractContents(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float partialTicks) {
+        super.extractContents(graphics, mouseX, mouseY, partialTicks);
+        if (this.nameField != null && this.editName) {
+            this.nameField.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         }
     }
 
     @Override
-    protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
-        if (editName) {
-            renderPlayerInventoryTitle(graphics);
+    protected void extractLabels(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY) {
+        if (this.editName) {
+            this.renderPlayerInventoryTitle(graphics);
             return;
         }
-        super.renderLabels(graphics, mouseX, mouseY);
-        final Component title = getChainingTitle(menu);
-        graphics.drawString(font, title, getChainingTitleX(title), titleLabelY, 4210752, false);
-    }
-
-    private boolean hasUpgrades() {
-        return tier != CableTiers.CREATIVE;
+        super.extractLabels(graphics, mouseX, mouseY);
+        final Component title = getChainingTitle(this.menu);
+        graphics.text(this.font, title, this.getChainingTitleX(title), this.titleLabelY, -12566464, false);
     }
 
     private static int getTitleMaxWidth(final TieredAutocrafterContainerMenu menu) {
@@ -163,7 +164,7 @@ public class TieredAutocrafterScreen extends AbstractBaseScreen<TieredAutocrafte
     }
 
     private int getEditButtonX() {
-        return leftPos + titleLabelX + titleMarquee.getEffectiveWidth(font) + 2;
+        return this.leftPos + this.titleLabelX + this.titleMarquee.getEffectiveWidth(this.font) + 2;
     }
 
     private static int getEditButtonWidth() {
@@ -175,127 +176,128 @@ public class TieredAutocrafterScreen extends AbstractBaseScreen<TieredAutocrafte
     }
 
     private Component getChainingTooltip() {
-        if (!getMenu().isPartOfChain() && !getMenu().isHeadOfChain()) {
+        if (!this.getMenu().isPartOfChain() && !this.getMenu().isHeadOfChain()) {
             return NOT_CHAINED_HELP;
         }
-        return getMenu().isHeadOfChain() ? CHAINED_HEAD_HELP : CHAINED_HELP;
+        return this.getMenu().isHeadOfChain() ? CHAINED_HEAD_HELP : CHAINED_HELP;
     }
 
     private void tryAddLockModeSideButton() {
-        if (getMenu().isPartOfChain()) {
+        if (this.getMenu().isPartOfChain()) {
             return;
         }
-        lockModeSideButtonWidget = new LockModeSideButtonWidget(
-            getMenu().getProperty(AutocrafterPropertyTypes.LOCK_MODE)
+        this.lockModeSideButtonWidget = new LockModeSideButtonWidget(
+            this.getMenu().getProperty(AutocrafterPropertyTypes.LOCK_MODE)
         );
-        lockedChanged(getMenu().isLocked());
-        addSideButton(lockModeSideButtonWidget);
+        this.lockedChanged(this.getMenu().isLocked());
+        this.addSideButton(this.lockModeSideButtonWidget);
     }
 
     private void setEditName(final boolean editName) {
         this.editName = editName;
-        if (nameField != null) {
-            nameField.visible = editName;
-            nameField.setFocused(editName);
-            nameField.setCanLoseFocus(!editName);
+        if (this.nameField != null) {
+            this.nameField.visible = editName;
+            this.nameField.setFocused(editName);
+            this.nameField.setCanLoseFocus(!editName);
             if (editName) {
-                setFocused(nameField);
+                this.setFocused(this.nameField);
             } else {
-                setFocused(null);
+                this.setFocused(null);
             }
         }
-        if (editButton != null) {
-            editButton.visible = !editName;
+        if (this.editButton != null) {
+            this.editButton.visible = !editName;
         }
     }
 
     private int getChainingTitleX(final Component title) {
-        return 210 - 41 - font.width(title);
+        return 210 - 41 - this.font.width(title);
     }
 
     @Override
-    public boolean charTyped(final char unknown1, final int unknown2) {
-        return (nameField != null && editName && nameField.charTyped(unknown1, unknown2))
-            || super.charTyped(unknown1, unknown2);
+    public boolean charTyped(final CharacterEvent event) {
+        if (this.nameField != null && this.editName && this.nameField.charTyped(event)) {
+            return true;
+        }
+        return super.charTyped(event);
     }
 
     @Override
-    public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
-        if (nameField != null && editName) {
-            if (nameField.isFocused() && saveOrCancel(key)) {
+    public boolean keyPressed(final KeyEvent event) {
+        if (this.nameField != null && this.editName) {
+            if (this.nameField.keyPressed(event)) {
                 return true;
             }
-            return nameField.keyPressed(key, scanCode, modifiers);
+            if (this.nameField.isFocused() && this.saveOrCancel(event.key())) {
+                return true;
+            }
         }
-        return super.keyPressed(key, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     private boolean saveOrCancel(final int key) {
         if ((key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER)) {
-            getMenu().changeName(requireNonNull(nameField).getValue());
-            setEditName(false);
+            this.getMenu().changeName(requireNonNull(this.nameField).getValue());
+            this.setEditName(false);
             return true;
         } else if (key == GLFW.GLFW_KEY_ESCAPE) {
-            setEditName(false);
-            requireNonNull(nameField).setValue(titleMarquee.getText().getString());
+            this.setEditName(false);
+            requireNonNull(this.nameField).setValue(this.titleMarquee.getText().getString());
             return true;
         }
         return false;
     }
 
     @Override
-    protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
-        if (hoveredSlot instanceof PatternSlot patternSlot
+    protected void extractTooltip(final GuiGraphicsExtractor graphics, final int x, final int y) {
+        if (this.hoveredSlot instanceof PatternSlot patternSlot
             && !patternSlot.hasItem()
-            && getMenu().getCarried().isEmpty()) {
-            graphics.renderTooltip(font, EMPTY_PATTERN_SLOT, x, y);
+            && this.getMenu().getCarried().isEmpty()) {
+            graphics.tooltip(this.font, EMPTY_PATTERN_SLOT, x, y, DefaultTooltipPositioner.INSTANCE, null);
             return;
         }
-        final Component chainingTitle = getChainingTitle(getMenu());
-        final int chainingTitleX = getChainingTitleX(chainingTitle);
-        if (isHovering(chainingTitleX, titleLabelY, font.width(chainingTitle), font.lineHeight, x, y)) {
-            final Component chainingTooltip = getChainingTooltip();
-            Platform.INSTANCE.renderTooltip(
-                graphics,
-                List.of(HelpClientTooltipComponent.createAlwaysDisplayed(chainingTooltip)),
-                x,
-                y
-            );
+        final Component chainingTitle = getChainingTitle(this.getMenu());
+        final int chainingTitleX = this.getChainingTitleX(chainingTitle);
+        if (this.isHovering(chainingTitleX, this.titleLabelY, this.font.width(chainingTitle), this.font.lineHeight, x, y)
+            && this.nameField != null && !this.nameField.isFocused()) {
+            final Component chainingTooltip = this.getChainingTooltip();
+            graphics.tooltip(this.font, List.of(HelpClientTooltipComponent.createAlwaysDisplayed(chainingTooltip)), x, y,
+                DefaultTooltipPositioner.INSTANCE, null);
             return;
         }
-        super.renderTooltip(graphics, x, y);
+        super.extractTooltip(graphics, x, y);
     }
 
     @Override
-    protected ResourceLocation getTexture() {
-        return AbstractAdvancedFilterScreen.getTexture(tier);
+    protected Identifier getTexture() {
+        return AbstractAdvancedFilterScreen.getTexture(this.tier);
     }
 
     @Override
     public void nameChanged(final Component name) {
-        titleMarquee.setText(name);
-        if (nameField != null) {
-            nameField.setValue(name.getString());
+        this.titleMarquee.setText(name);
+        if (this.nameField != null) {
+            this.nameField.setValue(name.getString());
         }
-        if (editButton != null) {
-            editButton.setX(getEditButtonX());
+        if (this.editButton != null) {
+            this.editButton.setX(this.getEditButtonX());
         }
     }
 
     @Override
     public void lockedChanged(final boolean locked) {
-        if (lockModeSideButtonWidget == null) {
+        if (this.lockModeSideButtonWidget == null) {
             return;
         }
         if (locked) {
-            lockModeSideButtonWidget.setWarning(CURRENTLY_LOCKED);
+            this.lockModeSideButtonWidget.setWarning(CURRENTLY_LOCKED);
             return;
         }
-        lockModeSideButtonWidget.setWarning(null);
+        this.lockModeSideButtonWidget.setWarning(null);
     }
 
     @Override
     public boolean canDisplayOutput(final ItemStack stack) {
-        return getMenu().containsPattern(stack);
+        return this.getMenu().containsPattern(stack);
     }
 }

@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:mega_constructors"
-    },
-    {
-      "tag": "c:dyes/light_blue"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:light_blue_mega_constructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "light_blue",
+  "ingredient": "#cabletiers:mega_constructors",
+  "result": "cabletiers:light_blue_mega_constructor"
 }

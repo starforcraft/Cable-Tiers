@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:ultra_importers"
-    },
-    {
-      "tag": "c:dyes/gray"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:ultra_importer"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "gray",
+  "ingredient": "#cabletiers:ultra_importers",
+  "result": "cabletiers:ultra_importer"
 }

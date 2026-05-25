@@ -22,58 +22,58 @@ public final class Items {
     }
 
     public void addTieredImporter(final Supplier<BaseBlockItem> supplier) {
-        allTieredImporters.add(supplier);
+        this.allTieredImporters.add(supplier);
     }
 
     public List<Supplier<BaseBlockItem>> getTieredImporters() {
-        return Collections.unmodifiableList(allTieredImporters);
+        return Collections.unmodifiableList(this.allTieredImporters);
     }
 
     public void addTieredExporter(final Supplier<BaseBlockItem> supplier) {
-        allTieredExporters.add(supplier);
+        this.allTieredExporters.add(supplier);
     }
 
     public List<Supplier<BaseBlockItem>> getTieredExporters() {
-        return Collections.unmodifiableList(allTieredExporters);
+        return Collections.unmodifiableList(this.allTieredExporters);
     }
 
     public void addTieredDestructor(final Supplier<BaseBlockItem> supplier) {
-        allTieredDestructors.add(supplier);
+        this.allTieredDestructors.add(supplier);
     }
 
     public List<Supplier<BaseBlockItem>> getTieredDestructors() {
-        return Collections.unmodifiableList(allTieredDestructors);
+        return Collections.unmodifiableList(this.allTieredDestructors);
     }
 
     public void addTieredConstructor(final Supplier<BaseBlockItem> supplier) {
-        allTieredConstructors.add(supplier);
+        this.allTieredConstructors.add(supplier);
     }
 
     public List<Supplier<BaseBlockItem>> getTieredConstructors() {
-        return Collections.unmodifiableList(allTieredConstructors);
+        return Collections.unmodifiableList(this.allTieredConstructors);
     }
 
     public void addTieredDiskInterface(final Supplier<BaseBlockItem> supplier) {
-        allTieredDiskInterfaces.add(supplier);
+        this.allTieredDiskInterfaces.add(supplier);
     }
 
     public List<Supplier<BaseBlockItem>> getTieredDiskInterfaces() {
-        return Collections.unmodifiableList(allTieredDiskInterfaces);
+        return Collections.unmodifiableList(this.allTieredDiskInterfaces);
     }
 
     public void addTieredAutocrafters(final Supplier<BaseBlockItem> supplier) {
-        allTieredAutocrafters.add(supplier);
+        this.allTieredAutocrafters.add(supplier);
     }
 
     public List<Supplier<BaseBlockItem>> getTieredAutocrafters() {
-        return Collections.unmodifiableList(allTieredAutocrafters);
+        return Collections.unmodifiableList(this.allTieredAutocrafters);
     }
 
     public void addTieredInterfaces(final Supplier<BaseBlockItem> supplier) {
-        allTieredInterfaces.add(supplier);
+        this.allTieredInterfaces.add(supplier);
     }
 
     public List<Supplier<BaseBlockItem>> getTieredInterfaces() {
-        return Collections.unmodifiableList(allTieredInterfaces);
+        return Collections.unmodifiableList(this.allTieredInterfaces);
     }
 }

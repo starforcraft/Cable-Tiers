@@ -10,7 +10,7 @@ import com.refinedmods.refinedstorage.common.support.widget.AbstractYesNoSideBut
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
@@ -21,19 +21,19 @@ public class TieredDestructorScreen extends AbstractAdvancedFilterScreen<TieredD
                                   final Inventory playerInventory,
                                   final Component title,
                                   final CableTiers tier) {
-        super(menu, playerInventory, title, tier);
+        super(menu, playerInventory, title, tier, true);
     }
 
     @Override
     protected void init() {
         super.init();
-        addSideButton(new FilterModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.FILTER_MODE),
+        this.addSideButton(new FilterModeSideButtonWidget(
+            this.getMenu().getProperty(PropertyTypes.FILTER_MODE),
             createTranslation("gui", "destructor.filter_mode.allow.help"),
             createTranslation("gui", "destructor.filter_mode.block.help")
         ));
-        addSideButton(new DestructorPickupItemsSideButtonWidget(
-            getMenu().getProperty(ConstructorDestructorPropertyTypes.PICKUP_ITEMS)
+        this.addSideButton(new DestructorPickupItemsSideButtonWidget(
+            this.getMenu().getProperty(ConstructorDestructorPropertyTypes.PICKUP_ITEMS)
         ));
     }
 
@@ -42,8 +42,8 @@ public class TieredDestructorScreen extends AbstractAdvancedFilterScreen<TieredD
      */
     static class DestructorPickupItemsSideButtonWidget extends AbstractYesNoSideButtonWidget {
         private static final MutableComponent TITLE = createTranslation("gui", "destructor.pickup_items");
-        private static final ResourceLocation YES = createIdentifier("widget/side_button/destructor_pickup_items/yes");
-        private static final ResourceLocation NO = createIdentifier("widget/side_button/destructor_pickup_items/no");
+        private static final Identifier YES = createIdentifier("widget/side_button/destructor_pickup_items/yes");
+        private static final Identifier NO = createIdentifier("widget/side_button/destructor_pickup_items/no");
 
         DestructorPickupItemsSideButtonWidget(final ClientProperty<Boolean> property) {
             super(property, TITLE, YES, NO);

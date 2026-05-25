@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:mega_exporters"
-    },
-    {
-      "tag": "c:dyes/magenta"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:magenta_mega_exporter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "magenta",
+  "ingredient": "#cabletiers:mega_exporters",
+  "result": "cabletiers:magenta_mega_exporter"
 }

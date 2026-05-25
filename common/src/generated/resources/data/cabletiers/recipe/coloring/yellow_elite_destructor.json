@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:elite_destructors"
-    },
-    {
-      "tag": "c:dyes/yellow"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:yellow_elite_destructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "yellow",
+  "ingredient": "#cabletiers:elite_destructors",
+  "result": "cabletiers:yellow_elite_destructor"
 }

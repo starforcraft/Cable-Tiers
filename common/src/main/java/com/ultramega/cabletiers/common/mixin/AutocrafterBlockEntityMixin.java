@@ -1,0 +1,108 @@
+package com.ultramega.cabletiers.common.mixin;
+
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink;
+import com.refinedmods.refinedstorage.api.core.Action;
+import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.PatternProviderNetworkNode;
+import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.autocrafting.PlatformPatternProviderExternalPatternSink;
+import com.refinedmods.refinedstorage.common.autocrafting.PatternInventory;
+import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterBlockEntity;
+import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.LockMode;
+import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import static com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock.tryExtractDirection;
+import static com.ultramega.cabletiers.common.autocrafting.autocrafter.TieredAutocrafterBlockEntity.findResult;
+
+@Mixin(AutocrafterBlockEntity.class)
+public abstract class AutocrafterBlockEntityMixin extends AbstractBaseNetworkNodeContainerBlockEntity<PatternProviderNetworkNode> {
+    @Shadow(remap = false)
+    private LockMode lockMode;
+    @Shadow(remap = false)
+    @Final
+    private PatternInventory patternContainer;
+    @Shadow(remap = false)
+    private boolean locked;
+
+    @Unique
+    @Nullable
+    private final PlatformPatternProviderExternalPatternSink[] cabletiers$sinks = new PlatformPatternProviderExternalPatternSink[Direction.values().length];
+
+    protected AutocrafterBlockEntityMixin(final BlockEntityType<?> type,
+                                          final BlockPos pos,
+                                          final BlockState state,
+                                          final PatternProviderNetworkNode networkNode) {
+        super(type, pos, state, networkNode);
+    }
+
+
+    @Inject(method = "initialize", at = @At("TAIL"))
+    private void initialize(final ServerLevel level, final Direction direction, final CallbackInfo ci) {
+        for (int i = 0; i < Direction.values().length; i++) {
+            final Direction incomingDirection = Direction.values()[i];
+
+            final BlockPos sourcePosition = this.worldPosition.relative(direction);
+            this.cabletiers$sinks[i] = Platform.INSTANCE.getPatternProviderExternalPatternSinkFactory()
+                .create(level, sourcePosition, incomingDirection);
+        }
+    }
+
+    @Inject(method = "calculateLocked", at = @At("RETURN"), cancellable = true, remap = false)
+    private void calculateLocked(final CallbackInfoReturnable<Boolean> cir) {
+        if (this.lockMode == LockMode.LOCK_UNTIL_CONNECTED_MACHINE_IS_EMPTY) {
+            cir.setReturnValue(
+                !Arrays.stream(this.cabletiers$sinks)
+                    .filter(Objects::nonNull)
+                    .allMatch(PlatformPatternProviderExternalPatternSink::isEmpty)
+            );
+        }
+    }
+
+    /**
+     * @author Ultramega
+     * @reason Add support for Sided Input
+     */
+    @Overwrite(remap = false)
+    public ExternalPatternSink.Result insertAll(final Collection<ResourceAmount> resources, final Action action) {
+        final AutocrafterBlockEntity root = this.getChainingRoot();
+        if (root != (Object) this) {
+            return root.insertAll(resources, action);
+        }
+        if (Arrays.stream(this.cabletiers$sinks).allMatch(Objects::isNull)) {
+            return ExternalPatternSink.Result.SKIPPED;
+        }
+        if (this.locked) {
+            return ExternalPatternSink.Result.LOCKED;
+        }
+
+        final Direction baseDirection = tryExtractDirection(this.getBlockState());
+
+        return findResult(this.cabletiers$sinks, this.patternContainer, baseDirection, resources, action, this::updateLockedAfterAccept);
+    }
+
+    @Shadow(remap = false)
+    protected abstract AutocrafterBlockEntity getChainingRoot();
+
+    @Shadow(remap = false)
+    protected abstract void updateLockedAfterAccept(Action action, ExternalPatternSink.Result result);
+}

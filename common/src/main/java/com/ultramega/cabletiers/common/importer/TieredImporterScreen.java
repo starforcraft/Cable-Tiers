@@ -17,19 +17,19 @@ public class TieredImporterScreen extends AbstractAdvancedFilterScreen<TieredImp
                                 final Inventory playerInventory,
                                 final Component title,
                                 final CableTiers tier) {
-        super(menu, playerInventory, title, tier);
+        super(menu, playerInventory, title, tier, true);
     }
 
     @Override
     protected void init() {
         super.init();
-        addSideButton(new FilterModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.FILTER_MODE),
+        this.addSideButton(new FilterModeSideButtonWidget(
+            this.getMenu().getProperty(PropertyTypes.FILTER_MODE),
             createTranslation("gui", "importer.filter_mode.allow.help"),
             createTranslation("gui", "importer.filter_mode.block.help")
         ));
-        addSideButton(new FuzzyModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.FUZZY_MODE),
+        this.addSideButton(new FuzzyModeSideButtonWidget(
+            this.getMenu().getProperty(PropertyTypes.FUZZY_MODE),
             () -> FuzzyModeSideButtonWidget.Type.EXTRACTING_SOURCE
         ));
     }

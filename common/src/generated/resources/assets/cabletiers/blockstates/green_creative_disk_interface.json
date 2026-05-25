@@ -1,7 +1,9 @@
 {
   "variants": {
     "": {
-      "model": "cabletiers:block/creative_disk_interface/green"
+      "type": "cabletiers:tiered_disk_interface",
+      "color": "green",
+      "tier": "creative"
     }
   }
 }

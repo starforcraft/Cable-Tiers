@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:elite_importers"
-    },
-    {
-      "tag": "c:dyes/cyan"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:cyan_elite_importer"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "cyan",
+  "ingredient": "#cabletiers:elite_importers",
+  "result": "cabletiers:cyan_elite_importer"
 }

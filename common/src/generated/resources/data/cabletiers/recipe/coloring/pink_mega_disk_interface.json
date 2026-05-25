@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:mega_disk_interfaces"
-    },
-    {
-      "tag": "c:dyes/pink"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:pink_mega_disk_interface"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "pink",
+  "ingredient": "#cabletiers:mega_disk_interfaces",
+  "result": "cabletiers:pink_mega_disk_interface"
 }

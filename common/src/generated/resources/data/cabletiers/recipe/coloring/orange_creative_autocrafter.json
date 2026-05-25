@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:creative_autocrafters"
-    },
-    {
-      "tag": "c:dyes/orange"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:orange_creative_autocrafter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "orange",
+  "ingredient": "#cabletiers:creative_autocrafters",
+  "result": "cabletiers:orange_creative_autocrafter"
 }

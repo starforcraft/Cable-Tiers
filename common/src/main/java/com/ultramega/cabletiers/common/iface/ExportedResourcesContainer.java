@@ -17,7 +17,8 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerI
 
 import java.util.Collection;
 import java.util.Collections;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class ExportedResourcesContainer extends ResourceContainerImpl implements InterfaceExportState {
     private final FilterWithFuzzyMode filter;
@@ -34,13 +35,13 @@ public class ExportedResourcesContainer extends ResourceContainerImpl implements
 
     @Override
     public int getSlots() {
-        return size();
+        return this.size();
     }
 
     @Override
     public Collection<ResourceKey> expandExportCandidates(final RootStorage rootStorage,
                                                           final ResourceKey resource) {
-        if (!filter.isFuzzyMode()) {
+        if (!this.filter.isFuzzyMode()) {
             return Collections.singletonList(resource);
         }
         if (!(rootStorage instanceof FuzzyRootStorage fuzzyRootStorage)) {
@@ -51,11 +52,11 @@ public class ExportedResourcesContainer extends ResourceContainerImpl implements
 
     @Override
     public boolean isExportedResourceValid(final ResourceKey want, final ResourceKey got) {
-        if (!filter.isFuzzyMode()) {
+        if (!this.filter.isFuzzyMode()) {
             return got.equals(want);
         }
-        final ResourceKey normalizedGot = normalize(got);
-        final ResourceKey normalizedWant = normalize(want);
+        final ResourceKey normalizedGot = this.normalize(got);
+        final ResourceKey normalizedWant = this.normalize(want);
         return normalizedGot.equals(normalizedWant);
     }
 
@@ -69,38 +70,38 @@ public class ExportedResourcesContainer extends ResourceContainerImpl implements
     @Nullable
     @Override
     public ResourceKey getRequestedResource(final int slotIndex) {
-        return filter.getFilterContainer().getResource(slotIndex);
+        return this.filter.getFilterContainer().getResource(slotIndex);
     }
 
     @Override
     public long getRequestedAmount(final int slotIndex) {
-        return filter.getFilterContainer().getAmount(slotIndex);
+        return this.filter.getFilterContainer().getAmount(slotIndex);
     }
 
     @Nullable
     @Override
     public ResourceKey getExportedResource(final int slotIndex) {
-        return getResource(slotIndex);
+        return this.getResource(slotIndex);
     }
 
     @Override
     public long getExportedAmount(final int slotIndex) {
-        return getAmount(slotIndex);
+        return this.getAmount(slotIndex);
     }
 
     @Override
     public void setExportSlot(final int slotIndex, final ResourceKey resource, final long amount) {
-        set(slotIndex, new ResourceAmount(resource, amount));
+        this.set(slotIndex, new ResourceAmount(resource, amount));
     }
 
     @Override
     public void shrinkExportedAmount(final int slotIndex, final long amount) {
-        shrink(slotIndex, amount);
+        this.shrink(slotIndex, amount);
     }
 
     @Override
     public void growExportedAmount(final int slotIndex, final long amount) {
-        grow(slotIndex, amount);
+        this.grow(slotIndex, amount);
     }
 
     /**
@@ -114,12 +115,12 @@ public class ExportedResourcesContainer extends ResourceContainerImpl implements
             return 0L;
         }
         long remainder = amount;
-        for (int i = 0; i < size(); ++i) {
-            final ResourceAmount slot = get(i);
+        for (int i = 0; i < this.size(); ++i) {
+            final ResourceAmount slot = this.get(i);
             if (slot == null) {
-                remainder -= insertIntoEmptySlot(i, platformResource, action, remainder);
+                remainder -= this.insertIntoEmptySlot(i, platformResource, action, remainder);
             } else if (slot.resource().equals(resource)) {
-                remainder -= insertIntoExistingSlot(
+                remainder -= this.insertIntoExistingSlot(
                     i,
                     platformResource,
                     action,
@@ -138,9 +139,9 @@ public class ExportedResourcesContainer extends ResourceContainerImpl implements
                                      final PlatformResourceKey resource,
                                      final Action action,
                                      final long amount) {
-        final long inserted = Math.min(Math.max(getMaxAmount(resource), resource.getInterfaceExportLimit()), amount);
+        final long inserted = Math.min(Math.max(this.getMaxAmount(resource), resource.getInterfaceExportLimit()), amount);
         if (action == Action.EXECUTE) {
-            set(slotIndex, new ResourceAmount(resource, inserted));
+            this.set(slotIndex, new ResourceAmount(resource, inserted));
         }
         return inserted;
     }
@@ -150,10 +151,10 @@ public class ExportedResourcesContainer extends ResourceContainerImpl implements
                                         final Action action,
                                         final long amount,
                                         final ResourceAmount existing) {
-        final long spaceRemaining = Math.max(getMaxAmount(resource), resource.getInterfaceExportLimit()) - existing.amount();
+        final long spaceRemaining = Math.max(this.getMaxAmount(resource), resource.getInterfaceExportLimit()) - existing.amount();
         final long inserted = Math.min(spaceRemaining, amount);
         if (action == Action.EXECUTE) {
-            grow(slotIndex, inserted);
+            this.grow(slotIndex, inserted);
         }
         return inserted;
     }

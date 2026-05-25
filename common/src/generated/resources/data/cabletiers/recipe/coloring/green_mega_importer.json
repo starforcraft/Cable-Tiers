@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:mega_importers"
-    },
-    {
-      "tag": "c:dyes/green"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:green_mega_importer"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "green",
+  "ingredient": "#cabletiers:mega_importers",
+  "result": "cabletiers:green_mega_importer"
 }

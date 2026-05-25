@@ -22,10 +22,10 @@ public abstract class TieredSimpleNetworkNode extends SimpleNetworkNode {
     }
 
     public CableTiers getTier() {
-        return tier;
+        return this.tier;
     }
 
     public CableType getType() {
-        return type;
+        return this.type;
     }
 }

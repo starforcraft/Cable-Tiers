@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:elite_autocrafters"
-    },
-    {
-      "tag": "c:dyes/light_blue"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:elite_autocrafter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "light_blue",
+  "ingredient": "#cabletiers:elite_autocrafters",
+  "result": "cabletiers:elite_autocrafter"
 }

@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:elite_exporters"
-    },
-    {
-      "tag": "c:dyes/gray"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:elite_exporter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "gray",
+  "ingredient": "#cabletiers:elite_exporters",
+  "result": "cabletiers:elite_exporter"
 }

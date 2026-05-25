@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:ultra_exporters"
-    },
-    {
-      "tag": "c:dyes/red"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:red_ultra_exporter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "red",
+  "ingredient": "#cabletiers:ultra_exporters",
+  "result": "cabletiers:red_ultra_exporter"
 }

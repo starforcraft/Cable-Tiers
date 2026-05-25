@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "minecraft:dragon_head",
+    "I": "minecraft:netherite_block",
+    "M": "cabletiers:ultra_interface"
+  },
+  "pattern": [
+    "IMI",
+    "MAM",
+    "IMI"
+  ],
+  "result": {
+    "id": "cabletiers:mega_interface"
+  }
+}

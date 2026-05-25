@@ -1,6 +1,0 @@
-{
-  "parent": "cabletiers:block/elite_importer",
-  "textures": {
-    "border": "cabletiers:block/cable/mega_part_border"
-  }
-}

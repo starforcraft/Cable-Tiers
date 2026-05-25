@@ -1,5 +1,4 @@
 modLoader = "javafml"
-loaderVersion = "[2,)"
 issueTrackerURL = "https://github.com/starforcraft/Cable-Tiers/issues"
 license = "MIT"
 [[mods]]
@@ -14,22 +13,22 @@ description = "Cable Tiers is an addon for Refined Storage which adds better Imp
 [[mixins]]
 config="cabletiers.mixins.json"
 
-[[dependencies.cabletiers]]
-modId="refinedtypes"
-type="optional"
-versionRange="[1.21.1-0.2.8,)"
-ordering="NONE"
-side="BOTH"
+#[[dependencies.cabletiers]]
+#modId="refinedtypes"
+#type="optional"
+#versionRange="[1.21.1-0.2.8,)"
+#ordering="NONE"
+#side="BOTH"
 
 [[dependencies.cabletiers]]
 modId="minecraft"
 type="required"
-versionRange="[1.21,)"
+versionRange="[26.1.2,)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.cabletiers]]
 modId = "refinedstorage"
 type = "required"
-versionRange = "2.0.0-beta.17"
+versionRange = "3.0.5"
 side = "BOTH"

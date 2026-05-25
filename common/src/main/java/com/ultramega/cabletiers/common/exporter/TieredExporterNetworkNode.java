@@ -11,7 +11,8 @@ import com.refinedmods.refinedstorage.common.api.support.resource.ResourceTag;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 import static com.ultramega.cabletiers.common.advancedfilter.TagFilterWithFuzzyMode.getResourcesFromFilter;
 
@@ -31,11 +32,11 @@ public class TieredExporterNetworkNode extends TieredSimpleNetworkNode {
     @Override
     public void doWork() {
         super.doWork();
-        if (network == null || !isActive() || schedulingMode == null) {
+        if (this.network == null || !this.isActive() || this.schedulingMode == null) {
             return;
         }
-        for (int i = 0; i < getTier().getSpeed(getType()); i++) {
-            schedulingMode.execute(tasks);
+        for (int i = 0; i < this.getTier().getSpeed(this.getType()); i++) {
+            this.schedulingMode.execute(this.tasks);
         }
     }
 
@@ -47,31 +48,29 @@ public class TieredExporterNetworkNode extends TieredSimpleNetworkNode {
         this.schedulingMode = schedulingMode;
     }
 
-    @Nullable
-    public ExporterTransferStrategy.Result getLastResult(final int filterIndex, final int fakeIndex) {
-        return tasks.get(filterIndex + fakeIndex).lastResult;
+    public ExporterTransferStrategy.@Nullable Result getLastResult(final int filterIndex, final int fakeIndex) {
+        return this.tasks.get(filterIndex + fakeIndex).lastResult;
     }
 
     public void setFilters(final List<ResourceKey> filters, final List<ResourceTag> tagFilters) {
         final List<TieredExporterTask> updatedTasks = new ArrayList<>();
         for (int i = 0; i < filters.size(); ++i) {
             for (final ResourceKey resource : getResourcesFromFilter(filters, tagFilters, i)) {
-                final ExporterTransferStrategy.Result lastResult = (i < tasks.size() && tasks.get(i).filter.equals(resource))
-                    ? tasks.get(i).lastResult
+                final ExporterTransferStrategy.Result lastResult = (i < this.tasks.size() && this.tasks.get(i).filter.equals(resource))
+                    ? this.tasks.get(i).lastResult
                     : null;
                 updatedTasks.add(new TieredExporterTask(resource, lastResult));
             }
         }
-        tasks.clear();
-        tasks.addAll(updatedTasks);
+        this.tasks.clear();
+        this.tasks.addAll(updatedTasks);
     }
 
     class TieredExporterTask implements SchedulingMode.ScheduledTask {
         private final ResourceKey filter;
-        @Nullable
-        private ExporterTransferStrategy.Result lastResult;
+        private ExporterTransferStrategy.@Nullable Result lastResult;
 
-        TieredExporterTask(final ResourceKey filter, @Nullable final ExporterTransferStrategy.Result lastResult) {
+        TieredExporterTask(final ResourceKey filter, final ExporterTransferStrategy.@Nullable Result lastResult) {
             this.filter = filter;
             this.lastResult = lastResult;
         }
@@ -81,8 +80,9 @@ public class TieredExporterNetworkNode extends TieredSimpleNetworkNode {
             if (transferStrategy == null || network == null) {
                 return false;
             }
-            this.lastResult = transferStrategy.transfer(filter, actor, network);
-            return lastResult == ExporterTransferStrategy.Result.EXPORTED;
+            this.lastResult = transferStrategy.transfer(this.filter,
+                actor, network);
+            return this.lastResult == ExporterTransferStrategy.Result.EXPORTED;
         }
     }
 }

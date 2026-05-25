@@ -6,7 +6,8 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public interface SidedInput {
     void cabletiers$setSidedResources(List<Optional<SidedResourceAmount>> sidedResources);

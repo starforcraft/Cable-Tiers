@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:creative_autocrafters"
-    },
-    {
-      "tag": "c:dyes/yellow"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:yellow_creative_autocrafter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "yellow",
+  "ingredient": "#cabletiers:creative_autocrafters",
+  "result": "cabletiers:yellow_creative_autocrafter"
 }

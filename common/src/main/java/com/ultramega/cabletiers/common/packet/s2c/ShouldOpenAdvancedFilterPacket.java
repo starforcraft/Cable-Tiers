@@ -11,7 +11,7 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 
 import java.util.Optional;
 
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -34,7 +34,7 @@ public record ShouldOpenAdvancedFilterPacket(int slotIndex,
     );
 
     public static void handle(final ShouldOpenAdvancedFilterPacket packet, final PacketContext ctx) {
-        if (Screen.hasShiftDown()) {
+        if (Minecraft.getInstance().hasShiftDown()) {
             // Remove the filter instead
             Platform.INSTANCE.sendPacketToServer(new ChangeAdvancedResourceSlotPacket(packet.tryAlternatives(), packet.slotIndex()));
         } else {

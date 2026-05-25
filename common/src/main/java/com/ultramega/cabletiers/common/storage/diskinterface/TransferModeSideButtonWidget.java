@@ -9,7 +9,7 @@ import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -29,9 +29,9 @@ class TransferModeSideButtonWidget extends AbstractSideButtonWidget {
         createTranslation("gui", "disk_interface.transfer_mode.insert_into_network.help");
     private static final Component HELP_EXTRACT_FROM_NETWORK =
         createTranslation("gui", "disk_interface.transfer_mode.extract_from_network.help");
-    private static final ResourceLocation INSERT_INTO_NETWORK =
+    private static final Identifier INSERT_INTO_NETWORK =
         createIdentifier("widget/side_button/disk_interface_transfer_mode/insert_into_network");
-    private static final ResourceLocation EXTRACT_FROM_NETWORK =
+    private static final Identifier EXTRACT_FROM_NETWORK =
         createIdentifier("widget/side_button/disk_interface_transfer_mode/extract_from_network");
 
     private final ClientProperty<StorageTransferMode> property;
@@ -53,8 +53,8 @@ class TransferModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected ResourceLocation getSprite() {
-        return switch (property.getValue()) {
+    protected Identifier getSprite() {
+        return switch (this.property.getValue()) {
             case INSERT_INTO_NETWORK -> INSERT_INTO_NETWORK;
             case EXTRACT_FROM_NETWORK -> EXTRACT_FROM_NETWORK;
         };
@@ -67,7 +67,7 @@ class TransferModeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected List<MutableComponent> getSubText() {
-        return switch (property.getValue()) {
+        return switch (this.property.getValue()) {
             case INSERT_INTO_NETWORK -> SUBTEXT_INSERT_INTO_NETWORK;
             case EXTRACT_FROM_NETWORK -> SUBTEXT_EXTRACT_FROM_NETWORK;
         };
@@ -75,7 +75,7 @@ class TransferModeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected Component getHelpText() {
-        return switch (property.getValue()) {
+        return switch (this.property.getValue()) {
             case INSERT_INTO_NETWORK -> HELP_INSERT_INTO_NETWORK;
             case EXTRACT_FROM_NETWORK -> HELP_EXTRACT_FROM_NETWORK;
         };

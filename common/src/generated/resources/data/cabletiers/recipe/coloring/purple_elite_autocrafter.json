@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:elite_autocrafters"
-    },
-    {
-      "tag": "c:dyes/purple"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:purple_elite_autocrafter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "purple",
+  "ingredient": "#cabletiers:elite_autocrafters",
+  "result": "cabletiers:purple_elite_autocrafter"
 }

@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:ultra_constructors"
-    },
-    {
-      "tag": "c:dyes/cyan"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:cyan_ultra_constructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "cyan",
+  "ingredient": "#cabletiers:ultra_constructors",
+  "result": "cabletiers:cyan_ultra_constructor"
 }

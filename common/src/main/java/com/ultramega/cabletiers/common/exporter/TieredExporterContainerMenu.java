@@ -68,41 +68,41 @@ public class TieredExporterContainerMenu extends AbstractTieredFilterContainerMe
     }
 
     ExportingIndicator getIndicator(final int idx) {
-        return indicators.get(idx);
+        return this.indicators.get(idx);
     }
 
     int getIndicators() {
-        return indicators.size();
+        return this.indicators.size();
     }
 
     @Override
     public void broadcastChanges() {
         super.broadcastChanges();
-        if (player instanceof ServerPlayer serverPlayer) {
-            indicators.detectChanges(serverPlayer);
+        if (this.player instanceof ServerPlayer serverPlayer) {
+            this.indicators.detectChanges(serverPlayer);
         }
     }
 
     @Override
     protected void registerClientProperties() {
-        registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
-        registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
-        registerProperty(new ClientProperty<>(PropertyTypes.SCHEDULING_MODE, SchedulingModeType.DEFAULT));
+        this.registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
+        this.registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
+        this.registerProperty(new ClientProperty<>(PropertyTypes.SCHEDULING_MODE, SchedulingModeType.DEFAULT));
     }
 
     @Override
     protected void registerServerProperties(final AbstractTieredExporterBlockEntity blockEntity) {
-        registerProperty(new ServerProperty<>(
+        this.registerProperty(new ServerProperty<>(
             PropertyTypes.FUZZY_MODE,
             blockEntity::isFuzzyMode,
             blockEntity::setFuzzyMode
         ));
-        registerProperty(new ServerProperty<>(
+        this.registerProperty(new ServerProperty<>(
             PropertyTypes.REDSTONE_MODE,
             blockEntity::getRedstoneMode,
             blockEntity::setRedstoneMode
         ));
-        registerProperty(new ServerProperty<>(
+        this.registerProperty(new ServerProperty<>(
             PropertyTypes.SCHEDULING_MODE,
             blockEntity::getSchedulingModeType,
             blockEntity::setSchedulingModeType
@@ -111,11 +111,11 @@ public class TieredExporterContainerMenu extends AbstractTieredFilterContainerMe
 
     @Override
     public void indicatorChanged(final int index, final ExportingIndicator indicator) {
-        indicators.set(index, indicator);
+        this.indicators.set(index, indicator);
     }
 
     @Override
     public boolean stillValid(final Player player) {
-        return stillValid.test(player);
+        return this.stillValid.test(player);
     }
 }

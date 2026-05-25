@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -31,13 +31,13 @@ public class ExtendedCustomButton extends CustomButton {
     }
 
     @Override
-    public void renderWidget(final GuiGraphics graphics, final int x, final int y, final float partialTicks) {
-        super.renderWidget(graphics, x, y, partialTicks);
+    protected void extractContents(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float partialTicks) {
+        super.extractContents(graphics, mouseX, mouseY, partialTicks);
 
-        if (isHovered()) {
+        if (this.isHovered()) {
             final Screen screen = Minecraft.getInstance().screen;
             if (screen instanceof AbstractBaseScreen<?> baseScreen) {
-                baseScreen.setDeferredTooltip(buildTooltip());
+                baseScreen.setDeferredTooltip(this.buildTooltip());
             }
         }
     }

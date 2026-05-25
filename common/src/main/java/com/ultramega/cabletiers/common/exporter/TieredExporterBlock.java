@@ -19,12 +19,12 @@ import com.refinedmods.refinedstorage.common.support.network.NetworkNodeBlockEnt
 
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -35,6 +35,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersTranslation;
@@ -47,16 +48,19 @@ public class TieredExporterBlock extends AbstractDirectionalCableBlock implement
     private static final ConcurrentHashMap<DirectionalCacheShapeCacheKey, VoxelShape> SHAPE_CACHE = new ConcurrentHashMap<>();
     private final AbstractBlockEntityTicker<AbstractTieredExporterBlockEntity> ticker;
 
+    private final Identifier id;
     private final DyeColor color;
     private final MutableComponent name;
     private final CableTiers tier;
     private final BlockEntityTierProvider<AbstractTieredExporterBlockEntity> blockEntityProvider;
 
-    public TieredExporterBlock(final DyeColor color,
+    public TieredExporterBlock(final Identifier id,
+                               final DyeColor color,
                                final MutableComponent name,
                                final CableTiers tier,
                                final BlockEntityTierProvider<AbstractTieredExporterBlockEntity> blockEntityProvider) {
-        super(SHAPE_CACHE);
+        super(id, SHAPE_CACHE);
+        this.id = id;
         this.color = color;
         this.name = name;
         this.tier = tier;
@@ -66,12 +70,12 @@ public class TieredExporterBlock extends AbstractDirectionalCableBlock implement
 
     @Override
     public DyeColor getColor() {
-        return color;
+        return this.color;
     }
 
     @Override
     public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
-        return blockEntityProvider.create(tier, pos, state);
+        return this.blockEntityProvider.create(this.tier, pos, state);
     }
 
     @Nullable
@@ -79,12 +83,12 @@ public class TieredExporterBlock extends AbstractDirectionalCableBlock implement
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level,
                                                                   final BlockState blockState,
                                                                   final BlockEntityType<T> type) {
-        return ticker.get(level, type);
+        return this.ticker.get(level, type);
     }
 
     @Override
     public BlockColorMap<TieredExporterBlock, BaseBlockItem> getBlockColorMap() {
-        return Blocks.INSTANCE.getTieredExporters(tier);
+        return Blocks.INSTANCE.getTieredExporters(this.tier);
     }
 
     @Override
@@ -101,12 +105,12 @@ public class TieredExporterBlock extends AbstractDirectionalCableBlock implement
 
     @Override
     public MutableComponent getName() {
-        return name;
+        return this.name;
     }
 
     @Override
     public BaseBlockItem createBlockItem() {
-        return new NetworkNodeBlockItem(this, null) {
+        return new NetworkNodeBlockItem(this.id, this, null) {
             @Override
             public Optional<TooltipComponent> getTooltipImage(final ItemStack stack) {
                 return Optional.of(new HelpTooltipComponent(
@@ -123,5 +127,10 @@ public class TieredExporterBlock extends AbstractDirectionalCableBlock implement
                 );
             }
         };
+    }
+
+    @Override
+    protected boolean shouldChangedStateKeepBlockEntity(final BlockState oldState) {
+        return oldState.getBlock() instanceof TieredExporterBlock;
     }
 }

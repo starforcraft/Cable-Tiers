@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_elite_machine": {
+      "conditions": {
+        "items": [
+          {
+            "items": "cabletiers:elite_exporter"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cabletiers:ultra_exporter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_elite_machine"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cabletiers:ultra_exporter"
+    ]
+  }
+}

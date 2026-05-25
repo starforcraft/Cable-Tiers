@@ -20,8 +20,6 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeSlot;
 
-import javax.annotation.Nullable;
-
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,6 +29,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 public class TieredAutocrafterContainerMenu extends AbstractBaseContainerMenu {
     private static final int PATTERN_SLOT_X = 8;
@@ -45,10 +44,10 @@ public class TieredAutocrafterContainerMenu extends AbstractBaseContainerMenu {
 
     @Nullable
     private TieredAutocrafterBlockEntity autocrafter;
-    @Nullable
-    private AutocrafterContainerMenu.Listener listener;
+    private AutocrafterContainerMenu.@Nullable Listener listener;
     private Component name;
 
+    // TODO: double the amount of container resourceContents (with a scrollbar)
     public TieredAutocrafterContainerMenu(final int syncId,
                                           final Inventory playerInventory,
                                           final AutocrafterData data,
@@ -56,11 +55,11 @@ public class TieredAutocrafterContainerMenu extends AbstractBaseContainerMenu {
         super(Menus.INSTANCE.getTieredAutocrafters(tier), syncId);
         this.tier = tier;
         this.player = playerInventory.player;
-        registerProperty(new ClientProperty<>(AutocrafterPropertyTypes.LOCK_MODE, LockMode.NEVER));
-        registerProperty(new ClientProperty<>(AutocrafterPropertyTypes.PRIORITY, 0));
-        registerProperty(new ClientProperty<>(AutocrafterPropertyTypes.VISIBLE_TO_THE_AUTOCRAFTER_MANAGER, true));
-        registerProperty(new ClientProperty<>(AutocrafterPropertyTypes.IMPORT_MODE, ImportMode.DONT_IMPORT));
-        addSlots(
+        this.registerProperty(new ClientProperty<>(AutocrafterPropertyTypes.LOCK_MODE, LockMode.NEVER));
+        this.registerProperty(new ClientProperty<>(AutocrafterPropertyTypes.PRIORITY, 0));
+        this.registerProperty(new ClientProperty<>(AutocrafterPropertyTypes.VISIBLE_TO_THE_AUTOCRAFTER_MANAGER, true));
+        this.registerProperty(new ClientProperty<>(AutocrafterPropertyTypes.IMPORT_MODE, ImportMode.DONT_IMPORT));
+        this.addSlots(
             new PatternInventory(tier.getFilterSlotsCount(), playerInventory.player::level),
             new UpgradeContainer(UpgradeDestinations.AUTOCRAFTER)
         );
@@ -82,96 +81,96 @@ public class TieredAutocrafterContainerMenu extends AbstractBaseContainerMenu {
         this.partOfChain = false;
         this.headOfChain = false;
         this.locked = autocrafter.isLocked();
-        registerProperty(new ServerProperty<>(
+        this.registerProperty(new ServerProperty<>(
             AutocrafterPropertyTypes.LOCK_MODE,
             autocrafter::getLockMode,
             autocrafter::setLockMode
         ));
-        registerProperty(new ServerProperty<>(
+        this.registerProperty(new ServerProperty<>(
             AutocrafterPropertyTypes.PRIORITY,
             autocrafter::getPriority,
             autocrafter::setPriority
         ));
-        registerProperty(new ServerProperty<>(
+        this.registerProperty(new ServerProperty<>(
             AutocrafterPropertyTypes.VISIBLE_TO_THE_AUTOCRAFTER_MANAGER,
             autocrafter::isVisibleToTheAutocrafterManager,
             autocrafter::setVisibleToTheAutocrafterManager
         ));
-        registerProperty(new ServerProperty<>(
+        this.registerProperty(new ServerProperty<>(
             AutocrafterPropertyTypes.IMPORT_MODE,
             autocrafter::getImportMode,
             autocrafter::setImportMode
         ));
-        addSlots(autocrafter.getPatternContainer(), autocrafter.getUpgradeContainer());
+        this.addSlots(autocrafter.getPatternContainer(), autocrafter.getUpgradeContainer());
     }
 
     boolean canChangeName() {
-        return !partOfChain;
+        return !this.partOfChain;
     }
 
     boolean isPartOfChain() {
-        return partOfChain;
+        return this.partOfChain;
     }
 
     boolean isHeadOfChain() {
-        return headOfChain;
+        return this.headOfChain;
     }
 
     boolean isLocked() {
-        return locked;
+        return this.locked;
     }
 
-    void setListener(@Nullable final AutocrafterContainerMenu.Listener listener) {
+    void setListener(final AutocrafterContainerMenu.@Nullable Listener listener) {
         this.listener = listener;
     }
 
     @Override
     public void broadcastChanges() {
         super.broadcastChanges();
-        if (autocrafter == null) {
+        if (this.autocrafter == null) {
             return;
         }
-        if (nameRateLimiter.tryAcquire()) {
-            detectNameChange();
+        if (this.nameRateLimiter.tryAcquire()) {
+            this.detectNameChange();
         }
-        final boolean newLocked = autocrafter.isLocked();
-        if (locked != newLocked) {
-            locked = newLocked;
-            Platform.INSTANCE.sendPacketToClient((ServerPlayer) player, new TieredAutocrafterLockedUpdatePacket(locked));
+        final boolean newLocked = this.autocrafter.isLocked();
+        if (this.locked != newLocked) {
+            this.locked = newLocked;
+            Platform.INSTANCE.sendPacketToClient((ServerPlayer) this.player, new TieredAutocrafterLockedUpdatePacket(this.locked));
         }
     }
 
     @Override
     public boolean stillValid(final Player p) {
-        if (autocrafter == null) {
+        if (this.autocrafter == null) {
             return true;
         }
-        return Container.stillValidBlockEntity(autocrafter, p);
+        return Container.stillValidBlockEntity(this.autocrafter, p);
     }
 
     private void detectNameChange() {
-        if (autocrafter == null) {
+        if (this.autocrafter == null) {
             return;
         }
-        final Component newName = autocrafter.getDisplayName();
-        if (!newName.equals(name)) {
+        final Component newName = this.autocrafter.getDisplayName();
+        if (!newName.equals(this.name)) {
             this.name = newName;
-            Platform.INSTANCE.sendPacketToClient((ServerPlayer) player, new TieredAutocrafterNameUpdatePacket(newName));
+            Platform.INSTANCE.sendPacketToClient((ServerPlayer) this.player, new TieredAutocrafterNameUpdatePacket(newName));
         }
     }
 
     private void addSlots(final FilteredContainer patternContainer, final UpgradeContainer upgradeContainer) {
         for (int i = 0; i < patternContainer.getContainerSize(); ++i) {
-            addSlot(createPatternSlot(patternContainer, i, player.level()));
+            this.addSlot(this.createPatternSlot(patternContainer, i, this.player.level()));
         }
-        if (tier != CableTiers.CREATIVE) {
+        if (this.tier != CableTiers.CREATIVE) {
             for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
-                addSlot(new UpgradeSlot(upgradeContainer, i, 187, 6 + (i * 18)));
+                this.addSlot(new UpgradeSlot(upgradeContainer, i, 187, 6 + (i * 18)));
             }
         }
-        addPlayerInventory(player.getInventory(), 8, tier.getPlayerInventoryY());
-        transferManager.addBiTransfer(player.getInventory(), upgradeContainer);
-        transferManager.addBiTransfer(player.getInventory(), patternContainer);
+        this.addPlayerInventory(this.player.getInventory(), 8, this.tier.getPlayerInventoryY());
+        this.transferManager.addBiTransfer(this.player.getInventory(), upgradeContainer);
+        this.transferManager.addBiTransfer(this.player.getInventory(), patternContainer);
     }
 
     private Slot createPatternSlot(final FilteredContainer patternContainer,
@@ -182,7 +181,7 @@ public class TieredAutocrafterContainerMenu extends AbstractBaseContainerMenu {
     }
 
     public boolean containsPattern(final ItemStack stack) {
-        for (final Slot slot : slots) {
+        for (final Slot slot : this.slots) {
             if (slot instanceof PatternSlot patternSlot && patternSlot.getItem() == stack) {
                 return true;
             }
@@ -191,27 +190,27 @@ public class TieredAutocrafterContainerMenu extends AbstractBaseContainerMenu {
     }
 
     public void changeName(final String newName) {
-        if (partOfChain) {
+        if (this.partOfChain) {
             return;
         }
-        if (autocrafter != null) {
-            autocrafter.setCustomName(newName);
-            detectNameChange();
+        if (this.autocrafter != null) {
+            this.autocrafter.setCustomName(newName);
+            this.detectNameChange();
         } else {
             Platform.INSTANCE.sendPacketToServer(new TieredAutocrafterNameChangePacket(newName));
         }
     }
 
     public void nameChanged(final Component newName) {
-        if (listener != null) {
-            listener.nameChanged(newName);
+        if (this.listener != null) {
+            this.listener.nameChanged(newName);
         }
     }
 
     public void lockedChanged(final boolean newLocked) {
         this.locked = newLocked;
-        if (listener != null) {
-            listener.lockedChanged(newLocked);
+        if (this.listener != null) {
+            this.listener.lockedChanged(newLocked);
         }
     }
 }

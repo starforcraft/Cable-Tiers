@@ -9,10 +9,10 @@ import com.refinedmods.refinedstorage.common.support.widget.AbstractYesNoSideBut
 import com.refinedmods.refinedstorage.common.support.widget.FuzzyModeSideButtonWidget;
 import com.refinedmods.refinedstorage.common.support.widget.SchedulingModeSideButtonWidget;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
@@ -23,28 +23,28 @@ public class TieredConstructorScreen extends AbstractAdvancedFilterScreen<Tiered
                                    final Inventory playerInventory,
                                    final Component title,
                                    final CableTiers tier) {
-        super(menu, playerInventory, title, tier);
+        super(menu, playerInventory, title, tier, true);
     }
 
     @Override
     protected void init() {
         super.init();
-        addSideButton(new FuzzyModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.FUZZY_MODE),
+        this.addSideButton(new FuzzyModeSideButtonWidget(
+            this.getMenu().getProperty(PropertyTypes.FUZZY_MODE),
             () -> FuzzyModeSideButtonWidget.Type.EXTRACTING_STORAGE_NETWORK
         ));
-        addSideButton(new SchedulingModeSideButtonWidget(getMenu().getProperty(PropertyTypes.SCHEDULING_MODE)));
-        addSideButton(new ConstructorDropItemsSideButtonWidget(
-            getMenu().getProperty(ConstructorDestructorPropertyTypes.DROP_ITEMS)
+        this.addSideButton(new SchedulingModeSideButtonWidget(this.getMenu().getProperty(PropertyTypes.SCHEDULING_MODE)));
+        this.addSideButton(new ConstructorDropItemsSideButtonWidget(
+            this.getMenu().getProperty(ConstructorDestructorPropertyTypes.DROP_ITEMS)
         ));
     }
 
     @Override
-    protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
-        if (renderTieredExportingIndicators(graphics, leftPos, topPos, x, y, getMenu().getIndicators(), getMenu()::getIndicator)) {
+    protected void extractTooltip(final GuiGraphicsExtractor graphics, final int x, final int y) {
+        if (renderTieredExportingIndicators(this.font, graphics, this.leftPos, this.topPos, x, y, this.getMenu().getIndicators(), this.getMenu()::getIndicator)) {
             return;
         }
-        super.renderTooltip(graphics, x, y);
+        super.extractTooltip(graphics, x, y);
     }
 
     /**
@@ -52,8 +52,8 @@ public class TieredConstructorScreen extends AbstractAdvancedFilterScreen<Tiered
      */
     static class ConstructorDropItemsSideButtonWidget extends AbstractYesNoSideButtonWidget {
         private static final MutableComponent TITLE = createTranslation("gui", "constructor.drop_items");
-        private static final ResourceLocation YES = createIdentifier("widget/side_button/constructor_drop_items/yes");
-        private static final ResourceLocation NO = createIdentifier("widget/side_button/constructor_drop_items/no");
+        private static final Identifier YES = createIdentifier("widget/side_button/constructor_drop_items/yes");
+        private static final Identifier NO = createIdentifier("widget/side_button/constructor_drop_items/no");
 
         ConstructorDropItemsSideButtonWidget(final ClientProperty<Boolean> property) {
             super(property, TITLE, YES, NO);

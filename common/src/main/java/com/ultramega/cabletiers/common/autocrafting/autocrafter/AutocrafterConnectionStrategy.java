@@ -21,26 +21,26 @@ class AutocrafterConnectionStrategy extends ColoredConnectionStrategy {
 
     @Override
     public void addOutgoingConnections(final ConnectionSink sink) {
-        final Direction myDirection = tryExtractDirection(blockStateProvider.get());
+        final Direction myDirection = tryExtractDirection(this.blockStateProvider.get());
         if (myDirection == null) {
             super.addOutgoingConnections(sink);
             return;
         }
         for (final Direction direction : Direction.values()) {
             if (direction == myDirection) {
-                sink.tryConnectInSameDimension(origin.relative(direction), direction.getOpposite(), TieredAutocrafterBlock.class);
+                sink.tryConnectInSameDimension(this.origin.relative(direction), direction.getOpposite(), TieredAutocrafterBlock.class);
             } else {
-                sink.tryConnectInSameDimension(origin.relative(direction), direction.getOpposite());
+                sink.tryConnectInSameDimension(this.origin.relative(direction), direction.getOpposite());
             }
         }
     }
 
     @Override
     public boolean canAcceptIncomingConnection(final Direction incomingDirection, final BlockState connectingState) {
-        if (!colorsAllowConnecting(connectingState)) {
+        if (!this.colorsAllowConnecting(connectingState)) {
             return false;
         }
-        final Direction myDirection = tryExtractDirection(blockStateProvider.get());
+        final Direction myDirection = tryExtractDirection(this.blockStateProvider.get());
         if (myDirection != null) {
             return myDirection != incomingDirection || connectingState.getBlock() instanceof TieredAutocrafterBlock;
         }

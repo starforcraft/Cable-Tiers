@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:creative_destructors"
-    },
-    {
-      "tag": "c:dyes/light_blue"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:light_blue_creative_destructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "light_blue",
+  "ingredient": "#cabletiers:creative_destructors",
+  "result": "cabletiers:light_blue_creative_destructor"
 }

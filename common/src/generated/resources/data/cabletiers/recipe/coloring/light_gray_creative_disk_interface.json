@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:creative_disk_interfaces"
-    },
-    {
-      "tag": "c:dyes/light_gray"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:light_gray_creative_disk_interface"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "light_gray",
+  "ingredient": "#cabletiers:creative_disk_interfaces",
+  "result": "cabletiers:light_gray_creative_disk_interface"
 }

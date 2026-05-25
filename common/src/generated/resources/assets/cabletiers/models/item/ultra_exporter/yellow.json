@@ -1,0 +1,8 @@
+{
+  "parent": "cabletiers:item/exporter/base",
+  "textures": {
+    "border": "cabletiers:block/cable/ultra_part_border",
+    "cable": "refinedstorage:block/cable/yellow",
+    "particle": "cabletiers:block/cable/ultra_part_border"
+  }
+}

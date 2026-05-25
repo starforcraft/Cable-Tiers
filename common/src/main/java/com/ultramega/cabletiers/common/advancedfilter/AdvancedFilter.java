@@ -25,7 +25,7 @@ public class AdvancedFilter extends Filter {
 
     @Override
     public FilterMode getMode() {
-        return mode;
+        return this.mode;
     }
 
     @Override
@@ -40,22 +40,22 @@ public class AdvancedFilter extends Filter {
 
     @Override
     public boolean isAllowed(final ResourceKey resource) {
-        final ResourceKey normalized = normalizer.apply(resource);
+        final ResourceKey normalized = this.normalizer.apply(resource);
 
         if (normalized instanceof PlatformResourceKey platformResourceKey) {
             boolean foundTag = false;
 
             final List<ResourceTag> tags = TagsCache.get(platformResourceKey);
             for (final ResourceTag tag : tags) {
-                if (tagFilters.contains(tag.key())) {
+                if (this.tagFilters.contains(tag.key())) {
                     foundTag = true;
                     break;
                 }
             }
 
-            final boolean isAllowed = !(foundTag || itemFilters.contains(normalized));
+            final boolean isAllowed = !(foundTag || this.itemFilters.contains(normalized));
 
-            return switch (mode) {
+            return switch (this.mode) {
                 case ALLOW -> !isAllowed;
                 case BLOCK -> isAllowed;
             };
@@ -67,7 +67,7 @@ public class AdvancedFilter extends Filter {
     @Override
     public void setFilters(final Set<ResourceKey> filters) {
         this.itemFilters.clear();
-        this.itemFilters.addAll(filters.stream().map(normalizer).collect(Collectors.toSet()));
+        this.itemFilters.addAll(filters.stream().map(this.normalizer).collect(Collectors.toSet()));
     }
 
     public void setTagFilters(final Set<TagKey<?>> tagFilters) {

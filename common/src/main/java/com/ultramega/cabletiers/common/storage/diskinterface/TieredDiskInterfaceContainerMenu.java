@@ -53,7 +53,7 @@ public class TieredDiskInterfaceContainerMenu extends AbstractTieredFilterContai
             129 + getYIncrease(tier),
             FILTER_HELP,
             tier);
-        addSlots(player, diskInventory);
+        this.addSlots(player, diskInventory);
         this.playerInventoryY = 129;
         this.stillValid = p -> Container.stillValidBlockEntity(blockEntity, p);
     }
@@ -70,12 +70,9 @@ public class TieredDiskInterfaceContainerMenu extends AbstractTieredFilterContai
             129 + getYIncrease(tier),
             FILTER_HELP,
             tier);
-        addSlots(
+        this.addSlots(
             playerInventory.player,
-            new FilteredContainer(
-                AbstractTieredDiskInterfaceBlockEntity.AMOUNT_OF_DISKS,
-                StorageContainerItem.stackValidator()
-            )
+            new FilteredContainer(AbstractTieredDiskInterfaceBlockEntity.AMOUNT_OF_DISKS, StorageContainerItem.VALIDATOR)
         );
         this.stillValid = p -> true;
     }
@@ -83,17 +80,17 @@ public class TieredDiskInterfaceContainerMenu extends AbstractTieredFilterContai
     private void addSlots(final Player player,
                           final FilteredContainer diskInventory) {
         for (int i = 0; i < diskInventory.getContainerSize(); ++i) {
-            addSlot(createDiskSlot(diskInventory, i));
+            this.addSlot(this.createDiskSlot(diskInventory, i));
         }
-        transferManager.addBiTransfer(player.getInventory(), diskInventory);
+        this.transferManager.addBiTransfer(player.getInventory(), diskInventory);
     }
 
     @Override
     protected void registerClientProperties() {
-        registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
-        registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
-        registerProperty(new ClientProperty<>(PropertyTypes.FILTER_MODE, FilterMode.BLOCK));
-        registerProperty(new ClientProperty<>(
+        this.registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
+        this.registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
+        this.registerProperty(new ClientProperty<>(PropertyTypes.FILTER_MODE, FilterMode.BLOCK));
+        this.registerProperty(new ClientProperty<>(
             DiskInterfacePropertyTypes.TRANSFER_MODE,
             StorageTransferMode.INSERT_INTO_NETWORK
         ));
@@ -101,22 +98,22 @@ public class TieredDiskInterfaceContainerMenu extends AbstractTieredFilterContai
 
     @Override
     protected void registerServerProperties(final AbstractTieredDiskInterfaceBlockEntity blockEntity) {
-        registerProperty(new ServerProperty<>(
+        this.registerProperty(new ServerProperty<>(
             PropertyTypes.REDSTONE_MODE,
             blockEntity::getRedstoneMode,
             blockEntity::setRedstoneMode
         ));
-        registerProperty(new ServerProperty<>(
+        this.registerProperty(new ServerProperty<>(
             PropertyTypes.FUZZY_MODE,
             blockEntity::isFuzzyMode,
             blockEntity::setFuzzyMode
         ));
-        registerProperty(new ServerProperty<>(
+        this.registerProperty(new ServerProperty<>(
             PropertyTypes.FILTER_MODE,
             blockEntity::getFilterMode,
             blockEntity::setFilterMode
         ));
-        registerProperty(new ServerProperty<>(
+        this.registerProperty(new ServerProperty<>(
             DiskInterfacePropertyTypes.TRANSFER_MODE,
             blockEntity::getTransferMode,
             blockEntity::setTransferMode
@@ -125,7 +122,7 @@ public class TieredDiskInterfaceContainerMenu extends AbstractTieredFilterContai
 
     private Slot createDiskSlot(final FilteredContainer diskInventory, final int i) {
         final int x = i < 3 ? DISK_SLOT_X1 : DISK_SLOT_X2;
-        final int y = DISK_SLOT_Y + ((i % 3) * 18) + getYIncrease(tier);
+        final int y = DISK_SLOT_Y + ((i % 3) * 18) + getYIncrease(this.tier);
         return ValidatedSlot.forStorageContainer(diskInventory, i, x, y);
     }
 
@@ -135,6 +132,6 @@ public class TieredDiskInterfaceContainerMenu extends AbstractTieredFilterContai
 
     @Override
     public boolean stillValid(final Player player) {
-        return stillValid.test(player);
+        return this.stillValid.test(player);
     }
 }

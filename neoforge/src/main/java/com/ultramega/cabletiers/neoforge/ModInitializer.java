@@ -22,8 +22,7 @@ import com.ultramega.cabletiers.common.utils.BlockEntityProviders;
 import com.ultramega.cabletiers.common.utils.BlockEntityTierProvider;
 import com.ultramega.cabletiers.common.utils.BlockEntityTierTypeFactory;
 import com.ultramega.cabletiers.common.utils.TagsCache;
-import com.ultramega.cabletiers.neoforge.capability.ImprovedInvWrapper;
-import com.ultramega.cabletiers.neoforge.capability.ImprovedResourceContainerFluidHandlerAdapter;
+import com.ultramega.cabletiers.neoforge.capability.ImprovedResourceContainerResourceHandlerAdapter;
 import com.ultramega.cabletiers.neoforge.compat.ArsNouveauIntegration;
 import com.ultramega.cabletiers.neoforge.compat.IndustrialForegoingSoulsIntegration;
 import com.ultramega.cabletiers.neoforge.compat.MekanismIntegration;
@@ -42,7 +41,7 @@ import com.refinedmods.refinedstorage.common.content.ExtendedMenuTypeFactory;
 import com.refinedmods.refinedstorage.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage.common.support.packet.PacketHandler;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
-import com.refinedmods.refinedstorage.neoforge.support.inventory.InsertExtractItemHandler;
+import com.refinedmods.refinedstorage.neoforge.support.inventory.InsertExtractResourceHandler;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -54,8 +53,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -79,12 +78,14 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
-import net.neoforged.neoforge.items.wrapper.InvWrapper;
-import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.transfer.RangedResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.MOD_ID;
 
@@ -108,15 +109,15 @@ public class ModInitializer extends AbstractModInitializer {
         final ConfigImpl config = new ConfigImpl();
         modContainer.registerConfig(ModConfig.Type.COMMON, config.getSpec());
         Platform.setConfigProvider(() -> config);
-        if (FMLEnvironment.dist == Dist.CLIENT) {
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
             modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
             eventBus.addListener(ClientModInitializer::onClientSetup);
-            eventBus.addListener(ClientModInitializer::onRegisterCustomModels);
+            eventBus.addListener(ClientModInitializer::onRegisterBlockStateModels);
             eventBus.addListener(ClientModInitializer::onRegisterMenuScreens);
         }
 
         eventBus.addListener(this::onCommonSetup);
-        registerContent(eventBus);
+        this.registerContent(eventBus);
         eventBus.addListener(this::registerCapabilities);
         eventBus.addListener(this::registerPackets);
         eventBus.addListener(this::registerCreativeModeTabListener);
@@ -124,52 +125,50 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerContent(final IEventBus eventBus) {
-        registerBlocks(eventBus);
-        registerItems(eventBus);
-        registerBlockEntities(eventBus);
-        registerMenus(eventBus);
-        registerDataComponents(eventBus);
+        this.registerBlocks(eventBus);
+        this.registerItems(eventBus);
+        this.registerBlockEntities(eventBus);
+        this.registerMenus(eventBus);
+        this.registerDataComponents(eventBus);
     }
 
     private void registerBlocks(final IEventBus eventBus) {
-        final RegistryCallback<Block> callback = new ForgeRegistryCallback<>(blockRegistry);
-        registerBlocks(callback, BLOCK_ENTITY_PROVIDERS);
-        blockRegistry.register(eventBus);
+        final RegistryCallback<Block> callback = new ForgeRegistryCallback<>(this.blockRegistry);
+        this.registerBlocks(callback, BLOCK_ENTITY_PROVIDERS);
+        this.blockRegistry.register(eventBus);
     }
 
     private void registerItems(final IEventBus eventBus) {
-        final RegistryCallback<Item> callback = new ForgeRegistryCallback<>(itemRegistry);
-        registerItems(callback);
-        itemRegistry.register(eventBus);
+        final RegistryCallback<Item> callback = new ForgeRegistryCallback<>(this.itemRegistry);
+        this.registerItems(callback);
+        this.itemRegistry.register(eventBus);
     }
 
     private void registerBlockEntities(final IEventBus eventBus) {
-        registerBlockEntities(
-            new ForgeRegistryCallback<>(blockEntityTypeRegistry),
+        this.registerBlockEntities(
+            new ForgeRegistryCallback<>(this.blockEntityTypeRegistry),
             new BlockEntityTierTypeFactory() {
-                @SuppressWarnings("DataFlowIssue") // data type can be null
                 @Override
                 public <T extends BlockEntity> BlockEntityType<T> create(final CableTiers tier,
                                                                          final BlockEntityTierProvider<T> factory,
                                                                          final Block... allowedBlocks) {
-                    return new BlockEntityType<>((pos, state) -> factory.create(tier, pos, state), new HashSet<>(Arrays.asList(allowedBlocks)), null);
+                    return new BlockEntityType<>((pos, state) -> factory.create(tier, pos, state), new HashSet<>(Arrays.asList(allowedBlocks)));
                 }
             },
             new BlockEntityTypeFactory() {
-                @SuppressWarnings("DataFlowIssue") // data type can be null
                 @Override
                 public <T extends BlockEntity> BlockEntityType<T> create(final BlockEntityProvider<T> factory,
                                                                          final Block... allowedBlocks) {
-                    return new BlockEntityType<>(factory::create, new HashSet<>(Arrays.asList(allowedBlocks)), null);
+                    return new BlockEntityType<>(factory::create, new HashSet<>(Arrays.asList(allowedBlocks)));
                 }
             },
             BLOCK_ENTITY_PROVIDERS
         );
-        blockEntityTypeRegistry.register(eventBus);
+        this.blockEntityTypeRegistry.register(eventBus);
     }
 
     private void registerMenus(final IEventBus eventBus) {
-        registerMenus(new ForgeRegistryCallback<>(menuTypeRegistry), new ExtendedMenuTypeFactory() {
+        this.registerMenus(new ForgeRegistryCallback<>(this.menuTypeRegistry), new ExtendedMenuTypeFactory() {
             @Override
             public <T extends AbstractContainerMenu, D> MenuType<T> create(final MenuSupplier<T, D> supplier,
                                                                            final StreamCodec<RegistryFriendlyByteBuf, D> streamCodec) {
@@ -179,17 +178,17 @@ public class ModInitializer extends AbstractModInitializer {
                 });
             }
         });
-        menuTypeRegistry.register(eventBus);
+        this.menuTypeRegistry.register(eventBus);
     }
 
     private void registerDataComponents(final IEventBus eventBus) {
-        final RegistryCallback<DataComponentType<?>> callback = new ForgeRegistryCallback<>(dataComponentTypeRegistry);
-        registerDataComponents(callback);
-        dataComponentTypeRegistry.register(eventBus);
+        final RegistryCallback<DataComponentType<?>> callback = new ForgeRegistryCallback<>(this.dataComponentTypeRegistry);
+        this.registerDataComponents(callback);
+        this.dataComponentTypeRegistry.register(eventBus);
     }
 
     private void onCommonSetup(final FMLCommonSetupEvent e) {
-        registerUpgradeMappings();
+        this.registerUpgradeMappings();
     }
 
     private void registerCapabilities(final RegisterCapabilitiesEvent event) {
@@ -199,27 +198,27 @@ public class ModInitializer extends AbstractModInitializer {
         final boolean hasIFSouls = ModList.get().isLoaded("industrialforegoingsouls");
 
         for (final CableTiers tier : CableTiers.values()) {
-            registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredImporters(tier));
-            registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredExporters(tier));
-            registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredDestructors(tier));
-            registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredConstructors(tier));
-            registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredDiskInterfaces(tier));
-            registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredAutocrafters(tier));
-            registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredInterfaces(tier));
+            this.registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredImporters(tier));
+            this.registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredExporters(tier));
+            this.registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredDestructors(tier));
+            this.registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredConstructors(tier));
+            this.registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredDiskInterfaces(tier));
+            this.registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredAutocrafters(tier));
+            this.registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getTieredInterfaces(tier));
 
             event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
+                Capabilities.Item.BLOCK,
                 BlockEntities.INSTANCE.getTieredDiskInterfaces(tier),
                 (be, side) -> {
-                    final InvWrapper wrapper = new InvWrapper(be.getDiskInventory());
-                    return new InsertExtractItemHandler(
-                        new RangedWrapper(
-                            wrapper,
+                    final ResourceHandler<ItemResource> diskHandler = VanillaContainerWrapper.of(be.getDiskInventory());
+                    return new InsertExtractResourceHandler<>(
+                        RangedResourceHandler.of(
+                            diskHandler,
                             0,
                             AbstractTieredDiskInterfaceBlockEntity.AMOUNT_OF_DISKS / 2
                         ),
-                        new RangedWrapper(
-                            wrapper,
+                        RangedResourceHandler.of(
+                            diskHandler,
                             AbstractTieredDiskInterfaceBlockEntity.AMOUNT_OF_DISKS / 2,
                             AbstractTieredDiskInterfaceBlockEntity.AMOUNT_OF_DISKS
                         )
@@ -228,14 +227,14 @@ public class ModInitializer extends AbstractModInitializer {
             );
 
             event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
+                Capabilities.Item.BLOCK,
                 BlockEntities.INSTANCE.getTieredInterfaces(tier),
-                (be, side) -> new ImprovedInvWrapper(be.getExportedResourcesAsContainer())
+                (be, side) -> VanillaContainerWrapper.of(be.getExportedResourcesAsContainer())
             );
             event.registerBlockEntity(
-                Capabilities.FluidHandler.BLOCK,
+                Capabilities.Fluid.BLOCK,
                 BlockEntities.INSTANCE.getTieredInterfaces(tier),
-                (be, side) -> new ImprovedResourceContainerFluidHandlerAdapter(be.getExportedResources())
+                (be, side) -> new ImprovedResourceContainerResourceHandlerAdapter(be.getExportedResources())
             );
             if (hasRSMekanismIntegration) {
                 MekanismIntegration.registerCapabilities(tier, event);
@@ -362,8 +361,8 @@ public class ModInitializer extends AbstractModInitializer {
 
     private record ForgeRegistryCallback<T>(DeferredRegister<T> registry) implements RegistryCallback<T> {
         @Override
-        public <R extends T> Supplier<R> register(final ResourceLocation id, final Supplier<R> value) {
-            return registry.register(id.getPath(), value);
+        public <R extends T> Supplier<R> register(final Identifier id, final Supplier<R> value) {
+            return this.registry.register(id.getPath(), value);
         }
     }
 }

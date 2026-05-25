@@ -1,7 +1,9 @@
 {
   "variants": {
     "": {
-      "model": "cabletiers:block/mega_disk_interface/brown"
+      "type": "cabletiers:tiered_disk_interface",
+      "color": "brown",
+      "tier": "mega"
     }
   }
 }

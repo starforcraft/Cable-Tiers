@@ -24,10 +24,10 @@ public class TieredInterfaceExternalStorageProviderImpl implements TieredInterfa
 
     @Override
     public long extract(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
-        if (isAnotherInterfaceActingAsExternalStorage(actor)) {
+        if (this.isAnotherInterfaceActingAsExternalStorage(actor)) {
             return 0;
         }
-        final InterfaceExportState exportState = networkNode.getExportState();
+        final InterfaceExportState exportState = this.networkNode.getExportState();
         if (exportState == null) {
             return 0;
         }
@@ -36,10 +36,10 @@ public class TieredInterfaceExternalStorageProviderImpl implements TieredInterfa
 
     @Override
     public long insert(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
-        if (isAnotherInterfaceActingAsExternalStorage(actor)) {
+        if (this.isAnotherInterfaceActingAsExternalStorage(actor)) {
             return 0;
         }
-        final InterfaceExportState exportState = networkNode.getExportState();
+        final InterfaceExportState exportState = this.networkNode.getExportState();
         if (exportState == null) {
             return 0;
         }
@@ -54,7 +54,7 @@ public class TieredInterfaceExternalStorageProviderImpl implements TieredInterfa
 
     @Override
     public Iterator<ResourceAmount> iterator() {
-        final InterfaceExportState exportState = networkNode.getExportState();
+        final InterfaceExportState exportState = this.networkNode.getExportState();
         if (exportState == null) {
             return Collections.emptyIterator();
         }
@@ -71,6 +71,6 @@ public class TieredInterfaceExternalStorageProviderImpl implements TieredInterfa
 
     @Override
     public TieredInterfaceNetworkNode getInterface() {
-        return networkNode;
+        return this.networkNode;
     }
 }

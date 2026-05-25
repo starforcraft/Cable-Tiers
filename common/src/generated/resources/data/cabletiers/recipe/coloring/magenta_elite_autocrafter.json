@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:elite_autocrafters"
-    },
-    {
-      "tag": "c:dyes/magenta"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:magenta_elite_autocrafter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "magenta",
+  "ingredient": "#cabletiers:elite_autocrafters",
+  "result": "cabletiers:magenta_elite_autocrafter"
 }

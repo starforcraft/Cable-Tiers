@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes
 import com.refinedmods.refinedstorage.common.support.widget.FuzzyModeSideButtonWidget;
 import com.refinedmods.refinedstorage.common.support.widget.SchedulingModeSideButtonWidget;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -16,24 +16,24 @@ public class TieredExporterScreen extends AbstractAdvancedFilterScreen<TieredExp
                                 final Inventory playerInventory,
                                 final Component title,
                                 final CableTiers tier) {
-        super(menu, playerInventory, title, tier);
+        super(menu, playerInventory, title, tier, true);
     }
 
     @Override
     protected void init() {
         super.init();
-        addSideButton(new FuzzyModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.FUZZY_MODE),
+        this.addSideButton(new FuzzyModeSideButtonWidget(
+            this.getMenu().getProperty(PropertyTypes.FUZZY_MODE),
             () -> FuzzyModeSideButtonWidget.Type.EXTRACTING_STORAGE_NETWORK
         ));
-        addSideButton(new SchedulingModeSideButtonWidget(getMenu().getProperty(PropertyTypes.SCHEDULING_MODE)));
+        this.addSideButton(new SchedulingModeSideButtonWidget(this.getMenu().getProperty(PropertyTypes.SCHEDULING_MODE)));
     }
 
     @Override
-    protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
-        if (renderTieredExportingIndicators(graphics, leftPos, topPos, x, y, getMenu().getIndicators(), getMenu()::getIndicator)) {
+    protected void extractTooltip(final GuiGraphicsExtractor graphics, final int x, final int y) {
+        if (renderTieredExportingIndicators(this.font, graphics, this.leftPos, this.topPos, x, y, this.getMenu().getIndicators(), this.getMenu()::getIndicator)) {
             return;
         }
-        super.renderTooltip(graphics, x, y);
+        super.extractTooltip(graphics, x, y);
     }
 }

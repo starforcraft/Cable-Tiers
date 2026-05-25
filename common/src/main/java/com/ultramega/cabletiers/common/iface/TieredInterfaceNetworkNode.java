@@ -17,7 +17,8 @@ import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 
 import java.util.Collection;
 import java.util.function.ToLongFunction;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class TieredInterfaceNetworkNode extends AbstractNetworkNode {
     private long energyUsage;
@@ -25,7 +26,7 @@ public class TieredInterfaceNetworkNode extends AbstractNetworkNode {
     @Nullable
     private InterfaceExportState exportState;
     @Nullable
-    private InterfaceTransferResult[] lastResults;
+    private InterfaceTransferResult @Nullable[] lastResults;
     private ToLongFunction<ResourceKey> transferQuotaProvider = resource -> Long.MAX_VALUE;
     private OnMissingResources onMissingResources = OnMissingResources.EMPTY;
 
@@ -42,10 +43,10 @@ public class TieredInterfaceNetworkNode extends AbstractNetworkNode {
     }
 
     public boolean isActingAsExternalStorage() {
-        if (network == null) {
+        if (this.network == null) {
             return false;
         }
-        return network.getComponent(StorageNetworkComponent.class).hasSource(
+        return this.network.getComponent(StorageNetworkComponent.class).hasSource(
             this::isStorageAnExternalStorageProviderThatReferencesMe
         );
     }
@@ -58,7 +59,7 @@ public class TieredInterfaceNetworkNode extends AbstractNetworkNode {
 
     @Nullable
     public InterfaceExportState getExportState() {
-        return exportState;
+        return this.exportState;
     }
 
     public void setEnergyUsage(final long energyUsage) {
@@ -75,12 +76,12 @@ public class TieredInterfaceNetworkNode extends AbstractNetworkNode {
     @Override
     public void doWork() {
         super.doWork();
-        if (exportState == null || network == null || !isActive()) {
+        if (this.exportState == null || this.network == null || !this.isActive()) {
             return;
         }
-        final RootStorage storage = network.getComponent(StorageNetworkComponent.class);
-        for (int i = 0; i < exportState.getSlots(); ++i) {
-            updateSlot(exportState, i, storage);
+        final RootStorage storage = this.network.getComponent(StorageNetworkComponent.class);
+        for (int i = 0; i < this.exportState.getSlots(); ++i) {
+            this.updateSlot(this.exportState, i, storage);
         }
     }
 
@@ -88,17 +89,17 @@ public class TieredInterfaceNetworkNode extends AbstractNetworkNode {
         final ResourceKey want = state.getRequestedResource(index);
         final ResourceKey got = state.getExportedResource(index);
         if (want == null && got == null) {
-            updateResult(index, null);
+            this.updateResult(index, null);
         } else if (want == null) {
-            clearSlot(state, index, got, storage);
+            this.clearSlot(state, index, got, storage);
         } else if (got == null) {
-            updateEmptySlot(state, index, want, storage);
+            this.updateEmptySlot(state, index, want, storage);
         } else {
             final boolean valid = state.isExportedResourceValid(want, got);
             if (!valid) {
-                clearSlot(state, index, got, storage);
+                this.clearSlot(state, index, got, storage);
             } else {
-                updateSlot(state, index, got, storage);
+                this.updateSlot(state, index, got, storage);
             }
         }
     }
@@ -111,9 +112,9 @@ public class TieredInterfaceNetworkNode extends AbstractNetworkNode {
         final long currentAmount = state.getExportedAmount(slot);
         final long difference = wantedAmount - currentAmount;
         if (difference > 0) {
-            extractMoreFromStorage(state, slot, got, difference, storage);
+            this.extractMoreFromStorage(state, slot, got, difference, storage);
         } else if (difference < 0) {
-            insertOverflowToStorage(state, slot, got, difference, storage);
+            this.insertOverflowToStorage(state, slot, got, difference, storage);
         }
     }
 
@@ -124,18 +125,18 @@ public class TieredInterfaceNetworkNode extends AbstractNetworkNode {
         final long currentAmount = state.getExportedAmount(slot);
         final long inserted = storage.insert(
             got,
-            Math.min(currentAmount, transferQuotaProvider.applyAsLong(got)),
+            Math.min(currentAmount, this.transferQuotaProvider.applyAsLong(got)),
             Action.EXECUTE,
-            actor
+            this.actor
         );
         if (inserted == 0) {
-            updateResult(slot, InterfaceTransferResult.STORAGE_DOES_NOT_ACCEPT_RESOURCE);
+            this.updateResult(slot, InterfaceTransferResult.STORAGE_DOES_NOT_ACCEPT_RESOURCE);
             return;
         }
         state.shrinkExportedAmount(slot, inserted);
         final boolean empty = state.getExportedAmount(slot) == 0;
         final boolean stillWantSomething = state.getRequestedResource(slot) != null;
-        updateResult(slot, empty && !stillWantSomething ? null : InterfaceTransferResult.EXPORTED);
+        this.updateResult(slot, empty && !stillWantSomething ? null : InterfaceTransferResult.EXPORTED);
     }
 
     private void updateEmptySlot(final InterfaceExportState state,
@@ -143,22 +144,22 @@ public class TieredInterfaceNetworkNode extends AbstractNetworkNode {
                                  final ResourceKey resource,
                                  final RootStorage storage) {
         final long wantedAmount = state.getRequestedAmount(slot);
-        final long correctedAmount = Math.min(transferQuotaProvider.applyAsLong(resource), wantedAmount);
+        final long correctedAmount = Math.min(this.transferQuotaProvider.applyAsLong(resource), wantedAmount);
         final Collection<ResourceKey> candidates = state.expandExportCandidates(storage, resource);
         for (final ResourceKey candidate : candidates) {
-            final long extracted = storage.extract(candidate, correctedAmount, Action.EXECUTE, actor);
+            final long extracted = storage.extract(candidate, correctedAmount, Action.EXECUTE, this.actor);
             if (extracted > 0) {
                 state.setExportSlot(slot, candidate, extracted);
-                updateResult(slot, InterfaceTransferResult.EXPORTED);
+                this.updateResult(slot, InterfaceTransferResult.EXPORTED);
                 return;
             }
         }
-        if (network == null) {
+        if (this.network == null) {
             return;
         }
-        final InterfaceTransferResult result = onMissingResources.onMissingResources(resource, correctedAmount, actor,
-            network);
-        updateResult(slot, result);
+        final InterfaceTransferResult result = this.onMissingResources.onMissingResources(resource, correctedAmount, this.actor,
+            this.network);
+        this.updateResult(slot, result);
     }
 
     private void extractMoreFromStorage(final InterfaceExportState state,
@@ -166,19 +167,19 @@ public class TieredInterfaceNetworkNode extends AbstractNetworkNode {
                                         final ResourceKey resource,
                                         final long amount,
                                         final RootStorage storage) {
-        final long correctedAmount = Math.min(transferQuotaProvider.applyAsLong(resource), amount);
-        final long extracted = storage.extract(resource, correctedAmount, Action.EXECUTE, actor);
+        final long correctedAmount = Math.min(this.transferQuotaProvider.applyAsLong(resource), amount);
+        final long extracted = storage.extract(resource, correctedAmount, Action.EXECUTE, this.actor);
         if (extracted == 0) {
-            if (network == null) {
+            if (this.network == null) {
                 return;
             }
             final InterfaceTransferResult result =
-                onMissingResources.onMissingResources(resource, correctedAmount, actor, network);
-            updateResult(slot, result);
+                this.onMissingResources.onMissingResources(resource, correctedAmount, this.actor, this.network);
+            this.updateResult(slot, result);
             return;
         }
         state.growExportedAmount(slot, extracted);
-        updateResult(slot, InterfaceTransferResult.EXPORTED);
+        this.updateResult(slot, InterfaceTransferResult.EXPORTED);
     }
 
     private void insertOverflowToStorage(final InterfaceExportState state,
@@ -186,33 +187,33 @@ public class TieredInterfaceNetworkNode extends AbstractNetworkNode {
                                          final ResourceKey resource,
                                          final long amount,
                                          final RootStorage storage) {
-        final long correctedAmount = Math.min(transferQuotaProvider.applyAsLong(resource), Math.abs(amount));
-        final long inserted = storage.insert(resource, correctedAmount, Action.EXECUTE, actor);
+        final long correctedAmount = Math.min(this.transferQuotaProvider.applyAsLong(resource), Math.abs(amount));
+        final long inserted = storage.insert(resource, correctedAmount, Action.EXECUTE, this.actor);
         if (inserted == 0) {
-            updateResult(slot, InterfaceTransferResult.STORAGE_DOES_NOT_ACCEPT_RESOURCE);
+            this.updateResult(slot, InterfaceTransferResult.STORAGE_DOES_NOT_ACCEPT_RESOURCE);
             return;
         }
         state.shrinkExportedAmount(slot, inserted);
-        updateResult(slot, InterfaceTransferResult.EXPORTED);
+        this.updateResult(slot, InterfaceTransferResult.EXPORTED);
     }
 
     private void updateResult(final int slot, @Nullable final InterfaceTransferResult result) {
-        if (lastResults == null) {
+        if (this.lastResults == null) {
             return;
         }
-        lastResults[slot] = result;
+        this.lastResults[slot] = result;
     }
 
     @Nullable
     public InterfaceTransferResult getLastResult(final int slot) {
-        if (lastResults == null) {
+        if (this.lastResults == null) {
             return null;
         }
-        return lastResults[slot];
+        return this.lastResults[slot];
     }
 
     @Override
     public long getEnergyUsage() {
-        return energyUsage;
+        return this.energyUsage;
     }
 }

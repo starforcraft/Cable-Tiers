@@ -16,11 +16,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import org.jspecify.annotations.Nullable;
 
 import static com.ultramega.cabletiers.common.advancedfilter.AdvancedFilterScreen.ADVANCED_TAG_HEIGHT;
 import static com.ultramega.cabletiers.common.advancedfilter.AdvancedFilterScreen.RESOURCES_PER_ROW;
@@ -44,15 +44,15 @@ public class AdvancedFilterContainerMenu extends AbstractResourceContainerMenu {
         if (selectedResource != null) {
             resourceContainer.set(0, new ResourceAmount(selectedResource, 1));
         }
-        filterSlot = new DisabledResourceSlot(resourceContainer, 0, Component.empty(), 105, 23, ResourceSlotType.FILTER);
-        addSlot(filterSlot);
+        this.filterSlot = new DisabledResourceSlot(resourceContainer, 0, Component.empty(), 105, 23, ResourceSlotType.FILTER);
+        this.addSlot(this.filterSlot);
 
-        addAdvancedTagSlots();
+        this.addAdvancedTagSlots();
     }
 
     void filter(final String query) {
         final String normalizedQuery = query.trim().toLowerCase(Locale.ROOT);
-        advancedTags.forEach(tagKey -> {
+        this.advancedTags.forEach(tagKey -> {
             final boolean titleMatch = I18n.exists(tagKey.getTranslationKey())
                 && I18n.get(tagKey.getTranslationKey()).trim().toLowerCase(Locale.ROOT).contains(normalizedQuery);
             final boolean idMatch = tagKey.getId().toString().trim().toLowerCase(Locale.ROOT)
@@ -63,9 +63,9 @@ public class AdvancedFilterContainerMenu extends AbstractResourceContainerMenu {
 
     private void addAdvancedTagSlots() {
         final int x = 8;
-        for (int i = 0; i < advancedTags.size(); ++i) {
+        for (int i = 0; i < this.advancedTags.size(); ++i) {
             final int y = 122 + (i * ADVANCED_TAG_HEIGHT);
-            final AdvancedTag advancedTag = advancedTags.get(i);
+            final AdvancedTag advancedTag = this.advancedTags.get(i);
             final ResourceContainer resources = ResourceContainerImpl.createForFilter(
                 advancedTag.getResources().size()
             );
@@ -81,17 +81,17 @@ public class AdvancedFilterContainerMenu extends AbstractResourceContainerMenu {
                 } else {
                     advancedTag.getOverflowSlots().add(resourceSlot);
                 }
-                addSlot(resourceSlot);
+                this.addSlot(resourceSlot);
             }
         }
     }
 
     public List<AdvancedTag> getAdvancedTags() {
-        return advancedTags;
+        return this.advancedTags;
     }
 
     public ResourceSlot getFilterSlot() {
-        return filterSlot;
+        return this.filterSlot;
     }
 
     @Override

@@ -1,7 +1,4 @@
-@ParametersAreNonnullByDefault
-@FieldsAndMethodsAreNonnullByDefault
+@NullMarked
 package com.ultramega.cabletiers.common.registry;
 
-import com.refinedmods.refinedstorage.api.core.FieldsAndMethodsAreNonnullByDefault;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;

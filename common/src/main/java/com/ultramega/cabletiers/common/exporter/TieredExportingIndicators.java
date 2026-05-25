@@ -10,9 +10,9 @@ import com.refinedmods.refinedstorage.common.support.packet.s2c.S2CPackets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.Nullable;
 
 import net.minecraft.server.level.ServerPlayer;
+import org.jspecify.annotations.Nullable;
 
 public class TieredExportingIndicators {
     @Nullable
@@ -37,29 +37,29 @@ public class TieredExportingIndicators {
         int j = 0;
         for (int i = 0; i < filterContainer.size(); ++i) {
             if (filterContainer.isEmpty(i) && !includeEmptySlots) {
-                indicators.add(ExportingIndicator.NONE);
+                this.indicators.add(ExportingIndicator.NONE);
                 continue;
             }
             final int fakeIndex = filterContainer.getFakeShowcaseIndex(i);
-            indicators.add(indicatorProvider.apply(j, fakeIndex)); //TODO: improve all indicators
+            this.indicators.add(indicatorProvider.apply(j, fakeIndex)); //TODO: improve all indicators
             j++;
         }
         this.indicatorProvider = indicatorProvider;
     }
 
     public void detectChanges(final ServerPlayer player) {
-        if (filterContainer == null) {
+        if (this.filterContainer == null) {
             return;
         }
         int j = 0;
         List<ExportingIndicatorUpdatePacket.UpdatedIndicator> updatedIndicators = null;
-        for (int i = 0; i < filterContainer.size(); ++i) {
-            if (filterContainer.isEmpty(i) && !includeEmptySlots) {
-                updatedIndicators = tryUpdateIndicator(i, ExportingIndicator.NONE, updatedIndicators);
+        for (int i = 0; i < this.filterContainer.size(); ++i) {
+            if (this.filterContainer.isEmpty(i) && !this.includeEmptySlots) {
+                updatedIndicators = this.tryUpdateIndicator(i, ExportingIndicator.NONE, updatedIndicators);
                 continue;
             }
-            final int fakeIndex = filterContainer.getFakeShowcaseIndex(i);
-            updatedIndicators = tryUpdateIndicator(i, indicatorProvider.apply(j, fakeIndex), updatedIndicators);
+            final int fakeIndex = this.filterContainer.getFakeShowcaseIndex(i);
+            updatedIndicators = this.tryUpdateIndicator(i, this.indicatorProvider.apply(j, fakeIndex), updatedIndicators);
             j++;
         }
         if (updatedIndicators != null) {
@@ -72,30 +72,30 @@ public class TieredExportingIndicators {
         final int idx,
         final ExportingIndicator indicator,
         @Nullable final List<ExportingIndicatorUpdatePacket.UpdatedIndicator> updatedIndicators) {
-        if (indicators.get(idx) == indicator) {
+        if (this.indicators.get(idx) == indicator) {
             return updatedIndicators;
         }
         final List<ExportingIndicatorUpdatePacket.UpdatedIndicator> result = updatedIndicators == null
             ? new ArrayList<>()
             : updatedIndicators;
         result.add(new ExportingIndicatorUpdatePacket.UpdatedIndicator(idx, indicator));
-        set(idx, indicator);
+        this.set(idx, indicator);
         return result;
     }
 
     public List<ExportingIndicator> getAll() {
-        return Collections.unmodifiableList(indicators);
+        return Collections.unmodifiableList(this.indicators);
     }
 
     public ExportingIndicator get(final int idx) {
-        return indicators.get(idx);
+        return this.indicators.get(idx);
     }
 
     public void set(final int idx, final ExportingIndicator indicator) {
-        indicators.set(idx, indicator);
+        this.indicators.set(idx, indicator);
     }
 
     public int size() {
-        return indicators.size();
+        return this.indicators.size();
     }
 }

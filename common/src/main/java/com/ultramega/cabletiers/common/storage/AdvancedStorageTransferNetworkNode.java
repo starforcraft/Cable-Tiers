@@ -21,9 +21,9 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
-import javax.annotation.Nullable;
 
 import net.minecraft.tags.TagKey;
+import org.jspecify.annotations.Nullable;
 
 public class AdvancedStorageTransferNetworkNode extends AbstractStorageContainerNetworkNode {
     private final AdvancedFilter filter = new AdvancedFilter();
@@ -46,7 +46,7 @@ public class AdvancedStorageTransferNetworkNode extends AbstractStorageContainer
     }
 
     public StorageTransferMode getMode() {
-        return mode;
+        return this.mode;
     }
 
     public void setTransferQuotaProvider(final ToLongFunction<Storage> transferQuotaProvider) {
@@ -62,32 +62,32 @@ public class AdvancedStorageTransferNetworkNode extends AbstractStorageContainer
     }
 
     public FilterMode getFilterMode() {
-        return filter.getMode();
+        return this.filter.getMode();
     }
 
     public void setFilterMode(final FilterMode filterMode) {
-        filter.setMode(filterMode);
+        this.filter.setMode(filterMode);
     }
 
     public void setFilters(final Set<ResourceKey> filters, final Set<TagKey<?>> tagFilters) {
-        filter.setFilters(filters);
-        filter.setTagFilters(tagFilters);
+        this.filter.setFilters(filters);
+        this.filter.setTagFilters(tagFilters);
     }
 
     public void setNormalizer(final UnaryOperator<ResourceKey> normalizer) {
-        filter.setNormalizer(normalizer);
+        this.filter.setNormalizer(normalizer);
     }
 
     @Override
     public void doWork() {
         super.doWork();
-        if (!isActive() || network == null) {
+        if (!this.isActive() || this.network == null) {
             return;
         }
 
         int firstNonNullIndex = -1;
-        for (int i = 0; i < storages.length / 2; ++i) {
-            if (storages[i] != null) {
+        for (int i = 0; i < this.storages.length / 2; ++i) {
+            if (this.storages[i] != null) {
                 firstNonNullIndex = i;
                 break;
             }
@@ -97,32 +97,32 @@ public class AdvancedStorageTransferNetworkNode extends AbstractStorageContainer
             return;
         }
 
-        final StorageNetworkComponent networkStorage = network.getComponent(StorageNetworkComponent.class);
-        for (int i = firstNonNullIndex; i < storages.length / 2; ++i) {
-            final StateTrackedStorage storage = storages[i];
+        final StorageNetworkComponent networkStorage = this.network.getComponent(StorageNetworkComponent.class);
+        for (int i = firstNonNullIndex; i < this.storages.length / 2; ++i) {
+            final StateTrackedStorage storage = this.storages[i];
             if (storage == null) {
                 continue;
             }
-            final Result result = transfer(storage, networkStorage);
-            if (processResult(result, i)) {
+            final Result result = this.transfer(storage, networkStorage);
+            if (this.processResult(result, i)) {
                 return;
             }
         }
     }
 
     private Result transfer(final StateTrackedStorage storage, final StorageNetworkComponent networkStorage) {
-        if (transferQuotaProvider == null) {
+        if (this.transferQuotaProvider == null) {
             return Result.FAILURE;
         }
-        final long transferQuota = transferQuotaProvider.applyAsLong(storage.getDelegate());
-        if (mode == StorageTransferMode.INSERT_INTO_NETWORK) {
-            return transfer(storage, networkStorage, transferQuota, this::hasNoExtractableResources);
+        final long transferQuota = this.transferQuotaProvider.applyAsLong(storage.getDelegate());
+        if (this.mode == StorageTransferMode.INSERT_INTO_NETWORK) {
+            return this.transfer(storage, networkStorage, transferQuota, this::hasNoExtractableResources);
         }
-        return transfer(
+        return this.transfer(
             networkStorage,
             storage,
             transferQuota,
-            source -> hasNoExtractableResources(source) || storageIsFull(storage)
+            source -> this.hasNoExtractableResources(source) || this.storageIsFull(storage)
         );
     }
 
@@ -133,7 +133,7 @@ public class AdvancedStorageTransferNetworkNode extends AbstractStorageContainer
         if (readyPredicate.test(source)) {
             return Result.SUCCESS;
         }
-        if (transfer(source, destination, transferQuota)) {
+        if (this.transfer(source, destination, transferQuota)) {
             return readyPredicate.test(source)
                 ? Result.SUCCESS
                 : Result.PARTIAL;
@@ -142,21 +142,21 @@ public class AdvancedStorageTransferNetworkNode extends AbstractStorageContainer
     }
 
     private boolean transfer(final Storage source, final Storage destination, final long transferQuota) {
-        if (stackUpgradeProvider == null) {
+        if (this.stackUpgradeProvider == null) {
             return false;
         }
 
         long remainder = transferQuota;
         for (final ResourceAmount resourceAmount : source.getAll()) {
             final ResourceKey resource = resourceAmount.resource();
-            if (!filter.isAllowed(resource)) {
+            if (!this.filter.isAllowed(resource)) {
                 continue;
             }
-            final long amount = stackUpgradeProvider.get() ? resourceAmount.amount() : Math.min(remainder, resourceAmount.amount());
-            if (stackUpgradeProvider.get()) {
+            final long amount = this.stackUpgradeProvider.get() ? resourceAmount.amount() : Math.min(remainder, resourceAmount.amount());
+            if (this.stackUpgradeProvider.get()) {
                 remainder = amount;
             }
-            final long transferred = TransferHelper.transfer(resource, amount, actor, source, destination, source);
+            final long transferred = TransferHelper.transfer(resource, amount, this.actor, source, destination, source);
             remainder -= transferred;
             if (remainder == 0) {
                 return true;
@@ -166,7 +166,7 @@ public class AdvancedStorageTransferNetworkNode extends AbstractStorageContainer
     }
 
     private boolean hasNoExtractableResources(final Storage source) {
-        return source.getAll().stream().noneMatch(resourceAmount -> filter.isAllowed(resourceAmount.resource()));
+        return source.getAll().stream().noneMatch(resourceAmount -> this.filter.isAllowed(resourceAmount.resource()));
     }
 
     private boolean storageIsFull(final Storage storage) {
@@ -177,8 +177,8 @@ public class AdvancedStorageTransferNetworkNode extends AbstractStorageContainer
 
     private boolean processResult(final Result result, final int index) {
         if (result.isSuccess()) {
-            if (result == Result.SUCCESS && listener != null) {
-                listener.onTransferSuccess(index);
+            if (result == Result.SUCCESS && this.listener != null) {
+                this.listener.onTransferSuccess(index);
             }
             return true;
         }

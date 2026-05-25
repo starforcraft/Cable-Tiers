@@ -11,39 +11,40 @@ import com.refinedmods.refinedstorage.common.grid.AutocraftableResourceHint;
 import com.refinedmods.refinedstorage.common.grid.screen.AbstractGridScreen;
 import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
 import com.refinedmods.refinedstorage.common.support.widget.ScrollbarWidget;
+import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.opengl.GL11;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersIdentifier;
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersTranslation;
 import static com.ultramega.cabletiers.common.utils.SidedInputUtil.isProcessingInputSlot;
-import static net.minecraft.client.gui.screens.inventory.AbstractContainerScreen.renderSlotHighlight;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class SidedInputScreen extends Screen {
-    private static final ResourceLocation TEXTURE = createCableTiersIdentifier("textures/gui/sided_input.png");
-    private static final ResourceLocation SLOT_TEXTURE = createIdentifier("slot");
-    private static final ResourceLocation DIRECTION_BUTTON = createIdentifier("widget/side_button/base");
-    private static final ResourceLocation DIRECTION_BUTTON_HOVERED = createIdentifier("widget/side_button/hovered");
-    private static final ResourceLocation DIRECTION_BUTTON_OVERLAY = createIdentifier("widget/side_button/hover_overlay");
+    private static final Identifier TEXTURE = createCableTiersIdentifier("textures/gui/sided_input.png");
+    private static final Identifier SLOT_TEXTURE = createIdentifier("slot");
+    private static final Identifier DIRECTION_BUTTON = createIdentifier("widget/side_button/base");
+    private static final Identifier DIRECTION_BUTTON_HOVERED = createIdentifier("widget/side_button/hovered");
+    private static final Identifier DIRECTION_BUTTON_OVERLAY = createIdentifier("widget/side_button/hover_overlay");
 
     private static final MutableComponent NONE = createCableTiersTranslation("gui", "omni_side_pattern_grid.none");
     private static final MutableComponent DOWN = createCableTiersTranslation("gui", "omni_side_pattern_grid.down");
@@ -68,7 +69,7 @@ public class SidedInputScreen extends Screen {
     private ScrollbarWidget scrollbar;
 
     @Nullable
-    private final Direction[] directions;
+    private final Direction @Nullable [] directions;
     private int hoveringDirectionRow;
     private int hoveringDirectionColumn;
 
@@ -89,12 +90,12 @@ public class SidedInputScreen extends Screen {
             this.processingInputSlots.add(slot);
         }
 
-        this.directions = new Direction[processingInputSlots.size()];
+        this.directions = new Direction[this.processingInputSlots.size()];
 
         int i = 0;
         for (final Optional<SidedResourceAmount> resource : sidedResources) {
-            if (resource.isPresent() && i < directions.length) {
-                directions[i] = resource.get().inputDirection().orElse(null);
+            if (resource.isPresent() && i < this.directions.length) {
+                this.directions[i] = resource.get().inputDirection().orElse(null);
             }
             i++;
         }
@@ -107,64 +108,63 @@ public class SidedInputScreen extends Screen {
     protected void init() {
         super.init();
 
-        this.leftPos = (width - imageWidth) / 2;
-        this.topPos = (height - imageHeight) / 2;
+        this.leftPos = (this.width - this.imageWidth) / 2;
+        this.topPos = (this.height - this.imageHeight) / 2;
 
-        this.scrollbar = createScrollbar();
-        updateScrollbarMaxOffset();
-        this.addRenderableWidget(scrollbar);
+        this.scrollbar = this.createScrollbar();
+        this.updateScrollbarMaxOffset();
+        this.addRenderableWidget(this.scrollbar);
     }
 
     @Override
-    public void render(final GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTick) {
-        super.render(graphics, mouseX, mouseY, partialTick);
+    public void extractBackground(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
+        graphics.blit(GUI_TEXTURED, TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
+    }
 
-        graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+    @Override
+    public void extractRenderState(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float partialTick) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTick);
 
-        final int startY = topPos + 6;
+        final int startY = this.topPos + 6;
         // include the edge so we get the item counts properly
-        final int endY = topPos + 6 + 88 + 1;
-        graphics.enableScissor(leftPos - 50, startY, leftPos + imageWidth + 50, endY);
-        renderSlotsAndDirections(graphics, mouseX, mouseY);
+        final int endY = this.topPos + 6 + 88 + 1;
+        graphics.enableScissor(this.leftPos - 50, startY, this.leftPos + this.imageWidth + 50, endY);
+        this.extractSlotsAndDirections(graphics, mouseX, mouseY);
         graphics.disableScissor();
 
-        if (scrollbar != null) {
-            scrollbar.render(graphics, mouseX, mouseY, partialTick);
+        if (this.scrollbar != null) {
+            this.scrollbar.extractRenderState(graphics, mouseX, mouseY, partialTick);
         }
 
-        renderHoveredResourceTooltip(graphics, mouseX, mouseY);
+        this.renderHoveredResourceTooltip(graphics, mouseX, mouseY);
     }
 
-    @Override
-    public void renderBackground(final GuiGraphics guiGraphics, final int mouseX, final int mouseY, final float partialTick) {
-        super.renderTransparentBackground(guiGraphics);
-    }
-
-    private void renderSlotsAndDirections(final GuiGraphics graphics, final int mouseX, final int mouseY) {
-        final int xx = leftPos + 5;
-        final int startY = topPos + 9 - INDIVIDUAL_SLOT_SIZE;
-        final int endY = topPos + 9 + (INDIVIDUAL_SLOT_SIZE * 4);
+    private void extractSlotsAndDirections(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY) {
+        final int xx = this.leftPos + 5;
+        final int startY = this.topPos + 9 - INDIVIDUAL_SLOT_SIZE;
+        final int endY = this.topPos + 9 + (INDIVIDUAL_SLOT_SIZE * 4);
 
         boolean anyHovered = false;
 
-        for (int i = 0; i < processingInputSlots.size(); ++i) {
-            final ResourceSlot slot = processingInputSlots.get(i);
-            if (directions == null || directions.length <= i) {
+        for (int i = 0; i < this.processingInputSlots.size(); ++i) {
+            final ResourceSlot slot = this.processingInputSlots.get(i);
+            if (this.directions == null || this.directions.length <= i) {
                 return;
             }
 
-            final int yy = getYForScrollbarOffset(i);
+            final int yy = this.getYForScrollbarOffset(i);
             if (yy < startY || yy > endY) {
                 continue;
             }
             final int slotX = xx + 1;
             final int slotY = yy + 1;
 
-            final boolean hovering = isHovering(slotX, slotY, INDIVIDUAL_SLOT_SIZE - 2, INDIVIDUAL_SLOT_SIZE - 2, mouseX, mouseY);
+            final boolean hovering = this.isHovering(slotX, slotY, INDIVIDUAL_SLOT_SIZE - 2, INDIVIDUAL_SLOT_SIZE - 2, mouseX, mouseY);
 
-            graphics.blitSprite(SLOT_TEXTURE, xx, yy, INDIVIDUAL_SLOT_SIZE, INDIVIDUAL_SLOT_SIZE);
+            graphics.blitSprite(GUI_TEXTURED, SLOT_TEXTURE, xx, yy, INDIVIDUAL_SLOT_SIZE, INDIVIDUAL_SLOT_SIZE);
 
-            if (slot.getResource() != null && gridContainerMenu.getRepository().isSticky(slot.getResource())) {
+            if (slot.getResource() != null && this.gridContainerMenu.getRepository().isSticky(slot.getResource())) {
                 AbstractGridScreen.renderSlotBackground(
                     graphics,
                     slotX,
@@ -173,15 +173,18 @@ public class SidedInputScreen extends Screen {
                     AutocraftableResourceHint.AUTOCRAFTABLE.getColor()
                 );
             }
+            if (hovering) {
+                ClientPlatformUtil.renderSlotHighlightBack(graphics, slotX, slotY);
+            }
             final List<Component> resourceTooltips = ResourceSlotRendering.render(graphics, slot, slotX, slotY);
             if (hovering) {
                 anyHovered = true;
-                renderSlotHighlight(graphics, slotX, slotY, 0);
+                ClientPlatformUtil.renderSlotHighlightFront(graphics, slotX, slotY);
                 this.tooltip = resourceTooltips;
             }
 
             // j = -1 is the "none/X" pseudo-direction; j = 0, ..., DIRS.length-1 are the real directions
-            final @Nullable Direction selectedDirection = directions[i];
+            final @Nullable Direction selectedDirection = this.directions[i];
             for (int j = -1; j < Direction.values().length; j++) {
                 final Direction direction = j == -1 ? null : Direction.values()[j];
                 final Component name = direction == null ? NONE : getDirectionName(direction);
@@ -191,10 +194,10 @@ public class SidedInputScreen extends Screen {
                 final int y = slotY + 1;
 
                 final boolean isEmpty = slot.isEmpty();
-                final boolean isHovered = isHovering(x + 1, y + 1, DIRECTION_SIZE - 2, DIRECTION_SIZE - 2, mouseX, mouseY);
+                final boolean isHovered = this.isHovering(x + 1, y + 1, DIRECTION_SIZE - 2, DIRECTION_SIZE - 2, mouseX, mouseY);
                 final boolean isClicked = selectedDirection == null ? j == -1 : j == selectedDirection.ordinal();
 
-                if (renderDirectionButton(graphics, x, y, shortName, isEmpty, isHovered, isClicked)) {
+                if (this.renderDirectionButton(graphics, x, y, shortName, isEmpty, isHovered, isClicked)) {
                     anyHovered = true;
                     this.tooltip = List.of(name);
                     this.hoveringDirectionRow = i;
@@ -210,27 +213,22 @@ public class SidedInputScreen extends Screen {
         }
     }
 
-    private boolean renderDirectionButton(final GuiGraphics graphics,
+    private boolean renderDirectionButton(final GuiGraphicsExtractor graphics,
                                           final int x,
                                           final int y,
                                           final String text,
                                           final boolean isEmpty,
                                           final boolean isHovered,
                                           final boolean isClicked) {
-        graphics.blitSprite((!isEmpty && (isHovered || isClicked)) ? DIRECTION_BUTTON_HOVERED : DIRECTION_BUTTON, x, y, DIRECTION_SIZE, DIRECTION_SIZE);
+        graphics.blitSprite(GUI_TEXTURED, (!isEmpty && (isHovered || isClicked)) ? DIRECTION_BUTTON_HOVERED : DIRECTION_BUTTON, x, y, DIRECTION_SIZE, DIRECTION_SIZE);
 
-        final int textWidth = font.width(text);
+        final int textWidth = this.font.width(text);
         final int textX = x + (DIRECTION_SIZE - textWidth) / 2;
-        final int textY = y + (DIRECTION_SIZE - font.lineHeight) / 2 + 1;
-        graphics.drawString(font, text, textX, textY, 0xFFFFFFFF);
+        final int textY = y + (DIRECTION_SIZE - this.font.lineHeight) / 2 + 1;
+        graphics.text(this.font, text, textX, textY, 0xFFFFFFFF);
 
         if (isHovered) {
-            RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.5F);
-            graphics.blitSprite(DIRECTION_BUTTON_OVERLAY, x, y, DIRECTION_SIZE, DIRECTION_SIZE);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.disableBlend();
+            graphics.blitSprite(GUI_TEXTURED, DIRECTION_BUTTON_OVERLAY, x, y, DIRECTION_SIZE, DIRECTION_SIZE, 0.5F);
 
             return true;
         }
@@ -238,59 +236,60 @@ public class SidedInputScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
-        final boolean clickedScrollbar = scrollbar != null && scrollbar.mouseClicked(mouseX, mouseY, button);
+    public boolean mouseClicked(final MouseButtonEvent event, final boolean doubleClick) {
+        final boolean clickedScrollbar = this.scrollbar != null && this.scrollbar.mouseClicked(event, doubleClick);
         if (clickedScrollbar) {
             return true;
         }
 
-        if (directions != null && hoveringDirectionRow != -1 && hoveringDirectionColumn != -2) {
-            playClickSound();
-            directions[hoveringDirectionRow] = hoveringDirectionColumn != -1 ? Direction.values()[hoveringDirectionColumn] : null;
-            setSidedInputPatternData();
+        if (this.directions != null && this.hoveringDirectionRow != -1 && this.hoveringDirectionColumn != -2) {
+            this.playClickSound();
+            this.directions[this.hoveringDirectionRow] = this.hoveringDirectionColumn != -1 ? Direction.values()[this.hoveringDirectionColumn] : null;
+            this.setSidedInputPatternData();
         }
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
+    @Override
     public void mouseMoved(final double mouseX, final double mouseY) {
-        if (scrollbar != null) {
-            scrollbar.mouseMoved(mouseX, mouseY);
+        if (this.scrollbar != null) {
+            this.scrollbar.mouseMoved(mouseX, mouseY);
         }
         super.mouseMoved(mouseX, mouseY);
     }
 
     @Override
-    public boolean mouseReleased(final double mouseX, final double mouseY, final int button) {
-        return (scrollbar != null && scrollbar.mouseReleased(mouseX, mouseY, button)) || super.mouseReleased(mouseX, mouseY, button);
+    public boolean mouseReleased(final MouseButtonEvent event) {
+        return (this.scrollbar != null && this.scrollbar.mouseReleased(event)) || super.mouseReleased(event);
     }
 
     @Override
     public boolean mouseScrolled(final double mouseX, final double mouseY, final double scrollX, final double scrollY) {
-        return (scrollbar != null && scrollbar.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) || super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return (this.scrollbar != null && this.scrollbar.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) || super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     private int getYForScrollbarOffset(final int i) {
-        final int scrollbarOffset = scrollbar != null ? (int) scrollbar.getOffset() : 0;
-        final int scrollbarOffsetCorrected = scrollbar != null && scrollbar.isSmoothScrolling()
+        final int scrollbarOffset = this.scrollbar != null ? (int) this.scrollbar.getOffset() : 0;
+        final int scrollbarOffsetCorrected = this.scrollbar != null && this.scrollbar.isSmoothScrolling()
             ? scrollbarOffset
             : scrollbarOffset * INDIVIDUAL_SLOT_SIZE;
 
-        return (topPos + 5)
+        return (this.topPos + 5)
             + (i * INDIVIDUAL_SLOT_SIZE)
             - scrollbarOffsetCorrected;
     }
 
     private void updateScrollbarMaxOffset() {
-        if (scrollbar == null) {
+        if (this.scrollbar == null) {
             return;
         }
 
         int maxFilledSlots = 0;
         int maxLastFilledSlot = 0;
 
-        for (int i = 0; i < processingInputSlots.size(); ++i) {
-            final ResourceSlot resourceSlot = processingInputSlots.get(i);
+        for (int i = 0; i < this.processingInputSlots.size(); ++i) {
+            final ResourceSlot resourceSlot = this.processingInputSlots.get(i);
             if (resourceSlot.isEmpty()) {
                 continue;
             }
@@ -300,47 +299,47 @@ public class SidedInputScreen extends Screen {
         }
 
         final int maxOffset = Math.max(maxFilledSlots - 4, maxLastFilledSlot - 4);
-        final int maxOffsetCorrected = scrollbar.isSmoothScrolling()
+        final int maxOffsetCorrected = this.scrollbar.isSmoothScrolling()
             ? maxOffset * INDIVIDUAL_SLOT_SIZE
             : maxOffset;
 
-        scrollbar.setMaxOffset(maxOffsetCorrected);
-        scrollbar.setEnabled(maxOffsetCorrected > 0);
+        this.scrollbar.setMaxOffset(maxOffsetCorrected);
+        this.scrollbar.setEnabled(maxOffsetCorrected > 0);
     }
 
     private ScrollbarWidget createScrollbar() {
         final ScrollbarWidget s = new ScrollbarWidget(
-            leftPos + 127,
-            topPos + 6,
+            this.leftPos + 127,
+            this.topPos + 6,
             ScrollbarWidget.Type.SMALL,
             88
         );
-        s.setListener(offset -> onScrollbarChanged((int) offset));
+        s.setListener(offset -> this.onScrollbarChanged((int) offset));
         return s;
     }
 
     private void onScrollbarChanged(final int offset) {
-        final int scrollbarOffset = (scrollbar != null && scrollbar.isSmoothScrolling())
+        final int scrollbarOffset = (this.scrollbar != null && this.scrollbar.isSmoothScrolling())
             ? offset
             : offset * INDIVIDUAL_SLOT_SIZE;
-        for (int i = 0; i < processingInputSlots.size(); ++i) {
-            final int slotY = topPos
+        for (int i = 0; i < this.processingInputSlots.size(); ++i) {
+            final int slotY = this.topPos
                 + 3
                 + 10
                 + (i * INDIVIDUAL_SLOT_SIZE)
                 - scrollbarOffset
-                - topPos;
-            Platform.INSTANCE.setSlotY(processingInputSlots.get(i), slotY);
+                - this.topPos;
+            Platform.INSTANCE.setSlotY(this.processingInputSlots.get(i), slotY);
         }
     }
 
     private void setSidedInputPatternData() {
-        if (directions == null) {
+        if (this.directions == null) {
             return;
         }
 
         final List<Optional<ResourceAmount>> resources = new ArrayList<>();
-        for (final ResourceSlot slot : processingInputSlots) {
+        for (final ResourceSlot slot : this.processingInputSlots) {
             if (slot.getResource() != null) {
                 resources.add(Optional.of(new ResourceAmount(slot.getResource(), slot.getAmount())));
             } else {
@@ -348,7 +347,7 @@ public class SidedInputScreen extends Screen {
             }
         }
 
-        final List<Optional<Direction>> inputSides = Arrays.stream(directions)
+        final List<Optional<Direction>> inputSides = Arrays.stream(this.directions)
             .map(Optional::ofNullable)
             .toList();
 
@@ -366,10 +365,10 @@ public class SidedInputScreen extends Screen {
         Platform.INSTANCE.sendPacketToServer(new SetSidedResourcesOnPatternGridBlockPacket(sidedResources));
     }
 
-    private void renderHoveredResourceTooltip(final GuiGraphics graphics,
+    private void renderHoveredResourceTooltip(final GuiGraphicsExtractor graphics,
                                               final int mouseX,
                                               final int mouseY) {
-        if (tooltip == null) {
+        if (this.tooltip == null || this.tooltip.isEmpty()) {
             return;
         }
 
@@ -380,14 +379,14 @@ public class SidedInputScreen extends Screen {
             Optional.empty(),
             this.tooltip
         );
-        Platform.INSTANCE.renderTooltip(graphics, processedLines, mouseX, mouseY);
+        graphics.tooltip(this.font, processedLines, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
     }
 
     @Override
     public void onClose() {
         final Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
-            mc.setScreen(new PatternGridScreen(gridContainerMenu, mc.player.getInventory(), gridTitle));
+            mc.setScreen(new PatternGridScreen(this.gridContainerMenu, mc.player.getInventory(), this.gridTitle));
         }
     }
 

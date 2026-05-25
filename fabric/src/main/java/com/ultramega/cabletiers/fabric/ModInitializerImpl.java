@@ -40,8 +40,6 @@ import com.refinedmods.refinedstorage.fabric.api.RefinedStoragePlugin;
 import com.refinedmods.refinedstorage.fabric.support.resource.ResourceContainerFluidStorageAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -49,12 +47,13 @@ import java.util.function.Predicate;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuType;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
-import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ContainerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
@@ -86,60 +85,58 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
     @Override
     public void onApiAvailable(final RefinedStorageApi refinedStorageApi) {
         Platform.setConfigProvider(ConfigImpl::get);
-        registerContent();
-        registerPackets();
-        registerPacketHandlers();
-        registerCapabilities();
-        registerCreativeModeTabListener(refinedStorageApi);
+        this.registerContent();
+        this.registerPackets();
+        this.registerPacketHandlers();
+        this.registerCapabilities();
+        this.registerCreativeModeTabListener(refinedStorageApi);
     }
 
     private void registerContent() {
-        registerBlocks(new DirectRegistryCallback<>(BuiltInRegistries.BLOCK), BLOCK_ENTITY_PROVIDERS);
-        registerItems(new DirectRegistryCallback<>(BuiltInRegistries.ITEM));
-        registerUpgradeMappings();
-        registerBlockEntities(
+        this.registerBlocks(new DirectRegistryCallback<>(BuiltInRegistries.BLOCK), BLOCK_ENTITY_PROVIDERS);
+        this.registerItems(new DirectRegistryCallback<>(BuiltInRegistries.ITEM));
+        this.registerUpgradeMappings();
+        this.registerBlockEntities(
             new DirectRegistryCallback<>(BuiltInRegistries.BLOCK_ENTITY_TYPE),
             new BlockEntityTierTypeFactory() {
-                @SuppressWarnings("DataFlowIssue") // data type can be null
                 @Override
                 public <T extends BlockEntity> BlockEntityType<T> create(final CableTiers tier,
                                                                          final BlockEntityTierProvider<T> factory,
                                                                          final Block... allowedBlocks) {
-                    return new BlockEntityType<>((pos, state) -> factory.create(tier, pos, state), new HashSet<>(Arrays.asList(allowedBlocks)), null);
+                    return FabricBlockEntityTypeBuilder.create((pos, state) -> factory.create(tier, pos, state), allowedBlocks).build();
                 }
             },
             new BlockEntityTypeFactory() {
-                @SuppressWarnings("DataFlowIssue") // data type can be null
                 @Override
                 public <T extends BlockEntity> BlockEntityType<T> create(final BlockEntityProvider<T> factory,
                                                                          final Block... allowedBlocks) {
-                    return new BlockEntityType<>(factory::create, new HashSet<>(Arrays.asList(allowedBlocks)), null);
+                    return FabricBlockEntityTypeBuilder.create(factory::create, allowedBlocks).build();
                 }
             },
             BLOCK_ENTITY_PROVIDERS
         );
-        registerMenus(new DirectRegistryCallback<>(BuiltInRegistries.MENU), new ExtendedMenuTypeFactory() {
+        this.registerMenus(new DirectRegistryCallback<>(BuiltInRegistries.MENU), new ExtendedMenuTypeFactory() {
             @Override
             public <T extends AbstractContainerMenu, D> MenuType<T> create(final MenuSupplier<T, D> supplier,
                                                                            final StreamCodec<RegistryFriendlyByteBuf, D> streamCodec) {
-                return new ExtendedScreenHandlerType<>(supplier::create, streamCodec);
+                return new ExtendedMenuType<>(supplier::create, streamCodec);
             }
         });
-        registerDataComponents(new DirectRegistryCallback<>(BuiltInRegistries.DATA_COMPONENT_TYPE));
+        this.registerDataComponents(new DirectRegistryCallback<>(BuiltInRegistries.DATA_COMPONENT_TYPE));
     }
 
     private void registerCapabilities() {
         for (final CableTiers tier : CableTiers.values()) {
-            registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredImporters(tier));
-            registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredExporters(tier));
-            registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredDestructors(tier));
-            registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredConstructors(tier));
-            registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredDiskInterfaces(tier));
-            registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredAutocrafters(tier));
-            registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredInterfaces(tier));
+            this.registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredImporters(tier));
+            this.registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredExporters(tier));
+            this.registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredDestructors(tier));
+            this.registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredConstructors(tier));
+            this.registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredDiskInterfaces(tier));
+            this.registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredAutocrafters(tier));
+            this.registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getTieredInterfaces(tier));
 
             ItemStorage.SIDED.registerForBlockEntity((blockEntity, context) -> {
-                final InventoryStorage storage = InventoryStorage.of(blockEntity.getDiskInventory(), context);
+                final ContainerStorage storage = ContainerStorage.of(blockEntity.getDiskInventory(), context);
                 final List<Storage<ItemVariant>> parts = new ArrayList<>();
                 for (int i = 0; i < AbstractTieredDiskInterfaceBlockEntity.AMOUNT_OF_DISKS; ++i) {
                     final var slot = storage.getSlot(i);
@@ -148,7 +145,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
                 return new CombinedStorage<>(parts);
             }, BlockEntities.INSTANCE.getTieredDiskInterfaces(tier));
 
-            registerItemStorage(
+            this.registerItemStorage(
                 TieredInterfaceBlockEntity.class::isInstance,
                 TieredInterfaceBlockEntity.class::cast,
                 TieredInterfaceBlockEntity::getExportedResourcesAsContainer,
@@ -175,7 +172,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
         ItemStorage.SIDED.registerForBlockEntities((blockEntity, context) -> {
             if (test.test(blockEntity)) {
                 final T casted = caster.apply(blockEntity);
-                return InventoryStorage.of(containerSupplier.apply(casted), context);
+                return ContainerStorage.of(containerSupplier.apply(casted), context);
             }
             return null;
         }, type);
@@ -186,7 +183,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
             Registries.CREATIVE_MODE_TAB,
             refinedStorageApi.getCreativeModeTabId()
         );
-        ItemGroupEvents.modifyEntriesEvent(creativeModeTab).register(
+        CreativeModeTabEvents.modifyOutputEvent(creativeModeTab).register(
             entries -> CreativeModeTabItems.appendBlocks(entries::accept)
         );
 
@@ -194,32 +191,32 @@ public class ModInitializerImpl extends AbstractModInitializer implements Refine
             Registries.CREATIVE_MODE_TAB,
             refinedStorageApi.getColoredCreativeModeTabId()
         );
-        ItemGroupEvents.modifyEntriesEvent(coloredCreativeModeTab).register(
+        CreativeModeTabEvents.modifyOutputEvent(coloredCreativeModeTab).register(
             entries -> CreativeModeTabItems.appendColoredVariants(entries::accept)
         );
     }
 
     private void registerPackets() {
-        registerServerToClientPackets();
-        registerClientToServerPackets();
+        this.registerServerToClientPackets();
+        this.registerClientToServerPackets();
     }
 
     private void registerServerToClientPackets() {
-        PayloadTypeRegistry.playS2C().register(ShouldOpenAdvancedFilterPacket.PACKET_TYPE, ShouldOpenAdvancedFilterPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(UpdateAdvancedFilterPacket.PACKET_TYPE, UpdateAdvancedFilterPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(TieredAutocrafterLockedUpdatePacket.PACKET_TYPE, TieredAutocrafterLockedUpdatePacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(TieredAutocrafterNameUpdatePacket.PACKET_TYPE, TieredAutocrafterNameUpdatePacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(SetSidedResourcesOnPatternGridMenuPacket.PACKET_TYPE, SetSidedResourcesOnPatternGridMenuPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(ReplaceSidedResourceOnPatternGridMenuPacket.PACKET_TYPE, ReplaceSidedResourceOnPatternGridMenuPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(ClearSidedResourceOnPatternGridMenuPacket.PACKET_TYPE, ClearSidedResourceOnPatternGridMenuPacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ShouldOpenAdvancedFilterPacket.PACKET_TYPE, ShouldOpenAdvancedFilterPacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(UpdateAdvancedFilterPacket.PACKET_TYPE, UpdateAdvancedFilterPacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(TieredAutocrafterLockedUpdatePacket.PACKET_TYPE, TieredAutocrafterLockedUpdatePacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(TieredAutocrafterNameUpdatePacket.PACKET_TYPE, TieredAutocrafterNameUpdatePacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(SetSidedResourcesOnPatternGridMenuPacket.PACKET_TYPE, SetSidedResourcesOnPatternGridMenuPacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ReplaceSidedResourceOnPatternGridMenuPacket.PACKET_TYPE, ReplaceSidedResourceOnPatternGridMenuPacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ClearSidedResourceOnPatternGridMenuPacket.PACKET_TYPE, ClearSidedResourceOnPatternGridMenuPacket.STREAM_CODEC);
     }
 
     private void registerClientToServerPackets() {
-        PayloadTypeRegistry.playC2S().register(ChangeAdvancedResourceSlotPacket.PACKET_TYPE, ChangeAdvancedResourceSlotPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(SetAdvancedFilterPacket.PACKET_TYPE, SetAdvancedFilterPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(TieredAutocrafterNameChangePacket.PACKET_TYPE, TieredAutocrafterNameChangePacket.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(RequestSidedResourcesPacket.PACKET_TYPE, RequestSidedResourcesPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(SetSidedResourcesOnPatternGridBlockPacket.PACKET_TYPE, SetSidedResourcesOnPatternGridBlockPacket.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(ChangeAdvancedResourceSlotPacket.PACKET_TYPE, ChangeAdvancedResourceSlotPacket.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(SetAdvancedFilterPacket.PACKET_TYPE, SetAdvancedFilterPacket.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(TieredAutocrafterNameChangePacket.PACKET_TYPE, TieredAutocrafterNameChangePacket.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(RequestSidedResourcesPacket.PACKET_TYPE, RequestSidedResourcesPacket.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(SetSidedResourcesOnPatternGridBlockPacket.PACKET_TYPE, SetSidedResourcesOnPatternGridBlockPacket.STREAM_CODEC);
     }
 
     private void registerPacketHandlers() {

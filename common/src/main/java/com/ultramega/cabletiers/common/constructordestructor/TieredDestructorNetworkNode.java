@@ -11,10 +11,10 @@ import com.refinedmods.refinedstorage.common.api.constructordestructor.Destructo
 
 import java.util.Set;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
+import org.jspecify.annotations.Nullable;
 
 public class TieredDestructorNetworkNode extends TieredSimpleNetworkNode {
     private final AdvancedFilter filter = new AdvancedFilter();
@@ -38,27 +38,27 @@ public class TieredDestructorNetworkNode extends TieredSimpleNetworkNode {
     }
 
     FilterMode getFilterMode() {
-        return filter.getMode();
+        return this.filter.getMode();
     }
 
     void setFilterMode(final FilterMode mode) {
-        filter.setMode(mode);
+        this.filter.setMode(mode);
     }
 
     public void setFilters(final Set<ResourceKey> filters, final Set<TagKey<?>> tagFilters) {
-        filter.setFilters(filters);
-        filter.setTagFilters(tagFilters);
+        this.filter.setFilters(filters);
+        this.filter.setTagFilters(tagFilters);
     }
 
     @Override
     public void doWork() {
         super.doWork();
-        if (strategy == null || network == null || !isActive() || playerProvider == null) {
+        if (this.strategy == null || this.network == null || !this.isActive() || this.playerProvider == null) {
             return;
         }
-        final Player player = playerProvider.get();
-        for (int i = 0; i < getTier().getSpeed(getType()); i++) {
-            strategy.apply(filter, actor, this::getNetwork, player);
+        final Player player = this.playerProvider.get();
+        for (int i = 0; i < this.getTier().getSpeed(this.getType()); i++) {
+            this.strategy.apply(this.filter, this.actor, this::getNetwork, player);
         }
     }
 }

@@ -25,12 +25,9 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
@@ -40,6 +37,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,14 +59,13 @@ public class AbstractTieredImporterBlockEntity extends AbstractTieredCableLikeBl
             this::setChanged,
             this::setFilters
         );
-        this.mainNetworkNode.setNormalizer(filter.createNormalizer());
+        this.mainNetworkNode.setNormalizer(this.filter.createNormalizer());
         this.upgradeContainer = new UpgradeContainer(getUpgradeDestination(tier), (c, upgradeEnergyUsage) -> {
-            mainNetworkNode.setEnergyUsage(tier.getEnergyUsage(CableType.IMPORTER) + upgradeEnergyUsage);
-            setChanged();
-            if (level instanceof ServerLevel serverLevel) {
-                initialize(serverLevel);
+            this.mainNetworkNode.setEnergyUsage(tier.getEnergyUsage(CableType.IMPORTER) + upgradeEnergyUsage);
+            if (this.level instanceof ServerLevel serverLevel) {
+                this.initialize(serverLevel);
             }
-        }) {
+        }, this::setChanged) {
             @Override
             public boolean has(final UpgradeItem upgradeItem) {
                 if (tier.hasIntegratedStackUpgrade(CableType.IMPORTER) && upgradeItem == Items.INSTANCE.getStackUpgrade()) {
@@ -83,7 +82,7 @@ public class AbstractTieredImporterBlockEntity extends AbstractTieredCableLikeBl
                 return super.getAmount(upgradeItem);
             }
         };
-        this.ticker = upgradeContainer.getTicker();
+        this.ticker = this.upgradeContainer.getTicker();
     }
 
     public static UpgradeDestination getUpgradeDestination(final CableTiers tier) {
@@ -95,46 +94,44 @@ public class AbstractTieredImporterBlockEntity extends AbstractTieredCableLikeBl
     }
 
     void setFilters(final Set<ResourceKey> filters, final Set<TagKey<?>> tagFilters) {
-        mainNetworkNode.setFilters(filters, tagFilters);
+        this.mainNetworkNode.setFilters(filters, tagFilters);
     }
 
     boolean isFuzzyMode() {
-        return filter.isFuzzyMode();
+        return this.filter.isFuzzyMode();
     }
 
     void setFuzzyMode(final boolean fuzzyMode) {
-        filter.setFuzzyMode(fuzzyMode);
+        this.filter.setFuzzyMode(fuzzyMode);
     }
 
     FilterMode getFilterMode() {
-        return mainNetworkNode.getFilterMode();
+        return this.mainNetworkNode.getFilterMode();
     }
 
     void setFilterMode(final FilterMode mode) {
-        mainNetworkNode.setFilterMode(mode);
-        setChanged();
+        this.mainNetworkNode.setFilterMode(mode);
+        this.setChanged();
     }
 
     @Override
-    public void writeConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.writeConfiguration(tag, provider);
-        tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(mainNetworkNode.getFilterMode()));
+    public void writeConfiguration(final ValueOutput output) {
+        super.writeConfiguration(output);
+        output.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(this.mainNetworkNode.getFilterMode()));
     }
 
     @Override
-    public void readConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.readConfiguration(tag, provider);
-        if (tag.contains(TAG_FILTER_MODE)) {
-            mainNetworkNode.setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
-        }
+    public void readConfiguration(final ValueInput input) {
+        super.readConfiguration(input);
+        input.getInt(TAG_FILTER_MODE).map(FilterModeSettings::getFilterMode).ifPresent(this.mainNetworkNode::setFilterMode);
     }
 
     @Override
     protected void initialize(final ServerLevel level, final Direction direction) {
         super.initialize(level, direction);
-        final ImporterTransferStrategy strategy = createStrategy(level, direction, worldPosition, upgradeContainer);
-        LOGGER.debug("Initialized importer at {} with strategy {}", worldPosition, strategy);
-        mainNetworkNode.setTransferStrategy(strategy);
+        final ImporterTransferStrategy strategy = createStrategy(level, direction, this.worldPosition, this.upgradeContainer);
+        LOGGER.debug("Initialized importer at {} with strategy {}", this.worldPosition, strategy);
+        this.mainNetworkNode.setTransferStrategy(strategy);
     }
 
     public static ImporterTransferStrategy createStrategy(final ServerLevel serverLevel,
@@ -153,7 +150,7 @@ public class AbstractTieredImporterBlockEntity extends AbstractTieredCableLikeBl
 
     @Override
     public ResourceContainerData getMenuData() {
-        return ResourceContainerData.of(filter.getFilterContainer());
+        return ResourceContainerData.of(this.filter.getFilterContainer());
     }
 
     @Override
@@ -163,7 +160,7 @@ public class AbstractTieredImporterBlockEntity extends AbstractTieredCableLikeBl
 
     @Override
     public Component getName() {
-        return overrideName(tier.getContentName(CableType.IMPORTER));
+        return this.overrideName(this.tier.getContentName(CableType.IMPORTER));
     }
 
     @Nullable
@@ -171,6 +168,6 @@ public class AbstractTieredImporterBlockEntity extends AbstractTieredCableLikeBl
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
         this.setInContainerMenu(true);
 
-        return new TieredImporterContainerMenu(syncId, player, this, filter.getFilterContainer(), upgradeContainer, tier);
+        return new TieredImporterContainerMenu(syncId, player, this, this.filter.getFilterContainer(), this.upgradeContainer, this.tier);
     }
 }

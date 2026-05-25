@@ -55,14 +55,6 @@ refinedarchitect {
     version = modVersion
     neoForge()
     dataGeneration(project(":common"))
-
-    project.afterEvaluate {
-        project.extensions.getByType<NeoForge>().runs.named("data") {
-            programArguments.addAll(
-                "--existing-mod", "refinedstorage"
-            )
-        }
-    }
 }
 
 base {
@@ -89,7 +81,7 @@ dependencies {
     commonResources(project(path = ":common", configuration = "commonResources"))
     api("com.refinedmods.refinedstorage:refinedstorage-neoforge:${refinedstorageVersion}")
 
-    compileOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorageMekanismIntegrationVersion}")  {
+    /*compileOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorageMekanismIntegrationVersion}")  {
         isTransitive = false
     }
     compileOnly("mekanism:Mekanism:${mekanismVersion}")
@@ -98,7 +90,7 @@ dependencies {
 
     implementation("com.hollingsworth.ars_nouveau:ars_nouveau-${minecraftVersion}:${arsNouveauVersion}")
     implementation("com.buuz135:industrialforegoing:1.21-${industrialForegoingVersion}")
-    implementation("curse.maven:industrial-foregoing-souls-904394:${industrialForegoingSoulsVersion}")
+    implementation("curse.maven:industrial-foregoing-souls-904394:${industrialForegoingSoulsVersion}")*/
     implementation("curse.maven:jade-324717:${jadeVersion}")
 }
 

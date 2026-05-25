@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:mega_destructors"
-    },
-    {
-      "tag": "c:dyes/blue"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:blue_mega_destructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "blue",
+  "ingredient": "#cabletiers:mega_destructors",
+  "result": "cabletiers:blue_mega_destructor"
 }

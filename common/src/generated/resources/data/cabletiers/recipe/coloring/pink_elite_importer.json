@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:elite_importers"
-    },
-    {
-      "tag": "c:dyes/pink"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:pink_elite_importer"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "pink",
+  "ingredient": "#cabletiers:elite_importers",
+  "result": "cabletiers:pink_elite_importer"
 }

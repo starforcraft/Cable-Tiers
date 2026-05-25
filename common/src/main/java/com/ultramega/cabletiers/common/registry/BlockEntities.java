@@ -34,7 +34,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<AbstractTieredImporterBlockEntity> getTieredImporters(final CableTiers tier) {
-        return requireNonNull(tieredImporters.get(tier)).get();
+        return requireNonNull(this.tieredImporters.get(tier)).get();
     }
 
     public void addTieredExporter(final CableTiers tier,
@@ -43,7 +43,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<AbstractTieredExporterBlockEntity> getTieredExporters(final CableTiers tier) {
-        return requireNonNull(tieredExporters.get(tier)).get();
+        return requireNonNull(this.tieredExporters.get(tier)).get();
     }
 
     public void addTieredDestructor(final CableTiers tier,
@@ -52,7 +52,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<AbstractTieredDestructorBlockEntity> getTieredDestructors(final CableTiers tier) {
-        return requireNonNull(tieredDestructors.get(tier)).get();
+        return requireNonNull(this.tieredDestructors.get(tier)).get();
     }
 
     public void addTieredConstructor(final CableTiers tier,
@@ -61,7 +61,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<AbstractTieredConstructorBlockEntity> getTieredConstructors(final CableTiers tier) {
-        return requireNonNull(tieredConstructors.get(tier)).get();
+        return requireNonNull(this.tieredConstructors.get(tier)).get();
     }
 
     public void addTieredDiskInterface(final CableTiers tier,
@@ -70,7 +70,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<AbstractTieredDiskInterfaceBlockEntity> getTieredDiskInterfaces(final CableTiers tier) {
-        return requireNonNull(tieredDiskInterface.get(tier)).get();
+        return requireNonNull(this.tieredDiskInterface.get(tier)).get();
     }
 
     public void addTieredAutocrafter(final CableTiers tier,
@@ -79,7 +79,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<TieredAutocrafterBlockEntity> getTieredAutocrafters(final CableTiers tier) {
-        return requireNonNull(tieredAutocrafter.get(tier)).get();
+        return requireNonNull(this.tieredAutocrafter.get(tier)).get();
     }
 
     public void addTieredInterface(final CableTiers tier,
@@ -88,6 +88,6 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<TieredInterfaceBlockEntity> getTieredInterfaces(final CableTiers tier) {
-        return requireNonNull(tieredInterface.get(tier)).get();
+        return requireNonNull(this.tieredInterface.get(tier)).get();
     }
 }

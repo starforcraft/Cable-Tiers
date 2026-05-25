@@ -1,5 +1,7 @@
 package com.ultramega.cabletiers.common;
 
+import java.util.Locale;
+
 public enum CableType {
     IMPORTER,
     EXPORTER,
@@ -7,5 +9,9 @@ public enum CableType {
     CONSTRUCTOR,
     DISK_INTERFACE,
     AUTOCRAFTER,
-    INTERFACE
+    INTERFACE;
+
+    public String getLowercaseName() {
+        return this.toString().toLowerCase(Locale.ROOT);
+    }
 }

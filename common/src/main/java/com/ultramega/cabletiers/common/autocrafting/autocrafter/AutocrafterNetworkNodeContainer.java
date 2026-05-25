@@ -24,16 +24,16 @@ class AutocrafterNetworkNodeContainer extends InWorldNetworkNodeContainerImpl im
 
     @Override
     public Component getAutocrafterName() {
-        return blockEntity.getName();
+        return this.blockEntity.getName();
     }
 
     @Override
     public Container getPatternContainer() {
-        return blockEntity.getPatternContainer();
+        return this.blockEntity.getPatternContainer();
     }
 
     @Override
     public boolean isVisibleToTheAutocrafterManager() {
-        return blockEntity.isVisibleToTheAutocrafterManager();
+        return this.blockEntity.isVisibleToTheAutocrafterManager();
     }
 }

@@ -13,6 +13,7 @@ import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 public class BlockDropProvider extends BlockLootSubProvider {
     public BlockDropProvider(final HolderLookup.Provider provider) {
@@ -22,23 +23,23 @@ public class BlockDropProvider extends BlockLootSubProvider {
     @Override
     protected void generate() {
         for (final CableTiers tier : CableTiers.values()) {
-            Blocks.INSTANCE.getTieredImporters(tier).forEach((color, id, block) -> drop(block.get()));
-            Blocks.INSTANCE.getTieredExporters(tier).forEach((color, id, block) -> drop(block.get()));
-            Blocks.INSTANCE.getTieredDestructors(tier).forEach((color, id, block) -> drop(block.get()));
-            Blocks.INSTANCE.getTieredConstructors(tier).forEach((color, id, block) -> drop(block.get()));
-            Blocks.INSTANCE.getTieredDiskInterfaces(tier).forEach((color, id, block) -> drop(block.get()));
-            Blocks.INSTANCE.getTieredAutocrafters(tier).forEach((color, id, block) -> drop(block.get()));
-            drop(Blocks.INSTANCE.getTieredInterfaces(tier).get());
+            Blocks.INSTANCE.getTieredImporters(tier).forEach((color, id, block) -> this.drop(block.get()));
+            Blocks.INSTANCE.getTieredExporters(tier).forEach((color, id, block) -> this.drop(block.get()));
+            Blocks.INSTANCE.getTieredDestructors(tier).forEach((color, id, block) -> this.drop(block.get()));
+            Blocks.INSTANCE.getTieredConstructors(tier).forEach((color, id, block) -> this.drop(block.get()));
+            Blocks.INSTANCE.getTieredDiskInterfaces(tier).forEach((color, id, block) -> this.drop(block.get()));
+            Blocks.INSTANCE.getTieredAutocrafters(tier).forEach((color, id, block) -> this.drop(block.get()));
+            this.drop(Blocks.INSTANCE.getTieredInterfaces(tier).get());
         }
     }
 
     private void drop(final Block block) {
-        add(block, createSingleItemTable(block)
+        this.add(block, this.createSingleItemTable(block)
             .apply(copyName()));
     }
 
     private static CopyComponentsFunction.Builder copyName() {
-        return CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+        return CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
             .include(DataComponents.CUSTOM_NAME);
     }
 

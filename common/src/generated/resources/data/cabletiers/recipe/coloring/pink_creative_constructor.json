@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:creative_constructors"
-    },
-    {
-      "tag": "c:dyes/pink"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:pink_creative_constructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "pink",
+  "ingredient": "#cabletiers:creative_constructors",
+  "result": "cabletiers:pink_creative_constructor"
 }

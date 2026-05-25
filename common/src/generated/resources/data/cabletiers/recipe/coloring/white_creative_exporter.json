@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:creative_exporters"
-    },
-    {
-      "tag": "c:dyes/white"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:white_creative_exporter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "white",
+  "ingredient": "#cabletiers:creative_exporters",
+  "result": "cabletiers:white_creative_exporter"
 }

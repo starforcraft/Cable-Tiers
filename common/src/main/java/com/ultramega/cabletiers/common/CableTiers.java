@@ -6,19 +6,23 @@ import com.ultramega.cabletiers.common.utils.ContentNames;
 
 import java.util.Arrays;
 import java.util.Locale;
-import javax.annotation.Nullable;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import org.jspecify.annotations.Nullable;
 
-public enum CableTiers {
+public enum CableTiers implements StringRepresentable {
     ELITE(18, 18, 73),
     ULTRA(36, 27, 109),
     MEGA(54, 27, 145),
     CREATIVE(54, 27, 145);
+
+    public static final Codec<CableTiers> CODEC = StringRepresentable.fromEnum(CableTiers::values);
 
     private final int filterSlotsCount;
     private final int interfaceSlotsCount;
@@ -32,7 +36,7 @@ public enum CableTiers {
         this.playerInventoryY = playerInventoryY;
     }
 
-    public ResourceLocation getContentId(final CableType type) {
+    public Identifier getContentId(final CableType type) {
         return ContentIds.getContentId(this, type);
     }
 
@@ -90,15 +94,15 @@ public enum CableTiers {
     }
 
     public int getFilterSlotsCount() {
-        return filterSlotsCount;
+        return this.filterSlotsCount;
     }
 
     public int getInterfaceSlotsCount() {
-        return interfaceSlotsCount;
+        return this.interfaceSlotsCount;
     }
 
     public int getPlayerInventoryY() {
-        return playerInventoryY;
+        return this.playerInventoryY;
     }
 
     public String getLowercaseName() {
@@ -111,5 +115,10 @@ public enum CableTiers {
             .filter(each -> each.name().equalsIgnoreCase(search))
             .findFirst()
             .orElse(null);
+    }
+
+    @Override
+    public String getSerializedName() {
+        return this.getLowercaseName();
     }
 }

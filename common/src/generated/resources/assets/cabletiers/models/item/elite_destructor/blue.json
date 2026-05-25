@@ -1,0 +1,8 @@
+{
+  "parent": "cabletiers:item/destructor/base",
+  "textures": {
+    "border": "cabletiers:block/cable/elite_constructor_destructor",
+    "cable": "refinedstorage:block/cable/blue",
+    "particle": "cabletiers:block/cable/elite_constructor_destructor"
+  }
+}

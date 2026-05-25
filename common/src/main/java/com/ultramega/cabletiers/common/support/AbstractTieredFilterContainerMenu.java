@@ -15,7 +15,6 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeSlot;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,6 +22,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractTieredFilterContainerMenu<T extends TagFiltering> extends AbstractResourceContainerMenu {
     private static final int FILTER_SLOT_X = 8;
@@ -36,7 +36,7 @@ public abstract class AbstractTieredFilterContainerMenu<T extends TagFiltering> 
     @Nullable
     private TagFiltering blockEntity;
     @Nullable
-    private List<ResourceTag> tagKeys;
+    private List<@Nullable ResourceTag> tagKeys;
 
     protected AbstractTieredFilterContainerMenu(final MenuType<?> type,
                                                 final int syncId,
@@ -52,8 +52,8 @@ public abstract class AbstractTieredFilterContainerMenu<T extends TagFiltering> 
         this.tier = tier;
         this.blockEntity = blockEntity;
         this.playerInventoryY = playerInventoryY;
-        registerServerProperties(blockEntity);
-        addSlots(player, resourceContainer, upgradeContainer);
+        this.registerServerProperties(blockEntity);
+        this.addSlots(player, resourceContainer, upgradeContainer);
 
         this.blockEntity.setOnChanged(() -> {
             if (player instanceof ServerPlayer serverPlayer) {
@@ -74,8 +74,8 @@ public abstract class AbstractTieredFilterContainerMenu<T extends TagFiltering> 
         this.filterHelp = filterHelp;
         this.tier = tier;
         this.playerInventoryY = playerInventoryY;
-        registerClientProperties();
-        addSlots(
+        this.registerClientProperties();
+        this.addSlots(
             player,
             ResourceContainerImpl.createForFilter(resourceContainerData),
             upgradeDestination == null ? null : new UpgradeContainer(upgradeDestination)
@@ -90,46 +90,46 @@ public abstract class AbstractTieredFilterContainerMenu<T extends TagFiltering> 
                             final ResourceContainer resourceContainer,
                             @Nullable final UpgradeContainer upgradeContainer) {
         for (int i = 0; i < resourceContainer.size(); ++i) {
-            addSlot(createFilterSlot(resourceContainer, i));
+            this.addSlot(this.createFilterSlot(resourceContainer, i));
         }
         if (upgradeContainer != null) {
             for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
-                addSlot(new UpgradeSlot(upgradeContainer, i, 187, 6 + (i * 18)));
+                this.addSlot(new UpgradeSlot(upgradeContainer, i, 187, 6 + (i * 18)));
             }
         }
-        addPlayerInventory(player.getInventory(), 8, playerInventoryY);
+        this.addPlayerInventory(player.getInventory(), 8, this.playerInventoryY);
 
         if (upgradeContainer != null) {
-            transferManager.addBiTransfer(player.getInventory(), upgradeContainer);
+            this.transferManager.addBiTransfer(player.getInventory(), upgradeContainer);
         }
-        transferManager.addFilterTransfer(player.getInventory());
+        this.transferManager.addFilterTransfer(player.getInventory());
     }
 
     private Slot createFilterSlot(final ResourceContainer resourceContainer, final int i) {
         final int x = FILTER_SLOT_X + (18 * (i % 9));
         final int y = FILTER_SLOT_Y + (18 * (i / 9));
-        return new AdvancedResourceSlot(this, player, resourceContainer, i, filterHelp, x, y, ResourceSlotType.FILTER);
+        return new AdvancedResourceSlot(this, this.player, resourceContainer, i, this.filterHelp, x, y, ResourceSlotType.FILTER);
     }
 
     @Override
     public void removed(final Player player) {
-        if (blockEntity != null) {
-            blockEntity.setInContainerMenu(false);
-            blockEntity.resetFakeFilters();
+        if (this.blockEntity != null) {
+            this.blockEntity.setInContainerMenu(false);
+            this.blockEntity.resetFakeFilters();
         }
         super.removed(player);
     }
 
     public void setTagFilter(final int slotIndex, @Nullable final ResourceTag resourceTag) {
-        if (blockEntity != null) {
-            blockEntity.setTagFilter(slotIndex, resourceTag);
+        if (this.blockEntity != null) {
+            this.blockEntity.setTagFilter(slotIndex, resourceTag);
         }
     }
 
     @Nullable
     public TagKey<?> getTagFilter(final int slotIndex) {
-        if (blockEntity != null) {
-            return blockEntity.getTagFilter(slotIndex);
+        if (this.blockEntity != null) {
+            return this.blockEntity.getTagFilter(slotIndex);
         }
 
         return null;
@@ -140,7 +140,7 @@ public abstract class AbstractTieredFilterContainerMenu<T extends TagFiltering> 
     }
 
     @Nullable
-    public List<ResourceTag> getTagKeys() {
-        return tagKeys;
+    public List<@Nullable ResourceTag> getTagKeys() {
+        return this.tagKeys;
     }
 }

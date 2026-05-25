@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:mega_disk_interfaces"
-    },
-    {
-      "tag": "c:dyes/lime"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:lime_mega_disk_interface"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "lime",
+  "ingredient": "#cabletiers:mega_disk_interfaces",
+  "result": "cabletiers:lime_mega_disk_interface"
 }

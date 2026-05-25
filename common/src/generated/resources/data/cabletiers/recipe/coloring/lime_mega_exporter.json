@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:mega_exporters"
-    },
-    {
-      "tag": "c:dyes/lime"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:lime_mega_exporter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "lime",
+  "ingredient": "#cabletiers:mega_exporters",
+  "result": "cabletiers:lime_mega_exporter"
 }

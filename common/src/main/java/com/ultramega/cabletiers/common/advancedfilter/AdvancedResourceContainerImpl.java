@@ -1,7 +1,6 @@
 package com.ultramega.cabletiers.common.advancedfilter;
 
 import com.ultramega.cabletiers.common.CableTiers;
-import com.ultramega.cabletiers.common.utils.ModCodecs;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
@@ -18,19 +17,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.ToLongFunction;
-import javax.annotation.Nullable;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.tags.TagKey;
+import org.jspecify.annotations.Nullable;
 
 public class AdvancedResourceContainerImpl extends ResourceContainerImpl {
     private static final String TAG_FILTER = "tf";
     private static final String TAG_FILTER_INDICES = "tfi";
 
+    @Nullable
     private ResourceTag[] filterTags;
+    @Nullable
     private ResourceAmount[] fakeSlots;
     private int[] fakeStartIndices;
     private int[] fakeShowcaseIndices;
@@ -47,7 +44,7 @@ public class AdvancedResourceContainerImpl extends ResourceContainerImpl {
         this.fakeSlots = new ResourceAmount[size];
         this.fakeStartIndices = new int[size];
         this.fakeShowcaseIndices = new int[size];
-        Arrays.fill(fakeShowcaseIndices, -1);
+        Arrays.fill(this.fakeShowcaseIndices, -1);
     }
 
     public void setListener(final Consumer<Integer> listener) {
@@ -58,8 +55,8 @@ public class AdvancedResourceContainerImpl extends ResourceContainerImpl {
     public void set(final int index, final ResourceAmount resourceAmount) {
         super.set(index, resourceAmount);
 
-        if (listener != null) {
-            listener.accept(index);
+        if (this.listener != null) {
+            this.listener.accept(index);
         }
     }
 
@@ -67,28 +64,28 @@ public class AdvancedResourceContainerImpl extends ResourceContainerImpl {
     public void remove(final int index) {
         super.remove(index);
 
-        fakeSlots[index] = null;
-        fakeStartIndices[index] = 0;
-        fakeShowcaseIndices[index] = -1;
-        if (listener != null) {
-            listener.accept(index);
+        this.fakeSlots[index] = null;
+        this.fakeStartIndices[index] = 0;
+        this.fakeShowcaseIndices[index] = -1;
+        if (this.listener != null) {
+            this.listener.accept(index);
         }
     }
 
     @Override
     @Nullable
     public ResourceAmount get(final int index) {
-        return fakeSlots[index] != null ? fakeSlots[index] : super.get(index);
+        return this.fakeSlots[index] != null ? this.fakeSlots[index] : super.get(index);
     }
 
     public void updateFakeSlot(final int index, final ResourceTag tag) {
-        if (fakeShowcaseIndices[index] == -1) {
-            fakeShowcaseIndices[index] = fakeStartIndices[index];
+        if (this.fakeShowcaseIndices[index] == -1) {
+            this.fakeShowcaseIndices[index] = this.fakeStartIndices[index];
         }
 
-        int showcasedIndex = ++fakeShowcaseIndices[index];
+        int showcasedIndex = ++this.fakeShowcaseIndices[index];
         if (showcasedIndex >= tag.resources().size()) {
-            fakeShowcaseIndices[index] = 0;
+            this.fakeShowcaseIndices[index] = 0;
             showcasedIndex = 0;
         }
 
@@ -104,35 +101,36 @@ public class AdvancedResourceContainerImpl extends ResourceContainerImpl {
     }
 
     public int getFakeShowcaseIndex(final int index) {
-        if (fakeShowcaseIndices[index] == -1) {
-            fakeShowcaseIndices[index] = fakeStartIndices[index];
+        if (this.fakeShowcaseIndices[index] == -1) {
+            this.fakeShowcaseIndices[index] = this.fakeStartIndices[index];
         }
 
-        return fakeShowcaseIndices[index];
+        return this.fakeShowcaseIndices[index];
     }
 
     public void setFilterTag(final int index, @Nullable final ResourceTag resourceTag) {
-        filterTags[index] = resourceTag;
+        this.filterTags[index] = resourceTag;
     }
 
     public @Nullable TagKey<?> getFilterTag(final int index) {
-        return filterTags[index] != null ? filterTags[index].key() : null;
+        return this.filterTags[index] != null ? this.filterTags[index].key() : null;
     }
 
-    public List<ResourceTag> getFilterTagsWithNull() {
-        return new ArrayList<>(Arrays.asList(filterTags));
+    public List<@Nullable ResourceTag> getFilterTagsWithNull() {
+        return new ArrayList<>(Arrays.asList(this.filterTags));
     }
 
     public List<ResourceTag> getFilterTags() {
         final List<ResourceTag> tags = new ArrayList<>();
 
-        for (int i = 0; i < size(); ++i) {
-            final PlatformResourceKey slot = getResource(i);
+        for (int i = 0; i < this.size(); ++i) {
+            final PlatformResourceKey slot = this.getResource(i);
             if (slot == null) {
                 continue;
             }
 
-            tags.add(filterTags[i] != null ? filterTags[i] : null);
+            final ResourceTag filterTag = this.filterTags[i];
+            tags.add(filterTag);
         }
 
         return tags;
@@ -141,65 +139,44 @@ public class AdvancedResourceContainerImpl extends ResourceContainerImpl {
     public Set<TagKey<?>> getUniqueFilterTags() {
         final Set<TagKey<?>> uniqueTags = new HashSet<>();
 
-        for (int i = 0; i < size(); ++i) {
-            final PlatformResourceKey slot = getResource(i);
+        for (int i = 0; i < this.size(); ++i) {
+            final PlatformResourceKey slot = this.getResource(i);
             if (slot == null) {
                 continue;
             }
 
-            uniqueTags.add(filterTags[i] != null ? filterTags[i].key() : null);
+            final ResourceTag filterTag = this.filterTags[i];
+            uniqueTags.add(filterTag != null ? filterTag.key() : null);
         }
 
         return uniqueTags;
     }
 
     public void setFake(final int index, @Nullable final ResourceAmount resourceAmount) {
-        fakeSlots[index] = resourceAmount;
+        this.fakeSlots[index] = resourceAmount;
     }
 
     public void resetFakeFilters() {
-        fakeSlots = new ResourceAmount[fakeSlots.length];
-        fakeStartIndices = new int[fakeSlots.length];
-        fakeShowcaseIndices = new int[fakeSlots.length];
-        Arrays.fill(fakeShowcaseIndices, -1);
+        this.fakeSlots = new ResourceAmount[this.fakeSlots.length];
+        this.fakeStartIndices = new int[this.fakeSlots.length];
+        this.fakeShowcaseIndices = new int[this.fakeSlots.length];
+        Arrays.fill(this.fakeShowcaseIndices, -1);
     }
 
-    @Override
-    public CompoundTag toTag(final HolderLookup.Provider provider) {
-        final CompoundTag tag = super.toTag(provider);
-        tag.put(TAG_FILTER, filterTagsToTag());
-        tag.putIntArray(TAG_FILTER_INDICES, fakeStartIndices);
-        return tag;
+    public void load(final TagResourceContainerContents contents) {
+        super.load(contents.resourceContents());
+        this.filterTags = contents.filterTags()
+            .stream()
+            .map(optional -> optional.orElse(null))
+            .toArray(ResourceTag[]::new);
+        this.fakeStartIndices = contents.fakeStartIndices()
+            .stream()
+            .mapToInt(Integer::intValue)
+            .toArray();
     }
 
-    @Override
-    public void fromTag(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.fromTag(tag, provider);
-        this.filterTags = filterTagsFromTag(tag);
-        this.fakeStartIndices = tag.getIntArray(TAG_FILTER_INDICES);
-    }
-
-    private ListTag filterTagsToTag() {
-        final ListTag listTag = new ListTag();
-        for (final ResourceTag resourceTag : getFilterTagsWithNull()) {
-            if (resourceTag != null) {
-                listTag.add(ModCodecs.RESOURCE_TAG_CODEC.encode(resourceTag, NbtOps.INSTANCE, new CompoundTag()).getOrThrow());
-            } else {
-                listTag.add(new CompoundTag());
-            }
-        }
-
-        return listTag;
-    }
-
-    private ResourceTag[] filterTagsFromTag(final CompoundTag tag) {
-        final ListTag listTag = tag.getList(TAG_FILTER, ListTag.TAG_COMPOUND);
-        final ResourceTag[] tags = new ResourceTag[listTag.size()];
-        for (int i = 0; i < listTag.size(); i++) {
-            tags[i] = ModCodecs.RESOURCE_TAG_CODEC.parse(NbtOps.INSTANCE, listTag.getCompound(i)).result().orElse(null);
-        }
-
-        return tags;
+    public List<Integer> getFakeStartIndices() {
+        return Arrays.stream(this.fakeStartIndices).boxed().toList();
     }
 
     public static AdvancedResourceContainerImpl createForFilter(final CableTiers tier) {

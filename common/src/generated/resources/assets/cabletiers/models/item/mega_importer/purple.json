@@ -1,0 +1,8 @@
+{
+  "parent": "cabletiers:item/importer/base",
+  "textures": {
+    "border": "cabletiers:block/cable/mega_part_border",
+    "cable": "refinedstorage:block/cable/purple",
+    "particle": "cabletiers:block/cable/mega_part_border"
+  }
+}

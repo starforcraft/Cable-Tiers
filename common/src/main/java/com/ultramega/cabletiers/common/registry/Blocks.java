@@ -44,109 +44,109 @@ public final class Blocks {
     public Map<CableTiers, BlockColorMap<TieredImporterBlock, BaseBlockItem>> setTieredImporters(
         final BlockEntityTierProvider<AbstractTieredImporterBlockEntity> provider) {
         for (final CableTiers tier : CableTiers.values()) {
-            tieredImporters.put(tier, new BlockColorMap<>(
-                (color, name) -> new TieredImporterBlock(color, name, tier, provider),
+            this.tieredImporters.put(tier, new BlockColorMap<>(
+                (id, color, name) -> new TieredImporterBlock(id, color, name, tier, provider),
                 tier.getContentId(CableType.IMPORTER),
                 tier.getContentName(CableType.IMPORTER),
                 CABLE_LIKE_COLOR
             ));
         }
-        return tieredImporters;
+        return this.tieredImporters;
     }
 
     public BlockColorMap<TieredImporterBlock, BaseBlockItem> getTieredImporters(final CableTiers tier) {
-        return requireNonNull(tieredImporters.get(tier));
+        return requireNonNull(this.tieredImporters.get(tier));
     }
 
     public Map<CableTiers, BlockColorMap<TieredExporterBlock, BaseBlockItem>> setTieredExporters(
         final BlockEntityTierProvider<AbstractTieredExporterBlockEntity> provider) {
         for (final CableTiers tier : CableTiers.values()) {
-            tieredExporters.put(tier, new BlockColorMap<>(
-                (color, name) -> new TieredExporterBlock(color, name, tier, provider),
+            this.tieredExporters.put(tier, new BlockColorMap<>(
+                (id, color, name) -> new TieredExporterBlock(id, color, name, tier, provider),
                 tier.getContentId(CableType.EXPORTER),
                 tier.getContentName(CableType.EXPORTER),
                 CABLE_LIKE_COLOR
             ));
         }
-        return tieredExporters;
+        return this.tieredExporters;
     }
 
     public BlockColorMap<TieredExporterBlock, BaseBlockItem> getTieredExporters(final CableTiers tier) {
-        return requireNonNull(tieredExporters.get(tier));
+        return requireNonNull(this.tieredExporters.get(tier));
     }
 
     public Map<CableTiers, BlockColorMap<TieredDestructorBlock, BaseBlockItem>> setTieredDestructors(
         final BlockEntityTierProvider<AbstractTieredDestructorBlockEntity> provider) {
         for (final CableTiers tier : CableTiers.values()) {
-            tieredDestructors.put(tier, new BlockColorMap<>(
-                (color, name) -> new TieredDestructorBlock(color, name, tier, provider),
+            this.tieredDestructors.put(tier, new BlockColorMap<>(
+                (id, color, name) -> new TieredDestructorBlock(id, color, name, tier, provider),
                 tier.getContentId(CableType.DESTRUCTOR),
                 tier.getContentName(CableType.DESTRUCTOR),
                 CABLE_LIKE_COLOR
             ));
         }
-        return tieredDestructors;
+        return this.tieredDestructors;
     }
 
     public BlockColorMap<TieredDestructorBlock, BaseBlockItem> getTieredDestructors(final CableTiers tier) {
-        return requireNonNull(tieredDestructors.get(tier));
+        return requireNonNull(this.tieredDestructors.get(tier));
     }
 
     public Map<CableTiers, BlockColorMap<TieredConstructorBlock, BaseBlockItem>> setTieredConstructors(
         final BlockEntityTierProvider<AbstractTieredConstructorBlockEntity> provider) {
         for (final CableTiers tier : CableTiers.values()) {
-            tieredConstructors.put(tier, new BlockColorMap<>(
-                (color, name) -> new TieredConstructorBlock(color, name, tier, provider),
+            this.tieredConstructors.put(tier, new BlockColorMap<>(
+                (id, color, name) -> new TieredConstructorBlock(id, color, name, tier, provider),
                 tier.getContentId(CableType.CONSTRUCTOR),
                 tier.getContentName(CableType.CONSTRUCTOR),
                 CABLE_LIKE_COLOR
             ));
         }
-        return tieredConstructors;
+        return this.tieredConstructors;
     }
 
     public BlockColorMap<TieredConstructorBlock, BaseBlockItem> getTieredConstructors(final CableTiers tier) {
-        return requireNonNull(tieredConstructors.get(tier));
+        return requireNonNull(this.tieredConstructors.get(tier));
     }
 
     public Map<CableTiers, BlockColorMap<TieredDiskInterfaceBlock, BaseBlockItem>> setTieredDiskInterfaces(
         final BlockEntityTierProvider<AbstractTieredDiskInterfaceBlockEntity> provider) {
         for (final CableTiers tier : CableTiers.values()) {
-            tieredDiskInterface.put(tier, new BlockColorMap<>(
-                (color, name) -> new TieredDiskInterfaceBlock(color, name, tier, provider),
+            this.tieredDiskInterface.put(tier, new BlockColorMap<>(
+                (id, color, name) -> new TieredDiskInterfaceBlock(id, color, name, tier, provider),
                 tier.getContentId(CableType.DISK_INTERFACE),
                 tier.getContentName(CableType.DISK_INTERFACE),
                 COLOR
             ));
         }
-        return tieredDiskInterface;
+        return this.tieredDiskInterface;
     }
 
     public BlockColorMap<TieredDiskInterfaceBlock, BaseBlockItem> getTieredDiskInterfaces(final CableTiers tier) {
-        return requireNonNull(tieredDiskInterface.get(tier));
+        return requireNonNull(this.tieredDiskInterface.get(tier));
     }
 
     public Map<CableTiers, BlockColorMap<TieredAutocrafterBlock, BaseBlockItem>> setTieredAutocrafters() {
         for (final CableTiers tier : CableTiers.values()) {
-            tieredAutocrafters.put(tier, new BlockColorMap<>(
-                (color, name) -> new TieredAutocrafterBlock(color, name, tier),
+            this.tieredAutocrafters.put(tier, new BlockColorMap<>(
+                (id, color, name) -> new TieredAutocrafterBlock(id, color, name, tier),
                 tier.getContentId(CableType.AUTOCRAFTER),
                 tier.getContentName(CableType.AUTOCRAFTER),
                 COLOR
             ));
         }
-        return tieredAutocrafters;
+        return this.tieredAutocrafters;
     }
 
     public BlockColorMap<TieredAutocrafterBlock, BaseBlockItem> getTieredAutocrafters(final CableTiers tier) {
-        return requireNonNull(tieredAutocrafters.get(tier));
+        return requireNonNull(this.tieredAutocrafters.get(tier));
     }
 
     public void setTieredInterfaces(final CableTiers tier, final Supplier<TieredInterfaceBlock> interfaceSupplier) {
-        tieredInterfaces.put(tier, interfaceSupplier);
+        this.tieredInterfaces.put(tier, interfaceSupplier);
     }
 
     public Supplier<TieredInterfaceBlock> getTieredInterfaces(final CableTiers tier) {
-        return requireNonNull(tieredInterfaces.get(tier));
+        return requireNonNull(this.tieredInterfaces.get(tier));
     }
 }

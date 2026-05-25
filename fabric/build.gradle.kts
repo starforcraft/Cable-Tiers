@@ -49,6 +49,6 @@ dependencies {
     compileOnly(project(":common"))
     commonJava(project(path = ":common", configuration = "commonJava"))
     commonResources(project(path = ":common", configuration = "commonResources"))
-    modApi("com.refinedmods.refinedstorage:refinedstorage-fabric:${refinedstorageVersion}")
+    api("com.refinedmods.refinedstorage:refinedstorage-fabric:${refinedstorageVersion}")
     implementation("curse.maven:jade-324717:${jadeVersion}")
 }

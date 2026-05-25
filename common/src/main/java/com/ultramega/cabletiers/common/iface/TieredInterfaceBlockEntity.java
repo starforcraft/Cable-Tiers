@@ -4,7 +4,7 @@ import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.iface.externalstorage.TieredInterfaceExternalStorageProvider;
 import com.ultramega.cabletiers.common.iface.externalstorage.TieredInterfaceExternalStorageProviderImpl;
-import com.ultramega.cabletiers.common.mixin.InvokerResourceContainerImpl;
+import com.ultramega.cabletiers.common.mixin.ResourceContainerImplInvoker;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.utils.AbstractResourceContainerContainerAdapter;
 import com.ultramega.cabletiers.common.utils.ContentNames;
@@ -16,39 +16,41 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
+import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainerContents;
 import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.iface.InterfaceData;
-import com.refinedmods.refinedstorage.common.support.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.exportingindicator.ExportingIndicator;
 import com.refinedmods.refinedstorage.common.support.exportingindicator.ExportingIndicators;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
-import com.refinedmods.refinedstorage.common.util.ContainerUtil;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 
 public class TieredInterfaceBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntity<TieredInterfaceNetworkNode>
-    implements NetworkNodeExtendedMenuProvider<InterfaceData>, BlockEntityWithDrops {
+    implements NetworkNodeExtendedMenuProvider<InterfaceData> {
     private static final String TAG_EXPORT_ITEMS = "ei";
     private static final String TAG_UPGRADES = "upgr";
 
@@ -71,24 +73,23 @@ public class TieredInterfaceBlockEntity extends AbstractBaseNetworkNodeContainer
         this.mainNetworkNode.setTransferQuotaProvider((resource) -> TieredInterfaceBlockEntity.getTransferQuota(tier, resource));
         this.upgradeContainer = new UpgradeContainer(1, UpgradeDestinations.INTERFACE, (c, upgradeEnergyUsage) -> {
             final long baseEnergyUsage = tier.getEnergyUsage(CableType.INTERFACE);
-            mainNetworkNode.setEnergyUsage(baseEnergyUsage + upgradeEnergyUsage);
+            this.mainNetworkNode.setEnergyUsage(baseEnergyUsage + upgradeEnergyUsage);
             final boolean autocrafting = c.has(Items.INSTANCE.getAutocraftingUpgrade());
-            mainNetworkNode.setOnMissingResources(autocrafting
+            this.mainNetworkNode.setOnMissingResources(autocrafting
                 ? new InterfaceNetworkNode.AutocraftOnMissingResources()
                 : InterfaceNetworkNode.OnMissingResources.EMPTY);
-            setChanged();
-        });
+        }, this::setChanged);
         this.filter = FilterWithFuzzyMode.create(createFilterContainer(tier), this::setChanged);
-        this.exportedResources = createExportedResourcesContainer(tier, filter);
+        this.exportedResources = createExportedResourcesContainer(tier, this.filter);
         this.exportedResources.setListener(this::setChanged);
-        this.mainNetworkNode.setExportState(exportedResources);
-        this.exportedResourcesAsContainer = new AbstractResourceContainerContainerAdapter(exportedResources) {
+        this.mainNetworkNode.setExportState(this.exportedResources);
+        this.exportedResourcesAsContainer = new AbstractResourceContainerContainerAdapter(this.exportedResources) {
             @Override
             public void setChanged() {
-                ((InvokerResourceContainerImpl) exportedResources).cabletiers$changed();
+                ((ResourceContainerImplInvoker) TieredInterfaceBlockEntity.this.exportedResources).cabletiers$changed();
             }
         };
-        this.externalStorageProvider = new TieredInterfaceExternalStorageProviderImpl(mainNetworkNode);
+        this.externalStorageProvider = new TieredInterfaceExternalStorageProviderImpl(this.mainNetworkNode);
     }
 
     static ResourceContainer createFilterContainer(final CableTiers tier) {
@@ -137,69 +138,65 @@ public class TieredInterfaceBlockEntity extends AbstractBaseNetworkNodeContainer
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        tag.put(TAG_EXPORT_ITEMS, exportedResources.toTag(provider));
-        tag.put(TAG_UPGRADES, ContainerUtil.write(upgradeContainer, provider));
+    public void saveAdditional(final ValueOutput output) {
+        super.saveAdditional(output);
+        output.store(TAG_EXPORT_ITEMS, ResourceCodecs.CONTAINER_CONTENTS_CODEC, ResourceContainerContents.of(this.exportedResources));
+        output.store(TAG_UPGRADES, ItemContainerContents.CODEC, ItemContainerContents.fromItems(this.upgradeContainer.getItems()));
     }
 
     @Override
-    public void writeConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.writeConfiguration(tag, provider);
-        filter.save(tag, provider);
+    public void loadAdditional(final ValueInput input) {
+        input.read(TAG_EXPORT_ITEMS, ResourceCodecs.CONTAINER_CONTENTS_CODEC).ifPresent(this.exportedResources::load);
+        input.read(TAG_UPGRADES, ItemContainerContents.CODEC).ifPresent(this.upgradeContainer::load);
+        super.loadAdditional(input);
     }
 
     @Override
-    public void loadAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        if (tag.contains(TAG_EXPORT_ITEMS)) {
-            exportedResources.fromTag(tag.getCompound(TAG_EXPORT_ITEMS), provider);
-        }
-        if (tag.contains(TAG_UPGRADES)) {
-            ContainerUtil.read(tag.getCompound(TAG_UPGRADES), upgradeContainer, provider);
-        }
-        super.loadAdditional(tag, provider);
+    public void writeConfiguration(final ValueOutput output) {
+        super.writeConfiguration(output);
+        this.filter.store(output);
+    }
+
+    @Override
+    public void readConfiguration(final ValueInput input) {
+        super.readConfiguration(input);
+        this.filter.read(input);
     }
 
     @Override
     public List<ItemStack> getUpgrades() {
-        return upgradeContainer.getUpgrades();
+        return this.upgradeContainer.getUpgrades();
     }
 
     @Override
     public boolean addUpgrade(final ItemStack upgradeStack) {
-        return upgradeContainer.addUpgrade(upgradeStack);
-    }
-
-    @Override
-    public void readConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.readConfiguration(tag, provider);
-        filter.load(tag, provider);
+        return this.upgradeContainer.addUpgrade(upgradeStack);
     }
 
     boolean isFuzzyMode() {
-        return filter.isFuzzyMode();
+        return this.filter.isFuzzyMode();
     }
 
     void setFuzzyMode(final boolean fuzzyMode) {
-        filter.setFuzzyMode(fuzzyMode);
+        this.filter.setFuzzyMode(fuzzyMode);
     }
 
     void clearFilters() {
-        filter.getFilterContainer().clear();
+        this.filter.getFilterContainer().clear();
     }
 
     void setFilters(final List<ResourceAmount> filters) {
         for (int i = 0; i < filters.size(); i++) {
-            filter.getFilterContainer().set(i, filters.get(i));
+            this.filter.getFilterContainer().set(i, filters.get(i));
         }
     }
 
     public ExportedResourcesContainer getExportedResources() {
-        return exportedResources;
+        return this.exportedResources;
     }
 
     public Container getExportedResourcesAsContainer() {
-        return exportedResourcesAsContainer;
+        return this.exportedResourcesAsContainer;
     }
 
     @Nullable
@@ -209,19 +206,19 @@ public class TieredInterfaceBlockEntity extends AbstractBaseNetworkNodeContainer
             syncId,
             player,
             this,
-            filter.getFilterContainer(),
-            exportedResources,
-            exportedResourcesAsContainer,
-            upgradeContainer,
-            getExportingIndicators(),
-            tier
+            this.filter.getFilterContainer(),
+            this.exportedResources,
+            this.exportedResourcesAsContainer,
+            this.upgradeContainer,
+            this.getExportingIndicators(),
+            this.tier
         );
     }
 
     private ExportingIndicators getExportingIndicators() {
         return new ExportingIndicators(
-            filter.getFilterContainer(),
-            i -> toExportingIndicator(mainNetworkNode.getLastResult(i)),
+            this.filter.getFilterContainer(),
+            i -> this.toExportingIndicator(this.mainNetworkNode.getLastResult(i)),
             true
         );
     }
@@ -239,9 +236,9 @@ public class TieredInterfaceBlockEntity extends AbstractBaseNetworkNodeContainer
     @Override
     public InterfaceData getMenuData() {
         return new InterfaceData(
-            ResourceContainerData.of(filter.getFilterContainer()),
-            ResourceContainerData.of(exportedResources),
-            getExportingIndicators().getAll()
+            ResourceContainerData.of(this.filter.getFilterContainer()),
+            ResourceContainerData.of(this.exportedResources),
+            this.getExportingIndicators().getAll()
         );
     }
 
@@ -252,24 +249,27 @@ public class TieredInterfaceBlockEntity extends AbstractBaseNetworkNodeContainer
 
     @Override
     public Component getName() {
-        return overrideName(ContentNames.getContentName(tier, CableType.INTERFACE));
+        return this.overrideName(ContentNames.getContentName(this.tier, CableType.INTERFACE));
     }
 
     @Override
-    public final NonNullList<ItemStack> getDrops() {
-        final NonNullList<ItemStack> drops = NonNullList.create();
-        for (int i = 0; i < exportedResourcesAsContainer.getContainerSize(); ++i) {
-            drops.add(exportedResourcesAsContainer.getItem(i));
+    public void preRemoveSideEffects(final BlockPos pos, final BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (this.level != null) {
+            final NonNullList<ItemStack> drops = NonNullList.create();
+            for (int i = 0; i < this.exportedResourcesAsContainer.getContainerSize(); ++i) {
+                drops.add(this.exportedResourcesAsContainer.getItem(i));
+            }
+            drops.addAll(this.upgradeContainer.getDrops());
+            Containers.dropContents(this.level, pos, drops);
         }
-        drops.addAll(upgradeContainer.getDrops());
-        return drops;
     }
 
     TieredInterfaceExternalStorageProvider getExternalStorageProvider() {
-        return externalStorageProvider;
+        return this.externalStorageProvider;
     }
 
     TieredInterfaceNetworkNode getInterface() {
-        return mainNetworkNode;
+        return this.mainNetworkNode;
     }
 }

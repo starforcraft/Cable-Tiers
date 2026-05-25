@@ -2,12 +2,11 @@ package com.ultramega.cabletiers.common.utils;
 
 import com.refinedmods.refinedstorage.common.support.tooltip.SmallText;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.Nullable;
 
 import static com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputScreen.getDirectionName;
 
@@ -15,7 +14,7 @@ public final class ClientUtils {
     private ClientUtils() {
     }
 
-    public static void renderDirectionText(final GuiGraphics graphics, final Font font, @Nullable final Direction direction, final int x, final int y) {
+    public static void renderDirectionText(final GuiGraphicsExtractor graphics, final Font font, @Nullable final Direction direction, final int x, final int y) {
         if (direction == null) {
             return;
         }
@@ -23,8 +22,6 @@ public final class ClientUtils {
         final Component name = getDirectionName(direction);
         final String shortName = name.getString().substring(0, 1);
 
-        graphics.pose().pushPose();
-        graphics.pose().translate(0.0F, 0.0F, 200.0F);
         SmallText.render(
             graphics,
             font,
@@ -35,6 +32,5 @@ public final class ClientUtils {
             true,
             SmallText.DEFAULT_SCALE
         );
-        graphics.pose().popPose();
     }
 }

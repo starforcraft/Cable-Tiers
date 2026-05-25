@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:creative_constructors"
-    },
-    {
-      "tag": "c:dyes/orange"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:orange_creative_constructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "orange",
+  "ingredient": "#cabletiers:creative_constructors",
+  "result": "cabletiers:orange_creative_constructor"
 }

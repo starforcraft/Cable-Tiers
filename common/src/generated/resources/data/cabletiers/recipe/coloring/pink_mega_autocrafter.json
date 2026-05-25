@@ -1,16 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "cabletiers:mega_autocrafters"
-    },
-    {
-      "tag": "c:dyes/pink"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "cabletiers:pink_mega_autocrafter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "pink",
+  "ingredient": "#cabletiers:mega_autocrafters",
+  "result": "cabletiers:pink_mega_autocrafter"
 }

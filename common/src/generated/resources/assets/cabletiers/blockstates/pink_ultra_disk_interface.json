@@ -1,7 +1,9 @@
 {
   "variants": {
     "": {
-      "model": "cabletiers:block/ultra_disk_interface/pink"
+      "type": "cabletiers:tiered_disk_interface",
+      "color": "pink",
+      "tier": "ultra"
     }
   }
 }

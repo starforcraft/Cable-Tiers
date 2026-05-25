@@ -23,13 +23,13 @@ public abstract class AbstractResourceContainerContainerAdapter implements Conta
 
     @Override
     public int getContainerSize() {
-        return container.size();
+        return this.container.size();
     }
 
     @Override
     public boolean isEmpty() {
-        for (int i = 0; i < container.size(); ++i) {
-            if (!container.isEmpty(i)) {
+        for (int i = 0; i < this.container.size(); ++i) {
+            if (!this.container.isEmpty(i)) {
                 return false;
             }
         }
@@ -38,15 +38,15 @@ public abstract class AbstractResourceContainerContainerAdapter implements Conta
 
     @Override
     public ItemStack getItem(final int slotIndex) {
-        return container.getStackRepresentation(slotIndex);
+        return this.container.getStackRepresentation(slotIndex);
     }
 
     @Override
     public ItemStack removeItem(final int slotIndex, final int amount) {
-        final ResourceKey resource = container.getResource(slotIndex);
+        final ResourceKey resource = this.container.getResource(slotIndex);
         if (resource instanceof ItemResource itemResource) {
-            final long maxRemove = Math.min(amount, container.getAmount(slotIndex));
-            container.shrink(slotIndex, maxRemove);
+            final long maxRemove = Math.min(amount, this.container.getAmount(slotIndex));
+            this.container.shrink(slotIndex, maxRemove);
             return itemResource.toItemStack(maxRemove);
         }
         return ItemStack.EMPTY;
@@ -54,11 +54,11 @@ public abstract class AbstractResourceContainerContainerAdapter implements Conta
 
     @Override
     public ItemStack removeItemNoUpdate(final int slotIndex) {
-        final ResourceKey resource = container.getResource(slotIndex);
+        final ResourceKey resource = this.container.getResource(slotIndex);
         if (resource instanceof ItemResource itemResource) {
             final ItemStack stack = itemResource.toItemStack();
-            final long maxRemove = Math.min(Math.max(container.getMaxAmount(resource), stack.getMaxStackSize()), container.getAmount(slotIndex));
-            container.shrink(slotIndex, maxRemove);
+            final long maxRemove = Math.min(Math.max(this.container.getMaxAmount(resource), stack.getMaxStackSize()), this.container.getAmount(slotIndex));
+            this.container.shrink(slotIndex, maxRemove);
             return stack.copyWithCount((int) maxRemove);
         }
         return ItemStack.EMPTY;
@@ -66,28 +66,28 @@ public abstract class AbstractResourceContainerContainerAdapter implements Conta
 
     @Override
     public boolean canPlaceItem(final int slot, final ItemStack stack) {
-        if (container.isEmpty(slot)) {
+        if (this.container.isEmpty(slot)) {
             return true;
         }
-        final PlatformResourceKey current = container.getResource(slot);
+        final PlatformResourceKey current = this.container.getResource(slot);
         if (!(current instanceof ItemResource)) {
             return false;
         }
         final ItemResource resource = ItemResource.ofItemStack(stack);
         return resource.equals(current)
-            && container.getAmount(slot) + stack.getCount() <= Math.max(container.getMaxAmount(resource), stack.getMaxStackSize());
+            && this.container.getAmount(slot) + stack.getCount() <= Math.max(this.container.getMaxAmount(resource), stack.getMaxStackSize());
     }
 
     @Override
     public void setItem(final int slotIndex, final ItemStack itemStack) {
-        final ResourceKey resource = container.getResource(slotIndex);
+        final ResourceKey resource = this.container.getResource(slotIndex);
         if (itemStack.isEmpty()) {
             if (resource instanceof ItemResource) {
-                container.remove(slotIndex);
+                this.container.remove(slotIndex);
             }
             return;
         }
-        container.set(slotIndex, new ResourceAmount(
+        this.container.set(slotIndex, new ResourceAmount(
             ItemResource.ofItemStack(itemStack),
             itemStack.getCount()
         ));
@@ -100,7 +100,7 @@ public abstract class AbstractResourceContainerContainerAdapter implements Conta
 
     @Override
     public int getMaxStackSize(final ItemStack stack) {
-        return (int) Math.clamp(0, container.getMaxAmount(ItemResource.ofItemStack(stack)), Integer.MAX_VALUE);
+        return (int) Math.clamp(0, this.container.getMaxAmount(ItemResource.ofItemStack(stack)), Integer.MAX_VALUE);
     }
 
     @Override
@@ -110,8 +110,8 @@ public abstract class AbstractResourceContainerContainerAdapter implements Conta
 
     @Override
     public void clearContent() {
-        for (int i = 0; i < container.size(); ++i) {
-            container.remove(i);
+        for (int i = 0; i < this.container.size(); ++i) {
+            this.container.remove(i);
         }
     }
 }

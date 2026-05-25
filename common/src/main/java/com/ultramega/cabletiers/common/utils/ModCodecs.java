@@ -3,6 +3,8 @@ package com.ultramega.cabletiers.common.utils;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceTag;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 
+import java.util.Optional;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Registry;
@@ -10,14 +12,14 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 
-public class ModCodecs {
+public final class ModCodecs {
     public static final Codec<TagKey<?>> TAG_KEY_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        ResourceLocation.CODEC.fieldOf("registry").forGetter(tagKey -> tagKey.registry().location()),
-        ResourceLocation.CODEC.fieldOf("tag").forGetter(TagKey::location)
+        Identifier.CODEC.fieldOf("registry").forGetter(tagKey -> tagKey.registry().identifier()),
+        Identifier.CODEC.fieldOf("tag").forGetter(TagKey::location)
     ).apply(instance, (registry, tag) -> {
         final ResourceKey<Registry<Object>> registryKey = ResourceKey.createRegistryKey(registry);
         return TagKey.create(registryKey, tag);
@@ -25,12 +27,12 @@ public class ModCodecs {
 
     public static final StreamCodec<FriendlyByteBuf, TagKey<?>> TAG_KEY_GENERIC_STREAM_CODEC = StreamCodec.of(
         (buf, tagKey) -> {
-            buf.writeResourceLocation(tagKey.registry().location());
-            buf.writeResourceLocation(tagKey.location());
+            buf.writeIdentifier(tagKey.registry().identifier());
+            buf.writeIdentifier(tagKey.location());
         },
         buf -> {
-            final ResourceLocation registryLocation = buf.readResourceLocation();
-            final ResourceLocation tagLocation = buf.readResourceLocation();
+            final Identifier registryLocation = buf.readIdentifier();
+            final Identifier tagLocation = buf.readIdentifier();
 
             final ResourceKey<Registry<Object>> registryKey = ResourceKey.createRegistryKey(registryLocation);
 
@@ -42,6 +44,8 @@ public class ModCodecs {
         TAG_KEY_CODEC.fieldOf("key").forGetter(ResourceTag::key),
         ResourceCodecs.CODEC.listOf().fieldOf("resources").forGetter(ResourceTag::resources)
     ).apply(instance, ResourceTag::new));
+
+    public static final Codec<Optional<ResourceTag>> OPTIONAL_RESOURCE_TAG_CODEC = RESOURCE_TAG_CODEC.optionalFieldOf("tag").codec();
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ResourceTag> RESOURCE_TAG_STREAM_CODEC = StreamCodec.composite(
         TAG_KEY_GENERIC_STREAM_CODEC, ResourceTag::key,

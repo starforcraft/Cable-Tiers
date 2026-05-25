@@ -26,7 +26,7 @@ class CompositeDestructorStrategy implements DestructorStrategy {
                          final Actor actor,
                          final Supplier<Network> networkProvider,
                          final Player player) {
-        for (final DestructorStrategy strategy : strategies) {
+        for (final DestructorStrategy strategy : this.strategies) {
             if (strategy.apply(filter, actor, networkProvider, player)) {
                 return true;
             }

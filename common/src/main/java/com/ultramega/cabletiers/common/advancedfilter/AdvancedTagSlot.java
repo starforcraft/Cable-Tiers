@@ -9,12 +9,10 @@ import net.minecraft.network.chat.Component;
 public class AdvancedTagSlot extends DisabledResourceSlot {
     private boolean active = true;
 
-    AdvancedTagSlot(
-        final ResourceContainer container,
-        final int index,
-        final int x,
-        final int y
-    ) {
+    AdvancedTagSlot(final ResourceContainer container,
+                    final int index,
+                    final int x,
+                    final int y) {
         super(container, index, Component.empty(), x, y, ResourceSlotType.FILTER);
     }
 
@@ -25,7 +23,7 @@ public class AdvancedTagSlot extends DisabledResourceSlot {
 
     @Override
     public boolean isActive() {
-        return active;
+        return this.active;
     }
 
     void setActive(final boolean active) {

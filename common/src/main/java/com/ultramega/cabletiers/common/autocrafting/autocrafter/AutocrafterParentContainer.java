@@ -32,23 +32,22 @@ class AutocrafterParentContainer implements ParentContainer {
 
     @Override
     public void taskAdded(final PatternProvider provider, final Task task) {
-        blockEntity.setChanged();
+        this.blockEntity.setChanged();
     }
 
     @Override
     public void taskRemoved(final Task task) {
-        System.out.println("taskRemoved");
-        blockEntity.completedOrCancelledTask(task);
-        blockEntity.setChanged();
+        this.blockEntity.completedOrCancelledTask(task);
+        this.blockEntity.setChanged();
     }
 
     @Override
     public void taskCompleted(final Task task) {
-        blockEntity.completedOrCancelledTask(task);
+        this.blockEntity.completedOrCancelledTask(task);
     }
 
     @Override
     public void taskChanged(final Task task) {
-        blockEntity.setChanged();
+        this.blockEntity.setChanged();
     }
 }

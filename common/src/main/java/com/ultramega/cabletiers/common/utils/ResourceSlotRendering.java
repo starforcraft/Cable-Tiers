@@ -7,16 +7,16 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
 
 import java.util.List;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 import static com.refinedmods.refinedstorage.common.support.ResourceSlotRendering.renderAmount;
 
-public class ResourceSlotRendering {
+public final class ResourceSlotRendering {
     private ResourceSlotRendering() {
     }
 
-    public static List<Component> render(final GuiGraphics graphics,
+    public static List<Component> render(final GuiGraphicsExtractor graphics,
                                          final ResourceSlot slot,
                                          final int x,
                                          final int y) {
