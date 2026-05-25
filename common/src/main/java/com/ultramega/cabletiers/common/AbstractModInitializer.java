@@ -19,6 +19,7 @@ import com.ultramega.cabletiers.common.storage.diskinterface.TieredDiskInterface
 import com.ultramega.cabletiers.common.utils.BlockEntityProviders;
 import com.ultramega.cabletiers.common.utils.BlockEntityTierTypeFactory;
 import com.ultramega.cabletiers.common.utils.ContentIds;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputCodecs;
 
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterData;
@@ -157,8 +158,8 @@ public class AbstractModInitializer {
         DataComponents.INSTANCE.setSidedInputPatternState(
             callback.register(createCableTiersIdentifier("sided_input_pattern_state"),
                 () -> DataComponentType.<SidedInputPatternState>builder()
-                    .persistent(SidedInputPatternState.CODEC)
-                    .networkSynchronized(SidedInputPatternState.STREAM_CODEC)
+                    .persistent(SidedInputCodecs.SIDED_INPUT_CODEC)
+                    .networkSynchronized(SidedInputCodecs.SIDED_INPUT_STREAM_CODEC)
                     .build()));
     }
 

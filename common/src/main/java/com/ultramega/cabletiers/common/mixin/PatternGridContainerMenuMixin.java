@@ -6,7 +6,7 @@ import com.ultramega.cabletiers.common.packet.s2c.ClearSidedResourceOnPatternGri
 import com.ultramega.cabletiers.common.packet.s2c.ReplaceSidedResourceOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.utils.ClearableSidedResource;
 import com.ultramega.cabletiers.common.utils.PlayerInventoryGetter;
-import com.ultramega.cabletiers.common.utils.SidedInput;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInput;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.Platform;
@@ -31,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static com.ultramega.cabletiers.common.utils.SidedInputUtil.isProcessingInputSlot;
+import static com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputUtil.isProcessingInputSlot;
 
 @Mixin(PatternGridContainerMenu.class)
 public abstract class PatternGridContainerMenuMixin extends AbstractGridContainerMenu implements SidedInput, ClearableSidedResource, PlayerInventoryGetter {

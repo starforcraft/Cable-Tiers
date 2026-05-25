@@ -9,10 +9,10 @@ public final class RefinedTypesIntegration {
     }
 
     public static void registerCapabilities(final CableTiers tier, final RegisterCapabilitiesEvent event) {
-//        event.registerBlockEntity(
-//            Capabilities.EnergyStorage.BLOCK,
-//            BlockEntities.INSTANCE.getTieredInterfaces(tier),
-//            (be, side) -> new ResourceContainerEnergyHandlerAdapter(be.getExportedResources())
-//        );
+        /*event.registerBlockEntity(
+            Capabilities.EnergyStorage.BLOCK,
+            BlockEntities.INSTANCE.getTieredInterfaces(tier),
+            (be, side) -> new ResourceContainerEnergyHandlerAdapter(be.getExportedResources())
+        );*/
     }
 }

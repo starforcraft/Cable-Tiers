@@ -46,6 +46,9 @@ repositories {
         name = "TerraBlender"
         url = uri("https://maven.minecraftforge.net")
     }
+    maven {
+        url = uri("https://api.modrinth.com/maven")
+    }
 }
 
 val modVersion: String by project
@@ -70,7 +73,7 @@ val grandPowerVersion: String by project
 val arsNouveauVersion: String by project
 val industrialForegoingVersion: String by project
 val industrialForegoingSoulsVersion: String by project
-val jadeVersion: String by project
+val jadeVersionNeoForge: String by project
 
 val commonJava by configurations.existing
 val commonResources by configurations.existing
@@ -91,6 +94,6 @@ dependencies {
     implementation("com.hollingsworth.ars_nouveau:ars_nouveau-${minecraftVersion}:${arsNouveauVersion}")
     implementation("com.buuz135:industrialforegoing:1.21-${industrialForegoingVersion}")
     implementation("curse.maven:industrial-foregoing-souls-904394:${industrialForegoingSoulsVersion}")*/
-    implementation("curse.maven:jade-324717:${jadeVersion}")
+    runtimeOnly("maven.modrinth:jade:${jadeVersionNeoForge}+neoforge");
 }
 

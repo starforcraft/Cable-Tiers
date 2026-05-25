@@ -69,26 +69,10 @@ public class TieredAutocrafterScreen extends AbstractBaseScreen<TieredAutocrafte
                                    final Inventory playerInventory,
                                    final Component title,
                                    final CableTiers tier) {
-        // TODO: refractor
-        super(menu, playerInventory, new TextMarquee(title, getTitleMaxWidth(menu)), tier != CableTiers.CREATIVE ? 210 : 176, switch (tier) {
-            case ELITE -> 155;
-            case ULTRA -> 191;
-            case MEGA, CREATIVE -> 227;
-        });
+        super(menu, playerInventory, new TextMarquee(title, getTitleMaxWidth(menu)), getImageWidth(tier), getImageHeight(tier));
         this.playerInventory = playerInventory;
         this.tier = tier;
-
-        switch (tier) {
-            case ELITE:
-                this.inventoryLabelY = 42 + 18;
-                break;
-            case ULTRA:
-                this.inventoryLabelY = 42 + 18 * 3;
-                break;
-            case MEGA, CREATIVE:
-                this.inventoryLabelY = 42 + 18 * 5;
-                break;
-        }
+        this.inventoryLabelY = getInventoryLabelY(tier);
     }
 
     @Override
@@ -155,6 +139,26 @@ public class TieredAutocrafterScreen extends AbstractBaseScreen<TieredAutocrafte
         super.extractLabels(graphics, mouseX, mouseY);
         final Component title = getChainingTitle(this.menu);
         graphics.text(this.font, title, this.getChainingTitleX(title), this.titleLabelY, -12566464, false);
+    }
+
+    private static int getImageWidth(final CableTiers tier) {
+        return tier == CableTiers.CREATIVE ? 176 : 210;
+    }
+
+    private static int getImageHeight(final CableTiers tier) {
+        return switch (tier) {
+            case ELITE -> 155;
+            case ULTRA -> 191;
+            case MEGA, CREATIVE -> 227;
+        };
+    }
+
+    private static int getInventoryLabelY(final CableTiers tier) {
+        return switch (tier) {
+            case ELITE -> 42 + 18;
+            case ULTRA -> 42 + 18 * 3;
+            case MEGA, CREATIVE -> 42 + 18 * 5;
+        };
     }
 
     private static int getTitleMaxWidth(final TieredAutocrafterContainerMenu menu) {

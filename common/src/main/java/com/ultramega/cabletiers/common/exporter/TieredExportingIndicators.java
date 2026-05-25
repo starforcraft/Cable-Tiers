@@ -41,7 +41,7 @@ public class TieredExportingIndicators {
                 continue;
             }
             final int fakeIndex = filterContainer.getFakeShowcaseIndex(i);
-            this.indicators.add(indicatorProvider.apply(j, fakeIndex)); //TODO: improve all indicators
+            this.indicators.add(indicatorProvider.apply(j, fakeIndex));
             j++;
         }
         this.indicatorProvider = indicatorProvider;

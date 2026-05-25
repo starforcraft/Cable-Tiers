@@ -1,7 +1,7 @@
 package com.ultramega.cabletiers.common.mixin;
 
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedResourceAmount;
-import com.ultramega.cabletiers.common.utils.SidedInput;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInput;
 
 import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridContainerMenu;
 import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static com.ultramega.cabletiers.common.utils.ClientUtils.renderDirectionText;
-import static com.ultramega.cabletiers.common.utils.SidedInputUtil.isProcessingInputSlot;
+import static com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputUtil.isProcessingInputSlot;
 
 @Mixin(targets = "com.refinedmods.refinedstorage.common.autocrafting.patterngrid.ProcessingPatternGridRenderer")
 public final class ProcessingPatternGridRendererMixin {

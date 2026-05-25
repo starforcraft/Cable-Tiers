@@ -95,8 +95,29 @@ public class ModelProviders extends ModelProvider {
         CUTOUT
     );
 
-    private static final ModelTemplate AUTOCRAFTER_MODEL = ModelTemplates.create(
-        MOD_ID + ":autocrafter",
+    private static final ModelTemplate ACTIVE_AUTOCRAFTER_MODEL = ModelTemplates.create(
+        MOD_ID + ":autocrafter/active",
+        TextureSlot.PARTICLE,
+        TextureSlot.NORTH,
+        TextureSlot.EAST,
+        TextureSlot.SOUTH,
+        TextureSlot.WEST,
+        TextureSlot.UP,
+        TextureSlot.DOWN,
+        NORTH_CUTOUT_COLOR,
+        EAST_CUTOUT_COLOR,
+        SOUTH_CUTOUT_COLOR,
+        WEST_CUTOUT_COLOR,
+        UP_CUTOUT_COLOR,
+        NORTH_CUTOUT_TIER,
+        EAST_CUTOUT_TIER,
+        SOUTH_CUTOUT_TIER,
+        WEST_CUTOUT_TIER,
+        UP_CUTOUT_TIER
+    );
+
+    private static final ModelTemplate INACTIVE_AUTOCRAFTER_MODEL = ModelTemplates.create(
+        MOD_ID + ":autocrafter/inactive",
         TextureSlot.PARTICLE,
         TextureSlot.NORTH,
         TextureSlot.EAST,
@@ -336,8 +357,6 @@ public class ModelProviders extends ModelProvider {
     }
 
     private void registerTieredAutocrafters(final CableTiers tier, final BlockModelGenerators blockModels, final ItemModelGenerators itemModels) {
-        // TODO: check if correctly emmisive
-        //  refined storage uses sides_cutout + emissive_sides_cutout for autocrafters
         final Identifier side = createCableTiersIdentifier("block/autocrafter/side");
         final Identifier top = createCableTiersIdentifier("block/autocrafter/top");
         final Identifier cutoutSideColor = createCableTiersIdentifier("block/autocrafter/cutouts/side_color/inactive");
@@ -346,7 +365,7 @@ public class ModelProviders extends ModelProvider {
         final Identifier cutoutTopTier = createCableTiersIdentifier("block/autocrafter/cutouts/top_tier/" + tier.getLowercaseName());
         final Identifier bottom = createCableTiersIdentifier("block/autocrafter/bottom");
 
-        final Identifier inactiveModel = AUTOCRAFTER_MODEL.create(
+        final Identifier inactiveModel = INACTIVE_AUTOCRAFTER_MODEL.create(
             createCableTiersIdentifier("block/" + tier.getLowercaseName() + "_autocrafter/inactive"),
             new TextureMapping()
                 .put(TextureSlot.PARTICLE, texture(side))
@@ -374,7 +393,7 @@ public class ModelProviders extends ModelProvider {
             final Identifier cutoutSideTierActive = createCableTiersIdentifier("block/autocrafter/cutouts/side_tier/" + tier.getLowercaseName());
             final Identifier cutoutTopColorActive = createCableTiersIdentifier("block/autocrafter/cutouts/top_color/" + color.getName());
             final Identifier cutoutTopTierActive = createCableTiersIdentifier("block/autocrafter/cutouts/top_tier/" + tier.getLowercaseName());
-            final Identifier activeModel = AUTOCRAFTER_MODEL.create(
+            final Identifier activeModel = ACTIVE_AUTOCRAFTER_MODEL.create(
                 createCableTiersIdentifier("block/" + tier.getLowercaseName() + "_autocrafter/" + color.getName()),
                 new TextureMapping()
                     .put(TextureSlot.PARTICLE, texture(side))

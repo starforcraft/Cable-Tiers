@@ -9,10 +9,10 @@ public final class MekanismIntegration {
     }
 
     public static void registerCapabilities(final CableTiers tier, final RegisterCapabilitiesEvent event) {
-//        event.registerBlockEntity(
-//            ChemicalUtil.BLOCK_CAPABILITY,
-//            BlockEntities.INSTANCE.getTieredInterfaces(tier),
-//            (be, side) -> new ImprovedResourceContainerChemicalHandlerAdapter(be.getExportedResources())
-//        );
+        /*event.registerBlockEntity(
+            ChemicalUtil.BLOCK_CAPABILITY,
+            BlockEntities.INSTANCE.getTieredInterfaces(tier),
+            (be, side) -> new ImprovedResourceContainerChemicalHandlerAdapter(be.getExportedResources())
+        );*/
     }
 }

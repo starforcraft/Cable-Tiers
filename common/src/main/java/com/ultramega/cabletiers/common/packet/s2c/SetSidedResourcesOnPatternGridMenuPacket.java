@@ -1,7 +1,8 @@
 package com.ultramega.cabletiers.common.packet.s2c;
 
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedResourceAmount;
-import com.ultramega.cabletiers.common.utils.SidedInput;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInput;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputCodecs;
 
 import com.refinedmods.refinedstorage.common.support.packet.PacketContext;
 
@@ -20,7 +21,7 @@ public record SetSidedResourcesOnPatternGridMenuPacket(List<Optional<SidedResour
     public static final Type<SetSidedResourcesOnPatternGridMenuPacket> PACKET_TYPE =
         new Type<>(createCableTiersIdentifier("set_sided_resources_on_pattern_grid_menu"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SetSidedResourcesOnPatternGridMenuPacket> STREAM_CODEC = StreamCodec.composite(
-        ByteBufCodecs.collection(ArrayList::new, SidedResourceAmount.OPTIONAL_STREAM_CODEC), SetSidedResourcesOnPatternGridMenuPacket::sidedResources,
+        ByteBufCodecs.collection(ArrayList::new, SidedInputCodecs.SIDED_RESOURCE_OPTIONAL_STREAM_CODEC), SetSidedResourcesOnPatternGridMenuPacket::sidedResources,
         SetSidedResourcesOnPatternGridMenuPacket::new
     );
 

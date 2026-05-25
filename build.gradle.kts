@@ -8,6 +8,21 @@ refinedarchitect {
 
 }
 
+val runRequiredTests by tasks.registering {
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    description = "Runs tests required before building or publishing Cable Tiers."
+
+    dependsOn(":common:test")
+}
+
+tasks.named("build") {
+    dependsOn(runRequiredTests)
+}
+
+tasks.named("publishMods") {
+    dependsOn(runRequiredTests)
+}
+
 val minecraftVersion: String by project
 val currentChangelog: String by project
 

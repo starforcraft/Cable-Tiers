@@ -24,6 +24,9 @@ repositories {
             includeGroup("curse.maven")
         }
     }
+    maven {
+        url = uri("https://api.modrinth.com/maven")
+    }
 }
 
 val modVersion: String by project
@@ -40,7 +43,7 @@ base {
 
 val minecraftVersion: String by project
 val refinedstorageVersion: String by project
-val jadeVersion: String by project
+val jadeVersionFabric: String by project
 
 val commonJava by configurations.existing
 val commonResources by configurations.existing
@@ -50,5 +53,16 @@ dependencies {
     commonJava(project(path = ":common", configuration = "commonJava"))
     commonResources(project(path = ":common", configuration = "commonResources"))
     api("com.refinedmods.refinedstorage:refinedstorage-fabric:${refinedstorageVersion}")
-    implementation("curse.maven:jade-324717:${jadeVersion}")
+    runtimeOnly("maven.modrinth:jade:${jadeVersionFabric}+fabric");
+}
+
+tasks.withType(ProcessResources::class.java) {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from(commonResources) {
+        filesMatching("assets/cabletiers/blockstates/*.json") {
+            filter { line ->
+                line.replace("\"type\"", "\"fabric:type\"")
+            }
+        }
+    }
 }

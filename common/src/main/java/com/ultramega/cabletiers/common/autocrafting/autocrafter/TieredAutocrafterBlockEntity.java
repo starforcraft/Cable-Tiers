@@ -4,6 +4,7 @@ import com.ultramega.cabletiers.common.CableTiers;
 import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.Platform;
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputPatternState;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputRouting;
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedResourceAmount;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
 import com.ultramega.cabletiers.common.registry.DataComponents;
@@ -25,7 +26,6 @@ import com.refinedmods.refinedstorage.api.network.autocrafting.PatternProviderEx
 import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.PatternProviderListener;
 import com.refinedmods.refinedstorage.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PlatformPatternProviderExternalPatternSink;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
@@ -46,13 +46,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -79,6 +76,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock.tryExtractDirection;
+import static com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputRouting.resourcesMatchIgnoringIndex;
 import static com.ultramega.cabletiers.common.importer.AbstractTieredImporterBlockEntity.createStrategy;
 
 public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntity<ExtendedPatternProviderNetworkNode>
@@ -636,70 +634,22 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         return findResult(this.sinks, this.patternContainer, baseDirection, resources, action, this::updateLockedAfterAccept);
     }
 
-
     public static Result findResult(final PlatformPatternProviderExternalPatternSink[] sinks,
-                                                        final FilteredContainer patternContainer,
-                                                        @Nullable final Direction baseDirection,
-                                                        final Collection<ResourceAmount> resources,
-                                                        final Action action,
-                                                        final BiConsumer<Action, Result> afterAccept) {
+                                    final FilteredContainer patternContainer,
+                                    @Nullable final Direction baseDirection,
+                                    final Collection<ResourceAmount> resources,
+                                    final Action action,
+                                    final BiConsumer<Action, Result> afterAccept) {
         @Nullable
         final SidedInputPatternState sidedInputState = findSidedInputPatternState(patternContainer, resources.stream().toList());
-        final Direction fallbackDirection = (baseDirection != null) ? baseDirection.getOpposite() : null;
-
-        if (sidedInputState != null) {
-            final List<Result> results = new ArrayList<>();
-            final List<ResourceAmount> insertedResources = new ArrayList<>();
-
-            for (final Optional<SidedResourceAmount> optionalResource : sidedInputState.sidedResources()) {
-                if (optionalResource.isEmpty()) {
-                    continue;
-                }
-
-                final SidedResourceAmount sidedResource = optionalResource.get();
-                final ResourceAmount resource = sidedResource.resource();
-                final Direction targetDirection = sidedResource.inputDirection().orElse(fallbackDirection);
-                if (targetDirection == null) {
-                    continue;
-                }
-
-                final Result result = sinks[targetDirection.ordinal()].insertAll(Set.of(resource), action);
-                afterAccept.accept(action, result);
-                results.add(result);
-                insertedResources.add(resource);
-            }
-
-            if (baseDirection != null) {
-                for (final ResourceAmount resource : resources) {
-                    if (insertedResources.contains(resource)) {
-                        continue;
-                    }
-                    final Result result = sinks[baseDirection.getOpposite().ordinal()].insertAll(Set.of(resource), action);
-                    afterAccept.accept(action, result);
-                    results.add(result);
-                }
-            }
-
-            if (!results.isEmpty()) {
-                return getMostImportantResult(results);
-            }
-        }
-
-        if (baseDirection == null) {
-            return Result.REJECTED;
-        }
-        final Result result = sinks[baseDirection.getOpposite().ordinal()].insertAll(resources, action);
-        afterAccept.accept(action, result);
-        return result;
+        return SidedInputRouting.findResult(sinks, baseDirection, resources, action, afterAccept, sidedInputState);
     }
 
     @Nullable
     public static SidedInputPatternState findSidedInputPatternState(final FilteredContainer patternContainer, final List<ResourceAmount> resources) {
         for (int i = 0; i < patternContainer.getContainerSize(); i++) {
             final ItemStack pattern = patternContainer.getItem(i);
-            final SidedInputPatternState sidedInputState =
-                pattern.get(DataComponents.INSTANCE.getSidedInputPatternState());
-
+            final SidedInputPatternState sidedInputState = pattern.get(DataComponents.INSTANCE.getSidedInputPatternState());
             if (sidedInputState == null) {
                 continue;
             }
@@ -708,8 +658,7 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
-
-            if (!resourcesMatchesIgnoringIndex(sidedResources, resources)) {
+            if (!resourcesMatchIgnoringIndex(sidedResources, resources)) {
                 continue;
             }
 
@@ -717,49 +666,6 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         }
 
         return null;
-    }
-
-    private static boolean resourcesMatchesIgnoringIndex(final List<SidedResourceAmount> sidedResources,
-                                                         final List<ResourceAmount> resources) {
-        // Sum amounts for identical resources
-        final Map<ResourceKey, Long> sidedMerged = sidedResources.stream()
-            .collect(Collectors.groupingBy(
-                sra -> sra.resource().resource(),
-                Collectors.summingLong(sra -> sra.resource().amount())
-            ));
-
-        final Map<ResourceKey, Long> flatResources = resources.stream()
-            .collect(Collectors.toMap(
-                ResourceAmount::resource,
-                ResourceAmount::amount
-            ));
-
-        // Must contain the same resource keys
-        if (!sidedMerged.keySet().equals(flatResources.keySet())) {
-            return false;
-        }
-
-        // Amounts must match
-        for (final ResourceKey key : sidedMerged.keySet()) {
-            if (!Objects.equals(sidedMerged.get(key), flatResources.get(key))) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static Result getMostImportantResult(final List<Result> results) {
-        final List<Result> priority = List.of(Result.REJECTED, Result.SKIPPED, Result.LOCKED);
-
-        for (final Result result : priority) {
-            if (results.contains(result)) {
-                return result;
-            }
-        }
-
-        // Fallback: first element
-        return results.getFirst();
     }
 
     private void updateLockedAfterAccept(final Action action, final ExternalPatternSink.Result result) {

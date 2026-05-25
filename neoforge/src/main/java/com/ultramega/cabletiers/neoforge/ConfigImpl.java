@@ -22,53 +22,53 @@ public class ConfigImpl implements Config {
     private final SimpleTieredInterfaceEntry tieredInterfaces;
 
     public ConfigImpl() {
-        tieredImporters = new SimpleTieredStackEntryImpl("tieredImporters", CableType.IMPORTER);
-        tieredExporters = new SimpleTieredStackEntryImpl("tieredExporters", CableType.EXPORTER);
-        tieredDestructors = new SimpleTieredEntryImpl("tieredDestructors", CableType.DESTRUCTOR, true);
-        tieredConstructors = new SimpleTieredStackEntryImpl("tieredConstructors", CableType.CONSTRUCTOR);
-        tieredDiskInterfaces = new SimpleTieredStackEntryImpl("tieredDiskInterfaces", CableType.DISK_INTERFACE);
-        tieredAutocrafters = new SimpleTieredEntryImpl("tieredAutocrafters", CableType.AUTOCRAFTER, true);
-        tieredInterfaces = new SimpleTieredInterfaceEntryImpl("tieredInterfaces", CableType.INTERFACE);
-        spec = builder.build();
+        this.tieredImporters = new SimpleTieredStackEntryImpl("tieredImporters", CableType.IMPORTER);
+        this.tieredExporters = new SimpleTieredStackEntryImpl("tieredExporters", CableType.EXPORTER);
+        this.tieredDestructors = new SimpleTieredEntryImpl("tieredDestructors", CableType.DESTRUCTOR, true);
+        this.tieredConstructors = new SimpleTieredStackEntryImpl("tieredConstructors", CableType.CONSTRUCTOR);
+        this.tieredDiskInterfaces = new SimpleTieredStackEntryImpl("tieredDiskInterfaces", CableType.DISK_INTERFACE);
+        this.tieredAutocrafters = new SimpleTieredEntryImpl("tieredAutocrafters", CableType.AUTOCRAFTER, true);
+        this.tieredInterfaces = new SimpleTieredInterfaceEntryImpl("tieredInterfaces", CableType.INTERFACE);
+        this.spec = this.builder.build();
     }
 
     public ModConfigSpec getSpec() {
-        return spec;
+        return this.spec;
     }
 
     @Override
     public SimpleTieredStackEntry getTieredImporters() {
-        return tieredImporters;
+        return this.tieredImporters;
     }
 
     @Override
     public SimpleTieredStackEntry getTieredExporters() {
-        return tieredExporters;
+        return this.tieredExporters;
     }
 
     @Override
     public SimpleTieredEntry getTieredDestructors() {
-        return tieredDestructors;
+        return this.tieredDestructors;
     }
 
     @Override
     public SimpleTieredStackEntry getTieredConstructors() {
-        return tieredConstructors;
+        return this.tieredConstructors;
     }
 
     @Override
     public SimpleTieredStackEntry getTieredDiskInterfaces() {
-        return tieredDiskInterfaces;
+        return this.tieredDiskInterfaces;
     }
 
     @Override
     public SimpleTieredEntry getTieredAutocrafters() {
-        return tieredAutocrafters;
+        return this.tieredAutocrafters;
     }
 
     @Override
     public SimpleTieredInterfaceEntry getTieredInterfaces() {
-        return tieredInterfaces;
+        return this.tieredInterfaces;
     }
 
     private static String translationKey(final String value) {
@@ -83,13 +83,13 @@ public class ConfigImpl implements Config {
         SimpleTieredStackEntryImpl(final String name, final CableType type) {
             super(name, type, false);
 
-            eliteStackUpgradeIntegrated = builder
+            this.eliteStackUpgradeIntegrated = builder
                 .translation(translationKey(name + ".eliteStackUpgradeIntegrated"))
                 .define("eliteStackUpgradeIntegrated", DefaultConfig.isStackUpgradeIntegrated(CableTiers.ELITE, type));
-            ultraStackUpgradeIntegrated = builder
+            this.ultraStackUpgradeIntegrated = builder
                 .translation(translationKey(name + ".ultraStackUpgradeIntegrated"))
                 .define("ultraStackUpgradeIntegrated", DefaultConfig.isStackUpgradeIntegrated(CableTiers.ULTRA, type));
-            megaStackUpgradeIntegrated = builder
+            this.megaStackUpgradeIntegrated = builder
                 .translation(translationKey(name + ".megaStackUpgradeIntegrated"))
                 .define("megaStackUpgradeIntegrated", DefaultConfig.isStackUpgradeIntegrated(CableTiers.MEGA, type));
 
@@ -99,9 +99,9 @@ public class ConfigImpl implements Config {
         @Override
         public boolean hasStackUpgradeIntegrated(final CableTiers tier) {
             return switch (tier) {
-                case ELITE -> eliteStackUpgradeIntegrated.get();
-                case ULTRA -> ultraStackUpgradeIntegrated.get();
-                case MEGA -> megaStackUpgradeIntegrated.get();
+                case ELITE -> this.eliteStackUpgradeIntegrated.get();
+                case ULTRA -> this.ultraStackUpgradeIntegrated.get();
+                case MEGA -> this.megaStackUpgradeIntegrated.get();
                 case CREATIVE -> true;
             };
         }
@@ -116,16 +116,16 @@ public class ConfigImpl implements Config {
         SimpleTieredInterfaceEntryImpl(final String name, final CableType type) {
             super(name, type, false);
 
-            eliteTransferQuotaMultiplier = builder
+            this.eliteTransferQuotaMultiplier = builder
                 .translation(translationKey(name + ".eliteTransferQuotaMultiplier"))
                 .defineInRange("eliteTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplier(CableTiers.ELITE, type), 1, Long.MAX_VALUE);
-            ultraTransferQuotaMultiplier = builder
+            this.ultraTransferQuotaMultiplier = builder
                 .translation(translationKey(name + ".ultraTransferQuotaMultiplier"))
                 .defineInRange("ultraTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplier(CableTiers.ULTRA, type), 1, Long.MAX_VALUE);
-            megaTransferQuotaMultiplier = builder
+            this.megaTransferQuotaMultiplier = builder
                 .translation(translationKey(name + ".megaTransferQuotaMultiplier"))
                 .defineInRange("megaTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplier(CableTiers.MEGA, type), 1, Long.MAX_VALUE);
-            creativeTransferQuotaMultiplier = builder
+            this.creativeTransferQuotaMultiplier = builder
                 .translation(translationKey(name + ".creativeTransferQuotaMultiplier"))
                 .defineInRange("creativeTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplier(CableTiers.CREATIVE, type), 1, Long.MAX_VALUE);
 
@@ -135,10 +135,10 @@ public class ConfigImpl implements Config {
         @Override
         public long getTransferQuotaMultiplier(final CableTiers tier) {
             return switch (tier) {
-                case ELITE -> eliteTransferQuotaMultiplier.get();
-                case ULTRA -> ultraTransferQuotaMultiplier.get();
-                case MEGA -> megaTransferQuotaMultiplier.get();
-                case CREATIVE -> creativeTransferQuotaMultiplier.get();
+                case ELITE -> this.eliteTransferQuotaMultiplier.get();
+                case ULTRA -> this.ultraTransferQuotaMultiplier.get();
+                case MEGA -> this.megaTransferQuotaMultiplier.get();
+                case CREATIVE -> this.creativeTransferQuotaMultiplier.get();
             };
         }
     }
@@ -152,16 +152,16 @@ public class ConfigImpl implements Config {
         SimpleTieredEntryImpl(final String name, final CableType type, final boolean pop) {
             super(name, type, false);
 
-            eliteSpeed = builder
+            this.eliteSpeed = builder
                 .translation(translationKey(name + ".eliteSpeed"))
                 .defineInRange("eliteSpeed", DefaultConfig.getSpeedFor(CableTiers.ELITE, type), 1, Integer.MAX_VALUE);
-            ultraSpeed = builder
+            this.ultraSpeed = builder
                 .translation(translationKey(name + ".ultraSpeed"))
                 .defineInRange("ultraSpeed", DefaultConfig.getSpeedFor(CableTiers.ULTRA, type), 1, Integer.MAX_VALUE);
-            megaSpeed = builder
+            this.megaSpeed = builder
                 .translation(translationKey(name + ".megaSpeed"))
                 .defineInRange("megaSpeed", DefaultConfig.getSpeedFor(CableTiers.MEGA, type), 1, Integer.MAX_VALUE);
-            creativeSpeed = builder
+            this.creativeSpeed = builder
                 .translation(translationKey(name + ".creativeSpeed"))
                 .defineInRange("creativeSpeed", DefaultConfig.getSpeedFor(CableTiers.CREATIVE, type), 1, Integer.MAX_VALUE);
 
@@ -173,10 +173,10 @@ public class ConfigImpl implements Config {
         @Override
         public int getSpeed(final CableTiers tier) {
             return switch (tier) {
-                case ELITE -> eliteSpeed.get();
-                case ULTRA -> ultraSpeed.get();
-                case MEGA -> megaSpeed.get();
-                case CREATIVE -> creativeSpeed.get();
+                case ELITE -> this.eliteSpeed.get();
+                case ULTRA -> this.ultraSpeed.get();
+                case MEGA -> this.megaSpeed.get();
+                case CREATIVE -> this.creativeSpeed.get();
             };
         }
     }
@@ -189,13 +189,13 @@ public class ConfigImpl implements Config {
         SimpleTieredEnergyEntryImpl(final String name, final CableType type, final boolean pop) {
             builder.translation(translationKey(name)).push(name);
 
-            eliteEnergyUsage = builder
+            this.eliteEnergyUsage = builder
                 .translation(translationKey(name + ".eliteEnergyUsage"))
                 .defineInRange("eliteEnergyUsage", DefaultConfig.getUsageFor(CableTiers.ELITE, type), 0, Long.MAX_VALUE);
-            ultraEnergyUsage = builder
+            this.ultraEnergyUsage = builder
                 .translation(translationKey(name + ".ultraEnergyUsage"))
                 .defineInRange("ultraEnergyUsage", DefaultConfig.getUsageFor(CableTiers.ULTRA, type), 0, Long.MAX_VALUE);
-            megaEnergyUsage = builder
+            this.megaEnergyUsage = builder
                 .translation(translationKey(name + ".megaEnergyUsage"))
                 .defineInRange("megaEnergyUsage", DefaultConfig.getUsageFor(CableTiers.MEGA, type), 0, Long.MAX_VALUE);
 
@@ -207,9 +207,9 @@ public class ConfigImpl implements Config {
         @Override
         public long getEnergyUsage(final CableTiers tier) {
             return switch (tier) {
-                case ELITE -> eliteEnergyUsage.get();
-                case ULTRA -> ultraEnergyUsage.get();
-                case MEGA -> megaEnergyUsage.get();
+                case ELITE -> this.eliteEnergyUsage.get();
+                case ULTRA -> this.ultraEnergyUsage.get();
+                case MEGA -> this.megaEnergyUsage.get();
                 case CREATIVE -> 0;
             };
         }

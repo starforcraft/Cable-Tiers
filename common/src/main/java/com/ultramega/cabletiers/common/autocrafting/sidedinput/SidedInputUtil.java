@@ -1,4 +1,4 @@
-package com.ultramega.cabletiers.common.utils;
+package com.ultramega.cabletiers.common.autocrafting.sidedinput;
 
 import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
 

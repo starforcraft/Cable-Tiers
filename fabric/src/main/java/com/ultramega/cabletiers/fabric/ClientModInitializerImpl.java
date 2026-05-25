@@ -2,7 +2,6 @@ package com.ultramega.cabletiers.fabric;
 
 import com.ultramega.cabletiers.common.AbstractClientModInitializer;
 import com.ultramega.cabletiers.common.CableTiers;
-import com.ultramega.cabletiers.common.CableType;
 import com.ultramega.cabletiers.common.packet.s2c.ClearSidedResourceOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.ReplaceSidedResourceOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.SetSidedResourcesOnPatternGridMenuPacket;
@@ -11,7 +10,6 @@ import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterLockedUpdateP
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterNameUpdatePacket;
 import com.ultramega.cabletiers.common.packet.s2c.UpdateAdvancedFilterPacket;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
-import com.ultramega.cabletiers.common.utils.ContentIds;
 import com.ultramega.cabletiers.fabric.storage.diskinterface.FabricTieredDiskInterfaceBlockEntityRenderer;
 import com.ultramega.cabletiers.fabric.storage.diskinterface.TieredDiskInterfaceItemModelUnbaked;
 import com.ultramega.cabletiers.fabric.storage.diskinterface.TieredDiskInterfaceUnbakedBlockStateModel;

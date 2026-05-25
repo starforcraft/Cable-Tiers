@@ -1,6 +1,6 @@
 package com.ultramega.cabletiers.common.packet.s2c;
 
-import com.ultramega.cabletiers.common.utils.SidedInput;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInput;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.support.packet.PacketContext;

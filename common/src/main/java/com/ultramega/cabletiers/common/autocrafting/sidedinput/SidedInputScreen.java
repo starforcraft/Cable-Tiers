@@ -36,7 +36,7 @@ import org.jspecify.annotations.Nullable;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersIdentifier;
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersTranslation;
-import static com.ultramega.cabletiers.common.utils.SidedInputUtil.isProcessingInputSlot;
+import static com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputUtil.isProcessingInputSlot;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class SidedInputScreen extends Screen {
@@ -126,10 +126,7 @@ public class SidedInputScreen extends Screen {
     public void extractRenderState(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float partialTick) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTick);
 
-        final int startY = this.topPos + 6;
-        // include the edge so we get the item counts properly
-        final int endY = this.topPos + 6 + 88 + 1;
-        graphics.enableScissor(this.leftPos - 50, startY, this.leftPos + this.imageWidth + 50, endY);
+        graphics.enableScissor(this.leftPos - 50, this.getSlotsViewportTop(), this.leftPos + this.imageWidth + 50, this.getSlotsViewportBottom());
         this.extractSlotsAndDirections(graphics, mouseX, mouseY);
         graphics.disableScissor();
 
@@ -142,8 +139,9 @@ public class SidedInputScreen extends Screen {
 
     private void extractSlotsAndDirections(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY) {
         final int xx = this.leftPos + 5;
-        final int startY = this.topPos + 9 - INDIVIDUAL_SLOT_SIZE;
-        final int endY = this.topPos + 9 + (INDIVIDUAL_SLOT_SIZE * 4);
+        final int viewportTop = this.getSlotsViewportTop();
+        final int viewportBottom = this.getSlotsViewportBottom();
+        final boolean mouseInsideViewport = this.isInsideSlotsViewport(mouseX, mouseY);
 
         boolean anyHovered = false;
 
@@ -154,24 +152,18 @@ public class SidedInputScreen extends Screen {
             }
 
             final int yy = this.getYForScrollbarOffset(i);
-            if (yy < startY || yy > endY) {
+            if (yy + INDIVIDUAL_SLOT_SIZE <= viewportTop || yy >= viewportBottom) {
                 continue;
             }
             final int slotX = xx + 1;
             final int slotY = yy + 1;
 
-            final boolean hovering = this.isHovering(slotX, slotY, INDIVIDUAL_SLOT_SIZE - 2, INDIVIDUAL_SLOT_SIZE - 2, mouseX, mouseY);
+            final boolean hovering = mouseInsideViewport && this.isHovering(slotX, slotY, INDIVIDUAL_SLOT_SIZE - 2, INDIVIDUAL_SLOT_SIZE - 2, mouseX, mouseY);
 
             graphics.blitSprite(GUI_TEXTURED, SLOT_TEXTURE, xx, yy, INDIVIDUAL_SLOT_SIZE, INDIVIDUAL_SLOT_SIZE);
 
             if (slot.getResource() != null && this.gridContainerMenu.getRepository().isSticky(slot.getResource())) {
-                AbstractGridScreen.renderSlotBackground(
-                    graphics,
-                    slotX,
-                    slotY,
-                    false,
-                    AutocraftableResourceHint.AUTOCRAFTABLE.getColor()
-                );
+                AbstractGridScreen.renderSlotBackground(graphics, slotX, slotY, false, AutocraftableResourceHint.AUTOCRAFTABLE.getColor());
             }
             if (hovering) {
                 ClientPlatformUtil.renderSlotHighlightBack(graphics, slotX, slotY);
@@ -194,7 +186,7 @@ public class SidedInputScreen extends Screen {
                 final int y = slotY + 1;
 
                 final boolean isEmpty = slot.isEmpty();
-                final boolean isHovered = this.isHovering(x + 1, y + 1, DIRECTION_SIZE - 2, DIRECTION_SIZE - 2, mouseX, mouseY);
+                final boolean isHovered = mouseInsideViewport && this.isHovering(x + 1, y + 1, DIRECTION_SIZE - 2, DIRECTION_SIZE - 2, mouseX, mouseY);
                 final boolean isClicked = selectedDirection == null ? j == -1 : j == selectedDirection.ordinal();
 
                 if (this.renderDirectionButton(graphics, x, y, shortName, isEmpty, isHovered, isClicked)) {
@@ -267,6 +259,22 @@ public class SidedInputScreen extends Screen {
     @Override
     public boolean mouseScrolled(final double mouseX, final double mouseY, final double scrollX, final double scrollY) {
         return (this.scrollbar != null && this.scrollbar.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) || super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    }
+
+    private int getSlotsViewportTop() {
+        return this.topPos + 6;
+    }
+
+    private int getSlotsViewportBottom() {
+        // Keep the extra pixel so item-count decorations on the last visible row do not get cut off
+        return this.getSlotsViewportTop() + 88 + 1;
+    }
+
+    private boolean isInsideSlotsViewport(final double mouseX, final double mouseY) {
+        return mouseX >= this.leftPos - 50
+            && mouseX < this.leftPos + this.imageWidth + 50
+            && mouseY >= this.getSlotsViewportTop()
+            && mouseY < this.getSlotsViewportBottom();
     }
 
     private int getYForScrollbarOffset(final int i) {

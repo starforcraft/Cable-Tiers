@@ -9,10 +9,10 @@ public final class IndustrialForegoingSoulsIntegration {
     }
 
     public static void registerCapabilities(final CableTiers tier, final RegisterCapabilitiesEvent event) {
-//        event.registerBlockEntity(
-//            SoulCapabilities.BLOCK,
-//            BlockEntities.INSTANCE.getTieredInterfaces(tier),
-//            (be, side) -> new ResourceContainerSoulHandlerAdapter(be.getExportedResources())
-//        );
+        /*event.registerBlockEntity(
+            SoulCapabilities.BLOCK,
+            BlockEntities.INSTANCE.getTieredInterfaces(tier),
+            (be, side) -> new ResourceContainerSoulHandlerAdapter(be.getExportedResources())
+        );*/
     }
 }

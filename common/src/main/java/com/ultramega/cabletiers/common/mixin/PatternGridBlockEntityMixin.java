@@ -3,7 +3,8 @@ package com.ultramega.cabletiers.common.mixin;
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputPatternState;
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedResourceAmount;
 import com.ultramega.cabletiers.common.registry.DataComponents;
-import com.ultramega.cabletiers.common.utils.SidedInput;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInput;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputCodecs;
 
 import com.refinedmods.refinedstorage.common.autocrafting.PatternState;
 import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridBlockEntity;
@@ -52,14 +53,14 @@ public abstract class PatternGridBlockEntityMixin extends AbstractGridBlockEntit
 
     @Inject(method = "saveAdditional", at = @At("TAIL"))
     private void saveAdditional(final ValueOutput output, final CallbackInfo ci) {
-        output.store(TAG_SIDED_RESOURCES, SidedResourceAmount.OPTIONAL_LIST_CODEC, this.cabletiers$sidedResources);
+        output.store(TAG_SIDED_RESOURCES, SidedInputCodecs.SIDED_RESOURCE_OPTIONAL_LIST_CODEC, this.cabletiers$sidedResources);
     }
 
     @Inject(method = "loadAdditional", at = @At("TAIL"))
     private void loadAdditional(final ValueInput input, final CallbackInfo ci) {
         this.cabletiers$sidedResources.clear();
 
-        input.read(TAG_SIDED_RESOURCES, SidedResourceAmount.OPTIONAL_LIST_CODEC)
+        input.read(TAG_SIDED_RESOURCES, SidedInputCodecs.SIDED_RESOURCE_OPTIONAL_LIST_CODEC)
             .ifPresent(sidedResources -> this.cabletiers$sidedResources = sidedResources);
     }
 

@@ -50,6 +50,6 @@ public class TieredDiskInterfaceUnbakedBlockStateModel implements CustomUnbakedB
         resolver.markDependency(TieredDiskInterfaceRenderingProperties.getInactiveBaseModel(this.tier));
         resolver.markDependency(TieredDiskInterfaceRenderingProperties.getActiveBaseModel(this.tier, this.color));
         resolver.markDependency(TieredDiskInterfaceRenderingProperties.INACTIVE_LED_MODEL);
-//        RefinedStorageClientApi.INSTANCE.getDiskModels().forEach(resolver::markDependency);
+        RefinedStorageClientApi.INSTANCE.getDiskModels().forEach(resolver::markDependency);
     }
 }

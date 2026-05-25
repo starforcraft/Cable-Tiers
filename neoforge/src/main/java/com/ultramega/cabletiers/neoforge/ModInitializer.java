@@ -22,7 +22,7 @@ import com.ultramega.cabletiers.common.utils.BlockEntityProviders;
 import com.ultramega.cabletiers.common.utils.BlockEntityTierProvider;
 import com.ultramega.cabletiers.common.utils.BlockEntityTierTypeFactory;
 import com.ultramega.cabletiers.common.utils.TagsCache;
-import com.ultramega.cabletiers.neoforge.capability.ImprovedResourceContainerResourceHandlerAdapter;
+import com.ultramega.cabletiers.neoforge.capability.ExpandedResourceContainerResourceHandlerAdapter;
 import com.ultramega.cabletiers.neoforge.compat.ArsNouveauIntegration;
 import com.ultramega.cabletiers.neoforge.compat.IndustrialForegoingSoulsIntegration;
 import com.ultramega.cabletiers.neoforge.compat.MekanismIntegration;
@@ -234,7 +234,7 @@ public class ModInitializer extends AbstractModInitializer {
             event.registerBlockEntity(
                 Capabilities.Fluid.BLOCK,
                 BlockEntities.INSTANCE.getTieredInterfaces(tier),
-                (be, side) -> new ImprovedResourceContainerResourceHandlerAdapter(be.getExportedResources())
+                (be, side) -> new ExpandedResourceContainerResourceHandlerAdapter(be.getExportedResources())
             );
             if (hasRSMekanismIntegration) {
                 MekanismIntegration.registerCapabilities(tier, event);

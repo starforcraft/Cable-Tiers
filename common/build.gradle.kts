@@ -23,6 +23,7 @@ val modVersion: String by project
 refinedarchitect {
     version = modVersion
     common()
+    testing()
     publishing {
         maven = true
     }
@@ -38,5 +39,9 @@ val jadeVersion: String by project
 
 dependencies {
     api("com.refinedmods.refinedstorage:refinedstorage-common:${refinedstorageVersion}")
-    api("curse.maven:jade-324717:${jadeVersion}")
+
+    testImplementation(libs.junit.api)
+    testImplementation(libs.junit.params)
+    testImplementation(libs.assertj)
+    testRuntimeOnly(libs.junit.engine)
 }

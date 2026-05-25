@@ -9,12 +9,12 @@ import com.refinedmods.refinedstorage.neoforge.support.resource.ResourceContaine
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * Check for the slot max stack size instead of the interface export limit
+ * Check for the container max stack size instead of the interface export limit
  */
-public class ImprovedResourceContainerResourceHandlerAdapter extends ResourceContainerResourceHandlerAdapter {
+public class ExpandedResourceContainerResourceHandlerAdapter extends ResourceContainerResourceHandlerAdapter {
     private final ResourceContainer container;
 
-    public ImprovedResourceContainerResourceHandlerAdapter(final ResourceContainer container) {
+    public ExpandedResourceContainerResourceHandlerAdapter(final ResourceContainer container) {
         super(container);
         this.container = container;
     }

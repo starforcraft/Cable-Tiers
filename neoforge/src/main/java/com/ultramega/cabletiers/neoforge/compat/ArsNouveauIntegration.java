@@ -9,10 +9,10 @@ public final class ArsNouveauIntegration {
     }
 
     public static void registerCapabilities(final CableTiers tier, final RegisterCapabilitiesEvent event) {
-//        event.registerBlockEntity(
-//            CapabilityRegistry.SOURCE_CAPABILITY,
-//            BlockEntities.INSTANCE.getTieredInterfaces(tier),
-//            (be, side) -> new ResourceContainerSourceHandlerAdapter(be.getExportedResources())
-//        );
+        /*event.registerBlockEntity(
+            CapabilityRegistry.SOURCE_CAPABILITY,
+            BlockEntities.INSTANCE.getTieredInterfaces(tier),
+            (be, side) -> new ResourceContainerSourceHandlerAdapter(be.getExportedResources())
+        );*/
     }
 }
