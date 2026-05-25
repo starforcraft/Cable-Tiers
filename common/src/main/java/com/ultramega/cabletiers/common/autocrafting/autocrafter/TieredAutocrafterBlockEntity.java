@@ -642,7 +642,7 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
 
         if (sidedInputState != null) {
             final List<Result> results = new ArrayList<>();
-            final List<ResourceAmount> insertedResources = new ArrayList<>();
+            final Map<ResourceKey, Long> remainingResources = toAmountMap(resources);
 
             for (final Optional<SidedResourceAmount> optionalResource : sidedInputState.sidedResources()) {
                 if (optionalResource.isEmpty()) {
@@ -659,14 +659,12 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
                 final Result result = sinks[targetDirection.ordinal()].accept(Set.of(resource), action);
                 afterAccept.accept(action, result);
                 results.add(result);
-                insertedResources.add(resource);
+
+                consumeResource(remainingResources, resource);
             }
 
             if (baseDirection != null) {
-                for (final ResourceAmount resource : resources) {
-                    if (insertedResources.contains(resource)) {
-                        continue;
-                    }
+                for (final ResourceAmount resource : toResourceAmounts(remainingResources)) {
                     final Result result = sinks[baseDirection.getOpposite().ordinal()].accept(Set.of(resource), action);
                     afterAccept.accept(action, result);
                     results.add(result);
@@ -690,9 +688,7 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
     public static SidedInputPatternState findSidedInputPatternState(final FilteredContainer patternContainer, final List<ResourceAmount> resources) {
         for (int i = 0; i < patternContainer.getContainerSize(); i++) {
             final ItemStack pattern = patternContainer.getItem(i);
-            final SidedInputPatternState sidedInputState =
-                pattern.get(DataComponents.INSTANCE.getSidedInputPatternState());
-
+            final SidedInputPatternState sidedInputState = pattern.get(DataComponents.INSTANCE.getSidedInputPatternState());
             if (sidedInputState == null) {
                 continue;
             }
@@ -701,7 +697,6 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
-
             if (!resourcesMatchesIgnoringIndex(sidedResources, resources)) {
                 continue;
             }
@@ -714,25 +709,17 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
 
     private static boolean resourcesMatchesIgnoringIndex(final List<SidedResourceAmount> sidedResources,
                                                          final List<ResourceAmount> resources) {
-        // Sum amounts for identical resources
         final Map<ResourceKey, Long> sidedMerged = sidedResources.stream()
             .collect(Collectors.groupingBy(
                 sra -> sra.resource().resource(),
                 Collectors.summingLong(sra -> sra.resource().amount())
             ));
 
-        final Map<ResourceKey, Long> flatResources = resources.stream()
-            .collect(Collectors.toMap(
-                ResourceAmount::resource,
-                ResourceAmount::amount
-            ));
-
-        // Must contain the same resource keys
+        final Map<ResourceKey, Long> flatResources = toAmountMap(resources);
         if (!sidedMerged.keySet().equals(flatResources.keySet())) {
             return false;
         }
 
-        // Amounts must match
         for (final ResourceKey key : sidedMerged.keySet()) {
             if (!Objects.equals(sidedMerged.get(key), flatResources.get(key))) {
                 return false;
@@ -740,6 +727,29 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
         }
 
         return true;
+    }
+
+    private static Map<ResourceKey, Long> toAmountMap(final Collection<ResourceAmount> resources) {
+        return resources.stream()
+            .collect(Collectors.groupingBy(
+                ResourceAmount::resource,
+                Collectors.summingLong(ResourceAmount::amount)
+            ));
+    }
+
+    private static void consumeResource(final Map<ResourceKey, Long> remainingResources,
+                                        final ResourceAmount resource) {
+        remainingResources.computeIfPresent(
+            resource.resource(),
+            (key, amount) -> Math.max(0, amount - resource.amount())
+        );
+    }
+
+    private static List<ResourceAmount> toResourceAmounts(final Map<ResourceKey, Long> resources) {
+        return resources.entrySet().stream()
+            .filter(entry -> entry.getValue() > 0)
+            .map(entry -> new ResourceAmount(entry.getKey(), entry.getValue()))
+            .toList();
     }
 
     public static Result getMostImportantResult(final List<Result> results) {
@@ -751,7 +761,7 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
             }
         }
 
-        // Fallback: first element
+        // Fallback
         return results.getFirst();
     }
 
