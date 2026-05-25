@@ -1,10 +1,10 @@
 package com.ultramega.cabletiers.common.mixin;
 
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInput;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputCodecs;
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputPatternState;
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedResourceAmount;
 import com.ultramega.cabletiers.common.registry.DataComponents;
-import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInput;
-import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputCodecs;
 
 import com.refinedmods.refinedstorage.common.autocrafting.PatternState;
 import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridBlockEntity;

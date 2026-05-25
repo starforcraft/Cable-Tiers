@@ -8,6 +8,7 @@ public final class DefaultConfig {
     private static final Map<CableTiers, Map<CableType, Integer>> SPEED_MAP = new EnumMap<>(CableTiers.class);
     private static final Map<CableTiers, Map<CableType, Boolean>> STACK_UPGRADE_MAP = new EnumMap<>(CableTiers.class);
     private static final Map<CableTiers, Map<CableType, Long>> TRANSFER_QUOTA_MULTIPLIER_MAP = new EnumMap<>(CableTiers.class);
+    private static final Map<CableTiers, Map<CableType, Integer>> PATTERN_SLOT_COUNT_MAP = new EnumMap<>(CableTiers.class);
 
     static {
         for (final CableTiers tier : CableTiers.values()) {
@@ -15,6 +16,7 @@ public final class DefaultConfig {
             SPEED_MAP.put(tier, new EnumMap<>(CableType.class));
             STACK_UPGRADE_MAP.put(tier, new EnumMap<>(CableType.class));
             TRANSFER_QUOTA_MULTIPLIER_MAP.put(tier, new EnumMap<>(CableType.class));
+            PATTERN_SLOT_COUNT_MAP.put(tier, new EnumMap<>(CableType.class));
         }
 
         // energy values
@@ -85,12 +87,14 @@ public final class DefaultConfig {
 
         // transfer quota multiplier values
         TRANSFER_QUOTA_MULTIPLIER_MAP.get(CableTiers.ELITE).put(CableType.INTERFACE, 50L);
-
         TRANSFER_QUOTA_MULTIPLIER_MAP.get(CableTiers.ULTRA).put(CableType.INTERFACE, 100L);
-
         TRANSFER_QUOTA_MULTIPLIER_MAP.get(CableTiers.MEGA).put(CableType.INTERFACE, 200L);
-
         TRANSFER_QUOTA_MULTIPLIER_MAP.get(CableTiers.CREATIVE).put(CableType.INTERFACE, Long.MAX_VALUE);
+
+        // Pattern slot count except elite
+        PATTERN_SLOT_COUNT_MAP.get(CableTiers.ULTRA).put(CableType.AUTOCRAFTER, 54);
+        PATTERN_SLOT_COUNT_MAP.get(CableTiers.MEGA).put(CableType.AUTOCRAFTER, 108);
+        PATTERN_SLOT_COUNT_MAP.get(CableTiers.CREATIVE).put(CableType.AUTOCRAFTER, 216);
     }
 
     private DefaultConfig() {
@@ -104,11 +108,15 @@ public final class DefaultConfig {
         return SPEED_MAP.getOrDefault(tier, Map.of()).getOrDefault(type, 0);
     }
 
-    public static boolean isStackUpgradeIntegrated(final CableTiers tier, final CableType type) {
+    public static boolean isStackUpgradeIntegratedFor(final CableTiers tier, final CableType type) {
         return STACK_UPGRADE_MAP.getOrDefault(tier, Map.of()).getOrDefault(type, false);
     }
 
-    public static long getTransferQuotaMultiplier(final CableTiers tier, final CableType type) {
+    public static long getTransferQuotaMultiplierFor(final CableTiers tier, final CableType type) {
         return TRANSFER_QUOTA_MULTIPLIER_MAP.getOrDefault(tier, Map.of()).getOrDefault(type, 1L);
+    }
+
+    public static int getPatternSlotCountFor(final CableTiers tier, final CableType type) {
+        return PATTERN_SLOT_COUNT_MAP.getOrDefault(tier, Map.of()).getOrDefault(type, 1);
     }
 }

@@ -1,12 +1,12 @@
 package com.ultramega.cabletiers.common.mixin;
 
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInput;
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedResourceAmount;
 import com.ultramega.cabletiers.common.packet.c2s.SetSidedResourcesOnPatternGridBlockPacket;
 import com.ultramega.cabletiers.common.packet.s2c.ClearSidedResourceOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.packet.s2c.ReplaceSidedResourceOnPatternGridMenuPacket;
 import com.ultramega.cabletiers.common.utils.ClearableSidedResource;
 import com.ultramega.cabletiers.common.utils.PlayerInventoryGetter;
-import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInput;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.Platform;

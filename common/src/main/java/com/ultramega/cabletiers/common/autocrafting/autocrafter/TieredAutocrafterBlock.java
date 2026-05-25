@@ -90,7 +90,7 @@ public class TieredAutocrafterBlock extends AbstractActiveColoredDirectionalBloc
                         .append(Component.translatable(
                             HELP_2.getString(),
                             Component.literal(tier.getSpeed(CableType.AUTOCRAFTER) + "x"),
-                            Component.literal(String.valueOf(tier.getFilterSlotsCount()))
+                            Component.literal(String.valueOf(tier.getAutocrafterPatternSlotCount()))
                         ))
                     )
                 );

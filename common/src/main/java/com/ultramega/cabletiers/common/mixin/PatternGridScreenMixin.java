@@ -1,9 +1,9 @@
 package com.ultramega.cabletiers.common.mixin;
 
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.ExtendedCustomButton;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInput;
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputScreen;
 import com.ultramega.cabletiers.common.packet.c2s.RequestSidedResourcesPacket;
-import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInput;
 
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridContainerMenu;

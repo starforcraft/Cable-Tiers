@@ -180,7 +180,7 @@ public class AdvancedResourceContainerImpl extends ResourceContainerImpl {
     }
 
     public static AdvancedResourceContainerImpl createForFilter(final CableTiers tier) {
-        return createForFilter(tier.getFilterSlotsCount());
+        return createForFilter(tier.getFilterSlotCount());
     }
 
     public static AdvancedResourceContainerImpl createForFilter(final int size) {

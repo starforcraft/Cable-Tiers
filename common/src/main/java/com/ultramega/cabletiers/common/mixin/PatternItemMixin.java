@@ -1,7 +1,7 @@
 package com.ultramega.cabletiers.common.mixin;
 
-import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputPatternState;
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInput;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputPatternState;
 
 import com.refinedmods.refinedstorage.common.autocrafting.PatternItem;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternState;

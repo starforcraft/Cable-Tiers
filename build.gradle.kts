@@ -1,3 +1,5 @@
+import me.modmuss50.mpp.PublishModTask
+
 plugins {
     id("com.refinedmods.refinedarchitect.root")
     id("com.refinedmods.refinedarchitect.base")
@@ -15,11 +17,11 @@ val runRequiredTests by tasks.registering {
     dependsOn(":common:test")
 }
 
-tasks.named("build") {
+tasks.withType<PublishModTask>().configureEach {
     dependsOn(runRequiredTests)
 }
 
-tasks.named("publishMods") {
+tasks.named("build") {
     dependsOn(runRequiredTests)
 }
 

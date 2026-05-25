@@ -1,7 +1,7 @@
 package com.ultramega.cabletiers.common.mixin;
 
-import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedResourceAmount;
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInput;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedResourceAmount;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 

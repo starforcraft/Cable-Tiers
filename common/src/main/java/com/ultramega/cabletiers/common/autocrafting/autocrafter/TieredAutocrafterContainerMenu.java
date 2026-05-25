@@ -5,6 +5,7 @@ import com.ultramega.cabletiers.common.packet.c2s.TieredAutocrafterNameChangePac
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterLockedUpdatePacket;
 import com.ultramega.cabletiers.common.packet.s2c.TieredAutocrafterNameUpdatePacket;
 import com.ultramega.cabletiers.common.registry.Menus;
+import com.ultramega.cabletiers.common.utils.AdvancedPatternSlot;
 
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternInventory;
@@ -20,6 +21,9 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeSlot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,6 +36,9 @@ import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 public class TieredAutocrafterContainerMenu extends AbstractBaseContainerMenu {
+    protected static final int PATTERN_VISIBLE_ROWS = 6;
+    private static final int PATTERN_COLUMNS = 9;
+
     private static final int PATTERN_SLOT_X = 8;
     private static final int PATTERN_SLOT_Y = 20;
 
@@ -42,12 +49,14 @@ public class TieredAutocrafterContainerMenu extends AbstractBaseContainerMenu {
     private boolean locked;
     private final RateLimiter nameRateLimiter = RateLimiter.create(0.5);
 
+    private final List<PatternSlot> patternSlots = new ArrayList<>();
+    private int patternScrollOffset;
+
     @Nullable
     private TieredAutocrafterBlockEntity autocrafter;
     private AutocrafterContainerMenu.@Nullable Listener listener;
     private Component name;
 
-    // TODO: double the amount of container resourceContents (with a scrollbar)
     public TieredAutocrafterContainerMenu(final int syncId,
                                           final Inventory playerInventory,
                                           final AutocrafterData data,
@@ -60,7 +69,7 @@ public class TieredAutocrafterContainerMenu extends AbstractBaseContainerMenu {
         this.registerProperty(new ClientProperty<>(AutocrafterPropertyTypes.VISIBLE_TO_THE_AUTOCRAFTER_MANAGER, true));
         this.registerProperty(new ClientProperty<>(AutocrafterPropertyTypes.IMPORT_MODE, ImportMode.DONT_IMPORT));
         this.addSlots(
-            new PatternInventory(tier.getFilterSlotsCount(), playerInventory.player::level),
+            new PatternInventory(tier.getAutocrafterPatternSlotCount(), playerInventory.player::level),
             new UpgradeContainer(UpgradeDestinations.AUTOCRAFTER)
         );
         this.name = Component.empty();
@@ -160,24 +169,73 @@ public class TieredAutocrafterContainerMenu extends AbstractBaseContainerMenu {
     }
 
     private void addSlots(final FilteredContainer patternContainer, final UpgradeContainer upgradeContainer) {
+        this.patternSlots.clear();
         for (int i = 0; i < patternContainer.getContainerSize(); ++i) {
-            this.addSlot(this.createPatternSlot(patternContainer, i, this.player.level()));
+            final PatternSlot slot = this.createPatternSlot(patternContainer, i, this.player.level());
+            this.patternSlots.add(slot);
+            this.addSlot(slot);
         }
+
+        this.updatePatternSlotsForScroll();
+
         if (this.tier != CableTiers.CREATIVE) {
             for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
-                this.addSlot(new UpgradeSlot(upgradeContainer, i, 187, 6 + (i * 18)));
+                this.addSlot(new UpgradeSlot(upgradeContainer, i, this.tier == CableTiers.ELITE ? 187 : 204, 6 + (i * SLOT_SIZE)));
             }
         }
-        this.addPlayerInventory(this.player.getInventory(), 8, this.tier.getPlayerInventoryY());
+
+        this.addPlayerInventory(this.player.getInventory(), 8, this.tier == CableTiers.ULTRA ? 145 : this.tier.getPlayerInventoryY());
+
         this.transferManager.addBiTransfer(this.player.getInventory(), upgradeContainer);
         this.transferManager.addBiTransfer(this.player.getInventory(), patternContainer);
     }
 
-    private Slot createPatternSlot(final FilteredContainer patternContainer,
-                                   final int i,
-                                   final Level level) {
-        final int x = PATTERN_SLOT_X + (18 * (i % 9));
-        return new PatternSlot(patternContainer, i, x, PATTERN_SLOT_Y + 18 * (i / 9), level);
+    private PatternSlot createPatternSlot(final FilteredContainer patternContainer,
+                                          final int i,
+                                          final Level level) {
+        final int x = PATTERN_SLOT_X + (SLOT_SIZE * (i % PATTERN_COLUMNS));
+        final int y = PATTERN_SLOT_Y + (SLOT_SIZE * (i / PATTERN_COLUMNS));
+        return new AdvancedPatternSlot(patternContainer, i, x, y, level, this.tier == CableTiers.ELITE);
+    }
+
+    public void setPatternScrollOffset(final int offset) {
+        final int rowsExcludingVisibleOnes = this.getPatternTotalRows() - PATTERN_VISIBLE_ROWS;
+        final int clampedOffset = Math.clamp(offset, 0, Math.max(0, rowsExcludingVisibleOnes * SLOT_SIZE));
+        if (this.patternScrollOffset == clampedOffset) {
+            return;
+        }
+
+        this.patternScrollOffset = clampedOffset;
+        this.updatePatternSlotsForScroll();
+    }
+
+    private void updatePatternSlotsForScroll() {
+        for (int row = 0; row < Math.max(this.getPatternTotalRows(), PATTERN_VISIBLE_ROWS); ++row) {
+            final int rowY = PATTERN_SLOT_Y + (row * SLOT_SIZE) - this.patternScrollOffset;
+            final boolean isOutOfFrame = rowY < PATTERN_SLOT_Y - SLOT_SIZE || rowY > PATTERN_SLOT_Y + getPatternViewportHeight() - 2;
+
+            for (int column = 0; column < PATTERN_COLUMNS; ++column) {
+                final int index = (row * PATTERN_COLUMNS) + column;
+                if (index >= this.patternSlots.size()) {
+                    continue;
+                }
+
+                final PatternSlot slot = this.patternSlots.get(index);
+                Platform.INSTANCE.setSlotY(slot, isOutOfFrame ? -10_000 : rowY);
+            }
+        }
+    }
+
+    public List<PatternSlot> getPatternSlots() {
+        return this.patternSlots;
+    }
+
+    protected int getPatternTotalRows() {
+        return (this.patternSlots.size() + PATTERN_COLUMNS - 1) / PATTERN_COLUMNS;
+    }
+
+    protected static int getPatternViewportHeight() {
+        return PATTERN_VISIBLE_ROWS * SLOT_SIZE;
     }
 
     public boolean containsPattern(final ItemStack stack) {

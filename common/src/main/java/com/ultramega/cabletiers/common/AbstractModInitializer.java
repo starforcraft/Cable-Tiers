@@ -2,6 +2,7 @@ package com.ultramega.cabletiers.common;
 
 import com.ultramega.cabletiers.common.autocrafting.autocrafter.TieredAutocrafterBlockEntity;
 import com.ultramega.cabletiers.common.autocrafting.autocrafter.TieredAutocrafterContainerMenu;
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputCodecs;
 import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputPatternState;
 import com.ultramega.cabletiers.common.constructordestructor.TieredConstructorContainerMenu;
 import com.ultramega.cabletiers.common.constructordestructor.TieredDestructorContainerMenu;
@@ -19,7 +20,6 @@ import com.ultramega.cabletiers.common.storage.diskinterface.TieredDiskInterface
 import com.ultramega.cabletiers.common.utils.BlockEntityProviders;
 import com.ultramega.cabletiers.common.utils.BlockEntityTierTypeFactory;
 import com.ultramega.cabletiers.common.utils.ContentIds;
-import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputCodecs;
 
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterData;

@@ -96,7 +96,7 @@ public class TieredDiskInterfaceBlock extends AbstractActiveColoredDirectionalBl
                         .append(Component.literal(" "))
                         .append(Component.translatable(
                             HELP_2.getString(),
-                            Component.literal(String.valueOf(tier.getFilterSlotsCount())),
+                            Component.literal(String.valueOf(tier.getFilterSlotCount())),
                             Component.literal(tier != CableTiers.ELITE ? " " + HELP_3.getString() : "")
                         ))
                     )

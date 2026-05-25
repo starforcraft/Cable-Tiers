@@ -120,7 +120,7 @@ public class TieredImporterBlock extends AbstractDirectionalCableBlock implement
                         .append(Component.translatable(
                             HELP_2.getString(),
                             Component.literal(tier.getSpeed(CableType.IMPORTER) + "x"),
-                            Component.literal(String.valueOf(tier.getFilterSlotsCount())),
+                            Component.literal(String.valueOf(tier.getFilterSlotCount())),
                             Component.literal(tier != CableTiers.ELITE ? " " + HELP_3.getString() : "")
                         ))
                     )

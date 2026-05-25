@@ -17,8 +17,8 @@ public class ConfigImpl implements Config {
     private final SimpleTieredStackEntry tieredExporters;
     private final SimpleTieredEntry tieredDestructors;
     private final SimpleTieredStackEntry tieredConstructors;
-    private final SimpleTieredStackEntry tieredDiskInterfaces;
-    private final SimpleTieredEntry tieredAutocrafters;
+    private final SimpleTieredStackEnergyEntry tieredDiskInterfaces;
+    private final SimpleTieredAutocrafterEntry tieredAutocrafters;
     private final SimpleTieredInterfaceEntry tieredInterfaces;
 
     public ConfigImpl() {
@@ -26,8 +26,8 @@ public class ConfigImpl implements Config {
         this.tieredExporters = new SimpleTieredStackEntryImpl("tieredExporters", CableType.EXPORTER);
         this.tieredDestructors = new SimpleTieredEntryImpl("tieredDestructors", CableType.DESTRUCTOR, true);
         this.tieredConstructors = new SimpleTieredStackEntryImpl("tieredConstructors", CableType.CONSTRUCTOR);
-        this.tieredDiskInterfaces = new SimpleTieredStackEntryImpl("tieredDiskInterfaces", CableType.DISK_INTERFACE);
-        this.tieredAutocrafters = new SimpleTieredEntryImpl("tieredAutocrafters", CableType.AUTOCRAFTER, true);
+        this.tieredDiskInterfaces = new SimpleTieredStackEnergyEntryImpl("tieredDiskInterfaces", CableType.DISK_INTERFACE);
+        this.tieredAutocrafters = new SimpleTieredAutocrafterEntryImpl("tieredAutocrafters", CableType.AUTOCRAFTER);
         this.tieredInterfaces = new SimpleTieredInterfaceEntryImpl("tieredInterfaces", CableType.INTERFACE);
         this.spec = this.builder.build();
     }
@@ -57,12 +57,12 @@ public class ConfigImpl implements Config {
     }
 
     @Override
-    public SimpleTieredStackEntry getTieredDiskInterfaces() {
+    public SimpleTieredStackEnergyEntry getTieredDiskInterfaces() {
         return this.tieredDiskInterfaces;
     }
 
     @Override
-    public SimpleTieredEntry getTieredAutocrafters() {
+    public SimpleTieredAutocrafterEntry getTieredAutocrafters() {
         return this.tieredAutocrafters;
     }
 
@@ -85,13 +85,45 @@ public class ConfigImpl implements Config {
 
             this.eliteStackUpgradeIntegrated = builder
                 .translation(translationKey(name + ".eliteStackUpgradeIntegrated"))
-                .define("eliteStackUpgradeIntegrated", DefaultConfig.isStackUpgradeIntegrated(CableTiers.ELITE, type));
+                .define("eliteStackUpgradeIntegrated", DefaultConfig.isStackUpgradeIntegratedFor(CableTiers.ELITE, type));
             this.ultraStackUpgradeIntegrated = builder
                 .translation(translationKey(name + ".ultraStackUpgradeIntegrated"))
-                .define("ultraStackUpgradeIntegrated", DefaultConfig.isStackUpgradeIntegrated(CableTiers.ULTRA, type));
+                .define("ultraStackUpgradeIntegrated", DefaultConfig.isStackUpgradeIntegratedFor(CableTiers.ULTRA, type));
             this.megaStackUpgradeIntegrated = builder
                 .translation(translationKey(name + ".megaStackUpgradeIntegrated"))
-                .define("megaStackUpgradeIntegrated", DefaultConfig.isStackUpgradeIntegrated(CableTiers.MEGA, type));
+                .define("megaStackUpgradeIntegrated", DefaultConfig.isStackUpgradeIntegratedFor(CableTiers.MEGA, type));
+
+            builder.pop();
+        }
+
+        @Override
+        public boolean hasStackUpgradeIntegrated(final CableTiers tier) {
+            return switch (tier) {
+                case ELITE -> this.eliteStackUpgradeIntegrated.get();
+                case ULTRA -> this.ultraStackUpgradeIntegrated.get();
+                case MEGA -> this.megaStackUpgradeIntegrated.get();
+                case CREATIVE -> true;
+            };
+        }
+    }
+
+    private final class SimpleTieredStackEnergyEntryImpl extends SimpleTieredEnergyEntryImpl implements SimpleTieredStackEnergyEntry {
+        private final ModConfigSpec.BooleanValue eliteStackUpgradeIntegrated;
+        private final ModConfigSpec.BooleanValue ultraStackUpgradeIntegrated;
+        private final ModConfigSpec.BooleanValue megaStackUpgradeIntegrated;
+
+        SimpleTieredStackEnergyEntryImpl(final String name, final CableType type) {
+            super(name, type, false);
+
+            this.eliteStackUpgradeIntegrated = builder
+                .translation(translationKey(name + ".eliteStackUpgradeIntegrated"))
+                .define("eliteStackUpgradeIntegrated", DefaultConfig.isStackUpgradeIntegratedFor(CableTiers.ELITE, type));
+            this.ultraStackUpgradeIntegrated = builder
+                .translation(translationKey(name + ".ultraStackUpgradeIntegrated"))
+                .define("ultraStackUpgradeIntegrated", DefaultConfig.isStackUpgradeIntegratedFor(CableTiers.ULTRA, type));
+            this.megaStackUpgradeIntegrated = builder
+                .translation(translationKey(name + ".megaStackUpgradeIntegrated"))
+                .define("megaStackUpgradeIntegrated", DefaultConfig.isStackUpgradeIntegratedFor(CableTiers.MEGA, type));
 
             builder.pop();
         }
@@ -118,16 +150,16 @@ public class ConfigImpl implements Config {
 
             this.eliteTransferQuotaMultiplier = builder
                 .translation(translationKey(name + ".eliteTransferQuotaMultiplier"))
-                .defineInRange("eliteTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplier(CableTiers.ELITE, type), 1, Long.MAX_VALUE);
+                .defineInRange("eliteTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplierFor(CableTiers.ELITE, type), 1, Long.MAX_VALUE);
             this.ultraTransferQuotaMultiplier = builder
                 .translation(translationKey(name + ".ultraTransferQuotaMultiplier"))
-                .defineInRange("ultraTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplier(CableTiers.ULTRA, type), 1, Long.MAX_VALUE);
+                .defineInRange("ultraTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplierFor(CableTiers.ULTRA, type), 1, Long.MAX_VALUE);
             this.megaTransferQuotaMultiplier = builder
                 .translation(translationKey(name + ".megaTransferQuotaMultiplier"))
-                .defineInRange("megaTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplier(CableTiers.MEGA, type), 1, Long.MAX_VALUE);
+                .defineInRange("megaTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplierFor(CableTiers.MEGA, type), 1, Long.MAX_VALUE);
             this.creativeTransferQuotaMultiplier = builder
                 .translation(translationKey(name + ".creativeTransferQuotaMultiplier"))
-                .defineInRange("creativeTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplier(CableTiers.CREATIVE, type), 1, Long.MAX_VALUE);
+                .defineInRange("creativeTransferQuotaMultiplier", DefaultConfig.getTransferQuotaMultiplierFor(CableTiers.CREATIVE, type), 1, Long.MAX_VALUE);
 
             builder.pop();
         }
@@ -139,6 +171,38 @@ public class ConfigImpl implements Config {
                 case ULTRA -> this.ultraTransferQuotaMultiplier.get();
                 case MEGA -> this.megaTransferQuotaMultiplier.get();
                 case CREATIVE -> this.creativeTransferQuotaMultiplier.get();
+            };
+        }
+    }
+
+    private final class SimpleTieredAutocrafterEntryImpl extends SimpleTieredEntryImpl implements SimpleTieredAutocrafterEntry {
+        private final ModConfigSpec.IntValue ultraPatternSlotCount;
+        private final ModConfigSpec.IntValue megaPatternSlotCount;
+        private final ModConfigSpec.IntValue creativePatternSlotCount;
+
+        SimpleTieredAutocrafterEntryImpl(final String name, final CableType type) {
+            super(name, type, false);
+
+            this.ultraPatternSlotCount = builder
+                .translation(translationKey(name + ".ultraPatternSlotCount"))
+                .defineInRange("ultraPatternSlotCount", DefaultConfig.getPatternSlotCountFor(CableTiers.ULTRA, type), 9 * 6, Integer.MAX_VALUE);
+            this.megaPatternSlotCount = builder
+                .translation(translationKey(name + ".megaPatternSlotCount"))
+                .defineInRange("megaPatternSlotCount", DefaultConfig.getPatternSlotCountFor(CableTiers.MEGA, type), 9 * 6, Integer.MAX_VALUE);
+            this.creativePatternSlotCount = builder
+                .translation(translationKey(name + ".creativePatternSlotCount"))
+                .defineInRange("creativePatternSlotCount", DefaultConfig.getPatternSlotCountFor(CableTiers.CREATIVE, type), 9 * 6, Integer.MAX_VALUE);
+
+            builder.pop();
+        }
+
+        @Override
+        public int getPatternSlotCount(final CableTiers tier) {
+            return switch (tier) {
+                case ULTRA -> this.ultraPatternSlotCount.get();
+                case MEGA -> this.megaPatternSlotCount.get();
+                case CREATIVE -> this.creativePatternSlotCount.get();
+                default -> throw new UnsupportedOperationException(tier.getLowercaseName() + " has no pattern slot count config");
             };
         }
     }

@@ -24,14 +24,14 @@ public enum CableTiers implements StringRepresentable {
 
     public static final Codec<CableTiers> CODEC = StringRepresentable.fromEnum(CableTiers::values);
 
-    private final int filterSlotsCount;
+    private final int filterSlotCount;
     private final int interfaceSlotsCount;
     private final int playerInventoryY;
 
     CableTiers(final int filterSlotsCount,
                final int interfaceSlotsCount,
                final int playerInventoryY) {
-        this.filterSlotsCount = filterSlotsCount;
+        this.filterSlotCount = filterSlotsCount;
         this.interfaceSlotsCount = interfaceSlotsCount;
         this.playerInventoryY = playerInventoryY;
     }
@@ -93,8 +93,15 @@ public enum CableTiers implements StringRepresentable {
         return 1L;
     }
 
-    public int getFilterSlotsCount() {
-        return this.filterSlotsCount;
+    public int getFilterSlotCount() {
+        return this.filterSlotCount;
+    }
+
+    public int getAutocrafterPatternSlotCount() {
+        if (this == ELITE) {
+            return this.getFilterSlotCount();
+        }
+        return Platform.getConfig().getTieredAutocrafters().getPatternSlotCount(this);
     }
 
     public int getInterfaceSlotsCount() {

@@ -119,12 +119,12 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
             BlockEntities.INSTANCE.getTieredAutocrafters(tier),
             pos,
             state,
-            new ExtendedPatternProviderNetworkNode(Platform.getConfig().getTieredAutocrafters().getEnergyUsage(tier), tier.getFilterSlotsCount())
+            new ExtendedPatternProviderNetworkNode(Platform.getConfig().getTieredAutocrafters().getEnergyUsage(tier), tier.getAutocrafterPatternSlotCount())
         );
         this.tier = tier;
         this.steps = getSteps(0, tier);
         this.tickRate = getTickRate(0, tier);
-        this.patternContainer = new PatternInventory(tier.getFilterSlotsCount(), this::getLevel) {
+        this.patternContainer = new PatternInventory(tier.getAutocrafterPatternSlotCount(), this::getLevel) {
             @Override
             public void setChanged() {
                 super.setChanged();

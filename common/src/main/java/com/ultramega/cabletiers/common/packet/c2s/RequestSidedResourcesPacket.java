@@ -1,8 +1,8 @@
 package com.ultramega.cabletiers.common.packet.c2s;
 
+import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInput;
 import com.ultramega.cabletiers.common.mixin.PatternGridContainerMenuInvoker;
 import com.ultramega.cabletiers.common.packet.s2c.SetSidedResourcesOnPatternGridMenuPacket;
-import com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInput;
 
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.support.packet.PacketContext;

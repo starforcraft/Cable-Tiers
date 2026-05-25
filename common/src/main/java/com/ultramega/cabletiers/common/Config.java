@@ -9,18 +9,25 @@ public interface Config {
 
     SimpleTieredStackEntry getTieredConstructors();
 
-    SimpleTieredStackEntry getTieredDiskInterfaces(); //TODO: remove speed config out of disk interface because it does literally nothing anymore
+    SimpleTieredStackEnergyEntry getTieredDiskInterfaces();
 
-    SimpleTieredEntry getTieredAutocrafters();
+    SimpleTieredAutocrafterEntry getTieredAutocrafters();
 
     SimpleTieredInterfaceEntry getTieredInterfaces();
 
-    interface SimpleTieredStackEntry extends SimpleTieredEntry {
+    interface SimpleTieredStackEnergyEntry extends SimpleTieredEnergyEntry {
         boolean hasStackUpgradeIntegrated(CableTiers tier);
+    }
+
+    interface SimpleTieredStackEntry extends SimpleTieredEntry, SimpleTieredStackEnergyEntry {
     }
 
     interface SimpleTieredInterfaceEntry extends SimpleTieredEnergyEntry {
         long getTransferQuotaMultiplier(CableTiers tier);
+    }
+
+    interface SimpleTieredAutocrafterEntry extends SimpleTieredEntry {
+        int getPatternSlotCount(CableTiers tier);
     }
 
     interface SimpleTieredEntry extends SimpleTieredEnergyEntry {

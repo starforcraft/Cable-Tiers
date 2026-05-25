@@ -127,7 +127,7 @@ public class TieredDiskInterfaceContainerMenu extends AbstractTieredFilterContai
     }
 
     public static int getYIncrease(final CableTiers tier) {
-        return ((tier.getFilterSlotsCount() / 9 - 1) * 18);
+        return ((tier.getFilterSlotCount() / 9 - 1) * 18);
     }
 
     @Override

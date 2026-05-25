@@ -72,7 +72,6 @@ public class ExtendedPatternProviderNetworkNode extends PatternProviderNetworkNo
             case IMPORT_REQUESTED_RESOURCES_DEEP -> this.requestedResourceFilterDeep;
             default -> null;
         };
-
         if (filter != null) {
             if (this.removeCompletedPatternsFromRequestedResourcesDeep()) {
                 return;

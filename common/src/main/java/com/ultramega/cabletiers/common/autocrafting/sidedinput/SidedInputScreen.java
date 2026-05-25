@@ -34,9 +34,9 @@ import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
+import static com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputUtil.isProcessingInputSlot;
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersIdentifier;
 import static com.ultramega.cabletiers.common.utils.CableTiersIdentifierUtil.createCableTiersTranslation;
-import static com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputUtil.isProcessingInputSlot;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class SidedInputScreen extends Screen {

@@ -76,7 +76,7 @@ public class TieredDestructorBlock extends AbstractConstructorDestructorBlock<Ti
                             .append(Component.translatable(
                                 HELP_2.getString(),
                                 Component.literal(tier.getSpeed(CableType.DESTRUCTOR) + "x"),
-                                Component.literal(String.valueOf(tier.getFilterSlotsCount()))
+                                Component.literal(String.valueOf(tier.getFilterSlotCount()))
                             ))
                     )
                 );

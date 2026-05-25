@@ -26,10 +26,10 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
     private SimpleTieredStackEntryImpl tieredConstructors = new SimpleTieredStackEntryImpl(CableType.CONSTRUCTOR);
 
     @ConfigEntry.Gui.CollapsibleObject
-    private SimpleTieredStackEntryImpl tieredDiskInterface = new SimpleTieredStackEntryImpl(CableType.DISK_INTERFACE); // Removed "s" to force configs to be regenerated
+    private SimpleTieredStackEnergyEntryImpl tieredDiskInterfaces = new SimpleTieredStackEnergyEntryImpl(CableType.DISK_INTERFACE);
 
     @ConfigEntry.Gui.CollapsibleObject
-    private SimpleTieredEntryImpl tieredAutocrafters = new SimpleTieredEntryImpl(CableType.AUTOCRAFTER);
+    private SimpleTieredAutocrafterEntryImpl tieredAutocrafters = new SimpleTieredAutocrafterEntryImpl(CableType.AUTOCRAFTER);
 
     @ConfigEntry.Gui.CollapsibleObject
     private SimpleTieredInterfaceEntryImpl tieredInterfaces = new SimpleTieredInterfaceEntryImpl(CableType.INTERFACE);
@@ -59,12 +59,12 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
     }
 
     @Override
-    public SimpleTieredStackEntry getTieredDiskInterfaces() {
-        return this.tieredDiskInterface;
+    public SimpleTieredStackEnergyEntry getTieredDiskInterfaces() {
+        return this.tieredDiskInterfaces;
     }
 
     @Override
-    public SimpleTieredEntry getTieredAutocrafters() {
+    public SimpleTieredAutocrafterEntry getTieredAutocrafters() {
         return this.tieredAutocrafters;
     }
 
@@ -97,9 +97,9 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
             this.megaSpeed = DefaultConfig.getSpeedFor(CableTiers.MEGA, type);
             this.creativeSpeed = DefaultConfig.getSpeedFor(CableTiers.MEGA, type);
 
-            this.eliteStackUpgradeIntegrated = DefaultConfig.isStackUpgradeIntegrated(CableTiers.ELITE, type);
-            this.ultraStackUpgradeIntegrated = DefaultConfig.isStackUpgradeIntegrated(CableTiers.ULTRA, type);
-            this.megaStackUpgradeIntegrated = DefaultConfig.isStackUpgradeIntegrated(CableTiers.MEGA, type);
+            this.eliteStackUpgradeIntegrated = DefaultConfig.isStackUpgradeIntegratedFor(CableTiers.ELITE, type);
+            this.ultraStackUpgradeIntegrated = DefaultConfig.isStackUpgradeIntegratedFor(CableTiers.ULTRA, type);
+            this.megaStackUpgradeIntegrated = DefaultConfig.isStackUpgradeIntegratedFor(CableTiers.MEGA, type);
         }
 
         @Override
@@ -133,6 +133,46 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
         }
     }
 
+    private static class SimpleTieredStackEnergyEntryImpl implements SimpleTieredStackEnergyEntry {
+        private long eliteEnergyUsage;
+        private long ultraEnergyUsage;
+        private long megaEnergyUsage;
+
+        private boolean eliteStackUpgradeIntegrated;
+        private boolean ultraStackUpgradeIntegrated;
+        private boolean megaStackUpgradeIntegrated;
+
+        SimpleTieredStackEnergyEntryImpl(final CableType type) {
+            this.eliteEnergyUsage = DefaultConfig.getUsageFor(CableTiers.ELITE, type);
+            this.ultraEnergyUsage = DefaultConfig.getUsageFor(CableTiers.ULTRA, type);
+            this.megaEnergyUsage = DefaultConfig.getUsageFor(CableTiers.MEGA, type);
+
+            this.eliteStackUpgradeIntegrated = DefaultConfig.isStackUpgradeIntegratedFor(CableTiers.ELITE, type);
+            this.ultraStackUpgradeIntegrated = DefaultConfig.isStackUpgradeIntegratedFor(CableTiers.ULTRA, type);
+            this.megaStackUpgradeIntegrated = DefaultConfig.isStackUpgradeIntegratedFor(CableTiers.MEGA, type);
+        }
+
+        @Override
+        public long getEnergyUsage(final CableTiers tier) {
+            return switch (tier) {
+                case ELITE -> this.eliteEnergyUsage;
+                case ULTRA -> this.ultraEnergyUsage;
+                case MEGA -> this.megaEnergyUsage;
+                case CREATIVE -> 0;
+            };
+        }
+
+        @Override
+        public boolean hasStackUpgradeIntegrated(final CableTiers tier) {
+            return switch (tier) {
+                case ELITE -> this.eliteStackUpgradeIntegrated;
+                case ULTRA -> this.ultraStackUpgradeIntegrated;
+                case MEGA -> this.megaStackUpgradeIntegrated;
+                case CREATIVE -> true;
+            };
+        }
+    }
+
     private static class SimpleTieredInterfaceEntryImpl implements SimpleTieredInterfaceEntry {
         private long eliteEnergyUsage;
         private long ultraEnergyUsage;
@@ -148,10 +188,10 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
             this.ultraEnergyUsage = DefaultConfig.getUsageFor(CableTiers.ULTRA, type);
             this.megaEnergyUsage = DefaultConfig.getUsageFor(CableTiers.MEGA, type);
 
-            this.eliteTransferQuotaMultiplier = DefaultConfig.getTransferQuotaMultiplier(CableTiers.ELITE, type);
-            this.ultraTransferQuotaMultiplier = DefaultConfig.getTransferQuotaMultiplier(CableTiers.ULTRA, type);
-            this.megaTransferQuotaMultiplier = DefaultConfig.getTransferQuotaMultiplier(CableTiers.MEGA, type);
-            this.creativeTransferQuotaMultiplier = DefaultConfig.getTransferQuotaMultiplier(CableTiers.CREATIVE, type);
+            this.eliteTransferQuotaMultiplier = DefaultConfig.getTransferQuotaMultiplierFor(CableTiers.ELITE, type);
+            this.ultraTransferQuotaMultiplier = DefaultConfig.getTransferQuotaMultiplierFor(CableTiers.ULTRA, type);
+            this.megaTransferQuotaMultiplier = DefaultConfig.getTransferQuotaMultiplierFor(CableTiers.MEGA, type);
+            this.creativeTransferQuotaMultiplier = DefaultConfig.getTransferQuotaMultiplierFor(CableTiers.CREATIVE, type);
         }
 
         @Override
@@ -171,6 +211,69 @@ public class ConfigImpl implements ConfigData, com.ultramega.cabletiers.common.C
                 case ULTRA -> this.ultraTransferQuotaMultiplier;
                 case MEGA -> this.megaTransferQuotaMultiplier;
                 case CREATIVE -> this.creativeTransferQuotaMultiplier;
+            };
+        }
+    }
+
+    private static class SimpleTieredAutocrafterEntryImpl implements SimpleTieredAutocrafterEntry {
+        private long eliteEnergyUsage;
+        private long ultraEnergyUsage;
+        private long megaEnergyUsage;
+
+        private int eliteSpeed;
+        private int ultraSpeed;
+        private int megaSpeed;
+        private int creativeSpeed;
+
+        @ConfigEntry.BoundedDiscrete(min = 9 * 6, max = Integer.MAX_VALUE)
+        private int ultraPatternSlotCount;
+        @ConfigEntry.BoundedDiscrete(min = 9 * 6, max = Integer.MAX_VALUE)
+        private int megaPatternSlotCount;
+        @ConfigEntry.BoundedDiscrete(min = 9 * 6, max = Integer.MAX_VALUE)
+        private int creativePatternSlotCount;
+
+        SimpleTieredAutocrafterEntryImpl(final CableType type) {
+            this.eliteEnergyUsage = DefaultConfig.getUsageFor(CableTiers.ELITE, type);
+            this.ultraEnergyUsage = DefaultConfig.getUsageFor(CableTiers.ULTRA, type);
+            this.megaEnergyUsage = DefaultConfig.getUsageFor(CableTiers.MEGA, type);
+
+            this.eliteSpeed = DefaultConfig.getSpeedFor(CableTiers.ELITE, type);
+            this.ultraSpeed = DefaultConfig.getSpeedFor(CableTiers.ULTRA, type);
+            this.megaSpeed = DefaultConfig.getSpeedFor(CableTiers.MEGA, type);
+            this.creativeSpeed = DefaultConfig.getSpeedFor(CableTiers.CREATIVE, type);
+
+            this.ultraPatternSlotCount = DefaultConfig.getPatternSlotCountFor(CableTiers.ULTRA, type);
+            this.megaPatternSlotCount = DefaultConfig.getPatternSlotCountFor(CableTiers.MEGA, type);
+            this.creativePatternSlotCount = DefaultConfig.getPatternSlotCountFor(CableTiers.CREATIVE, type);
+        }
+
+        @Override
+        public long getEnergyUsage(final CableTiers tier) {
+            return switch (tier) {
+                case ELITE -> this.eliteEnergyUsage;
+                case ULTRA -> this.ultraEnergyUsage;
+                case MEGA -> this.megaEnergyUsage;
+                case CREATIVE -> 0;
+            };
+        }
+
+        @Override
+        public int getSpeed(final CableTiers tier) {
+            return switch (tier) {
+                case ELITE -> this.eliteSpeed;
+                case ULTRA -> this.ultraSpeed;
+                case MEGA -> this.megaSpeed;
+                case CREATIVE -> this.creativeSpeed;
+            };
+        }
+
+        @Override
+        public int getPatternSlotCount(final CableTiers tier) {
+            return switch (tier) {
+                case ULTRA -> this.ultraPatternSlotCount;
+                case MEGA -> this.megaPatternSlotCount;
+                case CREATIVE -> this.creativePatternSlotCount;
+                default -> throw new UnsupportedOperationException(tier.getLowercaseName() + " has no pattern slot count config");
             };
         }
     }
