@@ -100,7 +100,7 @@ public abstract class AbstractResourceContainerContainerAdapter implements Conta
 
     @Override
     public int getMaxStackSize(final ItemStack stack) {
-        return (int) Math.clamp(0, this.container.getMaxAmount(ItemResource.ofItemStack(stack)), Integer.MAX_VALUE);
+        return Math.clamp(this.container.getMaxAmount(ItemResource.ofItemStack(stack)), 0, Integer.MAX_VALUE);
     }
 
     @Override
