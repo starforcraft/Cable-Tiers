@@ -84,16 +84,15 @@ dependencies {
     commonResources(project(path = ":common", configuration = "commonResources"))
     api("com.refinedmods.refinedstorage:refinedstorage-neoforge:${refinedstorageVersion}")
 
-    /*compileOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorageMekanismIntegrationVersion}")  {
-        isTransitive = false
-    }
-    compileOnly("mekanism:Mekanism:${mekanismVersion}")
+//    compileOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorageMekanismIntegrationVersion}")  {
+//        isTransitive = false
+//    }
+//    compileOnly("mekanism:Mekanism:${mekanismVersion}")
     implementation("curse.maven:refined-types-1327983:${refinedTypesVersion}")
-    compileOnly("dev.technici4n:GrandPower:${grandPowerVersion}")
 
-    implementation("com.hollingsworth.ars_nouveau:ars_nouveau-${minecraftVersion}:${arsNouveauVersion}")
-    implementation("com.buuz135:industrialforegoing:1.21-${industrialForegoingVersion}")
-    implementation("curse.maven:industrial-foregoing-souls-904394:${industrialForegoingSoulsVersion}")*/
+//    implementation("com.hollingsworth.ars_nouveau:ars_nouveau-${minecraftVersion}:${arsNouveauVersion}")
+//    implementation("com.buuz135:industrialforegoing:1.21-${industrialForegoingVersion}")
+//    implementation("curse.maven:industrial-foregoing-souls-904394:${industrialForegoingSoulsVersion}")
     runtimeOnly("maven.modrinth:jade:${jadeVersionNeoForge}+neoforge");
 }
 

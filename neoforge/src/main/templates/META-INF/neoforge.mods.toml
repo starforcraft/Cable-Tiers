@@ -13,12 +13,12 @@ description = "Cable Tiers is an addon for Refined Storage which adds better Imp
 [[mixins]]
 config="cabletiers.mixins.json"
 
-#[[dependencies.cabletiers]]
-#modId="refinedtypes"
-#type="optional"
-#versionRange="[1.21.1-0.2.8,)"
-#ordering="NONE"
-#side="BOTH"
+[[dependencies.cabletiers]]
+modId="refinedtypes"
+type="optional"
+versionRange="[26.1.2-1.0.0,)"
+ordering="NONE"
+side="BOTH"
 
 [[dependencies.cabletiers]]
 modId="minecraft"
