@@ -26,6 +26,7 @@ import com.refinedmods.refinedstorage.api.network.autocrafting.PatternProviderEx
 import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.PatternProviderListener;
 import com.refinedmods.refinedstorage.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PlatformPatternProviderExternalPatternSink;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
@@ -45,7 +46,9 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -76,7 +79,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock.tryExtractDirection;
-import static com.ultramega.cabletiers.common.autocrafting.sidedinput.SidedInputRouting.resourcesMatchIgnoringIndex;
 import static com.ultramega.cabletiers.common.importer.AbstractTieredImporterBlockEntity.createStrategy;
 
 public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntity<ExtendedPatternProviderNetworkNode>
@@ -647,28 +649,40 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
 
     @Nullable
     public static SidedInputPatternState findSidedInputPatternState(final FilteredContainer patternContainer, final List<ResourceAmount> resources) {
-        for (int i = 0; i < patternContainer.getContainerSize(); i++) {
-            final ItemStack pattern = patternContainer.getItem(i);
-            final SidedInputPatternState sidedInputState = pattern.get(DataComponents.INSTANCE.getSidedInputPatternState());
-            if (sidedInputState == null) {
-                continue;
-            }
-
-            final List<SidedResourceAmount> sidedResources = sidedInputState.sidedResources().stream()
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .toList();
-            if (!resourcesMatchIgnoringIndex(sidedResources, resources)) {
-                continue;
-            }
-
-            return sidedInputState;
+        final Map<ResourceKey, Long> wanted = new HashMap<>();
+        for (final ResourceAmount amount : resources) {
+            wanted.merge(amount.resource(), amount.amount(), Long::sum);
         }
 
+        final Map<ResourceKey, Long> offered = new HashMap<>();
+
+        for (int slot = 0; slot < patternContainer.getContainerSize(); slot++) {
+            final ItemStack stack = patternContainer.getItem(slot);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            final SidedInputPatternState state = stack.get(DataComponents.INSTANCE.getSidedInputPatternState());
+            if (state == null) {
+                continue;
+            }
+
+            offered.clear();
+            for (final Optional<SidedResourceAmount> sided : state.sidedResources()) {
+                if (sided.isEmpty()) {
+                    continue;
+                }
+                final ResourceAmount amount = sided.get().resource();
+                offered.merge(amount.resource(), amount.amount(), Long::sum);
+            }
+
+            if (offered.equals(wanted)) {
+                return state;
+            }
+        }
         return null;
     }
 
-    private void updateLockedAfterAccept(final Action action, final ExternalPatternSink.Result result) {
+    private void updateLockedAfterAccept(final Action action, final Result result) {
         // If we are using speed upgrades, we will try multiple insertions (steps) in 1 tick.
         // That is too late, however, if we only update the locked state every tick.
         if (result == ExternalPatternSink.Result.ACCEPTED
