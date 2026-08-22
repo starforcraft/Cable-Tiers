@@ -47,6 +47,7 @@ import com.refinedmods.refinedstorage.common.util.ContainerUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -686,47 +687,37 @@ public class TieredAutocrafterBlockEntity extends AbstractBaseNetworkNodeContain
 
     @Nullable
     public static SidedInputPatternState findSidedInputPatternState(final FilteredContainer patternContainer, final List<ResourceAmount> resources) {
-        for (int i = 0; i < patternContainer.getContainerSize(); i++) {
-            final ItemStack pattern = patternContainer.getItem(i);
-            final SidedInputPatternState sidedInputState = pattern.get(DataComponents.INSTANCE.getSidedInputPatternState());
-            if (sidedInputState == null) {
-                continue;
-            }
-
-            final List<SidedResourceAmount> sidedResources = sidedInputState.sidedResources().stream()
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .toList();
-            if (!resourcesMatchesIgnoringIndex(sidedResources, resources)) {
-                continue;
-            }
-
-            return sidedInputState;
+        final Map<ResourceKey, Long> wanted = new HashMap<>();
+        for (final ResourceAmount amount : resources) {
+            wanted.merge(amount.resource(), amount.amount(), Long::sum);
         }
 
+        final Map<ResourceKey, Long> offered = new HashMap<>();
+
+        for (int slot = 0; slot < patternContainer.getContainerSize(); slot++) {
+            final ItemStack stack = patternContainer.getItem(slot);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            final SidedInputPatternState state = stack.get(DataComponents.INSTANCE.getSidedInputPatternState());
+            if (state == null) {
+                continue;
+            }
+
+            offered.clear();
+            for (final Optional<SidedResourceAmount> sided : state.sidedResources()) {
+                if (sided.isEmpty()) {
+                    continue;
+                }
+                final ResourceAmount amount = sided.get().resource();
+                offered.merge(amount.resource(), amount.amount(), Long::sum);
+            }
+
+            if (offered.equals(wanted)) {
+                return state;
+            }
+        }
         return null;
-    }
-
-    private static boolean resourcesMatchesIgnoringIndex(final List<SidedResourceAmount> sidedResources,
-                                                         final List<ResourceAmount> resources) {
-        final Map<ResourceKey, Long> sidedMerged = sidedResources.stream()
-            .collect(Collectors.groupingBy(
-                sra -> sra.resource().resource(),
-                Collectors.summingLong(sra -> sra.resource().amount())
-            ));
-
-        final Map<ResourceKey, Long> flatResources = toAmountMap(resources);
-        if (!sidedMerged.keySet().equals(flatResources.keySet())) {
-            return false;
-        }
-
-        for (final ResourceKey key : sidedMerged.keySet()) {
-            if (!Objects.equals(sidedMerged.get(key), flatResources.get(key))) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private static Map<ResourceKey, Long> toAmountMap(final Collection<ResourceAmount> resources) {
