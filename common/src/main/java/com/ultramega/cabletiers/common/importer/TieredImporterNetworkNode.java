@@ -29,11 +29,14 @@ public class TieredImporterNetworkNode extends TieredSimpleNetworkNode {
     @Override
     public void doWork() {
         super.doWork();
-        if (network == null || !isActive() || transferStrategy == null) {
+        if (this.network == null || !this.isActive() || this.transferStrategy == null) {
             return;
         }
-        for (int i = 0; i < getTier().getSpeed(getType()); i++) {
-            transferStrategy.transfer(filter, actor, network);
+        final int speed = this.getTier().getSpeed(this.getType());
+        for (int i = 0; i < speed; i++) {
+            if (!this.transferStrategy.transfer(this.filter, this.actor, this.network)) {
+                break;
+            }
         }
     }
 
@@ -42,19 +45,19 @@ public class TieredImporterNetworkNode extends TieredSimpleNetworkNode {
     }
 
     public FilterMode getFilterMode() {
-        return filter.getMode();
+        return this.filter.getMode();
     }
 
     public void setFilterMode(final FilterMode mode) {
-        filter.setMode(mode);
+        this.filter.setMode(mode);
     }
 
     public void setNormalizer(final UnaryOperator<ResourceKey> normalizer) {
-        filter.setNormalizer(normalizer);
+        this.filter.setNormalizer(normalizer);
     }
 
     public void setFilters(final Set<ResourceKey> filters, final Set<TagKey<?>> tagFilters) {
-        filter.setFilters(filters);
-        filter.setTagFilters(tagFilters);
+        this.filter.setFilters(filters);
+        this.filter.setTagFilters(tagFilters);
     }
 }
