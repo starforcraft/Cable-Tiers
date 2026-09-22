@@ -32,8 +32,11 @@ public class TieredImporterNetworkNode extends TieredSimpleNetworkNode {
         if (this.network == null || !this.isActive() || this.transferStrategy == null) {
             return;
         }
-        for (int i = 0; i < this.getTier().getSpeed(this.getType()); i++) {
-            this.transferStrategy.transfer(this.filter, this.actor, this.network);
+        final int speed = this.getTier().getSpeed(this.getType());
+        for (int i = 0; i < speed; i++) {
+            if (!this.transferStrategy.transfer(this.filter, this.actor, this.network)) {
+                break;
+            }
         }
     }
 
