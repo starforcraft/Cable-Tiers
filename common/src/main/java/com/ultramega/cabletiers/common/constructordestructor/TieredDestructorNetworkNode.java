@@ -57,8 +57,11 @@ public class TieredDestructorNetworkNode extends TieredSimpleNetworkNode {
             return;
         }
         final Player player = this.playerProvider.get();
-        for (int i = 0; i < this.getTier().getSpeed(this.getType()); i++) {
-            this.strategy.apply(this.filter, this.actor, this::getNetwork, player);
+        final int speed = this.getTier().getSpeed(this.getType());
+        for (int i = 0; i < speed; i++) {
+            if (!this.strategy.apply(this.filter, this.actor, this::getNetwork, player)) {
+                break;
+            }
         }
     }
 }
