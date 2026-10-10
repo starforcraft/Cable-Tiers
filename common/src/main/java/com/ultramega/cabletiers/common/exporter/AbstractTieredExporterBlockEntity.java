@@ -6,9 +6,9 @@ import com.ultramega.cabletiers.common.TieredUpgradeDestinations;
 import com.ultramega.cabletiers.common.advancedfilter.AdvancedResourceContainerImpl;
 import com.ultramega.cabletiers.common.advancedfilter.TagFilterWithFuzzyMode;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
+import com.ultramega.cabletiers.common.scheduling.TieredSchedulingModeContainer;
 import com.ultramega.cabletiers.common.support.AbstractTieredCableLikeBlockEntity;
 
-import com.refinedmods.refinedstorage.api.network.node.SchedulingMode;
 import com.refinedmods.refinedstorage.api.network.node.exporter.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
@@ -19,7 +19,6 @@ import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeDestination;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeItem;
 import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.exporter.ExporterData;
-import com.refinedmods.refinedstorage.common.support.SchedulingModeContainer;
 import com.refinedmods.refinedstorage.common.support.SchedulingModeType;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.exportingindicator.ExportingIndicator;
@@ -51,7 +50,7 @@ public class AbstractTieredExporterBlockEntity extends AbstractTieredCableLikeBl
     implements NetworkNodeExtendedMenuProvider<ExporterData> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTieredExporterBlockEntity.class);
 
-    private final SchedulingModeContainer schedulingModeContainer;
+    private final TieredSchedulingModeContainer schedulingModeContainer;
 
     protected AbstractTieredExporterBlockEntity(final CableTiers tier, final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getTieredExporters(tier),
@@ -87,7 +86,7 @@ public class AbstractTieredExporterBlockEntity extends AbstractTieredCableLikeBl
                 return super.getAmount(upgradeItem);
             }
         };
-        this.schedulingModeContainer = new SchedulingModeContainer(this.mainNetworkNode::setSchedulingMode, this::setChanged);
+        this.schedulingModeContainer = new TieredSchedulingModeContainer(this.mainNetworkNode::setSchedulingMode, this::setChanged);
         this.ticker = this.upgradeContainer.getTicker();
     }
 
@@ -97,11 +96,6 @@ public class AbstractTieredExporterBlockEntity extends AbstractTieredCableLikeBl
             : tier.hasIntegratedStackUpgrade(CableType.EXPORTER)
             ? TieredUpgradeDestinations.EXPORTER_NO_STACK
             : UpgradeDestinations.EXPORTER;
-    }
-
-    private void schedulingModeChanged(final SchedulingMode schedulingMode) {
-        this.mainNetworkNode.setSchedulingMode(schedulingMode);
-        this.setChanged();
     }
 
     void setFilters(final List<ResourceKey> filters, final List<ResourceTag> tagFilters) {

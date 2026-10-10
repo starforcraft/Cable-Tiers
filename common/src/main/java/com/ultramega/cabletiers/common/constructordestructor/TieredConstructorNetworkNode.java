@@ -1,5 +1,6 @@
 package com.ultramega.cabletiers.common.constructordestructor;
 
+import com.ultramega.cabletiers.common.scheduling.TieredSchedulingMode;
 import com.ultramega.cabletiers.common.utils.TieredSimpleNetworkNode;
 
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeActor;
@@ -27,7 +28,7 @@ public class TieredConstructorNetworkNode extends TieredSimpleNetworkNode {
     @Nullable
     private ConstructorStrategy strategy;
     @Nullable
-    private SchedulingMode schedulingMode;
+    private TieredSchedulingMode schedulingMode;
 
     public TieredConstructorNetworkNode(final long energyUsage) {
         super(energyUsage);
@@ -39,8 +40,11 @@ public class TieredConstructorNetworkNode extends TieredSimpleNetworkNode {
         if (this.network == null || !this.isActive() || this.schedulingMode == null) {
             return;
         }
-        for (int i = 0; i < this.getTier().getSpeed(this.getType()); i++) {
-            this.schedulingMode.execute(this.tasks);
+        final int speed = this.getTier().getSpeed(this.getType());
+        for (int i = 0; i < speed; i++) {
+            if (!this.schedulingMode.execute(this.tasks)) {
+                break;
+            }
         }
     }
 
@@ -52,7 +56,7 @@ public class TieredConstructorNetworkNode extends TieredSimpleNetworkNode {
         this.playerProvider = playerSupplier;
     }
 
-    void setSchedulingMode(@Nullable final SchedulingMode schedulingMode) {
+    void setSchedulingMode(@Nullable final TieredSchedulingMode schedulingMode) {
         this.schedulingMode = schedulingMode;
     }
 

@@ -7,6 +7,7 @@ import com.ultramega.cabletiers.common.advancedfilter.AdvancedResourceContainerI
 import com.ultramega.cabletiers.common.advancedfilter.TagFilterWithFuzzyMode;
 import com.ultramega.cabletiers.common.exporter.TieredExportingIndicators;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
+import com.ultramega.cabletiers.common.scheduling.TieredSchedulingModeContainer;
 import com.ultramega.cabletiers.common.support.AbstractTieredCableLikeBlockEntity;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
@@ -18,7 +19,6 @@ import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeDestination;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeItem;
 import com.refinedmods.refinedstorage.common.constructordestructor.ConstructorData;
 import com.refinedmods.refinedstorage.common.content.Items;
-import com.refinedmods.refinedstorage.common.support.SchedulingModeContainer;
 import com.refinedmods.refinedstorage.common.support.SchedulingModeType;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.exportingindicator.ExportingIndicator;
@@ -47,7 +47,7 @@ public class AbstractTieredConstructorBlockEntity extends AbstractTieredCableLik
     implements NetworkNodeExtendedMenuProvider<ConstructorData> {
     private static final String TAG_DROP_ITEMS = "di";
 
-    private final SchedulingModeContainer schedulingModeContainer;
+    private final TieredSchedulingModeContainer schedulingModeContainer;
 
     private boolean dropItems;
 
@@ -85,7 +85,7 @@ public class AbstractTieredConstructorBlockEntity extends AbstractTieredCableLik
                 return super.getAmount(upgradeItem);
             }
         };
-        this.schedulingModeContainer = new SchedulingModeContainer(this.mainNetworkNode::setSchedulingMode, this::setChanged);
+        this.schedulingModeContainer = new TieredSchedulingModeContainer(this.mainNetworkNode::setSchedulingMode, this::setChanged);
         this.ticker = this.upgradeContainer.getTicker();
     }
 
