@@ -1,5 +1,6 @@
 package com.ultramega.cabletiers.common.constructordestructor;
 
+import com.ultramega.cabletiers.common.scheduling.TieredSchedulingMode;
 import com.ultramega.cabletiers.common.utils.TieredSimpleNetworkNode;
 
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeActor;
@@ -27,7 +28,7 @@ public class TieredConstructorNetworkNode extends TieredSimpleNetworkNode {
     @Nullable
     private ConstructorStrategy strategy;
     @Nullable
-    private SchedulingMode schedulingMode;
+    private TieredSchedulingMode schedulingMode;
 
     public TieredConstructorNetworkNode(final long energyUsage) {
         super(energyUsage);
@@ -36,11 +37,14 @@ public class TieredConstructorNetworkNode extends TieredSimpleNetworkNode {
     @Override
     public void doWork() {
         super.doWork();
-        if (network == null || !isActive() || schedulingMode == null) {
+        if (this.network == null || !this.isActive() || this.schedulingMode == null) {
             return;
         }
-        for (int i = 0; i < getTier().getSpeed(getType()); i++) {
-            schedulingMode.execute(tasks);
+        final int speed = this.getTier().getSpeed(this.getType());
+        for (int i = 0; i < speed; i++) {
+            if (!this.schedulingMode.execute(this.tasks)) {
+                break;
+            }
         }
     }
 
@@ -52,7 +56,7 @@ public class TieredConstructorNetworkNode extends TieredSimpleNetworkNode {
         this.playerProvider = playerSupplier;
     }
 
-    void setSchedulingMode(@Nullable final SchedulingMode schedulingMode) {
+    void setSchedulingMode(@Nullable final TieredSchedulingMode schedulingMode) {
         this.schedulingMode = schedulingMode;
     }
 
@@ -65,14 +69,14 @@ public class TieredConstructorNetworkNode extends TieredSimpleNetworkNode {
         final List<TieredConstructorTask> updatedTasks = new ArrayList<>();
         for (int i = 0; i < filters.size(); ++i) {
             for (final ResourceKey resource : getResourcesFromFilter(filters, tagFilters, i)) {
-                final ConstructorStrategy.Result lastResult = (i < tasks.size() && tasks.get(i).filter.equals(resource))
-                    ? tasks.get(i).lastResult
+                final ConstructorStrategy.Result lastResult = (i < this.tasks.size() && this.tasks.get(i).filter.equals(resource))
+                    ? this.tasks.get(i).lastResult
                     : null;
                 updatedTasks.add(new TieredConstructorTask(resource, lastResult));
             }
         }
-        tasks.clear();
-        tasks.addAll(updatedTasks);
+        this.tasks.clear();
+        this.tasks.addAll(updatedTasks);
     }
 
     class TieredConstructorTask implements SchedulingMode.ScheduledTask {
@@ -91,8 +95,8 @@ public class TieredConstructorNetworkNode extends TieredSimpleNetworkNode {
                 return false;
             }
             final Player player = playerProvider.get();
-            this.lastResult = strategy.apply(filter, actor, player, network);
-            return lastResult == ConstructorStrategy.Result.SUCCESS;
+            this.lastResult = strategy.apply(this.filter, actor, player, network);
+            return this.lastResult == ConstructorStrategy.Result.SUCCESS;
         }
     }
 }

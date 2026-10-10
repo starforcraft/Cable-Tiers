@@ -1,9 +1,10 @@
 package com.ultramega.cabletiers.common.exporter;
 
+import com.ultramega.cabletiers.common.scheduling.TieredSchedulingMode;
 import com.ultramega.cabletiers.common.utils.TieredSimpleNetworkNode;
 
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeActor;
-import com.refinedmods.refinedstorage.api.network.node.SchedulingMode;
+import com.refinedmods.refinedstorage.api.network.node.SchedulingMode.ScheduledTask;
 import com.refinedmods.refinedstorage.api.network.node.exporter.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
@@ -22,7 +23,7 @@ public class TieredExporterNetworkNode extends TieredSimpleNetworkNode {
     @Nullable
     private ExporterTransferStrategy transferStrategy;
     @Nullable
-    private SchedulingMode schedulingMode;
+    private TieredSchedulingMode schedulingMode;
 
     public TieredExporterNetworkNode(final long energyUsage) {
         super(energyUsage);
@@ -31,11 +32,14 @@ public class TieredExporterNetworkNode extends TieredSimpleNetworkNode {
     @Override
     public void doWork() {
         super.doWork();
-        if (network == null || !isActive() || schedulingMode == null) {
+        if (this.network == null || !this.isActive() || this.schedulingMode == null) {
             return;
         }
-        for (int i = 0; i < getTier().getSpeed(getType()); i++) {
-            schedulingMode.execute(tasks);
+        final int speed = this.getTier().getSpeed(this.getType());
+        for (int i = 0; i < speed; i++) {
+            if (!this.schedulingMode.execute(this.tasks)) {
+                break;
+            }
         }
     }
 
@@ -43,7 +47,7 @@ public class TieredExporterNetworkNode extends TieredSimpleNetworkNode {
         this.transferStrategy = transferStrategy;
     }
 
-    public void setSchedulingMode(@Nullable final SchedulingMode schedulingMode) {
+    public void setSchedulingMode(@Nullable final TieredSchedulingMode schedulingMode) {
         this.schedulingMode = schedulingMode;
     }
 
@@ -56,17 +60,17 @@ public class TieredExporterNetworkNode extends TieredSimpleNetworkNode {
         final List<TieredExporterTask> updatedTasks = new ArrayList<>();
         for (int i = 0; i < filters.size(); ++i) {
             for (final ResourceKey resource : getResourcesFromFilter(filters, tagFilters, i)) {
-                final ExporterTransferStrategy.Result lastResult = (i < tasks.size() && tasks.get(i).filter.equals(resource))
-                    ? tasks.get(i).lastResult
+                final ExporterTransferStrategy.Result lastResult = (i < this.tasks.size() && this.tasks.get(i).filter.equals(resource))
+                    ? this.tasks.get(i).lastResult
                     : null;
                 updatedTasks.add(new TieredExporterTask(resource, lastResult));
             }
         }
-        tasks.clear();
-        tasks.addAll(updatedTasks);
+        this.tasks.clear();
+        this.tasks.addAll(updatedTasks);
     }
 
-    class TieredExporterTask implements SchedulingMode.ScheduledTask {
+    class TieredExporterTask implements ScheduledTask {
         private final ResourceKey filter;
         @Nullable
         private ExporterTransferStrategy.Result lastResult;
@@ -81,8 +85,8 @@ public class TieredExporterNetworkNode extends TieredSimpleNetworkNode {
             if (transferStrategy == null || network == null) {
                 return false;
             }
-            this.lastResult = transferStrategy.transfer(filter, actor, network);
-            return lastResult == ExporterTransferStrategy.Result.EXPORTED;
+            this.lastResult = transferStrategy.transfer(this.filter, actor, network);
+            return this.lastResult == ExporterTransferStrategy.Result.EXPORTED;
         }
     }
 }

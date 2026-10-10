@@ -6,9 +6,9 @@ import com.ultramega.cabletiers.common.TieredUpgradeDestinations;
 import com.ultramega.cabletiers.common.advancedfilter.AdvancedResourceContainerImpl;
 import com.ultramega.cabletiers.common.advancedfilter.TagFilterWithFuzzyMode;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
+import com.ultramega.cabletiers.common.scheduling.TieredSchedulingModeContainer;
 import com.ultramega.cabletiers.common.support.AbstractTieredCableLikeBlockEntity;
 
-import com.refinedmods.refinedstorage.api.network.node.SchedulingMode;
 import com.refinedmods.refinedstorage.api.network.node.exporter.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
@@ -19,7 +19,6 @@ import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeDestination;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeItem;
 import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.exporter.ExporterData;
-import com.refinedmods.refinedstorage.common.support.SchedulingModeContainer;
 import com.refinedmods.refinedstorage.common.support.SchedulingModeType;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.exportingindicator.ExportingIndicator;
@@ -51,7 +50,7 @@ public class AbstractTieredExporterBlockEntity extends AbstractTieredCableLikeBl
     implements NetworkNodeExtendedMenuProvider<ExporterData> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTieredExporterBlockEntity.class);
 
-    private final SchedulingModeContainer schedulingModeContainer;
+    private final TieredSchedulingModeContainer schedulingModeContainer;
 
     protected AbstractTieredExporterBlockEntity(final CableTiers tier, final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getTieredExporters(tier),
@@ -88,8 +87,11 @@ public class AbstractTieredExporterBlockEntity extends AbstractTieredCableLikeBl
                 return super.getAmount(upgradeItem);
             }
         };
-        this.schedulingModeContainer = new SchedulingModeContainer(this::schedulingModeChanged);
-        this.ticker = upgradeContainer.getTicker();
+        this.schedulingModeContainer = new TieredSchedulingModeContainer(schedulingMode -> {
+            mainNetworkNode.setSchedulingMode(schedulingMode);
+            setChanged();
+        });
+        this.ticker = this.upgradeContainer.getTicker();
     }
 
     public static UpgradeDestination getUpgradeDestination(final CableTiers tier) {
@@ -100,31 +102,26 @@ public class AbstractTieredExporterBlockEntity extends AbstractTieredCableLikeBl
             : UpgradeDestinations.EXPORTER;
     }
 
-    private void schedulingModeChanged(final SchedulingMode schedulingMode) {
-        mainNetworkNode.setSchedulingMode(schedulingMode);
-        setChanged();
-    }
-
     void setFilters(final List<ResourceKey> filters, final List<ResourceTag> tagFilters) {
-        mainNetworkNode.setFilters(filters, tagFilters);
+        this.mainNetworkNode.setFilters(filters, tagFilters);
     }
 
     void setSchedulingModeType(final SchedulingModeType type) {
-        schedulingModeContainer.setType(type);
+        this.schedulingModeContainer.setType(type);
     }
 
     SchedulingModeType getSchedulingModeType() {
-        return schedulingModeContainer.getType();
+        return this.schedulingModeContainer.getType();
     }
 
     boolean isFuzzyMode() {
-        return filter.isFuzzyMode();
+        return this.filter.isFuzzyMode();
     }
 
     void setFuzzyMode(final boolean fuzzyMode) {
-        filter.setFuzzyMode(fuzzyMode);
-        if (level instanceof ServerLevel serverLevel) {
-            initialize(serverLevel);
+        this.filter.setFuzzyMode(fuzzyMode);
+        if (this.level instanceof ServerLevel serverLevel) {
+            this.initialize(serverLevel);
         }
     }
 
@@ -143,14 +140,14 @@ public class AbstractTieredExporterBlockEntity extends AbstractTieredCableLikeBl
     @Override
     protected void initialize(final ServerLevel level, final Direction direction) {
         super.initialize(level, direction);
-        final ExporterTransferStrategy strategy = createStrategy(level, direction);
-        LOGGER.debug("Initialized exporter at {} with strategy {}", worldPosition, strategy);
-        mainNetworkNode.setTransferStrategy(strategy);
+        final ExporterTransferStrategy strategy = this.createStrategy(level, direction);
+        LOGGER.debug("Initialized exporter at {} with strategy {}", this.worldPosition, strategy);
+        this.mainNetworkNode.setTransferStrategy(strategy);
     }
 
     private ExporterTransferStrategy createStrategy(final ServerLevel serverLevel, final Direction direction) {
         final Direction incomingDirection = direction.getOpposite();
-        final BlockPos sourcePosition = worldPosition.relative(direction);
+        final BlockPos sourcePosition = this.worldPosition.relative(direction);
         final List<ExporterTransferStrategyFactory> factories =
             RefinedStorageApi.INSTANCE.getExporterTransferStrategyRegistry().getAll();
         final Map<Class<? extends ResourceKey>, ExporterTransferStrategy> strategies =
@@ -160,8 +157,8 @@ public class AbstractTieredExporterBlockEntity extends AbstractTieredCableLikeBl
                     serverLevel,
                     sourcePosition,
                     incomingDirection,
-                    upgradeContainer,
-                    filter.isFuzzyMode()
+                    this.upgradeContainer,
+                    this.filter.isFuzzyMode()
                 )
             ));
         return new CompositeExporterTransferStrategy(strategies);
@@ -169,9 +166,9 @@ public class AbstractTieredExporterBlockEntity extends AbstractTieredCableLikeBl
 
     @Override
     public ExporterData getMenuData() {
-        final ResourceContainer filterContainer = filter.getFilterContainer();
+        final ResourceContainer filterContainer = this.filter.getFilterContainer();
         final ResourceContainerData resourceContainerData = ResourceContainerData.of(filterContainer);
-        return new ExporterData(resourceContainerData, getExportingIndicators().getAll());
+        return new ExporterData(resourceContainerData, this.getExportingIndicators().getAll());
     }
 
     @Override
@@ -181,7 +178,7 @@ public class AbstractTieredExporterBlockEntity extends AbstractTieredCableLikeBl
 
     @Override
     public Component getName() {
-        return overrideName(tier.getContentName(CableType.EXPORTER));
+        return this.overrideName(this.tier.getContentName(CableType.EXPORTER));
     }
 
     @Nullable
@@ -189,13 +186,13 @@ public class AbstractTieredExporterBlockEntity extends AbstractTieredCableLikeBl
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
         this.setInContainerMenu(true);
 
-        return new TieredExporterContainerMenu(syncId, player, this, filter.getFilterContainer(), upgradeContainer, getExportingIndicators(), tier);
+        return new TieredExporterContainerMenu(syncId, player, this, this.filter.getFilterContainer(), this.upgradeContainer, this.getExportingIndicators(), this.tier);
     }
 
     private TieredExportingIndicators getExportingIndicators() {
         return new TieredExportingIndicators(
-            filter.getFilterContainer(),
-            (i, j) -> toExportingIndicator(mainNetworkNode.getLastResult(i, j)),
+            this.filter.getFilterContainer(),
+            (i, j) -> this.toExportingIndicator(this.mainNetworkNode.getLastResult(i, j)),
             false
         );
     }

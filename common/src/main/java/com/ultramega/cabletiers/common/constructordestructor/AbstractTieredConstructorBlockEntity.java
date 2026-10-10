@@ -7,6 +7,7 @@ import com.ultramega.cabletiers.common.advancedfilter.AdvancedResourceContainerI
 import com.ultramega.cabletiers.common.advancedfilter.TagFilterWithFuzzyMode;
 import com.ultramega.cabletiers.common.exporter.TieredExportingIndicators;
 import com.ultramega.cabletiers.common.registry.BlockEntities;
+import com.ultramega.cabletiers.common.scheduling.TieredSchedulingModeContainer;
 import com.ultramega.cabletiers.common.support.AbstractTieredCableLikeBlockEntity;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
@@ -18,7 +19,6 @@ import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeDestination;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeItem;
 import com.refinedmods.refinedstorage.common.constructordestructor.ConstructorData;
 import com.refinedmods.refinedstorage.common.content.Items;
-import com.refinedmods.refinedstorage.common.support.SchedulingModeContainer;
 import com.refinedmods.refinedstorage.common.support.SchedulingModeType;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.exportingindicator.ExportingIndicator;
@@ -47,7 +47,7 @@ public class AbstractTieredConstructorBlockEntity extends AbstractTieredCableLik
     implements NetworkNodeExtendedMenuProvider<ConstructorData> {
     private static final String TAG_DROP_ITEMS = "di";
 
-    private final SchedulingModeContainer schedulingModeContainer;
+    private final TieredSchedulingModeContainer schedulingModeContainer;
 
     private boolean dropItems;
 
@@ -86,11 +86,11 @@ public class AbstractTieredConstructorBlockEntity extends AbstractTieredCableLik
                 return super.getAmount(upgradeItem);
             }
         };
-        this.schedulingModeContainer = new SchedulingModeContainer(schedulingMode -> {
+        this.schedulingModeContainer = new TieredSchedulingModeContainer(schedulingMode -> {
             mainNetworkNode.setSchedulingMode(schedulingMode);
             setChanged();
         });
-        this.ticker = upgradeContainer.getTicker();
+        this.ticker = this.upgradeContainer.getTicker();
     }
 
     public static UpgradeDestination getUpgradeDestination(final CableTiers tier) {
@@ -102,37 +102,37 @@ public class AbstractTieredConstructorBlockEntity extends AbstractTieredCableLik
     }
 
     void setFilters(final List<ResourceKey> filters, final List<ResourceTag> tagFilters) {
-        mainNetworkNode.setFilters(filters, tagFilters);
+        this.mainNetworkNode.setFilters(filters, tagFilters);
     }
 
     void setSchedulingModeType(final SchedulingModeType type) {
-        schedulingModeContainer.setType(type);
+        this.schedulingModeContainer.setType(type);
     }
 
     SchedulingModeType getSchedulingModeType() {
-        return schedulingModeContainer.getType();
+        return this.schedulingModeContainer.getType();
     }
 
     boolean isFuzzyMode() {
-        return filter.isFuzzyMode();
+        return this.filter.isFuzzyMode();
     }
 
     void setFuzzyMode(final boolean fuzzyMode) {
-        filter.setFuzzyMode(fuzzyMode);
-        if (level instanceof ServerLevel serverLevel) {
-            initialize(serverLevel);
+        this.filter.setFuzzyMode(fuzzyMode);
+        if (this.level instanceof ServerLevel serverLevel) {
+            this.initialize(serverLevel);
         }
     }
 
     boolean isDropItems() {
-        return dropItems;
+        return this.dropItems;
     }
 
     void setDropItems(final boolean dropItems) {
         this.dropItems = dropItems;
-        setChanged();
-        if (level instanceof ServerLevel serverLevel) {
-            initialize(serverLevel);
+        this.setChanged();
+        if (this.level instanceof ServerLevel serverLevel) {
+            this.initialize(serverLevel);
         }
     }
 
@@ -155,25 +155,25 @@ public class AbstractTieredConstructorBlockEntity extends AbstractTieredCableLik
     @Override
     protected void initialize(final ServerLevel level, final Direction direction) {
         super.initialize(level, direction);
-        mainNetworkNode.setPlayerProvider(() -> getFakePlayer(level));
-        mainNetworkNode.setStrategy(createStrategy(level, direction));
+        this.mainNetworkNode.setPlayerProvider(() -> this.getFakePlayer(level));
+        this.mainNetworkNode.setStrategy(this.createStrategy(level, direction));
     }
 
     private ConstructorStrategy createStrategy(final ServerLevel serverLevel, final Direction direction) {
         final Direction incomingDirection = direction.getOpposite();
-        final BlockPos sourcePosition = worldPosition.relative(direction);
+        final BlockPos sourcePosition = this.worldPosition.relative(direction);
         final Collection<ConstructorStrategyFactory> factories = RefinedStorageApi.INSTANCE
             .getConstructorStrategyFactories();
         final List<ConstructorStrategy> strategies = factories.stream().flatMap(factory -> factory.create(
                 serverLevel,
                 sourcePosition,
                 incomingDirection,
-                upgradeContainer,
-                dropItems
+                this.upgradeContainer,
+                this.dropItems
             ).stream())
             .toList();
         final ConstructorStrategy strategy = new CompositeConstructorStrategy(strategies);
-        if (upgradeContainer.has(Items.INSTANCE.getAutocraftingUpgrade())) {
+        if (this.upgradeContainer.has(Items.INSTANCE.getAutocraftingUpgrade())) {
             return new AutocraftOnMissingResourcesConstructorStrategy(strategy);
         }
         return strategy;
@@ -181,8 +181,8 @@ public class AbstractTieredConstructorBlockEntity extends AbstractTieredCableLik
 
     @Override
     public ConstructorData getMenuData() {
-        return new ConstructorData(ResourceContainerData.of(filter.getFilterContainer()),
-            getExportingIndicators().getAll());
+        return new ConstructorData(ResourceContainerData.of(this.filter.getFilterContainer()),
+            this.getExportingIndicators().getAll());
     }
 
     @Override
@@ -200,13 +200,14 @@ public class AbstractTieredConstructorBlockEntity extends AbstractTieredCableLik
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
         this.setInContainerMenu(true);
 
-        return new TieredConstructorContainerMenu(syncId, player, this, filter.getFilterContainer(), upgradeContainer, getExportingIndicators(), tier);
+        return new TieredConstructorContainerMenu(syncId, player, this, this.filter.getFilterContainer(),
+            this.upgradeContainer, this.getExportingIndicators(), this.tier);
     }
 
     private TieredExportingIndicators getExportingIndicators() {
         return new TieredExportingIndicators(
-            filter.getFilterContainer(),
-            (i, j) -> toExportingIndicator(mainNetworkNode.getLastResult(i, j)),
+            this.filter.getFilterContainer(),
+            (i, j) -> this.toExportingIndicator(this.mainNetworkNode.getLastResult(i, j)),
             false
         );
     }
